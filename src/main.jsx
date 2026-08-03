@@ -29,7 +29,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.10.0",
+const VERSION = "1.11.0",
   API = "/api";
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/private`, {
@@ -1779,11 +1779,20 @@ function Diary({
                 />
                 <div className="composerActions">
                   <label>
-                    <ImageIcon /> Galleria
+                    <ImageIcon /> Galleria foto
                     <input
                       type="file"
                       accept="image/*"
                       multiple
+                      onChange={(e) => addFiles(e.target.files)}
+                    />
+                  </label>
+                  <label>
+                    <Camera /> Scatta ora
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
                       onChange={(e) => addFiles(e.target.files)}
                     />
                   </label>
@@ -2039,6 +2048,7 @@ function Post({ p, author, groupCode, refresh }) {
     [likesOpen, setLikesOpen] = useState(false),
     [editingCommentId, setEditingCommentId] = useState(""),
     [editingCommentText, setEditingCommentText] = useState(""),
+    [deletingCommentId, setDeletingCommentId] = useState(""),
     [showAllComments, setShowAllComments] = useState(false);
   const replyInputRef = useRef(null);
   const visitor = () => {
@@ -2127,6 +2137,25 @@ function Post({ p, author, groupCode, refresh }) {
     setEditingCommentId("");
     setEditingCommentText("");
     setCommentStatus("Commento modificato.");
+    await refresh();
+  };
+  const deleteComment = async () => {
+    if (!deletingCommentId) return;
+    const response = await fetch(`${API}/comments/${deletingCommentId}`, {
+      method: "DELETE",
+      headers: {
+        "content-type": "application/json",
+        ...(groupCode ? { "x-group-code": groupCode } : {}),
+      },
+      body: JSON.stringify({ visitor_id: visitor() }),
+    });
+    if (!response.ok) {
+      const result = await response.json().catch(() => ({}));
+      setCommentStatus(result.error || "Eliminazione non riuscita.");
+      return;
+    }
+    setDeletingCommentId("");
+    setCommentStatus("Commento eliminato.");
     await refresh();
   };
   const remove = async () => {
@@ -2249,22 +2278,36 @@ function Post({ p, author, groupCode, refresh }) {
                     onChange={(event) => setEditingCommentText(event.target.value)}
                     aria-label="Modifica commento"
                   />
-                  <button onClick={() => saveCommentEdit(x.id)}>Salva</button>
-                  <button onClick={() => setEditingCommentId("")}>Annulla</button>
+                  <button
+                    aria-label="Salva modifica commento"
+                    onClick={() => saveCommentEdit(x.id)}
+                  >
+                    Salva
+                  </button>
+                  <button
+                    aria-label="Annulla modifica commento"
+                    onClick={() => setEditingCommentId("")}
+                  >
+                    Annulla
+                  </button>
                 </div>
               ) : (
                 <>
                   {x.text && <span>{x.text}</span>}
                   {(groupCode || x.visitor_id === visitor()) && x.text && (
-                    <button
-                      className="editCommentButton"
-                      onClick={() => {
-                        setEditingCommentId(x.id);
-                        setEditingCommentText(x.text || "");
-                      }}
-                    >
-                      Modifica
-                    </button>
+                    <div className="commentCommands">
+                      <button
+                        onClick={() => {
+                          setEditingCommentId(x.id);
+                          setEditingCommentText(x.text || "");
+                        }}
+                      >
+                        Modifica
+                      </button>
+                      <button onClick={() => setDeletingCommentId(x.id)}>
+                        Elimina
+                      </button>
+                    </div>
                   )}
                 </>
               )}
@@ -2338,6 +2381,19 @@ function Post({ p, author, groupCode, refresh }) {
             <div>
               <button onClick={() => setConfirmDelete(false)}>Annulla</button>
               <button onClick={remove}>Elimina</button>
+            </div>
+          </div>
+        </div>
+      )}
+      {deletingCommentId && (
+        <div className="confirmOverlay" onClick={() => setDeletingCommentId("")}>
+          <div className="confirmCard" onClick={(event) => event.stopPropagation()}>
+            <Trash2 />
+            <h3>Eliminare questo commento?</h3>
+            <p>Il testo e l’eventuale allegato verranno rimossi.</p>
+            <div>
+              <button onClick={() => setDeletingCommentId("")}>Annulla</button>
+              <button onClick={deleteComment}>Elimina</button>
             </div>
           </div>
         </div>
@@ -2569,7 +2625,9 @@ function VaultOnline({
   const [code, setCode] = useState(""),
     [privateData, setPrivateData] = useState({ documents: [], locations: [] }),
     [profileId, setProfileId] = useState(""),
-    [busy, setBusy] = useState("");
+    [busy, setBusy] = useState(""),
+    [documentStatus, setDocumentStatus] = useState(""),
+    [pendingDocumentDelete, setPendingDocumentDelete] = useState("");
   const refresh = async (c = groupCode) => {
     if (!c) return;
     const r = await fetch(`${API}/private`, {
@@ -2616,16 +2674,47 @@ function VaultOnline({
       body: f,
     });
     setBusy("");
-    if (r.ok) refresh();
-    else alert((await r.json()).error);
+    if (r.ok) {
+      setDocumentStatus("Documento caricato correttamente.");
+      refresh();
+    } else {
+      const result = await r.json().catch(() => ({}));
+      setDocumentStatus(result.error || "Caricamento del documento non riuscito.");
+    }
   };
   const remove = async (type) => {
-    if (!confirm("Rimuovere questo documento dalla cartella privata?")) return;
     const r = await fetch(`${API}/documents/${profileId}/${type}`, {
       method: "DELETE",
       headers: { "x-group-code": groupCode },
     });
-    if (r.ok) refresh();
+    if (r.ok) {
+      setPendingDocumentDelete("");
+      setDocumentStatus("Documento eliminato.");
+      refresh();
+    } else setDocumentStatus("Eliminazione del documento non riuscita.");
+  };
+  const openDocument = async (doc, download = false) => {
+    setDocumentStatus("Apertura del documento…");
+    const response = await fetch(
+      `${API}/media/${encodeURIComponent(doc.file_key)}`,
+      { headers: { "x-group-code": groupCode } },
+    );
+    if (!response.ok) {
+      setDocumentStatus("Documento non disponibile. Tocca Riprova.");
+      return;
+    }
+    const blobUrl = URL.createObjectURL(await response.blob());
+    if (download) {
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = doc.file_name || "documento";
+      link.click();
+      setDocumentStatus("Download avviato.");
+    } else {
+      window.open(blobUrl, "_blank", "noopener,noreferrer");
+      setDocumentStatus("Documento aperto.");
+    }
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
   };
   const locate = () =>
     navigator.geolocation?.getCurrentPosition(
@@ -2722,6 +2811,11 @@ function VaultOnline({
       )}
       {people.length ? (
         <div className="documentList">
+          {documentStatus && (
+            <small className="documentStatus" role="status">
+              {documentStatus}
+            </small>
+          )}
           {types.map(([type, label]) => {
             const doc = privateData.documents.find(
               (x) => x.profile_id === profileId && x.doc_type === type,
@@ -2735,12 +2829,21 @@ function VaultOnline({
                 {doc ? (
                   <>
                     <span className="docOk">✓ Presente</span>
-                    <button
-                      onClick={() => remove(type)}
-                      aria-label={`Rimuovi ${label}`}
-                    >
-                      <Trash2 />
-                    </button>
+                    <div className="documentActions">
+                      <button onClick={() => openDocument(doc)}>Apri</button>
+                      <button onClick={() => openDocument(doc, true)}>Scarica</button>
+                      <label>
+                        {busy === type ? "Invio…" : "Sostituisci"}
+                        <input
+                          type="file"
+                          accept="application/pdf,image/*"
+                          onChange={(e) => upload(type, e.target.files?.[0])}
+                        />
+                      </label>
+                      <button onClick={() => setPendingDocumentDelete(type)}>
+                        Elimina
+                      </button>
+                    </div>
                   </>
                 ) : (
                   <label>
@@ -2767,6 +2870,19 @@ function VaultOnline({
             </small>
           </div>
           <button onClick={onOpenGroup}>Vai al Gruppo</button>
+        </div>
+      )}
+      {pendingDocumentDelete && (
+        <div className="confirmOverlay" onClick={() => setPendingDocumentDelete("")}>
+          <div className="confirmCard" onClick={(event) => event.stopPropagation()}>
+            <Trash2 />
+            <h3>Eliminare questo documento?</h3>
+            <p>Verrà rimosso dalla cartella privata del viaggiatore.</p>
+            <div>
+              <button onClick={() => setPendingDocumentDelete("")}>Annulla</button>
+              <button onClick={() => remove(pendingDocumentDelete)}>Elimina</button>
+            </div>
+          </div>
         </div>
       )}
       <div className={`locationPanel ${!profileId ? "needsProfile" : ""}`}>

@@ -357,6 +357,23 @@ export async function onRequest({ request, env, params }) {
         .run();
       return json({ ok: true });
     }
+    if (request.method === "DELETE" && path.startsWith("comments/")) {
+      const commentId = path.slice(9);
+      const body = await request.json().catch(() => ({}));
+      const existing = await env.DB.prepare(
+        "SELECT visitor_id,media_key FROM comments WHERE id=?",
+      )
+        .bind(commentId)
+        .first();
+      if (!existing) return json({ error: "Commento non trovato" }, 404);
+      const ownsComment =
+        existing.visitor_id && existing.visitor_id === String(body.visitor_id || "");
+      if (!ownsComment && !groupOk(request, env))
+        return json({ error: "Non puoi eliminare questo commento" }, 403);
+      await env.DB.prepare("DELETE FROM comments WHERE id=?").bind(commentId).run();
+      if (existing.media_key) await env.MEDIA.delete(existing.media_key);
+      return json({ ok: true });
+    }
     if (request.method === "POST" && path === "reactions") {
       const b = await request.json();
       const kind = ["like", "heart", "laugh", "wow", "clap", "fire"].includes(
