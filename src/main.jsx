@@ -30,7 +30,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.22.0",
+const VERSION = "1.23.0",
   API = "/api";
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
@@ -927,6 +927,7 @@ function App() {
     [quickProfileOpen, setQuickProfileOpen] = useState(false),
     [travelersOpen, setTravelersOpen] = useState(false),
     [quickStatus, setQuickStatus] = useState(""),
+    [accessCode, setAccessCode] = useState(""),
     [groupCode, setGroupCode] = useState(
       () => localStorage.getItem("india-group-code") || "",
     ),
@@ -1194,16 +1195,8 @@ function App() {
     setQuickStatus(`Accesso personale attivo per ${result.profile.name}.`);
     return true;
   };
-  const automaticUnlockRef = useRef("");
-  useEffect(() => {
-    if (!groupCode || sessionToken || !currentProfile) return;
-    const attemptKey = `${groupCode}:${currentProfile.id}`;
-    if (automaticUnlockRef.current === attemptKey) return;
-    automaticUnlockRef.current = attemptKey;
-    unlockProfile(currentProfile);
-  }, [groupCode, sessionToken, currentProfile?.id]);
   const quickShareLocation = () => {
-    if (!currentProfile || (!sessionToken && !effectiveGroupCode)) return;
+    if (!currentProfile || !sessionToken) return;
     setQuickStatus("Cerco la posizione…");
     navigator.geolocation?.getCurrentPosition(
       async (position) => {
@@ -1212,9 +1205,6 @@ function App() {
           headers: {
             "content-type": "application/json",
             ...sessionHeaders(sessionToken),
-            ...(!sessionToken && effectiveGroupCode
-              ? { "x-group-code": effectiveGroupCode }
-              : {}),
           },
           body: JSON.stringify({
             profile_id: currentProfile.id,
@@ -1234,12 +1224,10 @@ function App() {
     );
   };
   const quickRemoveLocation = async () => {
-    if (!currentProfile || (!sessionToken && !effectiveGroupCode)) return;
+    if (!currentProfile || !sessionToken) return;
     const response = await fetch(`${API}/locations/${currentProfile.id}`, {
       method: "DELETE",
-      headers: sessionToken
-        ? sessionHeaders(sessionToken)
-        : { "x-group-code": effectiveGroupCode },
+      headers: sessionHeaders(sessionToken),
     });
     setQuickStatus(
       response.ok ? "Posizione cancellata." : "Cancellazione non riuscita.",
@@ -1380,9 +1368,11 @@ function App() {
             }}
           >
             <CircleUserRound size={15} />
-            {effectiveGroupCode || sessionToken
+            {sessionToken
               ? currentProfile?.name || "Profilo"
-              : "Pubblico"}
+              : effectiveGroupCode
+                ? "Scegli nome"
+                : "Pubblico"}
           </button>
           <button
             className="headerIcon"
@@ -1499,7 +1489,14 @@ function App() {
                   <Bell /> Attiva notifiche
                 </button>
               </div>
-            ) : currentProfile ? (
+            ) : !effectiveGroupCode && !sessionToken ? (
+              <UnlockCard
+                code={accessCode}
+                setCode={setAccessCode}
+                onUnlock={() => verifyGroupCode(accessCode, setGroupCode)}
+                text="La password è comune a tutti i viaggiatori."
+              />
+            ) : currentProfile && sessionToken ? (
               <div className="quickProfileActions">
                 <button onClick={quickShareLocation}>
                   <MapPin /> Condividi posizione
@@ -1527,17 +1524,11 @@ function App() {
             ) : (
               <div className="profileChooser">
                 <b>Collega questo telefono al tuo profilo</b>
-                <small>Non devi creare nuovamente il viaggiatore.</small>
+                <small>Usa la password comune e scegli il tuo nome una sola volta.</small>
                 {people.map((person) => (
                   <button
                     key={person.id}
                     onClick={async () => {
-                      localStorage.setItem("india-profile-id", person.id);
-                      localStorage.setItem(
-                        "india-visitor-name",
-                        `${person.name} ${person.surname || ""}`.trim(),
-                      );
-                      setVaultProfileId(person.id);
                       await unlockProfile(person);
                     }}
                   >
@@ -1554,7 +1545,7 @@ function App() {
                     setQuickProfileOpen(false);
                   }}
                 >
-                  Crea un nuovo viaggiatore
+                  Gestisci viaggiatori
                 </button>
               </div>
             )}
@@ -1818,7 +1809,7 @@ function App() {
             setComposeOpen={setComposeOpen}
             deviceProfileName={
               currentProfile
-                && (effectiveGroupCode || sessionToken)
+                && sessionToken
                 ? `${currentProfile.name} ${currentProfile.surname || ""}`.trim()
                 : ""
             }
@@ -2077,7 +2068,7 @@ function Diary({
     return mediaTypes.some((type) => type.startsWith(feedFilter));
   });
   const add = async () => {
-    if ((!sessionToken && !groupCode) || (!text.trim() && !files.length)) return;
+    if (!sessionToken || (!text.trim() && !files.length)) return;
     setBusy(true);
     try {
       const f = new FormData();
@@ -2093,9 +2084,7 @@ function Diary({
       files.forEach((file) => f.append("files", file));
       const r = await fetch(`${API}/posts`, {
         method: "POST",
-        headers: sessionToken
-          ? sessionHeaders(sessionToken)
-          : { "x-group-code": groupCode },
+        headers: sessionHeaders(sessionToken),
         body: f,
       });
       const j = await r.json();
@@ -2272,7 +2261,7 @@ function Diary({
                 ×
               </button>
             </div>
-            {sessionToken || groupCode ? (
+            {sessionToken ? (
               <div className="composer">
                 <div className="groupBadge">
                   <LockKeyhole /> Pubblicazione viaggiatore
@@ -2411,7 +2400,7 @@ function Diary({
                 code={code}
                 setCode={setCode}
                 onUnlock={() => verifyGroupCode(code, setGroupCode)}
-                text="I familiari possono commentare. Il codice serve per pubblicare foto, video e audio."
+                text="Inserisci la password comune, poi scegli il tuo nome dal profilo in alto."
               />
             )}
           </div>
@@ -2788,9 +2777,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
   const remove = async () => {
     const r = await fetch(`${API}/posts/${p.id}`, {
       method: "DELETE",
-      headers: sessionToken
-        ? sessionHeaders(sessionToken)
-        : { "x-group-code": groupCode },
+      headers: sessionHeaders(sessionToken),
     });
     if (r.ok) {
       setConfirmDelete(false);
@@ -2856,7 +2843,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
             )
           )}
         </div>
-        {(sessionToken || groupCode) && (
+        {sessionToken && (
           <div className="postMenu">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -2962,7 +2949,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
               ) : (
                 <>
                   {x.text && <span>{renderCommentText(x.text)}</span>}
-                  {(sessionToken || groupCode || x.visitor_id === visitor()) && x.text && (
+                  {(sessionToken || x.visitor_id === visitor()) && x.text && (
                     <div className="commentCommands">
                       <button
                         onClick={() => {
@@ -3895,11 +3882,14 @@ function VaultOnline({
   );
 }
 
-function UnlockCard({ code, setCode, onUnlock }) {
+function UnlockCard({ code, setCode, onUnlock, text = "" }) {
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const unlock = async () => {
     setError("");
+    setSuccess("");
     if (!(await onUnlock())) setError("Codice non corretto");
+    else setSuccess("Password corretta. Ora scegli il tuo nome.");
   };
   return (
     <div className="lockedComposer">
@@ -3908,6 +3898,7 @@ function UnlockCard({ code, setCode, onUnlock }) {
       </div>
       <div>
         <b>Accesso privato</b>
+        {text && <small>{text}</small>}
       </div>
       <div className="unlockInline">
         <input
@@ -3919,6 +3910,7 @@ function UnlockCard({ code, setCode, onUnlock }) {
         />
         <button onClick={unlock}>Accedi</button>
         {error && <small className="unlockError">{error}</small>}
+        {success && <small className="unlockSuccess">{success}</small>}
       </div>
     </div>
   );
