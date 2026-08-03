@@ -30,7 +30,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.23.1",
+const VERSION = "1.24.0",
   API = "/api";
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
@@ -85,6 +85,25 @@ const sessionHeaders = (token, additional = {}) => ({
   ...additional,
   ...(token ? { authorization: `Bearer ${token}` } : {}),
 });
+async function guestHeaders(displayName) {
+  const normalizedName = String(displayName || "").trim();
+  let token = localStorage.getItem("india-guest-token") || "";
+  const storedName = localStorage.getItem("india-guest-name") || "";
+  if (!token || storedName !== normalizedName) {
+    const response = await fetch(`${API}/auth/guest`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ display_name: normalizedName }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw Error(result.error || "Identità ospite non disponibile.");
+    token = result.token;
+    localStorage.setItem("india-guest-token", token);
+    localStorage.setItem("india-guest-name", result.display_name);
+    localStorage.setItem("india-visitor-id", result.visitor_id);
+  }
+  return { "x-guest-token": token };
+}
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/auth/group`, {
     method: "POST",
@@ -961,6 +980,7 @@ function App() {
     try {
       const r = await fetch(`${API}/state`, {
         cache: "no-store",
+        headers: sessionHeaders(sessionToken),
         signal: controller.signal,
       });
       if (!r.ok) throw Error();
@@ -2672,17 +2692,21 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
       setCommentStatus("Inserisci il tuo nome prima di lasciare una reazione.");
       return;
     }
-    await fetch(`${API}/reactions`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({
-        post_id: p.id,
-        visitor_id: visitor(),
-        author_name: reactionAuthor,
-        kind,
-      }),
-    });
-    refresh();
+    try {
+      const identityHeaders = sessionToken
+        ? sessionHeaders(sessionToken)
+        : await guestHeaders(reactionAuthor);
+      const response = await fetch(`${API}/reactions`, {
+        method: "POST",
+        headers: { "content-type": "application/json", ...identityHeaders },
+        body: JSON.stringify({ post_id: p.id, kind }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw Error(result.error || "Reazione non inviata.");
+      await refresh();
+    } catch (error) {
+      setCommentStatus(error.message || "Reazione non inviata.");
+    }
   };
   const send = async () => {
     const commentAuthor =
@@ -2704,9 +2728,12 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
     f.set("text", comment);
     if (replyFile) f.set("file", replyFile);
     try {
+      const identityHeaders = sessionToken
+        ? sessionHeaders(sessionToken)
+        : await guestHeaders(commentAuthor);
       const r = await fetch(`${API}/comments`, {
         method: "POST",
-        headers: sessionHeaders(sessionToken),
+        headers: identityHeaders,
         body: f,
       });
       if (!r.ok) {
@@ -2729,16 +2756,17 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
     }
   };
   const saveCommentEdit = async (commentId) => {
+    const identityHeaders = sessionToken
+      ? sessionHeaders(sessionToken)
+      : await guestHeaders(author);
     const response = await fetch(`${API}/comments/${commentId}`, {
       method: "PUT",
       headers: {
         "content-type": "application/json",
-        ...sessionHeaders(sessionToken),
-        ...(groupCode ? { "x-group-code": groupCode } : {}),
+        ...identityHeaders,
       },
       body: JSON.stringify({
         text: editingCommentText,
-        visitor_id: visitor(),
       }),
     });
     if (!response.ok) {
@@ -2754,14 +2782,16 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
   const deleteComment = async () => {
     if (!deletingCommentId) return;
     const targetCommentId = deletingCommentId;
+    const identityHeaders = sessionToken
+      ? sessionHeaders(sessionToken)
+      : await guestHeaders(author);
     const response = await fetch(`${API}/comments/${deletingCommentId}`, {
       method: "DELETE",
       headers: {
         "content-type": "application/json",
-        ...sessionHeaders(sessionToken),
-        ...(groupCode ? { "x-group-code": groupCode } : {}),
+        ...identityHeaders,
       },
-      body: JSON.stringify({ visitor_id: visitor() }),
+      body: JSON.stringify({}),
     });
     if (!response.ok) {
       const result = await response.json().catch(() => ({}));

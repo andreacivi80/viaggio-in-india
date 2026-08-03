@@ -4,3 +4,4 @@ dist/
 !.env.example
 .dev-output.log
 .dev-error.log
+backups/

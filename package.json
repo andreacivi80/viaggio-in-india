@@ -1,12 +1,13 @@
 {
   "name": "viaggio-in-india",
   "private": true,
-  "version": "1.23.1",
+  "version": "1.24.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "test": "npm run build"
+    "test": "node --test tests/*.test.mjs && npm run build",
+    "test:smoke": "node --test tests/production-smoke.test.mjs"
   },
   "dependencies": {
     "@block65/webcrypto-web-push": "^1.0.2",
