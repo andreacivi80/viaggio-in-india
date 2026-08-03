@@ -358,6 +358,24 @@ async function deleteStoredMedia(env, key) {
   await env.DB.prepare("DELETE FROM upload_parts WHERE upload_session_id=?").bind(upload.id).run();
   await env.DB.prepare("DELETE FROM upload_sessions WHERE id=?").bind(upload.id).run();
 }
+async function silentMaintenance(env) {
+  const markerKey = "system/last-silent-maintenance";
+  const lastRun = Number(await env.MEDIA.get(markerKey, { type: "text" })) || 0;
+  if (Date.now() - lastRun < 6 * 60 * 60 * 1000) return;
+  await env.MEDIA.put(markerKey, String(Date.now()));
+  const expiredUploads = await env.DB.prepare(
+    "SELECT object_key FROM upload_sessions WHERE status!='consumed' AND expires_at<? LIMIT 25",
+  ).bind(now()).all();
+  for (const upload of expiredUploads.results)
+    await deleteStoredMedia(env, upload.object_key);
+  await env.DB.batch([
+    env.DB.prepare("DELETE FROM idempotency_operations WHERE expires_at<?").bind(now()),
+    env.DB.prepare("DELETE FROM rate_limits WHERE expires_at<?").bind(now()),
+    env.DB.prepare("DELETE FROM guest_sessions WHERE expires_at<? OR revoked_at IS NOT NULL").bind(now()),
+    env.DB.prepare("DELETE FROM auth_sessions WHERE expires_at<? OR (revoked_at IS NOT NULL AND revoked_at<?)")
+      .bind(now(), new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
+  ]);
+}
 async function chunkedMedia(env, request, key, headers) {
   const upload = await env.DB.prepare(
     "SELECT id,content_type,file_name,file_size FROM upload_sessions WHERE object_key=? AND status IN ('completed','consumed')",
@@ -481,6 +499,7 @@ export async function onRequest(context) {
       ? params.path.join("/")
       : String(params.path || "")
   ).replace(/^\/+|\/+$/g, "");
+  context.waitUntil?.(silentMaintenance(env).catch(() => {}));
   try {
     if (request.method === "POST" && path === "auth/group") {
       const limited = await rateLimit(env, request, "auth-group", 10, 60);

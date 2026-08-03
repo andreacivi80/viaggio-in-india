@@ -363,6 +363,26 @@ test("caricamenti grandi completi per post e documenti, streaming e pulizia", {
   assert.ok(document?.file_key?.startsWith("chunked/private/"));
   assert.equal((await request(`/api/media/${document.file_key}`, { method: "HEAD", headers: { authorization } })).status, 200);
   assert.equal((await request(`/api/documents/${process.env.QA_PROFILE_ID}/insurance`, { method: "DELETE", headers: { authorization } })).status, 200);
+
+  const interrupted = await request("/api/uploads/init", {
+    method: "POST",
+    headers: { authorization, "content-type": "application/json" },
+    body: JSON.stringify({ scope: "post", visibility: "private", file_name: "interrotto.mp4", file_size: bytes.byteLength, content_type: "video/mp4" }),
+  });
+  assert.equal(interrupted.status, 201);
+  const interruptedUpload = await interrupted.json();
+  assert.equal((await request(`/api/uploads/${interruptedUpload.upload_id}/parts/1`, {
+    method: "PUT",
+    headers: { authorization, "content-type": "application/octet-stream" },
+    body: bytes.slice(0, interruptedUpload.part_size),
+  })).status, 200);
+  assert.equal((await request(`/api/uploads/${interruptedUpload.upload_id}`, {
+    method: "DELETE",
+    headers: { authorization },
+  })).status, 200);
+  assert.equal((await request(`/api/uploads/${interruptedUpload.upload_id}`, {
+    headers: { authorization },
+  })).status, 404);
 });
 
 test("health API risponde e non usa il computer locale", async () => {
