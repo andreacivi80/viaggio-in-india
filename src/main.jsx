@@ -29,8 +29,9 @@ import {
   Link,
 } from "./icons.jsx";
 import "./styles.css";
+import { flushOfflineQueue, queueFormRequest } from "./offlineQueue.js";
 
-const VERSION = "1.26.0",
+const VERSION = "1.27.0",
   API = "/api";
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
@@ -1017,6 +1018,28 @@ function App() {
       clearTimeout(timeout);
     }
   };
+  useEffect(() => {
+    let flushing = false;
+    const flushPending = async () => {
+      if (flushing || !navigator.onLine) return;
+      flushing = true;
+      try {
+        const result = await flushOfflineQueue();
+        if (result.sent) await refresh();
+      } catch {
+        // La coda resta nel dispositivo e verrà riprovata al prossimo ciclo.
+      } finally {
+        flushing = false;
+      }
+    };
+    flushPending();
+    const timer = setInterval(flushPending, 15000);
+    addEventListener("online", flushPending);
+    return () => {
+      clearInterval(timer);
+      removeEventListener("online", flushPending);
+    };
+  }, []);
   useEffect(() => {
     const initialUrl = new URL(location.href);
     if (initialUrl.searchParams.has("view") || initialUrl.searchParams.has("day")) {
@@ -2123,8 +2146,10 @@ function Diary({
   const add = async () => {
     if (!sessionToken || (!text.trim() && !files.length)) return;
     setBusy(true);
+    let pendingForm;
     try {
       const f = new FormData();
+      pendingForm = f;
       f.set("author_name", author || "Viaggiatore");
       f.set("profile_id", deviceProfileId || "");
       f.set("day_index", selectedDay);
@@ -2160,7 +2185,26 @@ function Diary({
       await refresh();
       setComposeOpen(false);
     } catch (e) {
-      setFileStatus(e.message || "Pubblicazione non riuscita.");
+      if (pendingForm && (!navigator.onLine || e instanceof TypeError)) {
+        try {
+          await queueFormRequest({
+            id: `post:${postOperationRef.current}`,
+            endpoint: `${API}/posts`,
+            form: pendingForm,
+            authType: "session",
+            operationKey: postOperationRef.current,
+          });
+          setText("");
+          setFiles([]);
+          setPlaceName("");
+          setPostCoordinates(null);
+          setFileStatus("Salvato nel telefono. Sarà pubblicato automaticamente quando torna la rete.");
+          postOperationRef.current = "";
+          setComposeOpen(false);
+        } catch {
+          setFileStatus("Connessione assente e salvataggio offline non disponibile.");
+        }
+      } else setFileStatus(e.message || "Pubblicazione non riuscita.");
     } finally {
       setBusy(false);
     }
@@ -2817,9 +2861,27 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
       await refresh();
       setCommentStatus("Commento pubblicato.");
     } catch (error) {
-      setCommentStatus(
-        error.message || "Commento non inviato. Tocca per riprovare.",
-      );
+      if (!navigator.onLine || error instanceof TypeError) {
+        try {
+          await queueFormRequest({
+            id: `comment:${commentOperationRef.current}`,
+            endpoint: `${API}/comments`,
+            form: f,
+            authType: sessionToken ? "session" : "guest",
+            guestName: commentAuthor,
+            operationKey: commentOperationRef.current,
+          });
+          setComment("");
+          setReplyFile(null);
+          commentOperationRef.current = "";
+          setCommentStatus("Commento salvato nel telefono. Invio automatico al ritorno della rete.");
+        } catch {
+          setCommentStatus("Connessione assente e salvataggio offline non disponibile.");
+        }
+      } else
+        setCommentStatus(
+          error.message || "Commento non inviato. Tocca per riprovare.",
+        );
     } finally {
       setSendingComment(false);
     }
@@ -3592,22 +3654,41 @@ function VaultOnline({
         signature,
         key: crypto.randomUUID(),
       };
+    try {
       const r = await fetch(`${API}/documents`, {
         method: "POST",
         headers: {
           ...sessionHeaders(sessionToken),
           "x-idempotency-key": documentOperationRef.current[type].key,
         },
-      body: f,
-    });
-    setBusy("");
-    if (r.ok) {
-      delete documentOperationRef.current[type];
-      setDocumentStatus("Documento caricato correttamente.");
-      refresh();
-    } else {
-      const result = await r.json().catch(() => ({}));
-      setDocumentStatus(result.error || "Caricamento del documento non riuscito.");
+        body: f,
+      });
+      if (r.ok) {
+        delete documentOperationRef.current[type];
+        setDocumentStatus("Documento caricato correttamente.");
+        refresh();
+      } else {
+        const result = await r.json().catch(() => ({}));
+        setDocumentStatus(result.error || "Caricamento del documento non riuscito.");
+      }
+    } catch (error) {
+      if (!navigator.onLine || error instanceof TypeError) {
+        try {
+          await queueFormRequest({
+            id: `document:${documentOperationRef.current[type].key}`,
+            endpoint: `${API}/documents`,
+            form: f,
+            authType: "session",
+            operationKey: documentOperationRef.current[type].key,
+          });
+          delete documentOperationRef.current[type];
+          setDocumentStatus("Documento salvato nel telefono. Caricamento automatico al ritorno della rete.");
+        } catch {
+          setDocumentStatus("Connessione assente e salvataggio offline non disponibile.");
+        }
+      } else setDocumentStatus("Caricamento del documento non riuscito.");
+    } finally {
+      setBusy("");
     }
   };
   const remove = async (type) => {
