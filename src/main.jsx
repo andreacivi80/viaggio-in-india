@@ -29,7 +29,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.9.0",
+const VERSION = "1.10.0",
   API = "/api";
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/private`, {
@@ -835,6 +835,15 @@ function App() {
   const refresh = async () => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
+    const visibleAnchor = Array.from(
+      document.querySelectorAll("[data-scroll-anchor]"),
+    ).find((element) => element.getBoundingClientRect().bottom > 72);
+    const anchorState = visibleAnchor
+      ? {
+          id: visibleAnchor.getAttribute("data-scroll-anchor"),
+          top: visibleAnchor.getBoundingClientRect().top,
+        }
+      : null;
     try {
       setSyncing(true);
       setSyncError("");
@@ -849,6 +858,19 @@ function App() {
       localStorage.setItem("india-posts", JSON.stringify(d.posts || []));
       localStorage.setItem("india-people", JSON.stringify(d.profiles || []));
       setLastSync(new Date());
+      if (anchorState) {
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            const sameElement = document.querySelector(
+              `[data-scroll-anchor="${CSS.escape(anchorState.id)}"]`,
+            );
+            if (!sameElement) return;
+            const movement = sameElement.getBoundingClientRect().top - anchorState.top;
+            if (Math.abs(movement) > 1)
+              window.scrollBy({ top: movement, behavior: "auto" });
+          }),
+        );
+      }
     } catch (error) {
       setSyncError(
         navigator.onLine
@@ -918,7 +940,25 @@ function App() {
   );
   const activeProfileId =
     vaultProfileId || localStorage.getItem("india-profile-id") || "";
-  const currentProfile = people.find((person) => person.id === activeProfileId);
+  const storedVisitorName = (
+    localStorage.getItem("india-visitor-name") || ""
+  ).trim().toLowerCase();
+  const currentProfile =
+    people.find((person) => person.id === activeProfileId) ||
+    people.find(
+      (person) =>
+        `${person.name} ${person.surname || ""}`.trim().toLowerCase() ===
+          storedVisitorName ||
+        person.name.trim().toLowerCase() === storedVisitorName,
+    );
+  useEffect(() => {
+    if (!currentProfile) return;
+    localStorage.setItem("india-profile-id", currentProfile.id);
+    localStorage.setItem(
+      "india-visitor-name",
+      `${currentProfile.name} ${currentProfile.surname || ""}`.trim(),
+    );
+  }, [currentProfile?.id]);
   const quickShareLocation = () => {
     if (!currentProfile || !groupCode) return;
     setQuickStatus("Cerco la posizione…");
@@ -1010,7 +1050,7 @@ function App() {
         <div className="heroShade" />
         <div className="top">
           <span className="flag">🇮🇳</span>
-          <span className="brand">INDIA INSIEME</span>
+          <span className="versionBadge">REV {VERSION}</span>
           <button
             className={`accessPill ${groupCode ? "unlocked" : ""}`}
             onClick={() => {
@@ -1033,13 +1073,11 @@ function App() {
             )}
           </button>
         </div>
-        <span className="versionBadge">REV {VERSION}</span>
-        <button className={`syncStateBadge ${syncError ? "error" : ""}`} onClick={refresh}>
-          {syncing
-            ? "Sincronizzazione…"
-            : syncError ||
-              `Sincronizzato${lastSync ? ` · ${lastSync.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}` : ""}`}
-        </button>
+        {syncError && (
+          <button className="syncErrorToast" onClick={refresh}>
+            Connessione non aggiornata · Riprova
+          </button>
+        )}
         {notificationOpen && (
           <div className="notificationPanel">
             <div>
@@ -1115,15 +1153,38 @@ function App() {
                 </button>
               </div>
             ) : (
-              <button
-                className="chooseProfileButton"
-                onClick={() => {
-                  setTab("people");
-                  setQuickProfileOpen(false);
-                }}
-              >
-                Vai al Gruppo e scegli il tuo nome
-              </button>
+              <div className="profileChooser">
+                <b>Collega questo telefono al tuo profilo</b>
+                <small>Non devi creare nuovamente il viaggiatore.</small>
+                {people.map((person) => (
+                  <button
+                    key={person.id}
+                    onClick={() => {
+                      localStorage.setItem("india-profile-id", person.id);
+                      localStorage.setItem(
+                        "india-visitor-name",
+                        `${person.name} ${person.surname || ""}`.trim(),
+                      );
+                      setVaultProfileId(person.id);
+                      setQuickStatus(`Telefono collegato a ${person.name}.`);
+                    }}
+                  >
+                    <span className="avatar">
+                      {person.name?.[0]?.toUpperCase() || "?"}
+                    </span>
+                    {person.name} {person.surname || ""}
+                  </button>
+                ))}
+                <button
+                  className="chooseProfileButton"
+                  onClick={() => {
+                    setTab("people");
+                    setQuickProfileOpen(false);
+                  }}
+                >
+                  Crea un nuovo viaggiatore
+                </button>
+              </div>
             )}
             {quickStatus && <small className="quickStatus">{quickStatus}</small>}
           </div>
@@ -1533,6 +1594,7 @@ function Diary({
     ),
     [code, setCode] = useState(""),
     [busy, setBusy] = useState(false),
+    [fileStatus, setFileStatus] = useState(""),
     [feedFilter, setFeedFilter] = useState("all");
   const [editingName, setEditingName] = useState(
     () => !localStorage.getItem("india-visitor-name"),
@@ -1547,6 +1609,20 @@ function Diary({
     localStorage.setItem("india-visitor-name", deviceProfileName);
   }, [deviceProfileName]);
   useEffect(() => localStorage.setItem("india-draft", text), [text]);
+  const addFiles = (incoming) => {
+    const selected = Array.from(incoming || []);
+    setFiles((current) => {
+      const total = current.length + selected.length;
+      if (total > 10) {
+        setFileStatus(
+          `Puoi caricare massimo 10 contenuti per volta. Hai selezionato ${total} elementi.`,
+        );
+        return current;
+      }
+      setFileStatus("");
+      return [...current, ...selected];
+    });
+  };
   const visiblePosts = posts.filter((p) => {
     if (feedFilter === "all") return true;
     if (feedFilter === "today") return Number(p.day_index) === liveIndex;
@@ -1577,10 +1653,11 @@ function Diary({
       setText("");
       localStorage.removeItem("india-draft");
       setFiles([]);
+      setFileStatus("");
       await refresh();
       setComposeOpen(false);
     } catch (e) {
-      alert(e.message);
+      setFileStatus(e.message || "Pubblicazione non riuscita.");
     } finally {
       setBusy(false);
     }
@@ -1698,22 +1775,16 @@ function Diary({
                   placeholder="Racconta questo momento…"
                 />
                 <AudioRecorder
-                  onRecorded={(recordedFile) =>
-                    setFiles((current) => [...current, recordedFile].slice(0, 10))
-                  }
+                  onRecorded={(recordedFile) => addFiles([recordedFile])}
                 />
                 <div className="composerActions">
                   <label>
-                    <ImageIcon /> Foto
+                    <ImageIcon /> Galleria
                     <input
                       type="file"
-                      accept="image/*,.heic,.heif"
+                      accept="image/*"
                       multiple
-                      onChange={(e) =>
-                        setFiles((current) =>
-                          [...current, ...Array.from(e.target.files || [])].slice(0, 10),
-                        )
-                      }
+                      onChange={(e) => addFiles(e.target.files)}
                     />
                   </label>
                   <label>
@@ -1722,11 +1793,7 @@ function Diary({
                       type="file"
                       accept="video/*,.mov,.mp4"
                       multiple
-                      onChange={(e) =>
-                        setFiles((current) =>
-                          [...current, ...Array.from(e.target.files || [])].slice(0, 10),
-                        )
-                      }
+                      onChange={(e) => addFiles(e.target.files)}
                     />
                   </label>
                   <label>
@@ -1735,17 +1802,18 @@ function Diary({
                       type="file"
                       accept="audio/*,.m4a,.aac"
                       multiple
-                      onChange={(e) =>
-                        setFiles((current) =>
-                          [...current, ...Array.from(e.target.files || [])].slice(0, 10),
-                        )
-                      }
+                      onChange={(e) => addFiles(e.target.files)}
                     />
                   </label>
                   <button disabled={busy} onClick={add}>
                     <Plus /> {busy ? "Invio…" : "Pubblica"}
                   </button>
                 </div>
+                {fileStatus && (
+                  <small className="uploadStatus" role="status">
+                    {fileStatus}
+                  </small>
+                )}
                 {files.length > 0 && (
                   <div className="attachmentPreviews">
                     <b>{files.length} allegati pronti</b>
@@ -1896,13 +1964,26 @@ function PostMedia({ items }) {
   const current = visualItems[Math.min(active, visualItems.length - 1)];
   return (
     <div className="postMediaCollection">
+      {audioItems.map((audioItem, index) => (
+        <div className="audioCard" key={audioItem.id || audioItem.media_url}>
+          <Mic />
+          <div>
+            <b>Messaggio vocale {index + 1}</b>
+            <small>Premi Play qui per ascoltare l’audio</small>
+          </div>
+          <audio controls preload="metadata" src={audioItem.media_url} />
+        </div>
+      ))}
       {current && (
         <div className="postMediaCarousel">
           {current.media_type?.startsWith("image") && (
             <img src={current.media_url} alt="Ricordo del viaggio" loading="lazy" />
           )}
           {current.media_type?.startsWith("video") && (
-            <video controls playsInline preload="metadata" src={current.media_url} />
+            <>
+              <span className="mediaTypeLabel">VIDEO</span>
+              <video controls playsInline preload="metadata" src={current.media_url} />
+            </>
           )}
           {visualItems.length > 1 && (
             <>
@@ -1943,16 +2024,6 @@ function PostMedia({ items }) {
           )}
         </div>
       )}
-      {audioItems.map((audioItem, index) => (
-        <div className="audioCard" key={audioItem.id || audioItem.media_url}>
-          <Mic />
-          <div>
-            <b>Audio {index + 1} · Messaggio vocale</b>
-            <small>{audioItem.media_name || "Voce dal viaggio"}</small>
-          </div>
-          <audio controls preload="metadata" src={audioItem.media_url} />
-        </div>
-      ))}
     </div>
   );
 }
@@ -1965,6 +2036,9 @@ function Post({ p, author, groupCode, refresh }) {
     [confirmDelete, setConfirmDelete] = useState(false),
     [sendingComment, setSendingComment] = useState(false),
     [commentStatus, setCommentStatus] = useState(""),
+    [likesOpen, setLikesOpen] = useState(false),
+    [editingCommentId, setEditingCommentId] = useState(""),
+    [editingCommentText, setEditingCommentText] = useState(""),
     [showAllComments, setShowAllComments] = useState(false);
   const replyInputRef = useRef(null);
   const visitor = () => {
@@ -1976,10 +2050,21 @@ function Post({ p, author, groupCode, refresh }) {
     return v;
   };
   const react = async (kind) => {
+    const reactionAuthor =
+      author.trim() || (localStorage.getItem("india-visitor-name") || "").trim();
+    if (!reactionAuthor) {
+      setCommentStatus("Inserisci il tuo nome prima di lasciare una reazione.");
+      return;
+    }
     await fetch(`${API}/reactions`, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ post_id: p.id, visitor_id: visitor(), kind }),
+      body: JSON.stringify({
+        post_id: p.id,
+        visitor_id: visitor(),
+        author_name: reactionAuthor,
+        kind,
+      }),
     });
     refresh();
   };
@@ -1999,6 +2084,7 @@ function Post({ p, author, groupCode, refresh }) {
     const f = new FormData();
     f.set("post_id", p.id);
     f.set("author_name", commentAuthor);
+    f.set("visitor_id", visitor());
     f.set("text", comment);
     if (replyFile) f.set("file", replyFile);
     try {
@@ -2021,6 +2107,28 @@ function Post({ p, author, groupCode, refresh }) {
       setSendingComment(false);
     }
   };
+  const saveCommentEdit = async (commentId) => {
+    const response = await fetch(`${API}/comments/${commentId}`, {
+      method: "PUT",
+      headers: {
+        "content-type": "application/json",
+        ...(groupCode ? { "x-group-code": groupCode } : {}),
+      },
+      body: JSON.stringify({
+        text: editingCommentText,
+        visitor_id: visitor(),
+      }),
+    });
+    if (!response.ok) {
+      const result = await response.json().catch(() => ({}));
+      setCommentStatus(result.error || "Modifica non riuscita.");
+      return;
+    }
+    setEditingCommentId("");
+    setEditingCommentText("");
+    setCommentStatus("Commento modificato.");
+    await refresh();
+  };
   const remove = async () => {
     const r = await fetch(`${API}/posts/${p.id}`, {
       method: "DELETE",
@@ -2031,10 +2139,18 @@ function Post({ p, author, groupCode, refresh }) {
       refresh();
     }
   };
-  const count = (k) =>
-    Number(p.reactions?.find((x) => x.kind === k)?.total || 0);
+  const heartReactions = (p.reactions || []).filter((x) => x.kind === "heart");
+  const heartCount = heartReactions.reduce(
+    (total, reaction) => total + Number(reaction.total || 0),
+    0,
+  );
+  const likerNames = heartReactions.flatMap((reaction) =>
+    Array(Number(reaction.total || 0)).fill(
+      reaction.author_name?.trim() || "Una persona",
+    ),
+  );
   return (
-    <article className="post">
+    <article className="post" data-scroll-anchor={`post-${p.id}`}>
       <div className="postTop">
         <div className="avatar">{p.author_name?.[0] || "V"}</div>
         <div>
@@ -2099,16 +2215,60 @@ function Post({ p, author, groupCode, refresh }) {
           <Bookmark />
         </button>
       </div>
-      {count("heart") > 0 && (
-        <small className="likesSummary">
-          Piace a {count("heart")} {count("heart") === 1 ? "persona" : "persone"}
-        </small>
+      {heartCount > 0 && (
+        <div className="likesBlock">
+          <button className="likesSummary" onClick={() => setLikesOpen(!likesOpen)}>
+            Piace a {likerNames.slice(0, 2).join(", ")}
+            {likerNames.length > 2 ? ` e altre ${likerNames.length - 2}` : ""}
+          </button>
+          {likesOpen && (
+            <div className="likerList">
+              <b>Mi piace di</b>
+              {likerNames.map((name, index) => (
+                <span key={`${name}-${index}`}>
+                  <i>{name[0]?.toUpperCase() || "?"}</i>
+                  {name}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
       )}
       <div className="comments">
         {(showAllComments ? p.comments || [] : (p.comments || []).slice(-2)).map((x) => (
           <div className="comment" key={x.id}>
-            <b>{x.author_name}</b>
-            {x.text && <span>{x.text}</span>}
+            <i className="commentAvatar">
+              {x.author_name?.[0]?.toUpperCase() || "?"}
+            </i>
+            <div className="commentCopy">
+              <b>{x.author_name || "Ospite"}</b>
+              {editingCommentId === x.id ? (
+                <div className="commentEditor">
+                  <input
+                    value={editingCommentText}
+                    onChange={(event) => setEditingCommentText(event.target.value)}
+                    aria-label="Modifica commento"
+                  />
+                  <button onClick={() => saveCommentEdit(x.id)}>Salva</button>
+                  <button onClick={() => setEditingCommentId("")}>Annulla</button>
+                </div>
+              ) : (
+                <>
+                  {x.text && <span>{x.text}</span>}
+                  {(groupCode || x.visitor_id === visitor()) && x.text && (
+                    <button
+                      className="editCommentButton"
+                      onClick={() => {
+                        setEditingCommentId(x.id);
+                        setEditingCommentText(x.text || "");
+                      }}
+                    >
+                      Modifica
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
             {x.media_type?.startsWith("audio") && (
               <audio controls src={x.media_url} />
             )}

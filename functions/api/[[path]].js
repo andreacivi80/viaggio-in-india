@@ -46,7 +46,7 @@ async function readState(env) {
     ).all(),
     env.DB.prepare("SELECT * FROM comments ORDER BY created_at").all(),
     env.DB.prepare(
-      "SELECT post_id, kind, COUNT(*) AS total FROM reactions GROUP BY post_id, kind",
+      "SELECT post_id, kind, author_name, COUNT(*) AS total FROM reactions GROUP BY post_id, kind, author_name",
     ).all(),
     env.DB.prepare("SELECT * FROM post_media ORDER BY position").all(),
   ]);
@@ -177,21 +177,27 @@ export async function onRequest({ request, env, params }) {
       const name = String(form.get("name") || "").trim();
       if (!name) return json({ error: "Nome richiesto" }, 400);
       const avatar = await saveMedia(env, form.get("avatar"), "public/avatars");
-      if (avatar && current.avatar_key) await env.MEDIA.delete(current.avatar_key);
       const avatarKey = avatar?.key || current.avatar_key || null;
-      await env.DB.prepare(
-        "UPDATE profiles SET name=?,surname=?,age=?,job=?,bio=?,avatar_key=? WHERE id=?",
-      )
-        .bind(
-          name,
-          String(form.get("surname") || ""),
-          String(form.get("age") || ""),
-          String(form.get("job") || ""),
-          String(form.get("bio") || ""),
-          avatarKey,
-          profileId,
+      try {
+        await env.DB.prepare(
+          "UPDATE profiles SET name=?,surname=?,age=?,job=?,bio=?,avatar_key=? WHERE id=?",
         )
-        .run();
+          .bind(
+            name,
+            String(form.get("surname") || ""),
+            String(form.get("age") || ""),
+            String(form.get("job") || ""),
+            String(form.get("bio") || ""),
+            avatarKey,
+            profileId,
+          )
+          .run();
+      } catch (error) {
+        if (avatar?.key) await env.MEDIA.delete(avatar.key);
+        throw error;
+      }
+      if (avatar?.key && current.avatar_key)
+        await env.MEDIA.delete(current.avatar_key);
       return json({ ok: true, id: profileId, avatar_url: mediaUrl(avatarKey) });
     }
     if (request.method === "POST" && path === "posts") {
@@ -201,12 +207,15 @@ export async function onRequest({ request, env, params }) {
       const files = form
         .getAll("files")
         .concat(form.get("file") ? [form.get("file")] : [])
-        .filter((file) => file instanceof File && file.size > 0)
-        .slice(0, 10);
+        .filter((file) => file instanceof File && file.size > 0);
+      if (files.length > 10)
+        return json(
+          {
+            error: `Puoi caricare massimo 10 contenuti per volta. Hai selezionato ${files.length} elementi.`,
+          },
+          400,
+        );
       const savedMedia = [];
-      for (const file of files) {
-        savedMedia.push(await saveMedia(env, file, "public"));
-      }
       const row = {
         id: id(),
         author_name: String(form.get("author_name") || "Viaggiatore"),
@@ -216,40 +225,48 @@ export async function onRequest({ request, env, params }) {
         text: String(form.get("text") || ""),
         created_at: now(),
       };
-      await env.DB.prepare(
-        "INSERT INTO posts(id,author_name,profile_id,day_index,visibility,text,media_key,media_type,media_name,media_size,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
-      )
-        .bind(
-          row.id,
-          row.author_name,
-          row.profile_id,
-          row.day_index,
-          row.visibility,
-          row.text,
-          null,
-          null,
-          null,
-          0,
-          row.created_at,
+      try {
+        for (const file of files)
+          savedMedia.push(await saveMedia(env, file, "public"));
+        await env.DB.prepare(
+          "INSERT INTO posts(id,author_name,profile_id,day_index,visibility,text,media_key,media_type,media_name,media_size,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
         )
-        .run();
-      if (savedMedia.length) {
-        await env.DB.batch(
-          savedMedia.map((media, position) =>
-            env.DB.prepare(
-              "INSERT INTO post_media(id,post_id,media_key,media_type,media_name,media_size,position,created_at) VALUES(?,?,?,?,?,?,?,?)",
-            ).bind(
-              id(),
-              row.id,
-              media.key,
-              media.type,
-              media.name,
-              media.size,
-              position,
-              row.created_at,
+          .bind(
+            row.id,
+            row.author_name,
+            row.profile_id,
+            row.day_index,
+            row.visibility,
+            row.text,
+            null,
+            null,
+            null,
+            0,
+            row.created_at,
+          )
+          .run();
+        if (savedMedia.length) {
+          await env.DB.batch(
+            savedMedia.map((media, position) =>
+              env.DB.prepare(
+                "INSERT INTO post_media(id,post_id,media_key,media_type,media_name,media_size,position,created_at) VALUES(?,?,?,?,?,?,?,?)",
+              ).bind(
+                id(),
+                row.id,
+                media.key,
+                media.type,
+                media.name,
+                media.size,
+                position,
+                row.created_at,
+              ),
             ),
-          ),
-        );
+          );
+        }
+      } catch (error) {
+        await Promise.all(savedMedia.map((media) => env.MEDIA.delete(media.key)));
+        await env.DB.prepare("DELETE FROM posts WHERE id=?").bind(row.id).run();
+        throw error;
       }
       return json(
         {
@@ -276,6 +293,14 @@ export async function onRequest({ request, env, params }) {
         .bind(postId)
         .all();
       await Promise.all(mediaRows.results.map((m) => env.MEDIA.delete(m.media_key)));
+      const commentMediaRows = await env.DB.prepare(
+        "SELECT media_key FROM comments WHERE post_id=? AND media_key IS NOT NULL",
+      )
+        .bind(postId)
+        .all();
+      await Promise.all(
+        commentMediaRows.results.map((media) => env.MEDIA.delete(media.media_key)),
+      );
       await env.DB.batch([
         env.DB.prepare("DELETE FROM post_media WHERE post_id=?").bind(postId),
         env.DB.prepare("DELETE FROM comments WHERE post_id=?").bind(postId),
@@ -297,12 +322,13 @@ export async function onRequest({ request, env, params }) {
         created_at: now(),
       };
       await env.DB.prepare(
-        "INSERT INTO comments(id,post_id,author_name,text,media_key,media_type,created_at) VALUES(?,?,?,?,?,?,?)",
+        "INSERT INTO comments(id,post_id,author_name,visitor_id,text,media_key,media_type,created_at) VALUES(?,?,?,?,?,?,?,?)",
       )
         .bind(
           row.id,
           row.post_id,
           row.author_name,
+          String(form.get("visitor_id") || ""),
           row.text,
           media?.key || null,
           media?.type || null,
@@ -310,6 +336,26 @@ export async function onRequest({ request, env, params }) {
         )
         .run();
       return json({ ...row, media_url: mediaUrl(media?.key) }, 201);
+    }
+    if (request.method === "PUT" && path.startsWith("comments/")) {
+      const commentId = path.slice(9);
+      const body = await request.json();
+      const existing = await env.DB.prepare(
+        "SELECT visitor_id FROM comments WHERE id=?",
+      )
+        .bind(commentId)
+        .first();
+      if (!existing) return json({ error: "Commento non trovato" }, 404);
+      const ownsComment =
+        existing.visitor_id && existing.visitor_id === String(body.visitor_id || "");
+      if (!ownsComment && !groupOk(request, env))
+        return json({ error: "Non puoi modificare questo commento" }, 403);
+      const text = String(body.text || "").trim();
+      if (!text) return json({ error: "Il commento non può essere vuoto" }, 400);
+      await env.DB.prepare("UPDATE comments SET text=? WHERE id=?")
+        .bind(text, commentId)
+        .run();
+      return json({ ok: true });
     }
     if (request.method === "POST" && path === "reactions") {
       const b = await request.json();
@@ -330,9 +376,16 @@ export async function onRequest({ request, env, params }) {
         .run();
       if (existing?.kind === kind) return json({ ok: true, reaction: null });
       await env.DB.prepare(
-        "INSERT INTO reactions(id,post_id,visitor_id,kind,created_at) VALUES(?,?,?,?,?)",
+        "INSERT INTO reactions(id,post_id,visitor_id,author_name,kind,created_at) VALUES(?,?,?,?,?,?)",
       )
-        .bind(id(), b.post_id, b.visitor_id, kind, now())
+        .bind(
+          id(),
+          b.post_id,
+          b.visitor_id,
+          String(b.author_name || "Ospite").trim() || "Ospite",
+          kind,
+          now(),
+        )
         .run();
       return json({ ok: true, reaction: kind });
     }
@@ -377,22 +430,34 @@ export async function onRequest({ request, env, params }) {
       const media = await saveMedia(env, form.get("file"), "private");
       const profileId = String(form.get("profile_id"));
       const type = String(form.get("doc_type"));
+      const previous = await env.DB.prepare(
+        "SELECT file_key FROM document_status WHERE profile_id=? AND doc_type=?",
+      )
+        .bind(profileId, type)
+        .first();
       const status = media
         ? "uploaded"
         : String(form.get("status") || "missing");
-      await env.DB.prepare(
-        "INSERT INTO document_status(profile_id,doc_type,file_key,file_name,status,verified_by,updated_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(profile_id,doc_type) DO UPDATE SET file_key=COALESCE(excluded.file_key,document_status.file_key),file_name=COALESCE(excluded.file_name,document_status.file_name),status=excluded.status,verified_by=excluded.verified_by,updated_at=excluded.updated_at",
-      )
-        .bind(
-          profileId,
-          type,
-          media?.key || null,
-          media?.name || null,
-          status,
-          String(form.get("verified_by") || ""),
-          now(),
+      try {
+        await env.DB.prepare(
+          "INSERT INTO document_status(profile_id,doc_type,file_key,file_name,status,verified_by,updated_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(profile_id,doc_type) DO UPDATE SET file_key=COALESCE(excluded.file_key,document_status.file_key),file_name=COALESCE(excluded.file_name,document_status.file_name),status=excluded.status,verified_by=excluded.verified_by,updated_at=excluded.updated_at",
         )
-        .run();
+          .bind(
+            profileId,
+            type,
+            media?.key || null,
+            media?.name || null,
+            status,
+            String(form.get("verified_by") || ""),
+            now(),
+          )
+          .run();
+      } catch (error) {
+        if (media?.key) await env.MEDIA.delete(media.key);
+        throw error;
+      }
+      if (media?.key && previous?.file_key && previous.file_key !== media.key)
+        await env.MEDIA.delete(previous.file_key);
       return json({ ok: true });
     }
     if (path.startsWith("documents/") && request.method === "DELETE") {

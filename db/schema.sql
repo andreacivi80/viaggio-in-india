@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS comments (
   id TEXT PRIMARY KEY,
   post_id TEXT NOT NULL,
   author_name TEXT NOT NULL,
+  visitor_id TEXT DEFAULT '',
   text TEXT DEFAULT '',
   media_key TEXT,
   media_type TEXT,
@@ -46,6 +47,7 @@ CREATE TABLE IF NOT EXISTS reactions (
   id TEXT PRIMARY KEY,
   post_id TEXT NOT NULL,
   visitor_id TEXT NOT NULL,
+  author_name TEXT DEFAULT '',
   kind TEXT NOT NULL,
   created_at TEXT NOT NULL,
   UNIQUE(post_id, visitor_id, kind)
