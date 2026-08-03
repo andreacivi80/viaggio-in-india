@@ -30,7 +30,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.25.1",
+const VERSION = "1.25.2",
   API = "/api";
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
