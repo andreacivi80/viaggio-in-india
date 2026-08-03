@@ -17,11 +17,29 @@ import {
   MapPin,
   ShieldCheck,
   ImageIcon,
+  House,
+  Bell,
+  CircleUserRound,
+  MoreHorizontal,
+  Heart,
+  Share2,
+  Bookmark,
+  Paperclip,
+  Send,
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.5.0",
+const VERSION = "1.6.0",
   API = "/api";
+async function verifyGroupCode(code, setGroupCode) {
+  const response = await fetch(`${API}/private`, {
+    headers: { "x-group-code": code },
+    cache: "no-store",
+  });
+  if (!response.ok) return false;
+  setGroupCode(code);
+  return true;
+}
 const cityImages = {
   Delhi:
     "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1100&q=80",
@@ -642,10 +660,10 @@ function App() {
             <LockKeyhole size={14} />
             {groupCode ? "Sbloccato" : "Pubblico"}
           </button>
-          <span className="version">
-            {VERSION}
-            {syncing ? " · ↻" : ""}
-          </span>
+          <button className="headerIcon" aria-label="Notifiche">
+            <Bell size={18} />
+            {syncing && <span className="syncDot" />}
+          </button>
         </div>
         <div className="heroCopy">
           <p>10 — 23 AGOSTO 2026</p>
@@ -667,16 +685,21 @@ function App() {
       </header>
       <nav className="tabs">
         {[
-          ["diary", Camera, "Social"],
-          ["roadmap", Route, "Diario"],
+          ["diary", House, "Bacheca"],
+          ["roadmap", Route, "Viaggio"],
+          ["publish", Plus, "Pubblica"],
           ["map", MapPinned, "Mappa"],
           ["people", Users, "Gruppo"],
-          ["vault", LockKeyhole, "Privato"],
         ].map(([id, I, label]) => (
           <button
             key={id}
-            className={tab === id ? "active" : ""}
-            onClick={() => setTab(id)}
+            className={`${tab === id ? "active" : ""} ${id === "publish" ? "publishNav" : ""}`}
+            onClick={() => {
+              if (id === "publish") {
+                setTab("diary");
+                setComposeOpen(true);
+              } else setTab(id);
+            }}
           >
             <I size={20} />
             <small>{label}</small>
@@ -827,19 +850,10 @@ function App() {
           />
         )}
       </main>
-      <button
-        className="uploadFab"
-        onClick={() => {
-          setTab("diary");
-          setComposeOpen(true);
-        }}
-      >
-        <Plus size={22} /> <span>Carica</span>
-      </button>
       <footer>
         <span>🇮🇳</span>
         <p>Un viaggio si misura negli amici, non nei chilometri.</p>
-        <small>India Insieme · revisione {VERSION}</small>
+        <small>India Insieme · il nostro diario condiviso</small>
       </footer>
     </div>
   );
@@ -866,29 +880,29 @@ function MapSection({ selectedDay, setSelectedDay }) {
         </div>
         {d && <button onClick={() => focusMap(null)}>Vedi tutto</button>}
       </div>
+      {d && (
+        <div className="mapTrip mapTripOutside">
+          <span>
+            {d.transport.includes("Aereo")
+              ? "✈️"
+              : d.transport.includes("Treno")
+                ? "🚆"
+                : "🚐"}
+          </span>
+          <div>
+            <em>Giorno {selectedDay + 1}</em>
+            <b>{d.transport}</b>
+            <small>
+              {d.km} km · {d.time}
+            </small>
+          </div>
+        </div>
+      )}
       <div className="mapShell" ref={mapShellRef}>
         <TripMap
           selectedDay={selectedDay}
           onSelect={(i) => i >= 0 && focusMap(i)}
         />
-        {d && (
-          <div className="mapTrip">
-            <span>
-              {d.transport.includes("Aereo")
-                ? "✈️"
-                : d.transport.includes("Treno")
-                  ? "🚆"
-                  : "🚐"}
-            </span>
-            <div>
-              <em>Giorno {selectedDay + 1}</em>
-              <b>{d.transport}</b>
-              <small>
-                {d.km} km · {d.time}
-              </small>
-            </div>
-          </div>
-        )}
       </div>
       <div className="routeChips">
         {days.map((x, i) => (
@@ -939,7 +953,8 @@ function Diary({
       () => localStorage.getItem("india-visitor-name") || "",
     ),
     [code, setCode] = useState(""),
-    [busy, setBusy] = useState(false);
+    [busy, setBusy] = useState(false),
+    [feedFilter, setFeedFilter] = useState("all");
   const [editingName, setEditingName] = useState(
     () => !localStorage.getItem("india-visitor-name"),
   );
@@ -947,6 +962,11 @@ function Diary({
     if (author) localStorage.setItem("india-visitor-name", author);
   }, [author]);
   useEffect(() => localStorage.setItem("india-draft", text), [text]);
+  const visiblePosts = posts.filter((p) => {
+    if (feedFilter === "all") return true;
+    if (feedFilter === "today") return Number(p.day_index) === liveIndex;
+    return p.media_type?.startsWith(feedFilter);
+  });
   const add = async () => {
     if (!groupCode || (!text.trim() && !file)) return;
     setBusy(true);
@@ -1017,8 +1037,25 @@ function Diary({
           <small>Rimarrà memorizzato soltanto su questo dispositivo</small>
         </div>
       )}
-      {posts.length ? (
-        posts.map((p) => (
+      <div className="feedFilters" aria-label="Filtri della bacheca">
+        {[
+          ["all", "Recenti"],
+          ["today", "Oggi"],
+          ["image", "Foto"],
+          ["video", "Video"],
+          ["audio", "Audio"],
+        ].map(([id, label]) => (
+          <button
+            key={id}
+            className={feedFilter === id ? "active" : ""}
+            onClick={() => setFeedFilter(id)}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+      {visiblePosts.length ? (
+        visiblePosts.map((p) => (
           <Post
             key={p.id}
             p={p}
@@ -1104,7 +1141,7 @@ function Diary({
               <UnlockCard
                 code={code}
                 setCode={setCode}
-                onUnlock={() => code === "india26" && setGroupCode(code)}
+                onUnlock={() => verifyGroupCode(code, setGroupCode)}
                 text="I familiari possono commentare. Il codice serve per pubblicare foto, video e audio."
               />
             )}
@@ -1117,7 +1154,9 @@ function Diary({
 
 function Post({ p, author, groupCode, refresh }) {
   const [comment, setComment] = useState(""),
-    [replyFile, setReplyFile] = useState(null);
+    [replyFile, setReplyFile] = useState(null),
+    [menuOpen, setMenuOpen] = useState(false),
+    [saved, setSaved] = useState(false);
   const visitor = () => {
     let v = localStorage.getItem("india-visitor-id");
     if (!v) {
@@ -1170,9 +1209,19 @@ function Post({ p, author, groupCode, refresh }) {
           </small>
         </div>
         {groupCode && (
-          <button onClick={remove} aria-label="Elimina questo contenuto">
-            <Trash2 />
-          </button>
+          <div className="postMenu">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              aria-label="Altre opzioni"
+            >
+              <MoreHorizontal />
+            </button>
+            {menuOpen && (
+              <button className="postDelete" onClick={remove}>
+                <Trash2 /> Elimina
+              </button>
+            )}
+          </div>
         )}
       </div>
       {p.media_type?.startsWith("image") && (
@@ -1185,25 +1234,34 @@ function Post({ p, author, groupCode, refresh }) {
         <audio controls preload="metadata" src={p.media_url} />
       )}
       {p.text && <p className="postCaption">{p.text}</p>}
-      <div className="reactions">
-        {[
-          ["heart", "❤️"],
-          ["like", "👍"],
-          ["laugh", "😂"],
-          ["wow", "😮"],
-          ["clap", "👏"],
-          ["fire", "🔥"],
-        ].map(([kind, emoji]) => (
-          <button key={kind} onClick={() => react(kind)} aria-label={kind}>
-            {emoji} <b>{count(kind) || ""}</b>
-          </button>
-        ))}
-        <span>
-          <MessageCircle /> {p.comments?.length || 0}
-        </span>
+      <div className="postActions">
+        <button onClick={() => react("heart")} aria-label="Mi piace">
+          <Heart /> <span>Mi piace</span>
+        </button>
+        <button aria-label="Commenta">
+          <MessageCircle /> <span>Commenta</span>
+        </button>
+        <button
+          aria-label="Condividi"
+          onClick={() => navigator.share?.({ title: "India Insieme", url: location.href })}
+        >
+          <Share2 />
+        </button>
+        <button
+          className={saved ? "saved" : ""}
+          aria-label="Salva"
+          onClick={() => setSaved(!saved)}
+        >
+          <Bookmark />
+        </button>
       </div>
+      {count("heart") > 0 && (
+        <small className="likesSummary">
+          Piace a {count("heart")} {count("heart") === 1 ? "persona" : "persone"}
+        </small>
+      )}
       <div className="comments">
-        {p.comments?.map((x) => (
+        {(p.comments || []).slice(-2).map((x) => (
           <div className="comment" key={x.id}>
             <b>{x.author_name}</b>
             {x.text && <span>{x.text}</span>}
@@ -1227,6 +1285,11 @@ function Post({ p, author, groupCode, refresh }) {
             )}
           </div>
         ))}
+        {p.comments?.length > 2 && (
+          <button className="allComments">
+            Visualizza tutti i {p.comments.length} commenti
+          </button>
+        )}
         <div className="reply">
           <input
             value={comment}
@@ -1234,14 +1297,16 @@ function Post({ p, author, groupCode, refresh }) {
             placeholder={author ? "Rispondi…" : "Inserisci il tuo nome sopra"}
           />
           <label title="Aggiungi foto, video o audio">
-            <Plus />
+            <Paperclip />
             <input
               type="file"
               accept="image/*,video/*,audio/*,.heic,.heif,.mov,.mp4,.m4a,.aac"
               onChange={(e) => setReplyFile(e.target.files?.[0] || null)}
             />
           </label>
-          <button onClick={send}>Invia</button>
+          <button onClick={send} aria-label="Invia commento">
+            <Send />
+          </button>
         </div>
         {replyFile && <small>Allegato pronto: {replyFile.name}</small>}
       </div>
@@ -1329,7 +1394,7 @@ function People({ people, groupCode, setGroupCode, refresh }) {
         <UnlockCard
           code={code}
           setCode={setCode}
-          onUnlock={() => code === "india26" && setGroupCode(code)}
+          onUnlock={() => verifyGroupCode(code, setGroupCode)}
           text="Il codice del gruppo serve per aggiungere un viaggiatore."
         />
       )}
@@ -1441,7 +1506,7 @@ function VaultOnline({ people, groupCode, setGroupCode }) {
         <UnlockCard
           code={code}
           setCode={setCode}
-          onUnlock={() => code === "india26" && setGroupCode(code)}
+          onUnlock={() => verifyGroupCode(code, setGroupCode)}
           text="Documenti e posizioni sono visibili soltanto ai viaggiatori."
         />
       </section>
@@ -1558,6 +1623,11 @@ function VaultOnline({ people, groupCode, setGroupCode }) {
 }
 
 function UnlockCard({ code, setCode, onUnlock, text }) {
+  const [error, setError] = useState("");
+  const unlock = async () => {
+    setError("");
+    if (!(await onUnlock())) setError("Codice non corretto");
+  };
   return (
     <div className="lockedComposer">
       <div className="lockMini">
@@ -1572,9 +1642,10 @@ function UnlockCard({ code, setCode, onUnlock, text }) {
         value={code}
         onChange={(e) => setCode(e.target.value)}
         placeholder="Codice gruppo"
-        onKeyDown={(e) => e.key === "Enter" && onUnlock()}
+        onKeyDown={(e) => e.key === "Enter" && unlock()}
       />
-      <button onClick={onUnlock}>Sblocca</button>
+      <button onClick={unlock}>Sblocca</button>
+      {error && <small className="unlockError">{error}</small>}
     </div>
   );
 }

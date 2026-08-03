@@ -15,4 +15,13 @@ export {
   ShieldCheck,
   Wifi,
   Image as ImageIcon,
+  House,
+  Bell,
+  CircleUserRound,
+  MoreHorizontal,
+  Heart,
+  Share2,
+  Bookmark,
+  Paperclip,
+  Send,
 } from "lucide-react";

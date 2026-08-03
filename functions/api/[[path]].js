@@ -8,7 +8,8 @@ const json = (data, status = 200) =>
   });
 const id = () => crypto.randomUUID();
 const now = () => new Date().toISOString();
-const groupOk = (request) => request.headers.get("x-group-code") === "india26";
+const groupOk = (request, env) =>
+  Boolean(env.GROUP_CODE) && request.headers.get("x-group-code") === env.GROUP_CODE;
 const ext = (name) =>
   (name?.split(".").pop() || "bin").replace(/[^a-z0-9]/gi, "").toLowerCase();
 const mediaUrl = (key) => (key ? `/api/media/${key}` : null);
@@ -75,7 +76,7 @@ export async function onRequest({ request, env, params }) {
       return json(await readState(env));
     if (request.method === "GET" && path.startsWith("media/")) {
       const key = decodeURIComponent(path.slice(6));
-      if (key.startsWith("private/") && !groupOk(request))
+      if (key.startsWith("private/") && !groupOk(request, env))
         return json({ error: "Accesso negato" }, 403);
       const value = await env.MEDIA.get(key, { type: "arrayBuffer" });
       if (!value) return new Response("Not found", { status: 404 });
@@ -91,7 +92,7 @@ export async function onRequest({ request, env, params }) {
       });
     }
     if (request.method === "POST" && path === "profiles") {
-      if (!groupOk(request))
+      if (!groupOk(request, env))
         return json({ error: "Codice del gruppo richiesto" }, 403);
       const form = await request.formData();
       const name = String(form.get("name") || "").trim();
@@ -124,7 +125,7 @@ export async function onRequest({ request, env, params }) {
       return json({ ...row, avatar_url: mediaUrl(row.avatar_key) }, 201);
     }
     if (request.method === "POST" && path === "posts") {
-      if (!groupOk(request))
+      if (!groupOk(request, env))
         return json({ error: "Codice del gruppo richiesto" }, 403);
       const form = await request.formData();
       const file = form.get("file");
@@ -158,7 +159,7 @@ export async function onRequest({ request, env, params }) {
       return json({ ...row, media_url: mediaUrl(media?.key) }, 201);
     }
     if (request.method === "DELETE" && path.startsWith("posts/")) {
-      if (!groupOk(request)) return json({ error: "Codice non corretto" }, 403);
+      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
       const postId = path.slice(6);
       const p = await env.DB.prepare("SELECT media_key FROM posts WHERE id=?")
         .bind(postId)
@@ -205,15 +206,26 @@ export async function onRequest({ request, env, params }) {
       )
         ? b.kind
         : "heart";
+      const existing = await env.DB.prepare(
+        "SELECT kind FROM reactions WHERE post_id=? AND visitor_id=? LIMIT 1",
+      )
+        .bind(b.post_id, b.visitor_id)
+        .first();
       await env.DB.prepare(
-        "INSERT OR IGNORE INTO reactions(id,post_id,visitor_id,kind,created_at) VALUES(?,?,?,?,?)",
+        "DELETE FROM reactions WHERE post_id=? AND visitor_id=?",
+      )
+        .bind(b.post_id, b.visitor_id)
+        .run();
+      if (existing?.kind === kind) return json({ ok: true, reaction: null });
+      await env.DB.prepare(
+        "INSERT INTO reactions(id,post_id,visitor_id,kind,created_at) VALUES(?,?,?,?,?)",
       )
         .bind(id(), b.post_id, b.visitor_id, kind, now())
         .run();
-      return json({ ok: true });
+      return json({ ok: true, reaction: kind });
     }
     if (path === "private" && request.method === "GET") {
-      if (!groupOk(request)) return json({ error: "Codice non corretto" }, 403);
+      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
       const [docs, locations] = await Promise.all([
         env.DB.prepare("SELECT * FROM document_status").all(),
         env.DB.prepare(
@@ -223,7 +235,7 @@ export async function onRequest({ request, env, params }) {
       return json({ documents: docs.results, locations: locations.results });
     }
     if (path === "locations" && request.method === "POST") {
-      if (!groupOk(request)) return json({ error: "Codice non corretto" }, 403);
+      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
       const b = await request.json();
       await env.DB.prepare(
         "INSERT INTO locations(profile_id,display_name,latitude,longitude,updated_at) VALUES(?,?,?,?,?) ON CONFLICT(profile_id) DO UPDATE SET display_name=excluded.display_name,latitude=excluded.latitude,longitude=excluded.longitude,updated_at=excluded.updated_at",
@@ -239,7 +251,7 @@ export async function onRequest({ request, env, params }) {
       return json({ ok: true });
     }
     if (path === "documents" && request.method === "POST") {
-      if (!groupOk(request)) return json({ error: "Codice non corretto" }, 403);
+      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
       const form = await request.formData();
       const media = await saveMedia(env, form.get("file"), "private");
       const profileId = String(form.get("profile_id"));
@@ -263,7 +275,7 @@ export async function onRequest({ request, env, params }) {
       return json({ ok: true });
     }
     if (path.startsWith("documents/") && request.method === "DELETE") {
-      if (!groupOk(request)) return json({ error: "Codice non corretto" }, 403);
+      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
       const [, profileId, type] = path.split("/");
       const doc = await env.DB.prepare(
         "SELECT file_key FROM document_status WHERE profile_id=? AND doc_type=?",
