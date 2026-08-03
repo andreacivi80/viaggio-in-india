@@ -24,4 +24,5 @@ export {
   Bookmark,
   Paperclip,
   Send,
+  Link,
 } from "lucide-react";

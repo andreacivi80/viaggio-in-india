@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS comments (
   id TEXT PRIMARY KEY,
   post_id TEXT NOT NULL,
   author_name TEXT NOT NULL,
+  profile_id TEXT DEFAULT '',
   visitor_id TEXT DEFAULT '',
   text TEXT DEFAULT '',
   media_key TEXT,
@@ -73,3 +74,24 @@ CREATE TABLE IF NOT EXISTS locations (
 CREATE INDEX IF NOT EXISTS posts_created_idx ON posts(created_at DESC);
 CREATE INDEX IF NOT EXISTS comments_post_idx ON comments(post_id, created_at);
 CREATE INDEX IF NOT EXISTS reactions_post_idx ON reactions(post_id);
+
+CREATE TABLE IF NOT EXISTS auth_sessions (
+  token_hash TEXT PRIMARY KEY,
+  profile_id TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  expires_at TEXT NOT NULL,
+  revoked_at TEXT
+);
+CREATE INDEX IF NOT EXISTS auth_sessions_profile_idx
+  ON auth_sessions(profile_id, expires_at);
+
+CREATE TABLE IF NOT EXISTS profile_invites (
+  token_hash TEXT PRIMARY KEY,
+  profile_id TEXT NOT NULL,
+  created_by TEXT,
+  created_at TEXT NOT NULL,
+  expires_at TEXT NOT NULL,
+  used_at TEXT
+);
+CREATE INDEX IF NOT EXISTS profile_invites_profile_idx
+  ON profile_invites(profile_id, expires_at);

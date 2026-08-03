@@ -27,6 +27,8 @@
         let updating = false;
         const safeToRefresh = () =>
           !localStorage.getItem("india-draft") &&
+          !sessionStorage.getItem("india-auth-claiming") &&
+          !new URLSearchParams(location.search).has("invite") &&
           !document.querySelector(".selected") &&
           !document.activeElement?.matches("input,textarea,select");
         navigator.serviceWorker.addEventListener("controllerchange", () => {

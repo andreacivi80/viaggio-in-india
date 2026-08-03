@@ -1271,6 +1271,24 @@ footer small {
   width: 18px;
   height: 18px;
 }
+.profileInviteLink {
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  border: 1px dashed var(--color-secondary);
+  border-radius: var(--radius-medium);
+  background: var(--color-secondary-soft);
+}
+.profileInviteLink small {
+  color: var(--color-text-secondary);
+  text-align: center;
+}
+.profileInviteLink button {
+  min-height: 40px;
+  border-color: var(--color-secondary);
+  background: var(--color-secondary);
+  color: #fff;
+}
 
 /* Revisione 1.6 — bacheca social e navigazione mobile */
 .feedFilters {
@@ -3000,6 +3018,29 @@ h2 {
   border-radius: var(--radius-pill);
   background: var(--color-secondary-soft);
   font-size: 11px;
+}
+.personalAccessRequired {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin: 12px 0;
+  padding: 14px;
+  border: 1px solid #dfcfb9;
+  border-radius: var(--radius-card);
+  background: #fff4e4;
+  color: var(--color-secondary);
+}
+.personalAccessRequired > svg {
+  flex: 0 0 auto;
+  color: var(--color-primary);
+}
+.personalAccessRequired b,
+.personalAccessRequired small {
+  display: block;
+}
+.personalAccessRequired small {
+  margin-top: 3px;
+  color: var(--color-text-secondary);
 }
 @media (max-width: 350px) {
   .unlockInline {

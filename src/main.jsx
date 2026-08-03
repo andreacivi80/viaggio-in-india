@@ -26,11 +26,16 @@ import {
   Bookmark,
   Paperclip,
   Send,
+  Link,
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.16.0",
+const VERSION = "1.17.0",
   API = "/api";
+const sessionHeaders = (token, additional = {}) => ({
+  ...additional,
+  ...(token ? { authorization: `Bearer ${token}` } : {}),
+});
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/private`, {
     headers: { "x-group-code": code },
@@ -829,6 +834,10 @@ function App() {
     [groupCode, setGroupCode] = useState(
       () => localStorage.getItem("india-group-code") || "",
     ),
+    [sessionToken, setSessionToken] = useState(
+      () => localStorage.getItem("india-session-token") || "",
+    ),
+    [sessionProfile, setSessionProfile] = useState(null),
     [publicPreview, setPublicPreview] = useState(false),
     [syncing, setSyncing] = useState(false),
     [syncError, setSyncError] = useState(""),
@@ -939,12 +948,68 @@ function App() {
   useEffect(() => {
     if (groupCode) localStorage.setItem("india-group-code", groupCode);
   }, [groupCode]);
+  useEffect(() => {
+    const inviteToken =
+      new URLSearchParams(location.search).get("invite") ||
+      sessionStorage.getItem("india-pending-invite");
+    if (!inviteToken) return;
+    sessionStorage.setItem("india-auth-claiming", "1");
+    sessionStorage.setItem("india-pending-invite", inviteToken);
+    fetch(`${API}/auth/claim`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ invite_token: inviteToken }),
+    })
+      .then(async (response) => {
+        const result = await response.json();
+        if (!response.ok) throw Error(result.error || "Invito non valido");
+        localStorage.setItem("india-session-token", result.token);
+        localStorage.setItem("india-profile-id", result.profile.id);
+        localStorage.setItem(
+          "india-visitor-name",
+          `${result.profile.name} ${result.profile.surname || ""}`.trim(),
+        );
+        setSessionToken(result.token);
+        setSessionProfile(result.profile);
+        setVaultProfileId(result.profile.id);
+        setQuickStatus(`Accesso personale attivato per ${result.profile.name}.`);
+        const cleanUrl = new URL(location.href);
+        cleanUrl.searchParams.delete("invite");
+        history.replaceState({}, "", cleanUrl);
+        sessionStorage.removeItem("india-pending-invite");
+      })
+      .catch((error) => setQuickStatus(error.message))
+      .finally(() => sessionStorage.removeItem("india-auth-claiming"));
+  }, []);
+  useEffect(() => {
+    if (!sessionToken) return;
+    fetch(`${API}/auth/session`, { headers: sessionHeaders(sessionToken) }).then(
+      async (response) => {
+        if (response.ok) {
+          const result = await response.json();
+          setSessionProfile(result.profile);
+          localStorage.setItem("india-profile-id", result.profile.id);
+          localStorage.setItem(
+            "india-visitor-name",
+            `${result.profile.name} ${result.profile.surname || ""}`.trim(),
+          );
+          return;
+        }
+        localStorage.removeItem("india-session-token");
+        setSessionToken("");
+        setSessionProfile(null);
+      },
+    );
+  }, [sessionToken]);
+  useEffect(() => {
+    if (!sessionToken) setSessionProfile(null);
+  }, [sessionToken]);
   const completed = useMemo(
     () => Object.values(done).filter(Boolean).length,
     [done],
   );
   const activeProfileId =
-    vaultProfileId || localStorage.getItem("india-profile-id") || "";
+    sessionProfile?.id || vaultProfileId || localStorage.getItem("india-profile-id") || "";
   const storedVisitorName = (
     localStorage.getItem("india-visitor-name") || ""
   ).trim().toLowerCase();
@@ -965,7 +1030,7 @@ function App() {
     );
   }, [currentProfile?.id]);
   const quickShareLocation = () => {
-    if (!currentProfile || !effectiveGroupCode) return;
+    if (!currentProfile || (!sessionToken && !effectiveGroupCode)) return;
     setQuickStatus("Cerco la posizione…");
     navigator.geolocation?.getCurrentPosition(
       async (position) => {
@@ -973,7 +1038,10 @@ function App() {
           method: "POST",
           headers: {
             "content-type": "application/json",
-            "x-group-code": effectiveGroupCode,
+            ...sessionHeaders(sessionToken),
+            ...(!sessionToken && effectiveGroupCode
+              ? { "x-group-code": effectiveGroupCode }
+              : {}),
           },
           body: JSON.stringify({
             profile_id: currentProfile.id,
@@ -993,10 +1061,12 @@ function App() {
     );
   };
   const quickRemoveLocation = async () => {
-    if (!currentProfile || !effectiveGroupCode) return;
+    if (!currentProfile || (!sessionToken && !effectiveGroupCode)) return;
     const response = await fetch(`${API}/locations/${currentProfile.id}`, {
       method: "DELETE",
-      headers: { "x-group-code": effectiveGroupCode },
+      headers: sessionToken
+        ? sessionHeaders(sessionToken)
+        : { "x-group-code": effectiveGroupCode },
     });
     setQuickStatus(
       response.ok ? "Posizione cancellata." : "Cancellazione non riuscita.",
@@ -1094,14 +1164,14 @@ function App() {
           <span className="flag">🇮🇳</span>
           <span className="versionBadge">REV {VERSION}</span>
           <button
-            className={`accessPill ${effectiveGroupCode ? "unlocked" : ""}`}
+            className={`accessPill ${effectiveGroupCode || sessionToken ? "unlocked" : ""}`}
             onClick={() => {
               setQuickProfileOpen(!quickProfileOpen);
               setNotificationOpen(false);
             }}
           >
             <CircleUserRound size={15} />
-            {effectiveGroupCode
+            {effectiveGroupCode || sessionToken
               ? currentProfile?.name || "Profilo"
               : "Pubblico"}
           </button>
@@ -1172,7 +1242,11 @@ function App() {
                     : "Scegli il tuo profilo"}
                 </b>
                 <small>
-                  {effectiveGroupCode ? "Dispositivo sbloccato" : "Accesso pubblico"}
+                  {sessionToken
+                    ? "Accesso personale attivo"
+                    : effectiveGroupCode
+                      ? "Dispositivo sbloccato"
+                      : "Accesso pubblico"}
                 </small>
               </div>
               <button
@@ -1190,8 +1264,8 @@ function App() {
                 Vista pubblica
               </button>
               <button
-                className={!publicPreview && groupCode ? "active" : ""}
-                disabled={!groupCode}
+                className={!publicPreview && (groupCode || sessionToken) ? "active" : ""}
+                disabled={!groupCode && !sessionToken}
                 onClick={() => setPublicPreview(false)}
               >
                 Vista gruppo
@@ -1506,13 +1580,14 @@ function App() {
             selectedDay={selectedDay}
             setSelectedDay={setSelectedDay}
             groupCode={effectiveGroupCode}
+            sessionToken={sessionToken}
             setGroupCode={setGroupCode}
             refresh={refresh}
             composeOpen={composeOpen}
             setComposeOpen={setComposeOpen}
             deviceProfileName={
               currentProfile
-                && effectiveGroupCode
+                && (effectiveGroupCode || sessionToken)
                 ? `${currentProfile.name} ${currentProfile.surname || ""}`.trim()
                 : ""
             }
@@ -1523,6 +1598,8 @@ function App() {
           <People
             people={people}
             groupCode={effectiveGroupCode}
+            sessionToken={sessionToken}
+            sessionProfile={sessionProfile}
             setGroupCode={setGroupCode}
             refresh={refresh}
             onOpenPrivate={(profileId) => {
@@ -1535,6 +1612,8 @@ function App() {
           <VaultOnline
             people={people}
             groupCode={effectiveGroupCode}
+            sessionToken={sessionToken}
+            setSessionToken={setSessionToken}
             setGroupCode={setGroupCode}
             onOpenGroup={() => setTab("people")}
             preferredProfileId={vaultProfileId}
@@ -1647,6 +1726,7 @@ function Diary({
   selectedDay,
   setSelectedDay,
   groupCode,
+  sessionToken,
   setGroupCode,
   refresh,
   composeOpen,
@@ -1711,7 +1791,7 @@ function Diary({
     return mediaTypes.some((type) => type.startsWith(feedFilter));
   });
   const add = async () => {
-    if (!groupCode || (!text.trim() && !files.length)) return;
+    if ((!sessionToken && !groupCode) || (!text.trim() && !files.length)) return;
     setBusy(true);
     try {
       const f = new FormData();
@@ -1722,7 +1802,9 @@ function Diary({
       files.forEach((file) => f.append("files", file));
       const r = await fetch(`${API}/posts`, {
         method: "POST",
-        headers: { "x-group-code": groupCode },
+        headers: sessionToken
+          ? sessionHeaders(sessionToken)
+          : { "x-group-code": groupCode },
         body: f,
       });
       const j = await r.json();
@@ -1808,6 +1890,7 @@ function Diary({
             p={p}
             author={author}
             groupCode={groupCode}
+            sessionToken={sessionToken}
             refresh={refresh}
           />
         ))
@@ -1831,7 +1914,7 @@ function Diary({
                 ×
               </button>
             </div>
-            {groupCode ? (
+            {sessionToken || groupCode ? (
               <div className="composer">
                 <div className="groupBadge">
                   <LockKeyhole /> Pubblicazione viaggiatore
@@ -2116,7 +2199,7 @@ function PostMedia({ items }) {
   );
 }
 
-function Post({ p, author, groupCode, refresh }) {
+function Post({ p, author, groupCode, sessionToken, refresh }) {
   const [comment, setComment] = useState(""),
     [replyFile, setReplyFile] = useState(null),
     [menuOpen, setMenuOpen] = useState(false),
@@ -2178,7 +2261,11 @@ function Post({ p, author, groupCode, refresh }) {
     f.set("text", comment);
     if (replyFile) f.set("file", replyFile);
     try {
-      const r = await fetch(`${API}/comments`, { method: "POST", body: f });
+      const r = await fetch(`${API}/comments`, {
+        method: "POST",
+        headers: sessionHeaders(sessionToken),
+        body: f,
+      });
       if (!r.ok) {
         const response = await r.json().catch(() => ({}));
         throw Error(
@@ -2202,6 +2289,7 @@ function Post({ p, author, groupCode, refresh }) {
       method: "PUT",
       headers: {
         "content-type": "application/json",
+        ...sessionHeaders(sessionToken),
         ...(groupCode ? { "x-group-code": groupCode } : {}),
       },
       body: JSON.stringify({
@@ -2226,6 +2314,7 @@ function Post({ p, author, groupCode, refresh }) {
       method: "DELETE",
       headers: {
         "content-type": "application/json",
+        ...sessionHeaders(sessionToken),
         ...(groupCode ? { "x-group-code": groupCode } : {}),
       },
       body: JSON.stringify({ visitor_id: visitor() }),
@@ -2243,7 +2332,9 @@ function Post({ p, author, groupCode, refresh }) {
   const remove = async () => {
     const r = await fetch(`${API}/posts/${p.id}`, {
       method: "DELETE",
-      headers: { "x-group-code": groupCode },
+      headers: sessionToken
+        ? sessionHeaders(sessionToken)
+        : { "x-group-code": groupCode },
     });
     if (r.ok) {
       setConfirmDelete(false);
@@ -2273,7 +2364,7 @@ function Post({ p, author, groupCode, refresh }) {
             Giorno {Number(p.day_index) + 1} · {days[p.day_index]?.city}
           </small>
         </div>
-        {groupCode && (
+        {(sessionToken || groupCode) && (
           <div className="postMenu">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -2379,7 +2470,7 @@ function Post({ p, author, groupCode, refresh }) {
               ) : (
                 <>
                   {x.text && <span>{x.text}</span>}
-                  {(groupCode || x.visitor_id === visitor()) && x.text && (
+                  {(sessionToken || groupCode || x.visitor_id === visitor()) && x.text && (
                     <div className="commentCommands">
                       <button
                         onClick={() => {
@@ -2490,6 +2581,8 @@ function Post({ p, author, groupCode, refresh }) {
 function People({
   people,
   groupCode,
+  sessionToken,
+  sessionProfile,
   setGroupCode,
   refresh,
   onOpenPrivate,
@@ -2506,13 +2599,41 @@ function People({
     [code, setCode] = useState(""),
     [saving, setSaving] = useState(false),
     [formStatus, setFormStatus] = useState({ type: "", text: "" }),
-    [editingId, setEditingId] = useState("");
+    [editingId, setEditingId] = useState(""),
+    [inviteLinks, setInviteLinks] = useState({}),
+    [inviteStatus, setInviteStatus] = useState("");
+  const canManageGroup = sessionProfile?.role === "coordinator";
+  const canEdit = (profileId) =>
+    canManageGroup || sessionProfile?.id === profileId;
+  const createInvite = async (person) => {
+    setInviteStatus(`Creo l’invito per ${person.name}…`);
+    const response = await fetch(`${API}/auth/invites`, {
+      method: "POST",
+      headers: sessionHeaders(sessionToken, { "content-type": "application/json" }),
+      body: JSON.stringify({ profile_id: person.id }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setInviteStatus(result.error || "Invito non creato.");
+      return;
+    }
+    const inviteUrl = new URL(location.origin);
+    inviteUrl.searchParams.set("invite", result.invite_token);
+    setInviteLinks((current) => ({ ...current, [person.id]: inviteUrl.href }));
+    setInviteStatus(`Invito pronto per ${person.name}. Vale 48 ore e si usa una volta.`);
+  };
+  const copyInvite = async (person) => {
+    const link = inviteLinks[person.id];
+    if (!link) return;
+    await navigator.clipboard.writeText(link);
+    setInviteStatus(`Link di ${person.name} copiato.`);
+  };
   const add = async () => {
     if (!form.name.trim()) {
       setFormStatus({ type: "error", text: "Inserisci almeno il nome." });
       return;
     }
-    if (!groupCode || saving) return;
+    if (!sessionToken || saving) return;
     setSaving(true);
     setFormStatus({ type: "", text: "" });
     try {
@@ -2523,7 +2644,7 @@ function People({
         editingId ? `${API}/profiles/${editingId}` : `${API}/profiles`,
         {
         method: editingId ? "PUT" : "POST",
-        headers: { "x-group-code": groupCode },
+        headers: sessionHeaders(sessionToken),
         body: f,
         },
       );
@@ -2566,7 +2687,7 @@ function People({
     <section>
       <span className="eyebrow">IL NOSTRO GRUPPO</span>
       <h2>Facce, nomi e storie</h2>
-      {groupCode ? (
+      {sessionToken && (canManageGroup || editingId === sessionProfile?.id) ? (
         <div className="profileForm">
           {editingId && (
             <div className="editingProfile">
@@ -2574,7 +2695,14 @@ function People({
               <button
                 onClick={() => {
                   setEditingId("");
-                  setForm({ name: "", surname: "", age: "", job: "", bio: "" });
+                  setForm({
+                    name: "",
+                    surname: "",
+                    age: "",
+                    job: "",
+                    bio: "",
+                    role: "traveler",
+                  });
                   setAvatar(null);
                 }}
               >
@@ -2629,7 +2757,7 @@ function People({
               onChange={(e) => setForm({ ...form, role: e.target.value })}
             >
               <option value="traveler">Viaggiatore</option>
-              <option value="coordinator">Coordinatore</option>
+              {canManageGroup && <option value="coordinator">Coordinatore</option>}
             </select>
           </label>
           {formStatus.text && (
@@ -2646,14 +2774,24 @@ function People({
                 : "Inserisci viaggiatore"}
           </button>
         </div>
+      ) : !sessionToken ? (
+        <div className="personalAccessRequired">
+          <LockKeyhole />
+          <div>
+            <b>Accesso personale richiesto</b>
+            <small>Apri il tuo invito personale per modificare il gruppo.</small>
+          </div>
+        </div>
       ) : (
-        <UnlockCard
-          code={code}
-          setCode={setCode}
-          onUnlock={() => verifyGroupCode(code, setGroupCode)}
-          text="Il codice del gruppo serve per aggiungere un viaggiatore."
-        />
+        <div className="personalAccessRequired">
+          <CircleUserRound />
+          <div>
+            <b>Il tuo profilo è collegato</b>
+            <small>Puoi modificare i tuoi dati dalla tua scheda qui sotto.</small>
+          </div>
+        </div>
       )}
+      {inviteStatus && <div className="formStatus success" role="status">{inviteStatus}</div>}
       <div className="peopleGrid">
         {people.map((x) => (
           <article key={x.id}>
@@ -2675,7 +2813,7 @@ function People({
                 .join(" · ")}
             </small>
             <p>{x.bio}</p>
-            {groupCode && (
+            {sessionToken && canEdit(x.id) && (
               <div className="profileActions">
                 <button
                   onClick={() => {
@@ -2709,6 +2847,17 @@ function People({
                 >
                   <ShieldCheck /> Documenti e posizione
                 </button>
+                {canManageGroup && (
+                  <button onClick={() => createInvite(x)}>
+                    <Link /> Crea invito personale
+                  </button>
+                )}
+                {inviteLinks[x.id] && (
+                  <div className="profileInviteLink">
+                    <small>Invito personale, valido una sola volta</small>
+                    <button onClick={() => copyInvite(x)}>Copia link</button>
+                  </div>
+                )}
               </div>
             )}
           </article>
@@ -2728,6 +2877,8 @@ function People({
 function VaultOnline({
   people,
   groupCode,
+  sessionToken,
+  setSessionToken,
   setGroupCode,
   onOpenGroup,
   preferredProfileId,
@@ -2740,17 +2891,25 @@ function VaultOnline({
     [pendingDocumentDelete, setPendingDocumentDelete] = useState(""),
     [locationMapOpen, setLocationMapOpen] = useState(false),
     [viewMode, setViewMode] = useState("traveler");
-  const refresh = async (c = groupCode) => {
-    if (!c) return;
+  const refresh = async () => {
+    if (!sessionToken) return;
     const r = await fetch(`${API}/private`, {
-      headers: { "x-group-code": c },
+      headers: sessionHeaders(sessionToken),
       cache: "no-store",
     });
     if (r.ok) setPrivateData(await r.json());
   };
   useEffect(() => {
-    if (groupCode) refresh();
-  }, [groupCode]);
+    if (sessionToken) refresh();
+  }, [sessionToken]);
+  useEffect(() => {
+    const viewer = privateData.viewer;
+    if (!viewer) return;
+    if (viewer.role !== "coordinator") {
+      setProfileId(viewer.profile_id);
+      setViewMode("traveler");
+    }
+  }, [privateData.viewer?.profile_id, privateData.viewer?.role]);
   useEffect(() => {
     if (preferredProfileId && people.some((p) => p.id === preferredProfileId)) {
       setProfileId(preferredProfileId);
@@ -2785,9 +2944,9 @@ function VaultOnline({
     f.set("profile_id", profileId);
     f.set("doc_type", type);
     f.set("file", file);
-    const r = await fetch(`${API}/documents`, {
-      method: "POST",
-      headers: { "x-group-code": groupCode },
+      const r = await fetch(`${API}/documents`, {
+        method: "POST",
+        headers: sessionHeaders(sessionToken),
       body: f,
     });
     setBusy("");
@@ -2802,7 +2961,7 @@ function VaultOnline({
   const remove = async (type) => {
     const r = await fetch(`${API}/documents/${profileId}/${type}`, {
       method: "DELETE",
-      headers: { "x-group-code": groupCode },
+      headers: sessionHeaders(sessionToken),
     });
     if (r.ok) {
       setPendingDocumentDelete("");
@@ -2814,7 +2973,7 @@ function VaultOnline({
     setDocumentStatus("Apertura del documento…");
     const response = await fetch(
       `${API}/media/${encodeURIComponent(doc.file_key)}`,
-      { headers: { "x-group-code": groupCode } },
+      { headers: sessionHeaders(sessionToken) },
     );
     if (!response.ok) {
       setDocumentStatus("Documento non disponibile. Tocca Riprova.");
@@ -2841,7 +3000,7 @@ function VaultOnline({
           method: "POST",
           headers: {
             "content-type": "application/json",
-            "x-group-code": groupCode,
+            ...sessionHeaders(sessionToken),
           },
           body: JSON.stringify({
             profile_id: profileId,
@@ -2860,25 +3019,33 @@ function VaultOnline({
   const removeLocation = async (targetProfileId) => {
     const response = await fetch(`${API}/locations/${targetProfileId}`, {
       method: "DELETE",
-      headers: { "x-group-code": groupCode },
+      headers: sessionHeaders(sessionToken),
     });
     if (response.ok) refresh();
   };
-  const lockDevice = () => {
+  const lockDevice = async () => {
+    if (sessionToken)
+      await fetch(`${API}/auth/logout`, {
+        method: "POST",
+        headers: sessionHeaders(sessionToken),
+      }).catch(() => {});
+    localStorage.removeItem("india-session-token");
     localStorage.removeItem("india-group-code");
+    setSessionToken("");
     setGroupCode("");
   };
-  if (!groupCode)
+  if (!sessionToken)
     return (
       <section>
         <span className="eyebrow">AREA RISERVATA</span>
-        <h2>La base del gruppo</h2>
-        <UnlockCard
-          code={code}
-          setCode={setCode}
-          onUnlock={() => verifyGroupCode(code, setGroupCode)}
-          text="Documenti e posizioni sono visibili soltanto ai viaggiatori."
-        />
+        <h2>Accesso personale richiesto</h2>
+        <div className="personalAccessRequired">
+          <LockKeyhole />
+          <div>
+            <b>Questo dispositivo non è ancora autorizzato</b>
+            <small>Apri una volta il tuo invito personale.</small>
+          </div>
+        </div>
       </section>
     );
   const types = [
@@ -2888,7 +3055,8 @@ function VaultOnline({
     ["insurance", "Assicurazione"],
   ];
   const selectedProfile = people.find((person) => person.id === profileId);
-  const isCoordinator = viewMode === "coordinator";
+  const viewerIsCoordinator = privateData.viewer?.role === "coordinator";
+  const isCoordinator = viewerIsCoordinator && viewMode === "coordinator";
   return (
     <section>
       <span className="eyebrow">AREA RISERVATA</span>
@@ -2912,14 +3080,16 @@ function VaultOnline({
         >
           Viaggiatore
         </button>
-        <button
-          className={viewMode === "coordinator" ? "active" : ""}
-          onClick={() => setViewMode("coordinator")}
-        >
-          Coordinatore
-        </button>
+        {viewerIsCoordinator && (
+          <button
+            className={viewMode === "coordinator" ? "active" : ""}
+            onClick={() => setViewMode("coordinator")}
+          >
+            Coordinatore
+          </button>
+        )}
       </div>
-      {people.length > 0 && viewMode === "traveler" && (
+      {people.length > 0 && viewMode === "traveler" && viewerIsCoordinator && (
         <label className="personSelect">
           Chi sei?
           <select

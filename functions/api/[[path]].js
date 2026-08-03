@@ -13,6 +13,45 @@ const groupOk = (request, env) =>
 const ext = (name) =>
   (name?.split(".").pop() || "bin").replace(/[^a-z0-9]/gi, "").toLowerCase();
 const mediaUrl = (key) => (key ? `/api/media/${key}` : null);
+const futureIso = (hours) =>
+  new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
+const secureToken = () =>
+  Array.from(crypto.getRandomValues(new Uint8Array(32)), (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
+async function tokenHash(token) {
+  const bytes = new TextEncoder().encode(String(token || ""));
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest), (byte) =>
+    byte.toString(16).padStart(2, "0"),
+  ).join("");
+}
+async function sessionFromRequest(request, env) {
+  const authorization = request.headers.get("authorization") || "";
+  const token = authorization.startsWith("Bearer ")
+    ? authorization.slice(7).trim()
+    : "";
+  if (!token) return null;
+  const session = await env.DB.prepare(
+    `SELECT s.profile_id,s.expires_at,p.name,p.surname,p.role
+     FROM auth_sessions s
+     JOIN profiles p ON p.id=s.profile_id
+     WHERE s.token_hash=? AND s.revoked_at IS NULL AND s.expires_at>?`,
+  )
+    .bind(await tokenHash(token), now())
+    .first();
+  return session || null;
+}
+async function createSession(env, profileId) {
+  const token = secureToken();
+  const expiresAt = futureIso(24 * 90);
+  await env.DB.prepare(
+    "INSERT INTO auth_sessions(token_hash,profile_id,created_at,expires_at,revoked_at) VALUES(?,?,?,?,NULL)",
+  )
+    .bind(await tokenHash(token), profileId, now(), expiresAt)
+    .run();
+  return { token, expires_at: expiresAt };
+}
 
 async function saveMedia(env, file, prefix = "public") {
   if (!(file instanceof File) || file.size === 0) return null;
@@ -90,12 +129,123 @@ export async function onRequest({ request, env, params }) {
       : String(params.path || "")
   ).replace(/^\/+|\/+$/g, "");
   try {
+    if (request.method === "POST" && path === "auth/claim") {
+      const body = await request.json();
+      const inviteHash = await tokenHash(body.invite_token);
+      const invite = await env.DB.prepare(
+        `SELECT i.profile_id,p.name,p.surname,p.role
+         FROM profile_invites i
+         JOIN profiles p ON p.id=i.profile_id
+         WHERE i.token_hash=? AND i.used_at IS NULL AND i.expires_at>?`,
+      )
+        .bind(inviteHash, now())
+        .first();
+      if (!invite)
+        return json({ error: "Invito non valido o scaduto" }, 403);
+      const claimedAt = now();
+      const claim = await env.DB.prepare(
+        "UPDATE profile_invites SET used_at=? WHERE token_hash=? AND used_at IS NULL",
+      )
+        .bind(claimedAt, inviteHash)
+        .run();
+      if (!claim.meta?.changes)
+        return json({ error: "Invito già utilizzato" }, 409);
+      let issued;
+      try {
+        issued = await createSession(env, invite.profile_id);
+      } catch (error) {
+        await env.DB.prepare(
+          "UPDATE profile_invites SET used_at=NULL WHERE token_hash=? AND used_at=?",
+        )
+          .bind(inviteHash, claimedAt)
+          .run();
+        throw error;
+      }
+      return json({
+        ...issued,
+        profile: {
+          id: invite.profile_id,
+          name: invite.name,
+          surname: invite.surname,
+          role: invite.role,
+        },
+      });
+    }
+    if (request.method === "GET" && path === "auth/session") {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Sessione non valida" }, 401);
+      return json({
+        profile: {
+          id: session.profile_id,
+          name: session.name,
+          surname: session.surname,
+          role: session.role,
+        },
+        expires_at: session.expires_at,
+      });
+    }
+    if (request.method === "POST" && path === "auth/logout") {
+      const authorization = request.headers.get("authorization") || "";
+      const token = authorization.startsWith("Bearer ")
+        ? authorization.slice(7).trim()
+        : "";
+      if (token)
+        await env.DB.prepare(
+          "UPDATE auth_sessions SET revoked_at=? WHERE token_hash=?",
+        )
+          .bind(now(), await tokenHash(token))
+          .run();
+      return json({ ok: true });
+    }
+    if (request.method === "POST" && path === "auth/invites") {
+      const session = await sessionFromRequest(request, env);
+      if (!session || session.role !== "coordinator")
+        return json({ error: "Solo il coordinatore può creare inviti" }, 403);
+      const body = await request.json();
+      const profile = await env.DB.prepare(
+        "SELECT id,name,surname,role FROM profiles WHERE id=?",
+      )
+        .bind(String(body.profile_id || ""))
+        .first();
+      if (!profile) return json({ error: "Profilo non trovato" }, 404);
+      const token = secureToken();
+      const expiresAt = futureIso(48);
+      await env.DB.prepare(
+        "INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at) VALUES(?,?,?,?,?,NULL)",
+      )
+        .bind(
+          await tokenHash(token),
+          profile.id,
+          session.profile_id,
+          now(),
+          expiresAt,
+        )
+        .run();
+      return json({
+        invite_token: token,
+        expires_at: expiresAt,
+        profile,
+      }, 201);
+    }
     if (request.method === "GET" && path === "state")
       return json(await readState(env));
     if (["GET", "HEAD"].includes(request.method) && path.startsWith("media/")) {
       const key = decodeURIComponent(path.slice(6));
-      if (key.startsWith("private/") && !groupOk(request, env))
-        return json({ error: "Accesso negato" }, 403);
+      if (key.startsWith("private/")) {
+        const session = await sessionFromRequest(request, env);
+        if (!session) return json({ error: "Accesso negato" }, 403);
+        const document = await env.DB.prepare(
+          "SELECT profile_id FROM document_status WHERE file_key=?",
+        )
+          .bind(key)
+          .first();
+        if (
+          !document ||
+          (session.role !== "coordinator" &&
+            document.profile_id !== session.profile_id)
+        )
+          return json({ error: "Documento non autorizzato" }, 403);
+      }
       const meta = await env.MEDIA.getWithMetadata(key, { type: "arrayBuffer" });
       if (!meta.value) return new Response("Not found", { status: 404 });
       const bytes = meta.value;
@@ -131,8 +281,9 @@ export async function onRequest({ request, env, params }) {
       return new Response(bytes, { headers });
     }
     if (request.method === "POST" && path === "profiles") {
-      if (!groupOk(request, env))
-        return json({ error: "Codice del gruppo richiesto" }, 403);
+      const session = await sessionFromRequest(request, env);
+      if (!session || session.role !== "coordinator")
+        return json({ error: "Solo il coordinatore può creare profili" }, 403);
       const form = await request.formData();
       const name = String(form.get("name") || "").trim();
       if (!name) return json({ error: "Nome richiesto" }, 400);
@@ -166,9 +317,13 @@ export async function onRequest({ request, env, params }) {
       return json({ ...row, avatar_url: mediaUrl(row.avatar_key) }, 201);
     }
     if (request.method === "PUT" && path.startsWith("profiles/")) {
-      if (!groupOk(request, env))
-        return json({ error: "Accesso del gruppo richiesto" }, 403);
       const profileId = path.slice(9);
+      const session = await sessionFromRequest(request, env);
+      if (
+        !session ||
+        (session.role !== "coordinator" && session.profile_id !== profileId)
+      )
+        return json({ error: "Non puoi modificare questo profilo" }, 403);
       const current = await env.DB.prepare(
         "SELECT * FROM profiles WHERE id=?",
       )
@@ -180,6 +335,12 @@ export async function onRequest({ request, env, params }) {
       if (!name) return json({ error: "Nome richiesto" }, 400);
       const avatar = await saveMedia(env, form.get("avatar"), "public/avatars");
       const avatarKey = avatar?.key || current.avatar_key || null;
+      const updatedRole =
+        session.role === "coordinator"
+          ? form.get("role") === "coordinator"
+            ? "coordinator"
+            : "traveler"
+          : current.role;
       try {
         await env.DB.prepare(
           "UPDATE profiles SET name=?,surname=?,age=?,job=?,bio=?,role=?,avatar_key=? WHERE id=?",
@@ -190,7 +351,7 @@ export async function onRequest({ request, env, params }) {
             String(form.get("age") || ""),
             String(form.get("job") || ""),
             String(form.get("bio") || ""),
-            form.get("role") === "coordinator" ? "coordinator" : "traveler",
+            updatedRole,
             avatarKey,
             profileId,
           )
@@ -204,8 +365,9 @@ export async function onRequest({ request, env, params }) {
       return json({ ok: true, id: profileId, avatar_url: mediaUrl(avatarKey) });
     }
     if (request.method === "POST" && path === "posts") {
-      if (!groupOk(request, env))
-        return json({ error: "Codice del gruppo richiesto" }, 403);
+      const session = await sessionFromRequest(request, env);
+      if (!session)
+        return json({ error: "Accesso personale richiesto" }, 403);
       const form = await request.formData();
       const files = form
         .getAll("files")
@@ -221,8 +383,8 @@ export async function onRequest({ request, env, params }) {
       const savedMedia = [];
       const row = {
         id: id(),
-        author_name: String(form.get("author_name") || "Viaggiatore"),
-        profile_id: String(form.get("profile_id") || ""),
+        author_name: `${session.name} ${session.surname || ""}`.trim(),
+        profile_id: session.profile_id,
         day_index: Number(form.get("day_index") || 0),
         visibility: String(form.get("visibility") || "public"),
         text: String(form.get("text") || ""),
@@ -284,11 +446,17 @@ export async function onRequest({ request, env, params }) {
       );
     }
     if (request.method === "DELETE" && path.startsWith("posts/")) {
-      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 403);
       const postId = path.slice(6);
-      const p = await env.DB.prepare("SELECT media_key FROM posts WHERE id=?")
+      const p = await env.DB.prepare(
+        "SELECT media_key,profile_id FROM posts WHERE id=?",
+      )
         .bind(postId)
         .first();
+      if (!p) return json({ error: "Contenuto non trovato" }, 404);
+      if (session.role !== "coordinator" && p.profile_id !== session.profile_id)
+        return json({ error: "Non puoi eliminare questo contenuto" }, 403);
       if (p?.media_key) await env.MEDIA.delete(p.media_key);
       const mediaRows = await env.DB.prepare(
         "SELECT media_key FROM post_media WHERE post_id=?",
@@ -313,24 +481,29 @@ export async function onRequest({ request, env, params }) {
       return json({ ok: true });
     }
     if (request.method === "POST" && path === "comments") {
+      const session = await sessionFromRequest(request, env);
       const form = await request.formData();
-      const author = String(form.get("author_name") || "").trim();
+      const author = session
+        ? `${session.name} ${session.surname || ""}`.trim()
+        : String(form.get("author_name") || "").trim();
       if (!author) return json({ error: "Inserisci il nome" }, 400);
       const media = await saveMedia(env, form.get("file"), "public");
       const row = {
         id: id(),
         post_id: String(form.get("post_id") || ""),
         author_name: author,
+        profile_id: session?.profile_id || "",
         text: String(form.get("text") || ""),
         created_at: now(),
       };
       await env.DB.prepare(
-        "INSERT INTO comments(id,post_id,author_name,visitor_id,text,media_key,media_type,created_at) VALUES(?,?,?,?,?,?,?,?)",
+        "INSERT INTO comments(id,post_id,author_name,profile_id,visitor_id,text,media_key,media_type,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
       )
         .bind(
           row.id,
           row.post_id,
           row.author_name,
+          row.profile_id,
           String(form.get("visitor_id") || ""),
           row.text,
           media?.key || null,
@@ -343,15 +516,18 @@ export async function onRequest({ request, env, params }) {
     if (request.method === "PUT" && path.startsWith("comments/")) {
       const commentId = path.slice(9);
       const body = await request.json();
+      const session = await sessionFromRequest(request, env);
       const existing = await env.DB.prepare(
-        "SELECT visitor_id FROM comments WHERE id=?",
+        "SELECT visitor_id,profile_id FROM comments WHERE id=?",
       )
         .bind(commentId)
         .first();
       if (!existing) return json({ error: "Commento non trovato" }, 404);
-      const ownsComment =
-        existing.visitor_id && existing.visitor_id === String(body.visitor_id || "");
-      if (!ownsComment && !groupOk(request, env))
+      const ownsComment = session
+        ? session.role === "coordinator" || existing.profile_id === session.profile_id
+        : existing.visitor_id &&
+          existing.visitor_id === String(body.visitor_id || "");
+      if (!ownsComment)
         return json({ error: "Non puoi modificare questo commento" }, 403);
       const text = String(body.text || "").trim();
       if (!text) return json({ error: "Il commento non può essere vuoto" }, 400);
@@ -363,15 +539,18 @@ export async function onRequest({ request, env, params }) {
     if (request.method === "DELETE" && path.startsWith("comments/")) {
       const commentId = path.slice(9);
       const body = await request.json().catch(() => ({}));
+      const session = await sessionFromRequest(request, env);
       const existing = await env.DB.prepare(
-        "SELECT visitor_id,media_key FROM comments WHERE id=?",
+        "SELECT visitor_id,profile_id,media_key FROM comments WHERE id=?",
       )
         .bind(commentId)
         .first();
       if (!existing) return json({ error: "Commento non trovato" }, 404);
-      const ownsComment =
-        existing.visitor_id && existing.visitor_id === String(body.visitor_id || "");
-      if (!ownsComment && !groupOk(request, env))
+      const ownsComment = session
+        ? session.role === "coordinator" || existing.profile_id === session.profile_id
+        : existing.visitor_id &&
+          existing.visitor_id === String(body.visitor_id || "");
+      if (!ownsComment)
         return json({ error: "Non puoi eliminare questo commento" }, 403);
       await env.DB.prepare("DELETE FROM comments WHERE id=?").bind(commentId).run();
       if (existing.media_key) await env.MEDIA.delete(existing.media_key);
@@ -410,18 +589,38 @@ export async function onRequest({ request, env, params }) {
       return json({ ok: true, reaction: kind });
     }
     if (path === "private" && request.method === "GET") {
-      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 401);
       const [docs, locations] = await Promise.all([
-        env.DB.prepare("SELECT * FROM document_status").all(),
+        session.role === "coordinator"
+          ? env.DB.prepare("SELECT * FROM document_status").all()
+          : env.DB.prepare(
+              "SELECT * FROM document_status WHERE profile_id=?",
+            )
+              .bind(session.profile_id)
+              .all(),
         env.DB.prepare(
           "SELECT * FROM locations ORDER BY updated_at DESC",
         ).all(),
       ]);
-      return json({ documents: docs.results, locations: locations.results });
+      return json({
+        documents: docs.results,
+        locations: locations.results,
+        viewer: {
+          profile_id: session.profile_id,
+          role: session.role,
+        },
+      });
     }
     if (path === "locations" && request.method === "POST") {
-      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 401);
       const b = await request.json();
+      if (
+        session.role !== "coordinator" &&
+        String(b.profile_id || "") !== session.profile_id
+      )
+        return json({ error: "Puoi aggiornare soltanto la tua posizione" }, 403);
       await env.DB.prepare(
         "INSERT INTO locations(profile_id,display_name,latitude,longitude,updated_at) VALUES(?,?,?,?,?) ON CONFLICT(profile_id) DO UPDATE SET display_name=excluded.display_name,latitude=excluded.latitude,longitude=excluded.longitude,updated_at=excluded.updated_at",
       )
@@ -436,19 +635,28 @@ export async function onRequest({ request, env, params }) {
       return json({ ok: true });
     }
     if (path.startsWith("locations/") && request.method === "DELETE") {
-      if (!groupOk(request, env))
-        return json({ error: "Accesso del gruppo richiesto" }, 403);
       const profileId = path.slice(10);
+      const session = await sessionFromRequest(request, env);
+      if (
+        !session ||
+        (session.role !== "coordinator" && session.profile_id !== profileId)
+      )
+        return json({ error: "Non puoi cancellare questa posizione" }, 403);
       await env.DB.prepare("DELETE FROM locations WHERE profile_id=?")
         .bind(profileId)
         .run();
       return json({ ok: true });
     }
     if (path === "documents" && request.method === "POST") {
-      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
       const form = await request.formData();
-      const media = await saveMedia(env, form.get("file"), "private");
       const profileId = String(form.get("profile_id"));
+      const session = await sessionFromRequest(request, env);
+      if (
+        !session ||
+        (session.role !== "coordinator" && session.profile_id !== profileId)
+      )
+        return json({ error: "Documento non autorizzato" }, 403);
+      const media = await saveMedia(env, form.get("file"), "private");
       const type = String(form.get("doc_type"));
       const previous = await env.DB.prepare(
         "SELECT file_key FROM document_status WHERE profile_id=? AND doc_type=?",
@@ -481,8 +689,13 @@ export async function onRequest({ request, env, params }) {
       return json({ ok: true });
     }
     if (path.startsWith("documents/") && request.method === "DELETE") {
-      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
       const [, profileId, type] = path.split("/");
+      const session = await sessionFromRequest(request, env);
+      if (
+        !session ||
+        (session.role !== "coordinator" && session.profile_id !== profileId)
+      )
+        return json({ error: "Documento non autorizzato" }, 403);
       const doc = await env.DB.prepare(
         "SELECT file_key FROM document_status WHERE profile_id=? AND doc_type=?",
       )
