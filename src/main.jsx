@@ -29,7 +29,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.8.0",
+const VERSION = "1.8.1",
   API = "/api";
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/private`, {
@@ -388,7 +388,7 @@ function TripMap({ selectedDay, onSelect }) {
         center: [77.2, 25.8],
         zoom: 4.5,
         minZoom: 3.5,
-        attributionControl: true,
+        attributionControl: false,
         cooperativeGestures: true,
         antialias: true,
         fadeDuration: 0,
@@ -400,6 +400,10 @@ function TripMap({ selectedDay, onSelect }) {
       map.current.addControl(
         new maplibregl.ScaleControl({ unit: "metric", maxWidth: 90 }),
         "bottom-left",
+      );
+      map.current.addControl(
+        new maplibregl.AttributionControl({ compact: true }),
+        "bottom-right",
       );
       map.current.on("load", () => {
         map.current.addSource("trip-route", {
@@ -682,6 +686,7 @@ function App() {
             )}
           </button>
         </div>
+        <span className="versionBadge">REV {VERSION}</span>
         {notificationOpen && (
           <div className="notificationPanel">
             <div>
