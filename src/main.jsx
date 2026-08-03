@@ -30,7 +30,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.21.2",
+const VERSION = "1.21.3",
   API = "/api";
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
@@ -1905,8 +1905,9 @@ function MapSection({ selectedDay, setSelectedDay, onBack }) {
         </div>
       )}
       <div className="mapShell" ref={mapShellRef}>
-        <GoogleTripMap
+        <TripMap
           selectedDay={selectedDay}
+          onSelect={focusMap}
           onReady={positionMapOnce}
         />
       </div>
