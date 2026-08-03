@@ -32,7 +32,7 @@ import "./styles.css";
 import { flushOfflineQueue, queueFormRequest } from "./offlineQueue.js";
 import { shouldUseResumableUpload, uploadFileResumable } from "./resumableUpload.js";
 
-const VERSION = "1.29.0",
+const VERSION = "1.30.0",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";

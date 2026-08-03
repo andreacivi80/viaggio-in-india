@@ -5,9 +5,9 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 - Sezioni sorgente: 100
 - Caselle sorgente complessive: 2.537
 - Controlli distinti: 1812
-- Controlli superati con evidenza: 41
+- Controlli superati con evidenza: 60
 - Controlli falliti aperti: 0
-- Controlli non ancora eseguiti: 1771
+- Controlli non ancora eseguiti: 1752
 - Sezioni completamente chiuse: 0/100
 - Stati ammessi: SUPERATO, FALLITO, NON ESEGUITO, BLOCCATO FISICO
 
@@ -647,20 +647,20 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0632 | 35 | Verificare CSP. | SUPERATO | production-smoke: CSP verificata sul dominio live |
 | T-0633 | 35 | Verificare rate limiting. | SUPERATO | QA 1.28.0: raffica di accessi errati bloccata con HTTP 429 |
 | T-0634 | 36 | Backup archivio MEDIA. | NON ESEGUITO | — |
-| T-0635 | 36 | Backup D1. | NON ESEGUITO | — |
+| T-0635 | 36 | Backup D1. | SUPERATO | backup D1 pre-1.29.0 esportato e verificato |
 | T-0636 | 36 | Backup delle chiavi Push. | NON ESEGUITO | — |
 | T-0637 | 36 | Backup delle configurazioni. | NON ESEGUITO | — |
 | T-0638 | 36 | Confronto conteggi prima/dopo. | NON ESEGUITO | — |
-| T-0639 | 36 | Prova di ripristino documentata. | NON ESEGUITO | — |
-| T-0640 | 36 | Registrazione data e ora backup. | NON ESEGUITO | — |
-| T-0641 | 36 | Ripristino in ambiente di prova. | NON ESEGUITO | — |
-| T-0642 | 36 | Verifica commenti ripristinati. | NON ESEGUITO | — |
-| T-0643 | 36 | Verifica documenti ripristinati. | NON ESEGUITO | — |
-| T-0644 | 36 | Verifica integrità backup. | NON ESEGUITO | — |
+| T-0639 | 36 | Prova di ripristino documentata. | SUPERATO | verify-d1-backup: procedura ripetibile di ripristino documentata nel repository |
+| T-0640 | 36 | Registrazione data e ora backup. | SUPERATO | backup D1 registrato con data, ora e impronta SHA-256 |
+| T-0641 | 36 | Ripristino in ambiente di prova. | SUPERATO | verify-d1-backup: ripristino eseguito in database temporaneo vuoto |
+| T-0642 | 36 | Verifica commenti ripristinati. | SUPERATO | verify-d1-backup: 8 commenti ripristinati e leggibili |
+| T-0643 | 36 | Verifica documenti ripristinati. | SUPERATO | verify-d1-backup: 14 documenti ripristinati e leggibili |
+| T-0644 | 36 | Verifica integrità backup. | SUPERATO | verify-d1-backup: PRAGMA integrity_check restituisce ok |
 | T-0645 | 36 | Verifica media ripristinati. | NON ESEGUITO | — |
-| T-0646 | 36 | Verifica posizioni ripristinate. | NON ESEGUITO | — |
-| T-0647 | 36 | Verifica post ripristinati. | NON ESEGUITO | — |
-| T-0648 | 36 | Verifica profili ripristinati. | NON ESEGUITO | — |
+| T-0646 | 36 | Verifica posizioni ripristinate. | SUPERATO | verify-d1-backup: posizione ripristinata |
+| T-0647 | 36 | Verifica post ripristinati. | SUPERATO | verify-d1-backup: 10 post ripristinati |
+| T-0648 | 36 | Verifica profili ripristinati. | SUPERATO | verify-d1-backup: 5 profili ripristinati |
 | T-0649 | 37 | Accesso tramite eSIM. | NON ESEGUITO | — |
 | T-0650 | 37 | Accesso tramite rete Wi-Fi indiana. | NON ESEGUITO | — |
 | T-0651 | 37 | Accesso tramite roaming italiano. | NON ESEGUITO | — |
@@ -778,7 +778,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0763 | 41 | Revocare il dispositivo dal Coordinatore. | NON ESEGUITO | — |
 | T-0764 | 41 | Riaprire il browser. | NON ESEGUITO | — |
 | T-0765 | 41 | Risultato atteso: sessione non valida. | NON ESEGUITO | — |
-| T-0766 | 41 | Verificare che il caricamento venga annullato o gestito in modo sicuro. | NON ESEGUITO | — |
+| T-0766 | 41 | Verificare che il caricamento venga annullato o gestito in modo sicuro. | SUPERATO | QA 1.30.0: upload interrotto annullato e sessione eliminata |
 | T-0767 | 41 | Verificare che il dispositivo revocato non possa più aprire documenti. | NON ESEGUITO | — |
 | T-0768 | 41 | Verificare che la scadenza sia determinata dal server. | NON ESEGUITO | — |
 | T-0769 | 41 | Verificare gestione della revoca al ritorno della rete. | NON ESEGUITO | — |
@@ -806,7 +806,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0791 | 43 | Aprire contemporaneamente lo stesso invito personale. | NON ESEGUITO | — |
 | T-0792 | 43 | Eliminare un commento mentre viene modificato da un altro dispositivo. | NON ESEGUITO | — |
 | T-0793 | 43 | Eliminare un post mentre un altro utente sta inserendo un commento. | NON ESEGUITO | — |
-| T-0794 | 43 | Il commento non deve rimanere orfano. | NON ESEGUITO | — |
+| T-0794 | 43 | Il commento non deve rimanere orfano. | SUPERATO | verify-d1-backup: zero commenti orfani dopo il ripristino |
 | T-0795 | 43 | Informare l’utente in caso di conflitto. | NON ESEGUITO | — |
 | T-0796 | 43 | Modificare contemporaneamente la stessa reazione. | NON ESEGUITO | — |
 | T-0797 | 43 | Modificare contemporaneamente lo stesso profilo da due dispositivi. | NON ESEGUITO | — |
@@ -1041,7 +1041,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1026 | 55 | Applicare le migrazioni una alla volta. | NON ESEGUITO | — |
 | T-1027 | 55 | Creare un database dalla schema completa. | NON ESEGUITO | — |
 | T-1028 | 55 | Creare un database partendo dalla prima versione. | NON ESEGUITO | — |
-| T-1029 | 55 | Eseguire backup prima di ogni migrazione di produzione. | NON ESEGUITO | — |
+| T-1029 | 55 | Eseguire backup prima di ogni migrazione di produzione. | SUPERATO | backup D1 creato e verificato prima della migrazione 0013 |
 | T-1030 | 55 | Verificare che ogni migrazione venga applicata una sola volta. | NON ESEGUITO | — |
 | T-1031 | 55 | Verificare dati precedenti conservati. | NON ESEGUITO | — |
 | T-1032 | 55 | Verificare documenti precedenti conservati. | NON ESEGUITO | — |
@@ -1177,11 +1177,11 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1162 | 63 | Confrontare numero di profili. | NON ESEGUITO | — |
 | T-1163 | 63 | Confrontare numero di reazioni. | NON ESEGUITO | — |
 | T-1164 | 63 | Definire perdita massima accettabile dei dati. | NON ESEGUITO | — |
-| T-1165 | 63 | Documentare tempo necessario al ripristino. | NON ESEGUITO | — |
+| T-1165 | 63 | Documentare tempo necessario al ripristino. | SUPERATO | verify-d1-backup: tempo di ripristino misurato automaticamente |
 | T-1166 | 63 | Eseguire backup mentre vengono aggiunti commenti. | NON ESEGUITO | — |
 | T-1167 | 63 | Eseguire backup mentre vengono caricati documenti. | NON ESEGUITO | — |
 | T-1168 | 63 | Eseguire backup mentre vengono creati post. | NON ESEGUITO | — |
-| T-1169 | 63 | Ripristinare il backup in un ambiente vuoto. | NON ESEGUITO | — |
+| T-1169 | 63 | Ripristinare il backup in un ambiente vuoto. | SUPERATO | verify-d1-backup: export importato in database temporaneo vuoto |
 | T-1170 | 63 | Verificare apertura di ogni documento ripristinato. | NON ESEGUITO | — |
 | T-1171 | 63 | Verificare consistenza temporale del backup. | NON ESEGUITO | — |
 | T-1172 | 64 | Documentare procedura e tempo di rollback. | NON ESEGUITO | — |
@@ -1755,13 +1755,13 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1740 | 97 | Tutti pubblicano una fotografia. | NON ESEGUITO | — |
 | T-1741 | 97 | Tutti registrano un audio. | NON ESEGUITO | — |
 | T-1742 | 97 | Tutti verificano i dati di emergenza. | NON ESEGUITO | — |
-| T-1743 | 97 | Viene eseguito un backup. | NON ESEGUITO | — |
-| T-1744 | 97 | Viene eseguito un ripristino. | NON ESEGUITO | — |
+| T-1743 | 97 | Viene eseguito un backup. | SUPERATO | backup D1 pre-migrazione eseguito |
+| T-1744 | 97 | Viene eseguito un ripristino. | SUPERATO | backup D1 ripristinato in ambiente temporaneo |
 | T-1745 | 97 | Viene simulata una perdita della connessione. | NON ESEGUITO | — |
 | T-1746 | 97 | Viene simulata una rete lenta. | NON ESEGUITO | — |
 | T-1747 | 97 | Viene verificato il ritorno della rete. | NON ESEGUITO | — |
 | T-1748 | 98 | API funzionanti; | NON ESEGUITO | — |
-| T-1749 | 98 | backup eseguito; | NON ESEGUITO | — |
+| T-1749 | 98 | backup eseguito; | SUPERATO | backup eseguito con impronta SHA-256 verificata |
 | T-1750 | 98 | coda offline vuota oppure correttamente registrata; | NON ESEGUITO | — |
 | T-1751 | 98 | commenti sincronizzati; | NON ESEGUITO | — |
 | T-1752 | 98 | dati di emergenza disponibili offline. | NON ESEGUITO | — |
@@ -1803,7 +1803,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1788 | 100 | assenza di errori bloccanti aperti. | NON ESEGUITO | — |
 | T-1789 | 100 | autenticazione e identità; | NON ESEGUITO | — |
 | T-1790 | 100 | autorizzazioni dei ruoli; | NON ESEGUITO | — |
-| T-1791 | 100 | backup e ripristino; | NON ESEGUITO | — |
+| T-1791 | 100 | backup e ripristino; | SUPERATO | backup e ripristino D1 verificati end-to-end |
 | T-1792 | 100 | idempotenza; | SUPERATO | production-smoke: idempotenza coperta su quattro tipi di scrittura |
 | T-1793 | 100 | notifiche autorizzate correttamente; | NON ESEGUITO | — |
 | T-1794 | 100 | offline con allegati; | SUPERATO | offline-queue: allegati multimediali conservati e reinviati |
