@@ -29,7 +29,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.12.0",
+const VERSION = "1.13.0",
   API = "/api";
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/private`, {
@@ -1679,7 +1679,7 @@ function Diary({
         </div>
         <MapPinned />
       </button>
-      {author && !editingName ? (
+      {!deviceProfileName && (author && !editingName ? (
         <div className="identityBar">
           <div className="avatar">{author[0].toUpperCase()}</div>
           <div>
@@ -1704,7 +1704,7 @@ function Diary({
           </button>
           <small>Rimarrà memorizzato soltanto su questo dispositivo</small>
         </div>
-      )}
+      ))}
       <div className="feedFilters" aria-label="Filtri della bacheca">
         {[
           ["all", "Recenti"],
@@ -2652,7 +2652,8 @@ function VaultOnline({
     [profileId, setProfileId] = useState(""),
     [busy, setBusy] = useState(""),
     [documentStatus, setDocumentStatus] = useState(""),
-    [pendingDocumentDelete, setPendingDocumentDelete] = useState("");
+    [pendingDocumentDelete, setPendingDocumentDelete] = useState(""),
+    [viewMode, setViewMode] = useState("traveler");
   const refresh = async (c = groupCode) => {
     if (!c) return;
     const r = await fetch(`${API}/private`, {
@@ -2686,6 +2687,11 @@ function VaultOnline({
     );
     if (match) setProfileId(match.id);
   }, [people, preferredProfileId]);
+  useEffect(() => {
+    const person = people.find((item) => item.id === profileId);
+    if (person)
+      setViewMode(person.role === "coordinator" ? "coordinator" : "traveler");
+  }, [profileId, people]);
   const upload = async (type, file) => {
     if (!file || !profileId) return;
     setBusy(type);
@@ -2796,7 +2802,7 @@ function VaultOnline({
     ["insurance", "Assicurazione"],
   ];
   const selectedProfile = people.find((person) => person.id === profileId);
-  const isCoordinator = selectedProfile?.role === "coordinator";
+  const isCoordinator = viewMode === "coordinator";
   return (
     <section>
       <span className="eyebrow">AREA RISERVATA</span>
@@ -2807,6 +2813,24 @@ function VaultOnline({
         </div>
         <button onClick={lockDevice}>
           <LockKeyhole /> Blocca
+        </button>
+      </div>
+      <div className="rolePreview" aria-label="Anteprima del ruolo">
+        <div>
+          <small>ANTEPRIMA SCHERMATA</small>
+          <b>Che cosa vede ciascun ruolo</b>
+        </div>
+        <button
+          className={viewMode === "traveler" ? "active" : ""}
+          onClick={() => setViewMode("traveler")}
+        >
+          Viaggiatore
+        </button>
+        <button
+          className={viewMode === "coordinator" ? "active" : ""}
+          onClick={() => setViewMode("coordinator")}
+        >
+          Coordinatore
         </button>
       </div>
       {people.length > 0 && (
@@ -2881,7 +2905,7 @@ function VaultOnline({
           </div>
         </section>
       )}
-      {people.length ? (
+      {people.length && viewMode === "traveler" ? (
         <div className="documentList">
           {documentStatus && (
             <small className="documentStatus" role="status">
@@ -2931,7 +2955,7 @@ function VaultOnline({
             );
           })}
         </div>
-      ) : (
+      ) : !people.length ? (
         <div className="missingProfile">
           <Users />
           <div>
@@ -2943,7 +2967,7 @@ function VaultOnline({
           </div>
           <button onClick={onOpenGroup}>Vai al Gruppo</button>
         </div>
-      )}
+      ) : null}
       {pendingDocumentDelete && (
         <div className="confirmOverlay" onClick={() => setPendingDocumentDelete("")}>
           <div className="confirmCard" onClick={(event) => event.stopPropagation()}>
