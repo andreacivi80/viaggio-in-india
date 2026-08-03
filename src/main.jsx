@@ -29,7 +29,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.11.0",
+const VERSION = "1.12.0",
   API = "/api";
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/private`, {
@@ -2415,6 +2415,7 @@ function People({
       age: "",
       job: "",
       bio: "",
+      role: "traveler",
     }),
     [avatar, setAvatar] = useState(null),
     [code, setCode] = useState(""),
@@ -2449,7 +2450,14 @@ function People({
         "india-visitor-name",
         `${form.name} ${form.surname}`.trim(),
       );
-      setForm({ name: "", surname: "", age: "", job: "", bio: "" });
+      setForm({
+        name: "",
+        surname: "",
+        age: "",
+        job: "",
+        bio: "",
+        role: "traveler",
+      });
       setAvatar(null);
       setEditingId("");
       setFormStatus({
@@ -2529,6 +2537,16 @@ function People({
             value={form.bio}
             onChange={(e) => setForm({ ...form, bio: e.target.value })}
           />
+          <label className="roleSelect">
+            Ruolo nel viaggio
+            <select
+              value={form.role}
+              onChange={(e) => setForm({ ...form, role: e.target.value })}
+            >
+              <option value="traveler">Viaggiatore</option>
+              <option value="coordinator">Coordinatore</option>
+            </select>
+          </label>
           {formStatus.text && (
             <div className={`formStatus ${formStatus.type}`} role="status">
               {formStatus.text}
@@ -2563,7 +2581,13 @@ function People({
               {x.name} {x.surname}
             </h3>
             <small>
-              {[x.age && `${x.age} anni`, x.job].filter(Boolean).join(" · ")}
+              {[
+                x.role === "coordinator" ? "Coordinatore" : "Viaggiatore",
+                x.age && `${x.age} anni`,
+                x.job,
+              ]
+                .filter(Boolean)
+                .join(" · ")}
             </small>
             <p>{x.bio}</p>
             {groupCode && (
@@ -2577,6 +2601,7 @@ function People({
                       age: x.age || "",
                       job: x.job || "",
                       bio: x.bio || "",
+                      role: x.role || "traveler",
                     });
                     setAvatar(null);
                     document.querySelector(".profileForm")?.scrollIntoView({
@@ -2770,6 +2795,8 @@ function VaultOnline({
     ["tickets", "Biglietti"],
     ["insurance", "Assicurazione"],
   ];
+  const selectedProfile = people.find((person) => person.id === profileId);
+  const isCoordinator = selectedProfile?.role === "coordinator";
   return (
     <section>
       <span className="eyebrow">AREA RISERVATA</span>
@@ -2808,6 +2835,51 @@ function VaultOnline({
             ))}
           </select>
         </label>
+      )}
+      {isCoordinator && (
+        <section className="coordinatorDashboard">
+          <div className="coordinatorHead">
+            <div>
+              <span className="eyebrow">VISTA COORDINATORE</span>
+              <h3>Documenti del gruppo</h3>
+            </div>
+            <b>
+              {
+                privateData.documents.filter((document) =>
+                  types.some(([type]) => type === document.doc_type),
+                ).length
+              }
+              /{people.length * types.length}
+            </b>
+          </div>
+          <div className="documentMatrix">
+            {people.map((person) => (
+              <article key={person.id}>
+                <div className="matrixPerson">
+                  <span className="avatar">
+                    {person.name?.[0]?.toUpperCase() || "?"}
+                  </span>
+                  <b>{person.name} {person.surname || ""}</b>
+                </div>
+                <div className="matrixChecks">
+                  {types.map(([type, label]) => {
+                    const document = privateData.documents.find(
+                      (item) =>
+                        item.profile_id === person.id && item.doc_type === type,
+                    );
+                    return document ? (
+                      <button key={type} onClick={() => openDocument(document)}>
+                        <Check /> {label}
+                      </button>
+                    ) : (
+                      <span key={type}>— {label}</span>
+                    );
+                  })}
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
       )}
       {people.length ? (
         <div className="documentList">

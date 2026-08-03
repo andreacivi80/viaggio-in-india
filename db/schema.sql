@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   age TEXT DEFAULT '',
   job TEXT DEFAULT '',
   bio TEXT DEFAULT '',
+  role TEXT DEFAULT 'traveler',
   avatar_key TEXT,
   created_at TEXT NOT NULL
 );

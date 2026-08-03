@@ -895,6 +895,23 @@ h3 {
   font: inherit;
   outline: none;
 }
+.roleSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 800;
+}
+.roleSelect select {
+  min-height: 44px;
+  padding: 9px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: #fff;
+  color: var(--color-text-primary);
+  font: inherit;
+}
 .composerActions {
   display: flex;
   gap: 7px;
@@ -2605,6 +2622,78 @@ h2 {
 .documentList {
   display: grid;
   gap: 7px;
+}
+.coordinatorDashboard {
+  margin: 12px 0;
+  padding: 12px;
+  border: 1px solid #cbded5;
+  border-radius: var(--radius-card);
+  background: #eef6f1;
+}
+.coordinatorHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.coordinatorHead h3 {
+  margin: 2px 0 0;
+}
+.coordinatorHead > b {
+  padding: 7px 9px;
+  border-radius: var(--radius-pill);
+  background: var(--color-secondary);
+  color: #fff;
+}
+.documentMatrix {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+.documentMatrix article {
+  margin: 0;
+  padding: 10px;
+  border-radius: var(--radius-medium);
+  background: #fff;
+}
+.matrixPerson {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.matrixPerson .avatar {
+  width: 30px;
+  height: 30px;
+  flex: 0 0 30px;
+}
+.matrixChecks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  margin-top: 8px;
+}
+.matrixChecks button,
+.matrixChecks span {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 7px;
+  border: 0;
+  border-radius: var(--radius-small);
+  background: #e5f4e9;
+  color: #27613f;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: left;
+}
+.matrixChecks span {
+  background: #f5eee8;
+  color: #8b6f5f;
+}
+.matrixChecks svg {
+  width: 14px;
+  height: 14px;
 }
 .documentStatus {
   padding: 9px 10px;

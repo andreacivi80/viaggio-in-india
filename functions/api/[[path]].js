@@ -144,11 +144,12 @@ export async function onRequest({ request, env, params }) {
         age: String(form.get("age") || ""),
         job: String(form.get("job") || ""),
         bio: String(form.get("bio") || ""),
+        role: form.get("role") === "coordinator" ? "coordinator" : "traveler",
         avatar_key: avatar?.key || null,
         created_at: now(),
       };
       await env.DB.prepare(
-        "INSERT INTO profiles(id,name,surname,age,job,bio,avatar_key,created_at) VALUES(?,?,?,?,?,?,?,?)",
+        "INSERT INTO profiles(id,name,surname,age,job,bio,role,avatar_key,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
       )
         .bind(
           row.id,
@@ -157,6 +158,7 @@ export async function onRequest({ request, env, params }) {
           row.age,
           row.job,
           row.bio,
+          row.role,
           row.avatar_key,
           row.created_at,
         )
@@ -180,7 +182,7 @@ export async function onRequest({ request, env, params }) {
       const avatarKey = avatar?.key || current.avatar_key || null;
       try {
         await env.DB.prepare(
-          "UPDATE profiles SET name=?,surname=?,age=?,job=?,bio=?,avatar_key=? WHERE id=?",
+          "UPDATE profiles SET name=?,surname=?,age=?,job=?,bio=?,role=?,avatar_key=? WHERE id=?",
         )
           .bind(
             name,
@@ -188,6 +190,7 @@ export async function onRequest({ request, env, params }) {
             String(form.get("age") || ""),
             String(form.get("job") || ""),
             String(form.get("bio") || ""),
+            form.get("role") === "coordinator" ? "coordinator" : "traveler",
             avatarKey,
             profileId,
           )
