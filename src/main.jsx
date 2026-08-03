@@ -30,7 +30,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.25.2",
+const VERSION = "1.26.0",
   API = "/api";
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
@@ -2004,6 +2004,7 @@ function Diary({
   setDirectoryOpen,
 }) {
   const locationRequestRef = useRef(0);
+  const postOperationRef = useRef("");
   const [clock, setClock] = useState(() => Date.now());
   useEffect(() => {
     const timer = setInterval(() => setClock(Date.now()), 1000);
@@ -2135,9 +2136,14 @@ function Diary({
         f.set("longitude", String(postCoordinates.longitude));
       }
       files.forEach((file) => f.append("files", file));
+      if (!postOperationRef.current)
+        postOperationRef.current = crypto.randomUUID();
       const r = await fetch(`${API}/posts`, {
         method: "POST",
-        headers: sessionHeaders(sessionToken),
+        headers: {
+          ...sessionHeaders(sessionToken),
+          "x-idempotency-key": postOperationRef.current,
+        },
         body: f,
       });
       const j = await r.json();
@@ -2149,6 +2155,7 @@ function Diary({
       setPostCoordinates(null);
       setPlaceResults([]);
       setPostVisibility("public");
+      postOperationRef.current = "";
       setFileStatus("");
       await refresh();
       setComposeOpen(false);
@@ -2724,6 +2731,8 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
     [hiddenCommentIds, setHiddenCommentIds] = useState([]),
     [showAllComments, setShowAllComments] = useState(false);
   const replyInputRef = useRef(null);
+  const commentOperationRef = useRef("");
+  const reactionOperationRef = useRef({});
   const visitor = () => {
     let v = localStorage.getItem("india-visitor-id");
     if (!v) {
@@ -2740,16 +2749,23 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
       return;
     }
     try {
+      if (!reactionOperationRef.current[kind])
+        reactionOperationRef.current[kind] = crypto.randomUUID();
       const identityHeaders = sessionToken
         ? sessionHeaders(sessionToken)
         : await guestHeaders(reactionAuthor);
       const response = await fetch(`${API}/reactions`, {
         method: "POST",
-        headers: { "content-type": "application/json", ...identityHeaders },
+        headers: {
+          "content-type": "application/json",
+          ...identityHeaders,
+          "x-idempotency-key": reactionOperationRef.current[kind],
+        },
         body: JSON.stringify({ post_id: p.id, kind }),
       });
       const result = await response.json().catch(() => ({}));
       if (!response.ok) throw Error(result.error || "Reazione non inviata.");
+      delete reactionOperationRef.current[kind];
       await refresh();
     } catch (error) {
       setCommentStatus(error.message || "Reazione non inviata.");
@@ -2775,12 +2791,17 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
     f.set("text", comment);
     if (replyFile) f.set("file", replyFile);
     try {
+      if (!commentOperationRef.current)
+        commentOperationRef.current = crypto.randomUUID();
       const identityHeaders = sessionToken
         ? sessionHeaders(sessionToken)
         : await guestHeaders(commentAuthor);
       const r = await fetch(`${API}/comments`, {
         method: "POST",
-        headers: identityHeaders,
+        headers: {
+          ...identityHeaders,
+          "x-idempotency-key": commentOperationRef.current,
+        },
         body: f,
       });
       if (!r.ok) {
@@ -2792,6 +2813,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
       setComment("");
       if (replyInputRef.current) replyInputRef.current.style.height = "";
       setReplyFile(null);
+      commentOperationRef.current = "";
       await refresh();
       setCommentStatus("Commento pubblicato.");
     } catch (error) {
@@ -3501,6 +3523,7 @@ function VaultOnline({
   onOpenGroup,
   preferredProfileId,
 }) {
+  const documentOperationRef = useRef({});
   const [code, setCode] = useState(""),
     [privateData, setPrivateData] = useState({ documents: [], locations: [] }),
     [profileId, setProfileId] = useState(""),
@@ -3562,13 +3585,24 @@ function VaultOnline({
     f.set("profile_id", profileId);
     f.set("doc_type", type);
     f.set("file", file);
+    const signature = `${file.name}:${file.size}:${file.lastModified}`;
+    const pendingOperation = documentOperationRef.current[type];
+    if (!pendingOperation || pendingOperation.signature !== signature)
+      documentOperationRef.current[type] = {
+        signature,
+        key: crypto.randomUUID(),
+      };
       const r = await fetch(`${API}/documents`, {
         method: "POST",
-        headers: sessionHeaders(sessionToken),
+        headers: {
+          ...sessionHeaders(sessionToken),
+          "x-idempotency-key": documentOperationRef.current[type].key,
+        },
       body: f,
     });
     setBusy("");
     if (r.ok) {
+      delete documentOperationRef.current[type];
       setDocumentStatus("Documento caricato correttamente.");
       refresh();
     } else {
