@@ -30,8 +30,9 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 import { flushOfflineQueue, queueFormRequest } from "./offlineQueue.js";
+import { shouldUseResumableUpload, uploadFileResumable } from "./resumableUpload.js";
 
-const VERSION = "1.28.0",
+const VERSION = "1.29.0",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -2158,7 +2159,6 @@ function Diary({
     let pendingForm;
     try {
       const f = new FormData();
-      pendingForm = f;
       f.set("author_name", author || "Viaggiatore");
       f.set("profile_id", deviceProfileId || "");
       f.set("day_index", selectedDay);
@@ -2169,7 +2169,25 @@ function Diary({
         f.set("latitude", String(postCoordinates.latitude));
         f.set("longitude", String(postCoordinates.longitude));
       }
-      files.forEach((file) => f.append("files", file));
+      pendingForm = new FormData();
+      for (const [key, value] of f.entries()) pendingForm.append(key, value);
+      files.forEach((file) => pendingForm.append("files", file));
+      const uploadedIds = [];
+      for (const file of files) {
+        if (navigator.onLine && shouldUseResumableUpload(file)) {
+          setFileStatus(`Caricamento protetto di ${file.name}: 0%`);
+          const uploaded = await uploadFileResumable({
+            api: API,
+            file,
+            scope: "post",
+            visibility: postVisibility,
+            headers: sessionHeaders(sessionToken),
+            onProgress: (progress) => setFileStatus(`Caricamento protetto di ${file.name}: ${progress}%`),
+          });
+          uploadedIds.push(uploaded.upload_id);
+        } else f.append("files", file);
+      }
+      f.set("upload_ids", JSON.stringify(uploadedIds));
       if (!postOperationRef.current)
         postOperationRef.current = crypto.randomUUID();
       const r = await fetch(`${API}/posts`, {
@@ -3673,6 +3691,18 @@ function VaultOnline({
         key: crypto.randomUUID(),
       };
     try {
+      if (navigator.onLine && shouldUseResumableUpload(file)) {
+        setDocumentStatus(`Caricamento protetto: 0%`);
+        const uploaded = await uploadFileResumable({
+          api: API,
+          file,
+          scope: "document",
+          headers: sessionHeaders(sessionToken),
+          onProgress: (progress) => setDocumentStatus(`Caricamento protetto: ${progress}%`),
+        });
+        f.delete("file");
+        f.set("upload_id", uploaded.upload_id);
+      }
       const r = await fetch(`${API}/documents`, {
         method: "POST",
         headers: {

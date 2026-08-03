@@ -5,3 +5,4 @@ dist/
 .dev-output.log
 .dev-error.log
 backups/
+.wrangler/
