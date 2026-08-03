@@ -30,7 +30,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.25.0",
+const VERSION = "1.25.1",
   API = "/api";
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
@@ -118,17 +118,13 @@ async function verifyGroupCode(code, setGroupCode) {
   return true;
 }
 const cityImages = {
-  Delhi:
-    "https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1100&q=80",
-  Udaipur:
-    "https://images.unsplash.com/photo-1595658658481-d53d3f999875?auto=format&fit=crop&w=1100&q=80",
-  Jodhpur:
-    "https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=1100&q=80",
-  Jaipur:
-    "https://images.unsplash.com/photo-1599661046289-e31897846e41?auto=format&fit=crop&w=1100&q=80",
-  Agra: "https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1100&q=80",
-  Varanasi:
-    "https://images.unsplash.com/photo-1561361058-c24e02d4a4c4?auto=format&fit=crop&w=1100&q=80",
+  Delhi: "/cities/delhi.jpg",
+  Udaipur: "/cities/udaipur.jpg",
+  Ranakpur: "/cities/ranakpur.jpg",
+  Jodhpur: "/cities/jodhpur.jpg",
+  Jaipur: "/cities/jaipur.jpg",
+  Agra: "/cities/agra.jpg",
+  Varanasi: "/cities/varanasi.jpg",
 };
 const places = {
   Delhi: [28.6139, 77.209],
@@ -969,10 +965,12 @@ function App() {
     : indiaToday;
   const todayTripIndex = tripDateKeys.indexOf(activeDateKey);
   const effectiveGroupCode = publicPreview ? "" : groupCode;
-  const sessionTokenRef = useRef(sessionToken);
+  const effectiveSessionToken = publicPreview ? "" : sessionToken;
+  const sessionTokenRef = useRef(effectiveSessionToken);
   useEffect(() => {
-    sessionTokenRef.current = sessionToken;
-  }, [sessionToken]);
+    sessionTokenRef.current = effectiveSessionToken;
+    refresh();
+  }, [effectiveSessionToken]);
   const refresh = async () => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
@@ -1411,14 +1409,14 @@ function App() {
           <span className="flag">🇮🇳</span>
           <span className="versionBadge">REV {VERSION}</span>
           <button
-            className={`accessPill ${effectiveGroupCode || sessionToken ? "unlocked" : ""}`}
+            className={`accessPill ${effectiveGroupCode || effectiveSessionToken ? "unlocked" : ""}`}
             onClick={() => {
               setQuickProfileOpen(!quickProfileOpen);
               setNotificationOpen(false);
             }}
           >
             <CircleUserRound size={15} />
-            {sessionToken
+            {effectiveSessionToken
               ? currentProfile?.name || "Profilo"
               : effectiveGroupCode
                 ? "Scegli nome"
@@ -1720,6 +1718,10 @@ function App() {
                       src={cityImages[d.city]}
                       alt={`Vista di ${d.city}`}
                       loading="lazy"
+                      onError={(event) => {
+                        event.currentTarget.onerror = null;
+                        event.currentTarget.src = "/cities/delhi.jpg";
+                      }}
                     />
                     <span className="dayNo">
                       {String(i + 1).padStart(2, "0")}
@@ -1851,14 +1853,14 @@ function App() {
             selectedDay={selectedDay}
             setSelectedDay={setSelectedDay}
             groupCode={effectiveGroupCode}
-            sessionToken={sessionToken}
+            sessionToken={effectiveSessionToken}
             setGroupCode={setGroupCode}
             refresh={refresh}
             composeOpen={composeOpen}
             setComposeOpen={setComposeOpen}
             deviceProfileName={
               currentProfile
-                && sessionToken
+                && effectiveSessionToken
                 ? `${currentProfile.name} ${currentProfile.surname || ""}`.trim()
                 : ""
             }
@@ -1871,8 +1873,8 @@ function App() {
           <People
             people={people}
             groupCode={effectiveGroupCode}
-            sessionToken={sessionToken}
-            sessionProfile={sessionProfile}
+            sessionToken={effectiveSessionToken}
+            sessionProfile={publicPreview ? null : sessionProfile}
             setGroupCode={setGroupCode}
             refresh={refresh}
             onOpenPrivate={(profileId) => {
@@ -1885,7 +1887,7 @@ function App() {
           <VaultOnline
             people={people}
             groupCode={effectiveGroupCode}
-            sessionToken={sessionToken}
+            sessionToken={effectiveSessionToken}
             setSessionToken={setSessionToken}
             setGroupCode={setGroupCode}
             onOpenGroup={() => setTab("people")}
