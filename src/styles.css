@@ -325,24 +325,24 @@ body {
 .heroTravelers {
   position: absolute;
   z-index: 4;
-  top: 54px;
-  left: 15px;
-  min-width: 105px;
-  height: 58px;
+  top: 51px;
+  left: 18px;
+  min-width: 84px;
+  height: 39px;
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 4px 10px 4px 5px;
+  gap: 5px;
+  padding: 3px 8px 3px 4px;
   border: 1px solid #ffffffa8;
-  border-radius: 16px;
+  border-radius: 12px;
   background: #fffaf1ed;
   color: var(--green);
   box-shadow: 0 8px 22px #071b1444;
   backdrop-filter: blur(8px);
 }
 .heroTravelers img {
-  width: 34px;
-  height: 48px;
+  width: 22px;
+  height: 32px;
   flex: 0 0 auto;
   object-fit: contain;
 }
@@ -353,13 +353,13 @@ body {
   line-height: 1;
 }
 .heroTravelers b {
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 0.15px;
 }
 .heroTravelers small {
-  margin-top: 4px;
+  margin-top: 2px;
   color: var(--orange);
-  font-size: 17px;
+  font-size: 13px;
   font-weight: 900;
 }
 .syncErrorToast {
@@ -2499,6 +2499,8 @@ h2 {
 }
 .socialHeading h2 {
   margin-bottom: 14px;
+  white-space: nowrap;
+  font-size: clamp(20px, 6.2vw, 27px);
 }
 .travelerDirectoryButton {
   position: relative;

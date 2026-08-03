@@ -30,7 +30,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.21.1",
+const VERSION = "1.21.2",
   API = "/api";
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
@@ -730,13 +730,30 @@ function TripMap({ selectedDay, onSelect, onReady }) {
 function GoogleTripMap({ selectedDay, onReady }) {
   const day = selectedDay == null ? null : days[selectedDay];
   const place = (value) => `${value === "Delhi" ? "New Delhi" : value}, India`;
-  const mapQuery = day
-    ? day.from === day.to
-      ? place(day.to)
-      : `${place(day.from)} to ${place(day.to)}`
-    : "Northern India";
-  const zoom = day ? (day.km <= 35 ? 11 : day.km <= 120 ? 8 : 6) : 5;
-  const embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=${zoom}&output=embed`;
+  const routeCoordinates = day
+    ? day.path
+      ? roadPaths[day.path]
+      : [places[day.from], places[day.to]]
+    : [
+        places.Delhi,
+        places.Udaipur,
+        places.Jodhpur,
+        places.Jaipur,
+        places.Agra,
+        places.Varanasi,
+        places.Delhi,
+      ];
+  const routePoint = ([lat, lng]) => `${lat.toFixed(5)},${lng.toFixed(5)}`;
+  const embedParams = new URLSearchParams({
+    output: "embed",
+    saddr: routePoint(routeCoordinates[0]),
+    daddr: routeCoordinates
+      .slice(1)
+      .map(routePoint)
+      .join(" to:"),
+  });
+  if (day?.transport.toLowerCase().includes("piedi")) embedParams.set("dirflg", "w");
+  const embedUrl = `https://maps.google.com/maps?${embedParams.toString()}`;
   const directions = new URL("https://www.google.com/maps/dir/");
   directions.searchParams.set("api", "1");
   if (day) {
@@ -2140,7 +2157,7 @@ function Diary({
       <div className="socialHeading">
         <div>
           <span className="eyebrow">SOCIAL DEL VIAGGIO</span>
-          <h2>Raccontiamola insieme</h2>
+          <h2>Raccontiamocele insieme</h2>
         </div>
       </div>
       <button className="liveStatus" onClick={() => setSelectedDay(liveIndex)}>
