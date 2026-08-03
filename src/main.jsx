@@ -6,7 +6,6 @@ import {
   Route,
   Camera,
   Users,
-  PersonStanding,
   LockKeyhole,
   Mic,
   MessageCircle,
@@ -31,8 +30,9 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.21.0",
+const VERSION = "1.21.1",
   API = "/api";
+const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
   (_, index) => `2026-08-${String(10 + index).padStart(2, "0")}`,
 );
@@ -1365,6 +1365,20 @@ function App() {
             )}
           </button>
         </div>
+        <button
+          className="heroTravelers"
+          onClick={() => {
+            setTab("diary");
+            setTravelersOpen(true);
+          }}
+          aria-label={`Apri elenco viaggiatori, ${people.length} persone`}
+        >
+          <img src={TRAVELER_ICON} alt="" aria-hidden="true" />
+          <span>
+            <b>Viaggiatori</b>
+            <small>{people.length}</small>
+          </span>
+        </button>
         {notificationOpen && (
           <div className="notificationPanel">
             <div>
@@ -2128,17 +2142,6 @@ function Diary({
           <span className="eyebrow">SOCIAL DEL VIAGGIO</span>
           <h2>Raccontiamola insieme</h2>
         </div>
-        <button
-          className="travelerDirectoryButton simple"
-          onClick={() => setDirectoryOpen(true)}
-          aria-label={`Apri elenco viaggiatori, ${people.length} persone`}
-        >
-          <PersonStanding aria-hidden="true" />
-          <span>
-            <b>Viaggiatori</b>
-            <small>{people.length}</small>
-          </span>
-        </button>
       </div>
       <button className="liveStatus" onClick={() => setSelectedDay(liveIndex)}>
         <span className="liveDot" />

@@ -322,6 +322,46 @@ body {
   letter-spacing: 0.7px;
   backdrop-filter: blur(8px);
 }
+.heroTravelers {
+  position: absolute;
+  z-index: 4;
+  top: 54px;
+  left: 15px;
+  min-width: 105px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 10px 4px 5px;
+  border: 1px solid #ffffffa8;
+  border-radius: 16px;
+  background: #fffaf1ed;
+  color: var(--green);
+  box-shadow: 0 8px 22px #071b1444;
+  backdrop-filter: blur(8px);
+}
+.heroTravelers img {
+  width: 34px;
+  height: 48px;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+.heroTravelers span {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1;
+}
+.heroTravelers b {
+  font-size: 10px;
+  letter-spacing: 0.15px;
+}
+.heroTravelers small {
+  margin-top: 4px;
+  color: var(--orange);
+  font-size: 17px;
+  font-weight: 900;
+}
 .syncErrorToast {
   position: fixed;
   z-index: 120;
@@ -2571,33 +2611,6 @@ h2 {
   font-size: 10px;
   font-weight: 900;
   white-space: nowrap;
-}
-.travelerDirectoryButton.simple {
-  width: auto;
-  min-width: 94px;
-  height: 48px;
-  padding: 6px 10px 6px 7px;
-  gap: 6px;
-}
-.travelerDirectoryButton.simple > svg {
-  width: 25px;
-  height: 25px;
-  flex: 0 0 auto;
-  stroke-width: 2.1;
-}
-.travelerDirectoryButton.simple > span {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  line-height: 1.05;
-}
-.travelerDirectoryButton.simple b {
-  font-size: 10px;
-}
-.travelerDirectoryButton.simple small {
-  color: var(--orange);
-  font-size: 15px;
-  font-weight: 900;
 }
 .directoryBackdrop {
   position: fixed;
