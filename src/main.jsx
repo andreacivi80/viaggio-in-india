@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
+import "maplibre-gl/dist/maplibre-gl.css";
 import {
   MapPinned,
   Route,
@@ -22,7 +21,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.1.2",
+const VERSION = "1.2.0",
   API = "/api";
 const cityImages = {
   Delhi:
@@ -355,34 +354,87 @@ const load = (k, f) => {
 function TripMap({ selectedDay, onSelect }) {
   const el = useRef(null),
     map = useRef(null),
-    layers = useRef([]);
+    maplibre = useRef(null),
+    markers = useRef([]);
+  const [ready, setReady] = useState(false);
   const day = selectedDay == null ? null : days[selectedDay];
   useEffect(() => {
     if (!el.current || map.current) return;
-    map.current = L.map(el.current, {
-      zoomControl: true,
-      attributionControl: true,
-      minZoom: 4,
-    }).setView([25.8, 77.2], 5);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution: "© OpenStreetMap contributors",
-      maxZoom: 18,
-    }).addTo(map.current);
-    setTimeout(() => map.current?.invalidateSize(), 60);
+    let cancelled = false;
+    import("maplibre-gl").then(({ default: maplibregl }) => {
+      if (cancelled || !el.current) return;
+      maplibre.current = maplibregl;
+      map.current = new maplibregl.Map({
+        container: el.current,
+        style: "https://tiles.openfreemap.org/styles/liberty",
+        center: [77.2, 25.8],
+        zoom: 4.5,
+        minZoom: 3.5,
+        attributionControl: true,
+        cooperativeGestures: true,
+        antialias: true,
+        fadeDuration: 0,
+      });
+      map.current.addControl(
+        new maplibregl.NavigationControl({ showCompass: false }),
+        "top-right",
+      );
+      map.current.addControl(
+        new maplibregl.ScaleControl({ unit: "metric", maxWidth: 90 }),
+        "bottom-left",
+      );
+      map.current.on("load", () => {
+        map.current.addSource("trip-route", {
+          type: "geojson",
+          data: { type: "FeatureCollection", features: [] },
+        });
+        map.current.addLayer({
+          id: "trip-route-shadow",
+          type: "line",
+          source: "trip-route",
+          paint: {
+            "line-color": "#102d25",
+            "line-width": 9,
+            "line-opacity": 0.28,
+            "line-blur": 2,
+          },
+        });
+        map.current.addLayer({
+          id: "trip-route-road",
+          type: "line",
+          source: "trip-route",
+          filter: ["==", ["get", "mode"], "road"],
+          paint: {
+            "line-color": "#ed6a24",
+            "line-width": 5,
+            "line-opacity": 1,
+          },
+        });
+        map.current.addLayer({
+          id: "trip-route-transit",
+          type: "line",
+          source: "trip-route",
+          filter: ["==", ["get", "mode"], "transit"],
+          paint: {
+            "line-color": "#ed6a24",
+            "line-width": 4,
+            "line-dasharray": [2, 2],
+          },
+        });
+        setReady(true);
+      });
+    });
     return () => {
+      cancelled = true;
       map.current?.remove();
       map.current = null;
     };
   }, []);
   useEffect(() => {
-    if (!map.current) return;
-    layers.current.forEach((x) => x.remove());
-    layers.current = [];
-    const add = (x) => {
-      x.addTo(map.current);
-      layers.current.push(x);
-      return x;
-    };
+    if (!map.current || !ready || !maplibre.current) return;
+    const maplibregl = maplibre.current;
+    markers.current.forEach((x) => x.remove());
+    markers.current = [];
     const sequence = [
       "Delhi",
       "Udaipur",
@@ -394,63 +446,76 @@ function TripMap({ selectedDay, onSelect }) {
       "Delhi",
     ];
     sequence.forEach((name, i) => {
-      const marker = add(
-        L.circleMarker(places[name], {
-          radius:
-            day && (name === day.from || name === day.to || name === day.via)
-              ? 9
-              : 6,
-          color: "#fff",
-          weight: 2,
-          fillColor:
-            day && (name === day.from || name === day.to || name === day.via)
-              ? "#e85d18"
-              : "#153d31",
-          fillOpacity: 1,
-        }),
-      );
-      marker.bindPopup(`<b>${i + 1}. ${name}</b>`);
-      marker.on("click", () =>
-        onSelect?.(days.findIndex((d) => d.city === name)),
-      );
+      const active =
+        day && (name === day.from || name === day.to || name === day.via);
+      const node = document.createElement("button");
+      node.className = `vectorMarker ${active ? "active" : ""}`;
+      node.textContent = String(i + 1);
+      node.setAttribute("aria-label", `Tappa ${i + 1}: ${name}`);
+      node.onclick = () => onSelect?.(days.findIndex((d) => d.city === name));
+      const [lat, lng] = places[name];
+      const marker = new maplibregl.Marker({ element: node, anchor: "center" })
+        .setLngLat([lng, lat])
+        .setPopup(
+          new maplibregl.Popup({ offset: 18 }).setHTML(
+            `<strong>${i + 1}. ${name}</strong>`,
+          ),
+        )
+        .addTo(map.current);
+      markers.current.push(marker);
     });
-    const draw = (coords, opts = {}) =>
-      add(
-        L.polyline(coords, {
-          color: "#e85d18",
-          weight: 4,
-          opacity: 0.9,
-          ...opts,
-        }),
-      );
+    const line = (coords, mode = "road") => ({
+      type: "Feature",
+      properties: { mode },
+      geometry: {
+        type: "LineString",
+        coordinates: coords.map(([lat, lng]) => [lng, lat]),
+      },
+    });
+    let features;
+    let fitPoints;
     if (day) {
       const coords = day.path
         ? roadPaths[day.path]
         : day.from === day.to
           ? [places[day.from]]
           : [places[day.from], places[day.to]];
-      if (coords.length > 1)
-        draw(coords, {
-          dashArray: ["Aereo", "Treno", "Treno notturno"].includes(
-            day.transport,
-          )
-            ? "10 10"
-            : null,
-        });
-      map.current.fitBounds(L.latLngBounds(coords).pad(0.35), {
-        maxZoom: day.from === day.to ? 11 : 7,
-      });
+      const transit = ["Aereo", "Treno", "Treno notturno"].includes(
+        day.transport,
+      );
+      features =
+        coords.length > 1 ? [line(coords, transit ? "transit" : "road")] : [];
+      fitPoints = coords;
     } else {
-      draw([places.Delhi, places.Udaipur], { dashArray: "10 10" });
-      draw(roadPaths["Udaipur-Jodhpur"]);
-      draw(roadPaths["Jodhpur-Jaipur"]);
-      draw(roadPaths["Jaipur-Agra"]);
-      draw([places.Agra, places.Varanasi, places.Delhi], {
-        dashArray: "10 10",
-      });
-      map.current.fitBounds(L.latLngBounds(Object.values(places)).pad(0.08));
+      features = [
+        line([places.Delhi, places.Udaipur], "transit"),
+        line(roadPaths["Udaipur-Jodhpur"]),
+        line(roadPaths["Jodhpur-Jaipur"]),
+        line(roadPaths["Jaipur-Agra"]),
+        line([places.Agra, places.Varanasi], "transit"),
+        line([places.Varanasi, places.Delhi], "transit"),
+      ];
+      fitPoints = Object.values(places);
     }
-  }, [selectedDay]);
+    map.current.getSource("trip-route").setData({
+      type: "FeatureCollection",
+      features,
+    });
+    if (fitPoints.length === 1) {
+      const [lat, lng] = fitPoints[0];
+      map.current.flyTo({ center: [lng, lat], zoom: 10.5, duration: 700 });
+    } else {
+      const bounds = fitPoints.reduce(
+        (box, [lat, lng]) => box.extend([lng, lat]),
+        new maplibregl.LngLatBounds(),
+      );
+      map.current.fitBounds(bounds, {
+        padding: { top: 55, right: 45, bottom: 100, left: 45 },
+        maxZoom: day ? 7.2 : 5.2,
+        duration: 700,
+      });
+    }
+  }, [selectedDay, ready]);
   return (
     <div
       className="realMap"
@@ -468,8 +533,9 @@ function App() {
     [open, setOpen] = useState(0),
     [selectedDay, setSelectedDay] = useState(0),
     [mapDay, setMapDay] = useState(null),
+    [composeOpen, setComposeOpen] = useState(false),
     [groupCode, setGroupCode] = useState(
-      () => sessionStorage.getItem("india-group-code") || "",
+      () => localStorage.getItem("india-group-code") || "",
     ),
     [syncing, setSyncing] = useState(false);
   const refresh = async () => {
@@ -497,7 +563,7 @@ function App() {
     [done],
   );
   useEffect(() => {
-    if (groupCode) sessionStorage.setItem("india-group-code", groupCode);
+    if (groupCode) localStorage.setItem("india-group-code", groupCode);
   }, [groupCode]);
   const completed = useMemo(
     () => Object.values(done).filter(Boolean).length,
@@ -656,6 +722,7 @@ function App() {
                           onClick={() => {
                             setSelectedDay(i);
                             setTab("diary");
+                            setComposeOpen(true);
                           }}
                         >
                           <Camera /> Aggiungi ricordo
@@ -679,6 +746,8 @@ function App() {
             groupCode={groupCode}
             setGroupCode={setGroupCode}
             refresh={refresh}
+            composeOpen={composeOpen}
+            setComposeOpen={setComposeOpen}
           />
         )}{" "}
         {tab === "people" && (
@@ -697,6 +766,15 @@ function App() {
           />
         )}
       </main>
+      <button
+        className="uploadFab"
+        onClick={() => {
+          setTab("diary");
+          setComposeOpen(true);
+        }}
+      >
+        <Plus size={22} /> <span>Carica</span>
+      </button>
       <footer>
         <span>🇮🇳</span>
         <p>Un viaggio si misura negli amici, non nei chilometri.</p>
@@ -771,6 +849,8 @@ function Diary({
   groupCode,
   setGroupCode,
   refresh,
+  composeOpen,
+  setComposeOpen,
 }) {
   const today = new Date();
   const tripStart = new Date("2026-08-10T00:00:00+05:30");
@@ -779,7 +859,9 @@ function Diary({
     Math.min(13, Math.floor((today - tripStart) / 86400000)),
   );
   const liveDay = days[liveIndex];
-  const [text, setText] = useState(() => localStorage.getItem("india-draft") || ""),
+  const [text, setText] = useState(
+      () => localStorage.getItem("india-draft") || "",
+    ),
     [file, setFile] = useState(null),
     [author, setAuthor] = useState(
       () => localStorage.getItem("india-visitor-name") || "",
@@ -810,6 +892,7 @@ function Diary({
       localStorage.removeItem("india-draft");
       setFile(null);
       await refresh();
+      setComposeOpen(false);
     } catch (e) {
       alert(e.message);
     } finally {
@@ -820,14 +903,15 @@ function Diary({
     <section>
       <span className="eyebrow">SOCIAL DEL VIAGGIO</span>
       <h2>Raccontiamola insieme</h2>
-      <button
-        className="liveStatus"
-        onClick={() => setSelectedDay(liveIndex)}
-      >
+      <button className="liveStatus" onClick={() => setSelectedDay(liveIndex)}>
         <span className="liveDot" />
         <div>
-          <small>{today < tripStart ? "PROSSIMA TAPPA" : "DOVE SIAMO ORA"}</small>
-          <b>{liveDay.city} · Giorno {liveIndex + 1}</b>
+          <small>
+            {today < tripStart ? "PROSSIMA TAPPA" : "DOVE SIAMO ORA"}
+          </small>
+          <b>
+            {liveDay.city} · Giorno {liveIndex + 1}
+          </b>
           <span>{liveDay.title}</span>
         </div>
         <MapPinned />
@@ -858,71 +942,89 @@ function Diary({
           text="Il primo ricordo pubblicato apparirà qui per tutti."
         />
       )}
-      <div className="dataSaver">
-        <Wifi />
-        <div>
-          <b>Modalità pochi giga</b>
-          <small>I contenuti si sincronizzano su tutti i telefoni.</small>
-        </div>
-      </div>
-      {groupCode ? (
-        <div className="composer">
-          <div className="groupBadge">
-            <LockKeyhole /> Pubblicazione viaggiatore
+      {composeOpen && (
+        <div className="sheetBackdrop" onClick={() => setComposeOpen(false)}>
+          <div className="uploadSheet" onClick={(e) => e.stopPropagation()}>
+            <div className="sheetHandle" />
+            <div className="sheetTitle">
+              <div>
+                <small>NUOVO CONTENUTO</small>
+                <h3>Che cosa vuoi condividere?</h3>
+              </div>
+              <button onClick={() => setComposeOpen(false)} aria-label="Chiudi">
+                ×
+              </button>
+            </div>
+            <div className="dataSaver">
+              <Wifi />
+              <div>
+                <b>Modalità pochi giga</b>
+                <small>Il contenuto sarà visibile su tutti i telefoni.</small>
+              </div>
+            </div>
+            {groupCode ? (
+              <div className="composer">
+                <div className="groupBadge">
+                  <LockKeyhole /> Pubblicazione viaggiatore
+                </div>
+                <select
+                  value={selectedDay}
+                  onChange={(e) => setSelectedDay(Number(e.target.value))}
+                >
+                  {days.map((d, i) => (
+                    <option value={i} key={i}>
+                      Giorno {i + 1} · {d.city}
+                    </option>
+                  ))}
+                </select>
+                <textarea
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder="Racconta questo momento…"
+                />
+                <div className="composerActions">
+                  <label>
+                    <ImageIcon /> Foto
+                    <input
+                      type="file"
+                      accept="image/*,.heic,.heif"
+                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    />
+                  </label>
+                  <label>
+                    <Camera /> Video
+                    <input
+                      type="file"
+                      accept="video/*,.mov,.mp4"
+                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    />
+                  </label>
+                  <label>
+                    <Mic /> Audio
+                    <input
+                      type="file"
+                      accept="audio/*,.m4a,.aac"
+                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                    />
+                  </label>
+                  <button disabled={busy} onClick={add}>
+                    <Plus /> {busy ? "Invio…" : "Pubblica"}
+                  </button>
+                </div>
+                {file && (
+                  <small className="selected">Pronto: {file.name}</small>
+                )}
+              </div>
+            ) : (
+              <UnlockCard
+                code={code}
+                setCode={setCode}
+                onUnlock={() => code === "india26" && setGroupCode(code)}
+                text="I familiari possono commentare. Il codice serve per pubblicare foto, video e audio."
+              />
+            )}
           </div>
-          <select
-            value={selectedDay}
-            onChange={(e) => setSelectedDay(Number(e.target.value))}
-          >
-            {days.map((d, i) => (
-              <option value={i} key={i}>
-                Giorno {i + 1} · {d.city}
-              </option>
-            ))}
-          </select>
-          <textarea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Racconta questo momento…"
-          />
-          <div className="composerActions">
-            <label>
-              <ImageIcon /> Foto
-              <input
-                type="file"
-                accept="image/*,.heic,.heif"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-              />
-            </label>
-            <label>
-              <Camera /> Video
-              <input
-                type="file"
-                accept="video/*,.mov,.mp4"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-              />
-            </label>
-            <label>
-              <Mic /> Audio
-              <input
-                type="file"
-                accept="audio/*,.m4a,.aac"
-                onChange={(e) => setFile(e.target.files?.[0] || null)}
-              />
-            </label>
-            <button disabled={busy} onClick={add}>
-              <Plus /> {busy ? "Invio…" : "Pubblica"}
-            </button>
-          </div>
-          {file && <small className="selected">Pronto: {file.name}</small>}
         </div>
-      ) : (
-        <UnlockCard
-          code={code}
-          setCode={setCode}
-          onUnlock={() => code === "india26" && setGroupCode(code)}
-          text="I familiari possono già commentare e mettere cuori. Il codice serve per pubblicare nuovi ricordi."
-        />
       )}
     </section>
   );
@@ -1001,7 +1103,6 @@ function Post({ p, author, groupCode, refresh }) {
           <button onClick={remove}>Elimina</button>
         </div>
       )}
-      {p.text && <p>{p.text}</p>}
       {p.media_type?.startsWith("image") && (
         <img src={p.media_url} alt="Ricordo del viaggio" loading="lazy" />
       )}
@@ -1011,6 +1112,7 @@ function Post({ p, author, groupCode, refresh }) {
       {p.media_type?.startsWith("audio") && (
         <audio controls preload="metadata" src={p.media_url} />
       )}
+      {p.text && <p className="postCaption">{p.text}</p>}
       <div className="reactions">
         <button onClick={() => react("heart")}>
           ♥ <b>{count("heart")}</b>
