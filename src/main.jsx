@@ -29,7 +29,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.13.0",
+const VERSION = "1.14.0",
   API = "/api";
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/private`, {
@@ -829,9 +829,14 @@ function App() {
     [groupCode, setGroupCode] = useState(
       () => localStorage.getItem("india-group-code") || "",
     ),
+    [publicPreview, setPublicPreview] = useState(false),
     [syncing, setSyncing] = useState(false),
     [syncError, setSyncError] = useState(""),
-    [lastSync, setLastSync] = useState(null);
+    [lastSync, setLastSync] = useState(null),
+    [lastActivityRead, setLastActivityRead] = useState(
+      () => localStorage.getItem("india-activity-read") || "",
+    );
+  const effectiveGroupCode = publicPreview ? "" : groupCode;
   const refresh = async () => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
@@ -960,7 +965,7 @@ function App() {
     );
   }, [currentProfile?.id]);
   const quickShareLocation = () => {
-    if (!currentProfile || !groupCode) return;
+    if (!currentProfile || !effectiveGroupCode) return;
     setQuickStatus("Cerco la posizione…");
     navigator.geolocation?.getCurrentPosition(
       async (position) => {
@@ -968,7 +973,7 @@ function App() {
           method: "POST",
           headers: {
             "content-type": "application/json",
-            "x-group-code": groupCode,
+            "x-group-code": effectiveGroupCode,
           },
           body: JSON.stringify({
             profile_id: currentProfile.id,
@@ -988,10 +993,10 @@ function App() {
     );
   };
   const quickRemoveLocation = async () => {
-    if (!currentProfile || !groupCode) return;
+    if (!currentProfile || !effectiveGroupCode) return;
     const response = await fetch(`${API}/locations/${currentProfile.id}`, {
       method: "DELETE",
-      headers: { "x-group-code": groupCode },
+      headers: { "x-group-code": effectiveGroupCode },
     });
     setQuickStatus(
       response.ok ? "Posizione cancellata." : "Cancellazione non riuscita.",
@@ -1044,6 +1049,43 @@ function App() {
       restoreNavigationOrigin(navigationOriginRef.current);
     }
   };
+  const activityItems = useMemo(
+    () =>
+      posts
+        .flatMap((post) => [
+          {
+            id: `post-${post.id}`,
+            kind: "post",
+            author: post.author_name,
+            text: `Nuovo ricordo · ${days[post.day_index]?.city || "India"}`,
+            createdAt: post.created_at,
+            dayIndex: Number(post.day_index) || 0,
+          },
+          ...(post.comments || []).map((comment) => ({
+            id: `comment-${comment.id}`,
+            kind: "comment",
+            author: comment.author_name,
+            text: `Nuovo commento · ${comment.text || "Allegato"}`,
+            createdAt: comment.created_at,
+            dayIndex: Number(post.day_index) || 0,
+          })),
+        ])
+        .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))),
+    [posts],
+  );
+  const unreadActivityCount = activityItems.filter(
+    (item) => !lastActivityRead || item.createdAt > lastActivityRead,
+  ).length;
+  const toggleActivityPanel = () => {
+    const opening = !notificationOpen;
+    setNotificationOpen(opening);
+    setQuickProfileOpen(false);
+    if (opening) {
+      const readAt = new Date().toISOString();
+      setLastActivityRead(readAt);
+      localStorage.setItem("india-activity-read", readAt);
+    }
+  };
   return (
     <div className="app">
       <header className="hero">
@@ -1052,24 +1094,28 @@ function App() {
           <span className="flag">🇮🇳</span>
           <span className="versionBadge">REV {VERSION}</span>
           <button
-            className={`accessPill ${groupCode ? "unlocked" : ""}`}
+            className={`accessPill ${effectiveGroupCode ? "unlocked" : ""}`}
             onClick={() => {
               setQuickProfileOpen(!quickProfileOpen);
               setNotificationOpen(false);
             }}
           >
             <CircleUserRound size={15} />
-            {currentProfile?.name || (groupCode ? "Profilo" : "Pubblico")}
+            {effectiveGroupCode
+              ? currentProfile?.name || "Profilo"
+              : "Pubblico"}
           </button>
           <button
             className="headerIcon"
-            aria-label="Notifiche"
-            onClick={() => setNotificationOpen(!notificationOpen)}
+            aria-label="Attività recenti"
+            onClick={toggleActivityPanel}
           >
             <Bell size={18} />
             {syncing && <span className="syncDot" />}
-            {posts.length > 0 && (
-              <span className="notificationBadge">{Math.min(posts.length, 9)}</span>
+            {unreadActivityCount > 0 && (
+              <span className="notificationBadge">
+                {Math.min(unreadActivityCount, 9)}
+              </span>
             )}
           </button>
         </div>
@@ -1081,7 +1127,7 @@ function App() {
         {notificationOpen && (
           <div className="notificationPanel">
             <div>
-              <b>Notifiche del viaggio</b>
+              <b>Attività recenti</b>
               <button
                 aria-label="Chiudi notifiche"
                 onClick={() => setNotificationOpen(false)}
@@ -1089,27 +1135,28 @@ function App() {
                 ×
               </button>
             </div>
-            {posts.slice(0, 3).map((post) => (
+            <small className="notificationKind">
+              Avvisi nell’app · le notifiche push non sono ancora attive
+            </small>
+            {activityItems.slice(0, 6).map((item) => (
               <button
-                key={post.id}
+                key={item.id}
                 onClick={() => {
-                  setSelectedDay(Number(post.day_index) || 0);
+                  setSelectedDay(item.dayIndex);
                   setTab("diary");
                   setNotificationOpen(false);
                 }}
               >
                 <span className="avatar">
-                  {post.author_name?.[0]?.toUpperCase() || "I"}
+                  {item.author?.[0]?.toUpperCase() || "I"}
                 </span>
                 <span>
-                  <b>{post.author_name}</b>
-                  <small>
-                    Nuovo ricordo · {days[post.day_index]?.city || "India"}
-                  </small>
+                  <b>{item.author}</b>
+                  <small>{item.text}</small>
                 </span>
               </button>
             ))}
-            {!posts.length && <small>Nessuna nuova attività.</small>}
+            {!activityItems.length && <small>Nessuna nuova attività.</small>}
           </div>
         )}
         {quickProfileOpen && (
@@ -1124,7 +1171,9 @@ function App() {
                     ? `${currentProfile.name} ${currentProfile.surname || ""}`.trim()
                     : "Scegli il tuo profilo"}
                 </b>
-                <small>{groupCode ? "Dispositivo sbloccato" : "Accesso pubblico"}</small>
+                <small>
+                  {effectiveGroupCode ? "Dispositivo sbloccato" : "Accesso pubblico"}
+                </small>
               </div>
               <button
                 aria-label="Chiudi pannello personale"
@@ -1133,7 +1182,28 @@ function App() {
                 ×
               </button>
             </div>
-            {currentProfile ? (
+            <div className="accessModeSwitch">
+              <button
+                className={publicPreview ? "active" : ""}
+                onClick={() => setPublicPreview(true)}
+              >
+                Vista pubblica
+              </button>
+              <button
+                className={!publicPreview && groupCode ? "active" : ""}
+                disabled={!groupCode}
+                onClick={() => setPublicPreview(false)}
+              >
+                Vista gruppo
+              </button>
+            </div>
+            {publicPreview ? (
+              <div className="publicAccessSummary">
+                <b>Senza password</b>
+                <span>Puoi vedere la bacheca, commentare, reagire e condividere.</span>
+                <small>Documenti, posizioni e modifiche restano bloccati.</small>
+              </div>
+            ) : currentProfile ? (
               <div className="quickProfileActions">
                 <button onClick={quickShareLocation}>
                   <MapPin /> Condividi posizione
@@ -1432,13 +1502,14 @@ function App() {
             posts={posts}
             selectedDay={selectedDay}
             setSelectedDay={setSelectedDay}
-            groupCode={groupCode}
+            groupCode={effectiveGroupCode}
             setGroupCode={setGroupCode}
             refresh={refresh}
             composeOpen={composeOpen}
             setComposeOpen={setComposeOpen}
             deviceProfileName={
               currentProfile
+                && effectiveGroupCode
                 ? `${currentProfile.name} ${currentProfile.surname || ""}`.trim()
                 : ""
             }
@@ -1447,7 +1518,7 @@ function App() {
         {tab === "people" && (
           <People
             people={people}
-            groupCode={groupCode}
+            groupCode={effectiveGroupCode}
             setGroupCode={setGroupCode}
             refresh={refresh}
             onOpenPrivate={(profileId) => {
@@ -1459,7 +1530,7 @@ function App() {
         {tab === "vault" && (
           <VaultOnline
             people={people}
-            groupCode={groupCode}
+            groupCode={effectiveGroupCode}
             setGroupCode={setGroupCode}
             onOpenGroup={() => setTab("people")}
             preferredProfileId={vaultProfileId}
@@ -2049,6 +2120,7 @@ function Post({ p, author, groupCode, refresh }) {
     [editingCommentId, setEditingCommentId] = useState(""),
     [editingCommentText, setEditingCommentText] = useState(""),
     [deletingCommentId, setDeletingCommentId] = useState(""),
+    [hiddenCommentIds, setHiddenCommentIds] = useState([]),
     [showAllComments, setShowAllComments] = useState(false);
   const replyInputRef = useRef(null);
   const visitor = () => {
@@ -2141,6 +2213,7 @@ function Post({ p, author, groupCode, refresh }) {
   };
   const deleteComment = async () => {
     if (!deletingCommentId) return;
+    const targetCommentId = deletingCommentId;
     const response = await fetch(`${API}/comments/${deletingCommentId}`, {
       method: "DELETE",
       headers: {
@@ -2154,6 +2227,7 @@ function Post({ p, author, groupCode, refresh }) {
       setCommentStatus(result.error || "Eliminazione non riuscita.");
       return;
     }
+    setHiddenCommentIds((current) => [...current, targetCommentId]);
     setDeletingCommentId("");
     setCommentStatus("Commento eliminato.");
     await refresh();
@@ -2177,6 +2251,9 @@ function Post({ p, author, groupCode, refresh }) {
     Array(Number(reaction.total || 0)).fill(
       reaction.author_name?.trim() || "Una persona",
     ),
+  );
+  const visibleComments = (p.comments || []).filter(
+    (commentItem) => !hiddenCommentIds.includes(commentItem.id),
   );
   return (
     <article className="post" data-scroll-anchor={`post-${p.id}`}>
@@ -2264,7 +2341,7 @@ function Post({ p, author, groupCode, refresh }) {
         </div>
       )}
       <div className="comments">
-        {(showAllComments ? p.comments || [] : (p.comments || []).slice(-2)).map((x) => (
+        {(showAllComments ? visibleComments : visibleComments.slice(-2)).map((x) => (
           <div className="comment" key={x.id}>
             <i className="commentAvatar">
               {x.author_name?.[0]?.toUpperCase() || "?"}
@@ -2332,14 +2409,14 @@ function Post({ p, author, groupCode, refresh }) {
             )}
           </div>
         ))}
-        {p.comments?.length > 2 && (
+        {visibleComments.length > 2 && (
           <button
             className="allComments"
             onClick={() => setShowAllComments(!showAllComments)}
           >
             {showAllComments
               ? "Mostra soltanto gli ultimi commenti"
-              : `Visualizza tutti i ${p.comments.length} commenti`}
+              : `Visualizza tutti i ${visibleComments.length} commenti`}
           </button>
         )}
         <div className="reply">
@@ -2876,31 +2953,42 @@ function VaultOnline({
               /{people.length * types.length}
             </b>
           </div>
-          <div className="documentMatrix">
+          <div className="documentMatrix" role="table" aria-label="Stato documenti del gruppo">
+            <div className="matrixRow matrixHeader" role="row">
+              <b role="columnheader">Persona</b>
+              {types.map(([, label]) => (
+                <b role="columnheader" key={label}>{label}</b>
+              ))}
+            </div>
             {people.map((person) => (
-              <article key={person.id}>
-                <div className="matrixPerson">
+              <div className="matrixRow" role="row" key={person.id}>
+                <div className="matrixPerson" role="cell">
                   <span className="avatar">
                     {person.name?.[0]?.toUpperCase() || "?"}
                   </span>
                   <b>{person.name} {person.surname || ""}</b>
                 </div>
-                <div className="matrixChecks">
-                  {types.map(([type, label]) => {
-                    const document = privateData.documents.find(
-                      (item) =>
-                        item.profile_id === person.id && item.doc_type === type,
-                    );
-                    return document ? (
-                      <button key={type} onClick={() => openDocument(document)}>
-                        <Check /> {label}
-                      </button>
-                    ) : (
-                      <span key={type}>— {label}</span>
-                    );
-                  })}
-                </div>
-              </article>
+                {types.map(([type, label]) => {
+                  const document = privateData.documents.find(
+                    (item) =>
+                      item.profile_id === person.id && item.doc_type === type,
+                  );
+                  return document ? (
+                    <button
+                      role="cell"
+                      aria-label={`${person.name}: ${label} presente, apri`}
+                      key={type}
+                      onClick={() => openDocument(document)}
+                    >
+                      <Check /> <span>Presente</span>
+                    </button>
+                  ) : (
+                    <span role="cell" className="matrixMissing" key={type}>
+                      — <i>Manca</i>
+                    </span>
+                  );
+                })}
+              </div>
             ))}
           </div>
         </section>
