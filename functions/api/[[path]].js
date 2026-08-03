@@ -11,8 +11,7 @@ const now = () => new Date().toISOString();
 const groupOk = (request) => request.headers.get("x-group-code") === "india26";
 const ext = (name) =>
   (name?.split(".").pop() || "bin").replace(/[^a-z0-9]/gi, "").toLowerCase();
-const mediaUrl = (key) =>
-  key ? `/api/media/${encodeURIComponent(key)}` : null;
+const mediaUrl = (key) => (key ? `/api/media/${key}` : null);
 
 async function saveMedia(env, file, prefix = "public") {
   if (!(file instanceof File) || file.size === 0) return null;
@@ -66,7 +65,11 @@ async function readState(env) {
 }
 
 export async function onRequest({ request, env, params }) {
-  const path = String(params.path || "").replace(/^\/+|\/+$/g, "");
+  const path = (
+    Array.isArray(params.path)
+      ? params.path.join("/")
+      : String(params.path || "")
+  ).replace(/^\/+|\/+$/g, "");
   try {
     if (request.method === "GET" && path === "state")
       return json(await readState(env));

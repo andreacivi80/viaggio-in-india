@@ -22,7 +22,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.1.1",
+const VERSION = "1.1.2",
   API = "/api";
 const cityImages = {
   Delhi:
