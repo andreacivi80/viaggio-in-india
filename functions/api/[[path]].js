@@ -1,11 +1,19 @@
 import { buildPushPayload } from "@block65/webcrypto-web-push";
 
-const json = (data, status = 200) =>
+const responseSecurityHeaders = {
+  "x-content-type-options": "nosniff",
+  "referrer-policy": "strict-origin-when-cross-origin",
+  "x-frame-options": "SAMEORIGIN",
+  "permissions-policy": "camera=(self), microphone=(self), geolocation=(self)",
+};
+const json = (data, status = 200, additionalHeaders = {}) =>
   new Response(JSON.stringify(data), {
     status,
     headers: {
       "content-type": "application/json; charset=utf-8",
       "cache-control": "no-store",
+      ...responseSecurityHeaders,
+      ...additionalHeaders,
     },
   });
 const id = () => crypto.randomUUID();
@@ -68,6 +76,48 @@ async function createSession(env, profileId) {
     .bind(await tokenHash(token), profileId, createdAt, createdAt, expiresAt)
     .run();
   return { token, expires_at: expiresAt };
+}
+async function guestFromRequest(request, env) {
+  const token = String(request.headers.get("x-guest-token") || "").trim();
+  if (!token) return null;
+  return (
+    (await env.DB.prepare(
+      `SELECT visitor_id,display_name,expires_at
+       FROM guest_sessions
+       WHERE token_hash=? AND revoked_at IS NULL AND expires_at>?`,
+    )
+      .bind(await tokenHash(token), now())
+      .first()) || null
+  );
+}
+async function rateLimit(env, request, scope, limit, windowSeconds, actor = "") {
+  const ip = String(request.headers.get("cf-connecting-ip") || "unknown");
+  const actorHash = await tokenHash(`${scope}:${actor || ip}`);
+  const bucket = Math.floor(Date.now() / (windowSeconds * 1000));
+  const key = `${actorHash}:${bucket}`;
+  const expiresAt = new Date((bucket + 1) * windowSeconds * 1000).toISOString();
+  await env.DB.prepare(
+    `INSERT INTO rate_limits(rate_key,scope,bucket,count,expires_at)
+     VALUES(?,?,?,?,?)
+     ON CONFLICT(rate_key) DO UPDATE SET count=count+1`,
+  )
+    .bind(key, scope, bucket, 1, expiresAt)
+    .run();
+  const row = await env.DB.prepare(
+    "SELECT count FROM rate_limits WHERE rate_key=?",
+  )
+    .bind(key)
+    .first();
+  if (Number(row?.count || 0) <= limit) return null;
+  const retryAfter = Math.max(
+    1,
+    Math.ceil((Date.parse(expiresAt) - Date.now()) / 1000),
+  );
+  return json(
+    { error: `Troppi tentativi. Riprova tra ${retryAfter} secondi.`, retry_after: retryAfter },
+    429,
+    { "retry-after": String(retryAfter) },
+  );
 }
 async function claimInitialProfile(env, profileId) {
   const token = secureToken();
@@ -176,7 +226,7 @@ async function saveMedia(env, file, prefix = "public") {
   };
 }
 
-async function readState(env) {
+async function readState(env, viewer = null) {
   const [profiles, posts, comments, reactions, postMedia, syncState] = await Promise.all([
     env.DB.prepare("SELECT * FROM profiles ORDER BY created_at").all(),
     env.DB.prepare(
@@ -189,15 +239,33 @@ async function readState(env) {
     env.DB.prepare("SELECT * FROM post_media ORDER BY position").all(),
     env.DB.prepare("SELECT version,updated_at FROM sync_state WHERE id=1").first(),
   ]);
+  const profileById = new Map(profiles.results.map((profile) => [profile.id, profile]));
+  const publicName = (profileId, fallback) => {
+    if (viewer) return fallback;
+    const profile = profileById.get(profileId);
+    if (!profile) return fallback;
+    const initial = String(profile.surname || "").trim().slice(0, 1);
+    return `${profile.name}${initial ? ` ${initial}.` : ""}`;
+  };
   return {
     sync_version: Number(syncState?.version || 0),
     sync_updated_at: syncState?.updated_at || null,
-    profiles: profiles.results.map((p) => ({
-      ...p,
-      avatar_url: mediaUrl(p.avatar_key),
-    })),
+    profiles: profiles.results.map((p) =>
+      viewer
+        ? { ...p, avatar_url: mediaUrl(p.avatar_key) }
+        : {
+            id: p.id,
+            name: p.name,
+            surname: String(p.surname || "").trim().slice(0, 1),
+            origin_city: p.origin_city || "",
+            role: p.role,
+            avatar_url: mediaUrl(p.avatar_key),
+            created_at: p.created_at,
+          },
+    ),
     posts: posts.results.map((p) => ({
       ...p,
+      author_name: publicName(p.profile_id, p.author_name),
       media_url: mediaUrl(p.media_key),
       media: [
         ...(p.media_key
@@ -218,7 +286,11 @@ async function readState(env) {
       ],
       comments: comments.results
         .filter((c) => c.post_id === p.id)
-        .map((c) => ({ ...c, media_url: mediaUrl(c.media_key) })),
+        .map((c) => ({
+          ...c,
+          author_name: publicName(c.profile_id, c.author_name),
+          media_url: mediaUrl(c.media_key),
+        })),
       reactions: reactions.results.filter((r) => r.post_id === p.id),
     })),
   };
@@ -233,10 +305,14 @@ export async function onRequest(context) {
   ).replace(/^\/+|\/+$/g, "");
   try {
     if (request.method === "POST" && path === "auth/group") {
+      const limited = await rateLimit(env, request, "auth-group", 10, 60);
+      if (limited) return limited;
       if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
       return json({ ok: true });
     }
     if (request.method === "POST" && path === "auth/unlock") {
+      const limited = await rateLimit(env, request, "auth-unlock", 10, 60);
+      if (limited) return limited;
       if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
       const body = await request.json();
       const profile = await env.DB.prepare(
@@ -270,6 +346,8 @@ export async function onRequest(context) {
       });
     }
     if (request.method === "POST" && path === "auth/claim") {
+      const limited = await rateLimit(env, request, "auth-claim", 20, 60);
+      if (limited) return limited;
       const body = await request.json();
       const inviteHash = await tokenHash(body.invite_token);
       const invite = await env.DB.prepare(
@@ -310,6 +388,26 @@ export async function onRequest(context) {
           role: invite.role,
         },
       });
+    }
+    if (request.method === "POST" && path === "auth/guest") {
+      const limited = await rateLimit(env, request, "auth-guest", 5, 60);
+      if (limited) return limited;
+      const body = await request.json();
+      const displayName = String(body.display_name || "").trim();
+      if (!displayName || displayName.length > 80)
+        return json({ error: "Inserisci un nome valido" }, 400);
+      const token = secureToken();
+      const visitorId = id();
+      const expiresAt = futureIso(24 * 30);
+      await env.DB.prepare(
+        "INSERT INTO guest_sessions(token_hash,visitor_id,display_name,created_at,expires_at,revoked_at) VALUES(?,?,?,?,?,NULL)",
+      )
+        .bind(await tokenHash(token), visitorId, displayName, now(), expiresAt)
+        .run();
+      return json(
+        { token, visitor_id: visitorId, display_name: displayName, expires_at: expiresAt },
+        201,
+      );
     }
     if (request.method === "GET" && path === "auth/session") {
       const session = await sessionFromRequest(request, env);
@@ -367,8 +465,10 @@ export async function onRequest(context) {
         profile,
       }, 201);
     }
-    if (request.method === "GET" && path === "state")
-      return json(await readState(env));
+    if (request.method === "GET" && path === "state") {
+      const viewer = await sessionFromRequest(request, env);
+      return json(await readState(env, viewer));
+    }
     if (request.method === "GET" && path === "sync/version") {
       const state = await env.DB.prepare(
         "SELECT version,updated_at FROM sync_state WHERE id=1",
@@ -387,6 +487,8 @@ export async function onRequest(context) {
       const cutoff = now();
       await env.DB.batch([
         env.DB.prepare("DELETE FROM auth_sessions WHERE expires_at<=?").bind(cutoff),
+        env.DB.prepare("DELETE FROM guest_sessions WHERE expires_at<=?").bind(cutoff),
+        env.DB.prepare("DELETE FROM rate_limits WHERE expires_at<=?").bind(cutoff),
         env.DB.prepare(
           "DELETE FROM profile_invites WHERE expires_at<=? OR used_at IS NOT NULL",
         ).bind(cutoff),
@@ -401,6 +503,8 @@ export async function onRequest(context) {
       });
     }
     if (request.method === "GET" && path === "places/search") {
+      const limited = await rateLimit(env, request, "places-search", 60, 60);
+      if (limited) return limited;
       const query = String(new URL(request.url).searchParams.get("q") || "").trim();
       if (query.length < 3) return json({ places: [] });
       const target = new URL("https://photon.komoot.io/api/");
@@ -431,6 +535,8 @@ export async function onRequest(context) {
       return json({ places });
     }
     if (request.method === "GET" && path === "places/reverse") {
+      const limited = await rateLimit(env, request, "places-reverse", 60, 60);
+      if (limited) return limited;
       const source = new URL(request.url).searchParams;
       const latitude = Number(source.get("lat"));
       const longitude = Number(source.get("lon"));
@@ -791,11 +897,22 @@ export async function onRequest(context) {
     }
     if (request.method === "POST" && path === "comments") {
       const session = await sessionFromRequest(request, env);
+      const guest = session ? null : await guestFromRequest(request, env);
+      if (!session && !guest)
+        return json({ error: "Identità ospite richiesta" }, 401);
+      const limited = await rateLimit(
+        env,
+        request,
+        "comments",
+        10,
+        60,
+        session?.profile_id || guest?.visitor_id,
+      );
+      if (limited) return limited;
       const form = await request.formData();
       const author = session
         ? `${session.name} ${session.surname || ""}`.trim()
-        : String(form.get("author_name") || "").trim();
-      if (!author) return json({ error: "Inserisci il nome" }, 400);
+        : guest.display_name;
       const postId = String(form.get("post_id") || "");
       if (!postId) return json({ error: "Contenuto non valido" }, 400);
       const targetPost = await env.DB.prepare("SELECT id FROM posts WHERE id=?")
@@ -820,7 +937,7 @@ export async function onRequest(context) {
           row.post_id,
           row.author_name,
           row.profile_id,
-          String(form.get("visitor_id") || ""),
+          guest?.visitor_id || "",
           row.text,
           media?.key || null,
           media?.type || null,
@@ -841,6 +958,7 @@ export async function onRequest(context) {
       const commentId = path.slice(9);
       const body = await request.json();
       const session = await sessionFromRequest(request, env);
+      const guest = session ? null : await guestFromRequest(request, env);
       const existing = await env.DB.prepare(
         "SELECT visitor_id,profile_id FROM comments WHERE id=?",
       )
@@ -849,8 +967,7 @@ export async function onRequest(context) {
       if (!existing) return json({ error: "Commento non trovato" }, 404);
       const ownsComment = session
         ? session.role === "coordinator" || existing.profile_id === session.profile_id
-        : existing.visitor_id &&
-          existing.visitor_id === String(body.visitor_id || "");
+        : guest && existing.visitor_id === guest.visitor_id;
       if (!ownsComment)
         return json({ error: "Non puoi modificare questo commento" }, 403);
       const text = String(body.text || "").trim();
@@ -864,6 +981,7 @@ export async function onRequest(context) {
       const commentId = path.slice(9);
       const body = await request.json().catch(() => ({}));
       const session = await sessionFromRequest(request, env);
+      const guest = session ? null : await guestFromRequest(request, env);
       const existing = await env.DB.prepare(
         "SELECT visitor_id,profile_id,media_key FROM comments WHERE id=?",
       )
@@ -872,8 +990,7 @@ export async function onRequest(context) {
       if (!existing) return json({ error: "Commento non trovato" }, 404);
       const ownsComment = session
         ? session.role === "coordinator" || existing.profile_id === session.profile_id
-        : existing.visitor_id &&
-          existing.visitor_id === String(body.visitor_id || "");
+        : guest && existing.visitor_id === guest.visitor_id;
       if (!ownsComment)
         return json({ error: "Non puoi eliminare questo commento" }, 403);
       await env.DB.prepare("DELETE FROM comments WHERE id=?").bind(commentId).run();
@@ -881,9 +998,26 @@ export async function onRequest(context) {
       return json({ ok: true });
     }
     if (request.method === "POST" && path === "reactions") {
+      const session = await sessionFromRequest(request, env);
+      const guest = session ? null : await guestFromRequest(request, env);
+      if (!session && !guest)
+        return json({ error: "Identità ospite richiesta" }, 401);
       const b = await request.json();
-      if (!String(b.post_id || "") || !String(b.visitor_id || ""))
+      if (!String(b.post_id || ""))
         return json({ error: "Reazione non valida" }, 400);
+      const visitorId = session?.profile_id || guest.visitor_id;
+      const authorName = session
+        ? `${session.name} ${session.surname || ""}`.trim()
+        : guest.display_name;
+      const limited = await rateLimit(
+        env,
+        request,
+        "reactions",
+        30,
+        60,
+        visitorId,
+      );
+      if (limited) return limited;
       const targetPost = await env.DB.prepare("SELECT id FROM posts WHERE id=?")
         .bind(String(b.post_id))
         .first();
@@ -896,12 +1030,12 @@ export async function onRequest(context) {
       const existing = await env.DB.prepare(
         "SELECT kind FROM reactions WHERE post_id=? AND visitor_id=? LIMIT 1",
       )
-        .bind(b.post_id, b.visitor_id)
+        .bind(b.post_id, visitorId)
         .first();
       await env.DB.prepare(
         "DELETE FROM reactions WHERE post_id=? AND visitor_id=?",
       )
-        .bind(b.post_id, b.visitor_id)
+        .bind(b.post_id, visitorId)
         .run();
       if (existing?.kind === kind) return json({ ok: true, reaction: null });
       await env.DB.prepare(
@@ -910,8 +1044,8 @@ export async function onRequest(context) {
         .bind(
           id(),
           b.post_id,
-          b.visitor_id,
-          String(b.author_name || "Ospite").trim() || "Ospite",
+          visitorId,
+          authorName,
           kind,
           now(),
         )
