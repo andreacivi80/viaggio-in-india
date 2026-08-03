@@ -30,7 +30,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.23.0",
+const VERSION = "1.23.1",
   API = "/api";
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
@@ -1387,20 +1387,19 @@ function App() {
             )}
           </button>
         </div>
-        <button
-          className="heroTravelers"
-          onClick={() => {
-            setTab("diary");
-            setTravelersOpen(true);
-          }}
-          aria-label={`Apri elenco viaggiatori, ${people.length} persone`}
-        >
-          <img src={TRAVELER_ICON} alt="" aria-hidden="true" />
-          <span>
-            <b>Viaggiatori</b>
-            <small>{people.length}</small>
-          </span>
-        </button>
+        {tab === "diary" && (
+          <button
+            className="heroTravelers"
+            onClick={() => setTravelersOpen(true)}
+            aria-label={`Apri elenco viaggiatori, ${people.length} persone`}
+          >
+            <img src={TRAVELER_ICON} alt="" aria-hidden="true" />
+            <span>
+              <b>Viaggiatori</b>
+              <small>{people.length}</small>
+            </span>
+          </button>
+        )}
         {notificationOpen && (
           <div className="notificationPanel">
             <div>
