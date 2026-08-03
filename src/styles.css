@@ -954,6 +954,179 @@ footer small {
   font-weight: 700;
   text-align: left;
 }
+.missingProfile {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 10px 12px;
+  align-items: center;
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-secondary-soft);
+}
+.missingProfile > svg {
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  border-radius: 50%;
+  background: var(--color-surface);
+  color: var(--color-secondary);
+}
+.missingProfile div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.missingProfile small {
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+.missingProfile button {
+  grid-column: 1 / -1;
+  min-height: 44px;
+  border: 0;
+  border-radius: var(--radius-medium);
+  background: var(--color-secondary);
+  color: #fff;
+  font-weight: 800;
+}
+.locationPanel.needsProfile {
+  opacity: 0.72;
+}
+.formStatus {
+  grid-column: 1 / -1;
+  padding: 10px 12px;
+  border-radius: var(--radius-medium);
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 700;
+}
+.formStatus.success {
+  background: #e9f5ed;
+  color: var(--color-success);
+}
+.formStatus.error,
+.unlockError {
+  background: #fdecea;
+  color: var(--color-error);
+}
+.diaryDayPicker {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  margin: 0 -14px 12px;
+  padding: 7px 14px 9px;
+  background: #fbf7eff2;
+  backdrop-filter: blur(12px);
+  scrollbar-width: none;
+}
+.diaryDayPicker button {
+  flex: 0 0 92px;
+  min-height: 68px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface);
+  color: var(--color-text-secondary);
+}
+.diaryDayPicker button.active {
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
+  color: var(--color-secondary);
+  box-shadow: inset 0 -3px var(--color-primary);
+}
+.diaryDayPicker b {
+  font-size: 12px;
+}
+.diaryDayPicker span,
+.diaryDayPicker small {
+  font-size: 11px;
+}
+.dayList .day:not(.open) {
+  display: none;
+}
+.dayList .day.open {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.dayList .day.open .dayHero > svg {
+  display: none;
+}
+.dayBody > p {
+  font-size: 16px;
+  line-height: 1.6;
+}
+.diaryMiniMap {
+  margin: 16px 0;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+}
+.miniMapTitle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+}
+.miniMapTitle div {
+  display: flex;
+  flex-direction: column;
+}
+.miniMapTitle small {
+  font-size: 11px;
+  color: var(--color-primary);
+  font-weight: 800;
+}
+.miniMapTitle button {
+  min-height: 40px;
+  border: 0;
+  border-radius: var(--radius-medium);
+  background: var(--color-secondary-soft);
+  color: var(--color-secondary);
+  font-size: 11px;
+  font-weight: 800;
+}
+.diaryMiniMap .realMap {
+  height: 280px;
+}
+.diaryPager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-divider);
+}
+.diaryPager button {
+  min-height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: var(--color-surface);
+  color: var(--color-secondary);
+  font-weight: 800;
+}
+.diaryPager button:disabled {
+  opacity: 0.45;
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+  }
+}
 @media (min-width: 681px) {
   body {
     background: #ede8df;

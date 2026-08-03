@@ -634,9 +634,6 @@ function App() {
   useEffect(() => {
     if (groupCode) localStorage.setItem("india-group-code", groupCode);
   }, [groupCode]);
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [tab]);
   const completed = useMemo(
     () => Object.values(done).filter(Boolean).length,
     [done],
@@ -719,12 +716,33 @@ function App() {
                 <small>spuntate</small>
               </button>
             </div>
+            <div className="diaryDayPicker" aria-label="Seleziona la giornata">
+              {days.map((day, index) => (
+                <button
+                  key={index}
+                  className={open === index ? "active" : ""}
+                  aria-pressed={open === index}
+                  onClick={(event) => {
+                    setOpen(index);
+                    event.currentTarget.scrollIntoView({
+                      behavior: "smooth",
+                      block: "nearest",
+                      inline: "center",
+                    });
+                  }}
+                >
+                  <b>Giorno {index + 1}</b>
+                  <span>{day.date.replace(" AGOSTO", " AGO")}</span>
+                  <small>{day.city}</small>
+                </button>
+              ))}
+            </div>
             <div className="dayList">
               {days.map((d, i) => (
                 <article className={`day ${open === i ? "open" : ""}`} key={i}>
                   <button
                     className="dayHero"
-                    onClick={() => setOpen(open === i ? -1 : i)}
+                    onClick={() => setOpen(i)}
                   >
                     <img
                       src={cityImages[d.city]}
@@ -780,6 +798,20 @@ function App() {
                         <b>Obiettivo del giorno</b>
                         <span>{d.goal}</span>
                       </div>
+                      <div className="diaryMiniMap">
+                        <div className="miniMapTitle">
+                          <div>
+                            <small>PERCORSO DELLA GIORNATA</small>
+                            <b>
+                              {d.from} → {d.to}
+                            </b>
+                          </div>
+                          <button onClick={() => showMap(i)}>
+                            Apri mappa completa
+                          </button>
+                        </div>
+                        <TripMap selectedDay={i} onSelect={() => showMap(i)} />
+                      </div>
                       <div className="checks">
                         {d.checks.map((x, j) => {
                           const k = `${i}-${j}`;
@@ -810,6 +842,20 @@ function App() {
                           }}
                         >
                           <Camera /> Aggiungi ricordo
+                        </button>
+                      </div>
+                      <div className="diaryPager">
+                        <button
+                          disabled={i === 0}
+                          onClick={() => setOpen(Math.max(0, i - 1))}
+                        >
+                          ← Giorno precedente
+                        </button>
+                        <button
+                          disabled={i === days.length - 1}
+                          onClick={() => setOpen(Math.min(days.length - 1, i + 1))}
+                        >
+                          Giorno successivo →
                         </button>
                       </div>
                     </div>
@@ -847,6 +893,7 @@ function App() {
             people={people}
             groupCode={groupCode}
             setGroupCode={setGroupCode}
+            onOpenGroup={() => setTab("people")}
           />
         )}
       </main>
@@ -1323,22 +1370,40 @@ function People({ people, groupCode, setGroupCode, refresh }) {
       bio: "",
     }),
     [avatar, setAvatar] = useState(null),
-    [code, setCode] = useState("");
+    [code, setCode] = useState(""),
+    [saving, setSaving] = useState(false),
+    [formStatus, setFormStatus] = useState({ type: "", text: "" });
   const add = async () => {
-    if (!groupCode || !form.name.trim()) return;
-    const f = new FormData();
-    Object.entries(form).forEach(([k, v]) => f.set(k, v));
-    if (avatar) f.set("avatar", avatar);
-    const r = await fetch(`${API}/profiles`, {
-      method: "POST",
-      headers: { "x-group-code": groupCode },
-      body: f,
-    });
-    if (r.ok) {
+    if (!form.name.trim()) {
+      setFormStatus({ type: "error", text: "Inserisci almeno il nome." });
+      return;
+    }
+    if (!groupCode || saving) return;
+    setSaving(true);
+    setFormStatus({ type: "", text: "" });
+    try {
+      const f = new FormData();
+      Object.entries(form).forEach(([k, v]) => f.set(k, v));
+      if (avatar) f.set("avatar", avatar);
+      const r = await fetch(`${API}/profiles`, {
+        method: "POST",
+        headers: { "x-group-code": groupCode },
+        body: f,
+      });
+      if (!r.ok) throw Error((await r.json()).error || "Salvataggio non riuscito");
       setForm({ name: "", surname: "", age: "", job: "", bio: "" });
       setAvatar(null);
-      refresh();
-    } else alert((await r.json()).error);
+      setFormStatus({ type: "success", text: "Viaggiatore inserito correttamente." });
+      await refresh();
+    } catch {
+      await refresh();
+      setFormStatus({
+        type: "error",
+        text: "Non è stato possibile confermare il salvataggio. L'elenco è stato aggiornato: controlla se il profilo compare qui sotto.",
+      });
+    } finally {
+      setSaving(false);
+    }
   };
   return (
     <section>
@@ -1386,8 +1451,13 @@ function People({ people, groupCode, setGroupCode, refresh }) {
             value={form.bio}
             onChange={(e) => setForm({ ...form, bio: e.target.value })}
           />
-          <button onClick={add}>
-            <Plus /> Inserisci viaggiatore
+          {formStatus.text && (
+            <div className={`formStatus ${formStatus.type}`} role="status">
+              {formStatus.text}
+            </div>
+          )}
+          <button onClick={add} disabled={saving}>
+            <Plus /> {saving ? "Salvataggio…" : "Inserisci viaggiatore"}
           </button>
         </div>
       ) : (
@@ -1427,7 +1497,7 @@ function People({ people, groupCode, setGroupCode, refresh }) {
   );
 }
 
-function VaultOnline({ people, groupCode, setGroupCode }) {
+function VaultOnline({ people, groupCode, setGroupCode, onOpenGroup }) {
   const [code, setCode] = useState(""),
     [privateData, setPrivateData] = useState({ documents: [], locations: [] }),
     [profileId, setProfileId] = useState(""),
@@ -1444,7 +1514,16 @@ function VaultOnline({ people, groupCode, setGroupCode }) {
     if (groupCode) refresh();
   }, [groupCode]);
   useEffect(() => {
-    if (!profileId && people[0]) setProfileId(people[0].id);
+    if (profileId || !people.length) return;
+    const savedName = (localStorage.getItem("india-visitor-name") || "")
+      .trim()
+      .toLowerCase();
+    const match = people.find(
+      (person) =>
+        `${person.name} ${person.surname || ""}`.trim().toLowerCase() ===
+          savedName || person.name.trim().toLowerCase() === savedName,
+    );
+    if (match) setProfileId(match.id);
   }, [people]);
   const upload = async (type, file) => {
     if (!file || !profileId) return;
@@ -1529,19 +1608,22 @@ function VaultOnline({ people, groupCode, setGroupCode }) {
           <LockKeyhole /> Blocca
         </button>
       </div>
-      <label className="personSelect">
-        Cartella di
-        <select
-          value={profileId}
-          onChange={(e) => setProfileId(e.target.value)}
-        >
-          {people.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.name} {p.surname}
-            </option>
-          ))}
-        </select>
-      </label>
+      {people.length > 0 && (
+        <label className="personSelect">
+          Chi sei?
+          <select
+            value={profileId}
+            onChange={(e) => setProfileId(e.target.value)}
+          >
+            <option value="">Seleziona il tuo profilo</option>
+            {people.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name} {p.surname}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       {people.length ? (
         <div className="documentList">
           {types.map(([type, label]) => {
@@ -1579,17 +1661,27 @@ function VaultOnline({ people, groupCode, setGroupCode }) {
           })}
         </div>
       ) : (
-        <Empty
-          icon={Users}
-          title="Manca il viaggiatore"
-          text="Aggiungi prima una persona nella sezione Gruppo."
-        />
+        <div className="missingProfile">
+          <Users />
+          <div>
+            <b>Prima crea il tuo profilo viaggiatore</b>
+            <small>
+              La posizione e i documenti devono essere associati alla persona
+              corretta.
+            </small>
+          </div>
+          <button onClick={onOpenGroup}>Vai al Gruppo</button>
+        </div>
       )}
-      <div className="locationPanel">
+      <div className={`locationPanel ${!profileId ? "needsProfile" : ""}`}>
         <MapPin />
         <div>
           <b>Posizione condivisa</b>
-          <small>Aggiornamento volontario, visibile a tutto il gruppo.</small>
+          <small>
+            {profileId
+              ? "Aggiornamento volontario, visibile a tutto il gruppo."
+              : "Seleziona prima il tuo profilo qui sopra."}
+          </small>
         </div>
         <button onClick={locate} disabled={!profileId}>
           Aggiorna ora
