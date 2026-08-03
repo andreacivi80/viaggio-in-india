@@ -34,24 +34,54 @@ async function sessionFromRequest(request, env) {
     ? authorization.slice(7).trim()
     : "";
   if (!token) return null;
+  const tokenDigest = await tokenHash(token);
+  const inactivityLimit = new Date(
+    Date.now() - 21 * 24 * 60 * 60 * 1000,
+  ).toISOString();
   const session = await env.DB.prepare(
-    `SELECT s.profile_id,s.expires_at,p.name,p.surname,p.role
+    `SELECT s.profile_id,s.expires_at,s.last_used_at,p.name,p.surname,p.role
      FROM auth_sessions s
      JOIN profiles p ON p.id=s.profile_id
-     WHERE s.token_hash=? AND s.revoked_at IS NULL AND s.expires_at>?`,
+     WHERE s.token_hash=? AND s.revoked_at IS NULL AND s.expires_at>?
+       AND COALESCE(s.last_used_at,s.created_at)>?`,
   )
-    .bind(await tokenHash(token), now())
+    .bind(tokenDigest, now(), inactivityLimit)
     .first();
+  if (session) {
+    const lastUsed = Date.parse(session.last_used_at || 0);
+    if (!Number.isFinite(lastUsed) || Date.now() - lastUsed > 60 * 60 * 1000)
+      await env.DB.prepare(
+        "UPDATE auth_sessions SET last_used_at=? WHERE token_hash=?",
+      )
+        .bind(now(), tokenDigest)
+        .run();
+  }
   return session || null;
 }
 async function createSession(env, profileId) {
   const token = secureToken();
-  const expiresAt = futureIso(24 * 90);
+  const createdAt = now();
+  const expiresAt = futureIso(24 * 30);
   await env.DB.prepare(
-    "INSERT INTO auth_sessions(token_hash,profile_id,created_at,expires_at,revoked_at) VALUES(?,?,?,?,NULL)",
+    "INSERT INTO auth_sessions(token_hash,profile_id,created_at,last_used_at,expires_at,revoked_at) VALUES(?,?,?,?,?,NULL)",
   )
-    .bind(await tokenHash(token), profileId, now(), expiresAt)
+    .bind(await tokenHash(token), profileId, createdAt, createdAt, expiresAt)
     .run();
+  return { token, expires_at: expiresAt };
+}
+async function claimInitialProfile(env, profileId) {
+  const token = secureToken();
+  const tokenDigest = await tokenHash(token);
+  const createdAt = now();
+  const expiresAt = futureIso(24 * 30);
+  await env.DB.batch([
+    env.DB.prepare(
+      "INSERT INTO profile_device_claims(profile_id,claimed_at) VALUES(?,?)",
+    ).bind(profileId, createdAt),
+    env.DB.prepare(
+      "INSERT INTO auth_sessions(token_hash,profile_id,created_at,last_used_at,expires_at,revoked_at) VALUES(?,?,?,?,?,NULL)",
+    ).bind(tokenDigest, profileId, createdAt, createdAt, expiresAt),
+  ]);
   return { token, expires_at: expiresAt };
 }
 async function notifySubscribers(env, payload) {
@@ -215,7 +245,20 @@ export async function onRequest(context) {
         .bind(String(body.profile_id || ""))
         .first();
       if (!profile) return json({ error: "Profilo non trovato" }, 404);
-      const issued = await createSession(env, profile.id);
+      let issued;
+      try {
+        issued = await claimInitialProfile(env, profile.id);
+      } catch (error) {
+        if (/UNIQUE|constraint/i.test(String(error?.message || error)))
+          return json(
+            {
+              error:
+                "Profilo già collegato. Per un secondo telefono serve un invito del coordinatore.",
+            },
+            409,
+          );
+        throw error;
+      }
       return json({
         ...issued,
         profile: {
