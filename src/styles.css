@@ -1498,6 +1498,7 @@ footer small {
   scrollbar-width: none;
 }
 .diaryDayPicker button {
+  position: relative;
   flex: 0 0 92px;
   min-height: 68px;
   display: flex;
@@ -1509,6 +1510,24 @@ footer small {
   border-radius: var(--radius-medium);
   background: var(--color-surface);
   color: var(--color-text-secondary);
+}
+.diaryDayPicker .todayDot {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  width: 10px;
+  height: 10px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #20a464;
+  box-shadow: 0 0 0 2px #20a46444, 0 2px 6px #083c2670;
+  animation: todayPulse 2.2s ease-in-out infinite;
+}
+@keyframes todayPulse {
+  50% {
+    transform: scale(1.16);
+    box-shadow: 0 0 0 5px #20a46422, 0 2px 6px #083c2670;
+  }
 }
 .diaryDayPicker button.active {
   border-color: var(--color-primary);

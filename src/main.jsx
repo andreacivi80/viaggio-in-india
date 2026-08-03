@@ -30,8 +30,18 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.17.0",
+const VERSION = "1.18.0",
   API = "/api";
+const tripDateKeys = Array.from({ length: 14 },
+  (_, index) => `2026-08-${String(10 + index).padStart(2, "0")}`,
+);
+const indiaDateKey = (date = new Date()) =>
+  new Intl.DateTimeFormat("en-CA", {
+    timeZone: "Asia/Kolkata",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(date);
 const sessionHeaders = (token, additional = {}) => ({
   ...additional,
   ...(token ? { authorization: `Bearer ${token}` } : {}),
@@ -844,7 +854,13 @@ function App() {
     [lastSync, setLastSync] = useState(null),
     [lastActivityRead, setLastActivityRead] = useState(
       () => localStorage.getItem("india-activity-read") || "",
-    );
+    ),
+    [indiaToday, setIndiaToday] = useState(() => indiaDateKey());
+  const simulatedDate = initialParams.get("simulateDate");
+  const activeDateKey = /^2026-08-(1\d|2[0-3])$/.test(simulatedDate || "")
+    ? simulatedDate
+    : indiaToday;
+  const todayTripIndex = tripDateKeys.indexOf(activeDateKey);
   const effectiveGroupCode = publicPreview ? "" : groupCode;
   const refresh = async () => {
     const controller = new AbortController();
@@ -901,6 +917,10 @@ function App() {
     refresh();
     const t = setInterval(refresh, 15000);
     return () => clearInterval(t);
+  }, []);
+  useEffect(() => {
+    const timer = setInterval(() => setIndiaToday(indiaDateKey()), 60000);
+    return () => clearInterval(timer);
   }, []);
   const restoreNavigationOrigin = (origin) => {
     if (!origin) return;
@@ -1418,8 +1438,9 @@ function App() {
               {days.map((day, index) => (
                 <button
                   key={index}
-                  className={open === index ? "active" : ""}
+                  className={`${open === index ? "active" : ""} ${todayTripIndex === index ? "today" : ""}`.trim()}
                   aria-pressed={open === index}
+                  aria-label={`${todayTripIndex === index ? "Oggi, " : ""}Giorno ${index + 1}, ${day.date}, ${day.city}`}
                   onClick={(event) => {
                     setOpen(index);
                     event.currentTarget.scrollIntoView({
@@ -1432,6 +1453,9 @@ function App() {
                   <b>Giorno {index + 1}</b>
                   <span>{day.date.replace(" AGOSTO", " AGO")}</span>
                   <small>{day.city}</small>
+                  {todayTripIndex === index && (
+                    <i className="todayDot" title="Oggi" aria-hidden="true" />
+                  )}
                 </button>
               ))}
             </div>
