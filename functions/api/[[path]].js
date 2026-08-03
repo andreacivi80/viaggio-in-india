@@ -202,6 +202,30 @@ export async function onRequest(context) {
       : String(params.path || "")
   ).replace(/^\/+|\/+$/g, "");
   try {
+    if (request.method === "POST" && path === "auth/group") {
+      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
+      return json({ ok: true });
+    }
+    if (request.method === "POST" && path === "auth/unlock") {
+      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
+      const body = await request.json();
+      const profile = await env.DB.prepare(
+        "SELECT id,name,surname,role FROM profiles WHERE id=?",
+      )
+        .bind(String(body.profile_id || ""))
+        .first();
+      if (!profile) return json({ error: "Profilo non trovato" }, 404);
+      const issued = await createSession(env, profile.id);
+      return json({
+        ...issued,
+        profile: {
+          id: profile.id,
+          name: profile.name,
+          surname: profile.surname,
+          role: profile.role,
+        },
+      });
+    }
     if (request.method === "POST" && path === "auth/claim") {
       const body = await request.json();
       const inviteHash = await tokenHash(body.invite_token);

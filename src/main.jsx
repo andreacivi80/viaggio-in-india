@@ -30,7 +30,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.21.5",
+const VERSION = "1.22.0",
   API = "/api";
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
@@ -86,9 +86,9 @@ const sessionHeaders = (token, additional = {}) => ({
   ...(token ? { authorization: `Bearer ${token}` } : {}),
 });
 async function verifyGroupCode(code, setGroupCode) {
-  const response = await fetch(`${API}/private`, {
+  const response = await fetch(`${API}/auth/group`, {
+    method: "POST",
     headers: { "x-group-code": code },
-    cache: "no-store",
   });
   if (!response.ok) return false;
   setGroupCode(code);
@@ -1162,6 +1162,46 @@ function App() {
       `${currentProfile.name} ${currentProfile.surname || ""}`.trim(),
     );
   }, [currentProfile?.id]);
+  const unlockProfile = async (person) => {
+    if (!person || !groupCode || sessionToken) return false;
+    setQuickStatus(`Attivo l’accesso di ${person.name}…`);
+    const response = await fetch(`${API}/auth/unlock`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "x-group-code": groupCode,
+      },
+      body: JSON.stringify({ profile_id: person.id }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      setQuickStatus(result.error || "Accesso personale non attivato.");
+      if (response.status === 403) {
+        localStorage.removeItem("india-group-code");
+        setGroupCode("");
+      }
+      return false;
+    }
+    localStorage.setItem("india-session-token", result.token);
+    localStorage.setItem("india-profile-id", result.profile.id);
+    localStorage.setItem(
+      "india-visitor-name",
+      `${result.profile.name} ${result.profile.surname || ""}`.trim(),
+    );
+    setSessionToken(result.token);
+    setSessionProfile(result.profile);
+    setVaultProfileId(result.profile.id);
+    setQuickStatus(`Accesso personale attivo per ${result.profile.name}.`);
+    return true;
+  };
+  const automaticUnlockRef = useRef("");
+  useEffect(() => {
+    if (!groupCode || sessionToken || !currentProfile) return;
+    const attemptKey = `${groupCode}:${currentProfile.id}`;
+    if (automaticUnlockRef.current === attemptKey) return;
+    automaticUnlockRef.current = attemptKey;
+    unlockProfile(currentProfile);
+  }, [groupCode, sessionToken, currentProfile?.id]);
   const quickShareLocation = () => {
     if (!currentProfile || (!sessionToken && !effectiveGroupCode)) return;
     setQuickStatus("Cerco la posizione…");
@@ -1491,14 +1531,14 @@ function App() {
                 {people.map((person) => (
                   <button
                     key={person.id}
-                    onClick={() => {
+                    onClick={async () => {
                       localStorage.setItem("india-profile-id", person.id);
                       localStorage.setItem(
                         "india-visitor-name",
                         `${person.name} ${person.surname || ""}`.trim(),
                       );
                       setVaultProfileId(person.id);
-                      setQuickStatus(`Telefono collegato a ${person.name}.`);
+                      await unlockProfile(person);
                     }}
                   >
                     <span className="avatar">
