@@ -5,5 +5,8 @@
   "display":"standalone",
   "background_color":"#f8f5ef",
   "theme_color":"#f97316",
-  "description":"Roadmap e diario condiviso del viaggio in India del Nord"
+  "description":"Roadmap e diario condiviso del viaggio in India del Nord",
+  "icons":[
+    {"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
 }

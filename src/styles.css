@@ -1646,6 +1646,11 @@ footer small {
   object-fit: cover;
   border-radius: var(--radius-small);
 }
+.attachmentPreviews audio {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: 38px;
+}
 .attachmentPreviews span {
   overflow: hidden;
   font-size: 11px;

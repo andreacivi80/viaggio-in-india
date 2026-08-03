@@ -29,7 +29,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.14.0",
+const VERSION = "1.15.0",
   API = "/api";
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/private`, {
@@ -1513,6 +1513,7 @@ function App() {
                 ? `${currentProfile.name} ${currentProfile.surname || ""}`.trim()
                 : ""
             }
+            deviceProfileId={currentProfile?.id || ""}
           />
         )}{" "}
         {tab === "people" && (
@@ -1648,6 +1649,7 @@ function Diary({
   composeOpen,
   setComposeOpen,
   deviceProfileName,
+  deviceProfileId,
 }) {
   const today = new Date();
   const tripStart = new Date("2026-08-10T00:00:00+05:30");
@@ -1686,7 +1688,7 @@ function Diary({
       const total = current.length + selected.length;
       if (total > 10) {
         setFileStatus(
-          `Puoi caricare massimo 10 contenuti per volta. Hai selezionato ${total} elementi.`,
+          `Puoi caricare massimo 10 contenuti per ogni post. Hai selezionato ${total} elementi. Rimuovine ${total - 10} per continuare.`,
         );
         return current;
       }
@@ -1711,6 +1713,7 @@ function Diary({
     try {
       const f = new FormData();
       f.set("author_name", author || "Viaggiatore");
+      f.set("profile_id", deviceProfileId || "");
       f.set("day_index", selectedDay);
       f.set("text", text);
       files.forEach((file) => f.append("files", file));
@@ -1941,6 +1944,8 @@ function AttachmentPreview({ file, onRemove }) {
         <img src={url} alt={`Anteprima ${file.name}`} />
       ) : file.type.startsWith("video/") ? (
         <video src={url} muted playsInline />
+      ) : file.type.startsWith("audio/") ? (
+        <audio controls preload="metadata" src={url} />
       ) : (
         <Mic />
       )}
@@ -2910,7 +2915,7 @@ function VaultOnline({
           Coordinatore
         </button>
       </div>
-      {people.length > 0 && (
+      {people.length > 0 && viewMode === "traveler" && (
         <label className="personSelect">
           Chi sei?
           <select
