@@ -30,7 +30,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.21.4",
+const VERSION = "1.21.5",
   API = "/api";
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
@@ -507,7 +507,7 @@ function TripMap({ selectedDay, onSelect, onReady }) {
       maplibre.current = maplibregl;
       map.current = new maplibregl.Map({
         container: el.current,
-        style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+        style: "https://tiles.openfreemap.org/styles/liberty",
         center: [77.2, 25.8],
         zoom: 4.5,
         minZoom: 3.5,
@@ -523,10 +523,6 @@ function TripMap({ selectedDay, onSelect, onReady }) {
       map.current.addControl(
         new maplibregl.ScaleControl({ unit: "metric", maxWidth: 90 }),
         "bottom-left",
-      );
-      map.current.addControl(
-        new maplibregl.AttributionControl({ compact: true }),
-        "bottom-right",
       );
       map.current.on("load", () => {
         map.current.addSource("trip-route", {
@@ -785,7 +781,7 @@ function PeopleLocationMap({ locations }) {
       if (cancelled || !elementRef.current) return;
       mapRef.current = new maplibregl.Map({
         container: elementRef.current,
-        style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+        style: "https://tiles.openfreemap.org/styles/liberty",
         center: [78.9, 22.6],
         zoom: 3.8,
         minZoom: 3,
@@ -845,10 +841,6 @@ function PeopleLocationMap({ locations }) {
         });
         setMapReady(true);
       });
-      mapRef.current.addControl(
-        new maplibregl.AttributionControl({ compact: true }),
-        "bottom-right",
-      );
     });
     return () => {
       cancelled = true;
@@ -1888,8 +1880,9 @@ function MapSection({ selectedDay, setSelectedDay, onBack }) {
         </div>
       )}
       <div className="mapShell" ref={mapShellRef}>
-        <GoogleTripMap
+        <TripMap
           selectedDay={selectedDay}
+          onSelect={focusMap}
           onReady={positionMapOnce}
         />
       </div>
