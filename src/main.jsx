@@ -29,7 +29,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.15.0",
+const VERSION = "1.16.0",
   API = "/api";
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/private`, {
@@ -1216,7 +1216,10 @@ function App() {
                     setQuickProfileOpen(false);
                   }}
                 >
-                  <ShieldCheck /> Documenti e sicurezza
+                  <ShieldCheck />
+                  {currentProfile.role === "coordinator"
+                    ? "Griglia coordinatore"
+                    : "Documenti e sicurezza"}
                 </button>
                 <button onClick={enableNotifications}>
                   <Bell /> Attiva notifiche
@@ -2735,6 +2738,7 @@ function VaultOnline({
     [busy, setBusy] = useState(""),
     [documentStatus, setDocumentStatus] = useState(""),
     [pendingDocumentDelete, setPendingDocumentDelete] = useState(""),
+    [locationMapOpen, setLocationMapOpen] = useState(false),
     [viewMode, setViewMode] = useState("traveler");
   const refresh = async (c = groupCode) => {
     if (!c) return;
@@ -2947,9 +2951,10 @@ function VaultOnline({
           <div className="coordinatorHead">
             <div>
               <span className="eyebrow">VISTA COORDINATORE</span>
-              <h3>Documenti del gruppo</h3>
+              <h3>Controllo documenti</h3>
+              <small>La situazione del gruppo, persona per persona</small>
             </div>
-            <b>
+            <b aria-label="Documenti presenti sul totale">
               {
                 privateData.documents.filter((document) =>
                   types.some(([type]) => type === document.doc_type),
@@ -2958,43 +2963,68 @@ function VaultOnline({
               /{people.length * types.length}
             </b>
           </div>
-          <div className="documentMatrix" role="table" aria-label="Stato documenti del gruppo">
-            <div className="matrixRow matrixHeader" role="row">
-              <b role="columnheader">Persona</b>
-              {types.map(([, label]) => (
-                <b role="columnheader" key={label}>{label}</b>
-              ))}
-            </div>
-            {people.map((person) => (
-              <div className="matrixRow" role="row" key={person.id}>
-                <div className="matrixPerson" role="cell">
-                  <span className="avatar">
-                    {person.name?.[0]?.toUpperCase() || "?"}
-                  </span>
-                  <b>{person.name} {person.surname || ""}</b>
-                </div>
-                {types.map(([type, label]) => {
-                  const document = privateData.documents.find(
-                    (item) =>
-                      item.profile_id === person.id && item.doc_type === type,
-                  );
-                  return document ? (
-                    <button
-                      role="cell"
-                      aria-label={`${person.name}: ${label} presente, apri`}
-                      key={type}
-                      onClick={() => openDocument(document)}
-                    >
-                      <Check /> <span>Presente</span>
-                    </button>
-                  ) : (
-                    <span role="cell" className="matrixMissing" key={type}>
-                      — <i>Manca</i>
+          <div className="coordinatorProgress" aria-hidden="true">
+            <i
+              style={{
+                width: `${people.length ? Math.round((privateData.documents.filter((document) => types.some(([type]) => type === document.doc_type)).length / (people.length * types.length)) * 100) : 0}%`,
+              }}
+            />
+          </div>
+          <div className="documentCards" aria-label="Stato documenti del gruppo">
+            {people.map((person) => {
+              const personDocuments = types.map(([type, label]) => ({
+                type,
+                label,
+                document: privateData.documents.find(
+                  (item) =>
+                    item.profile_id === person.id && item.doc_type === type,
+                ),
+              }));
+              const presentCount = personDocuments.filter(
+                (item) => item.document,
+              ).length;
+              return (
+                <article className="documentPersonCard" key={person.id}>
+                  <header>
+                    <span className="avatar">
+                      {person.name?.[0]?.toUpperCase() || "?"}
                     </span>
-                  );
-                })}
-              </div>
-            ))}
+                    <div>
+                      <b>{person.name} {person.surname || ""}</b>
+                      <small>
+                        {person.role === "coordinator"
+                          ? "Coordinatore"
+                          : "Viaggiatore"}
+                      </small>
+                    </div>
+                    <strong className={presentCount === types.length ? "complete" : ""}>
+                      {presentCount}/{types.length}
+                    </strong>
+                  </header>
+                  <div className="documentChecks">
+                    {personDocuments.map(({ type, label, document }) =>
+                      document ? (
+                        <button
+                          aria-label={`${person.name}: ${label} presente, apri`}
+                          key={type}
+                          onClick={() => openDocument(document)}
+                        >
+                          <span><Check /></span>
+                          <b>{label}</b>
+                          <small>Presente · Apri</small>
+                        </button>
+                      ) : (
+                        <div className="documentCheckMissing" key={type}>
+                          <span>!</span>
+                          <b>{label}</b>
+                          <small>Da caricare</small>
+                        </div>
+                      ),
+                    )}
+                  </div>
+                </article>
+              );
+            })}
           </div>
         </section>
       )}
@@ -3088,43 +3118,56 @@ function VaultOnline({
           Aggiorna ora
         </button>
       </div>
-      <PeopleLocationMap locations={privateData.locations} />
-      <div className="locationList">
-        {privateData.locations.map((x) => (
-          <article key={x.profile_id}>
-            <div>
-              <b>{x.display_name}</b>
-              <span>
-                {Number(x.latitude).toFixed(4)}, {Number(x.longitude).toFixed(4)}
-              </span>
-              <small>
-                Ultimo aggiornamento · {new Date(x.updated_at).toLocaleString("it-IT")}
-              </small>
-            </div>
-            <div className="locationActions">
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${x.latitude},${x.longitude}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Google Maps
-              </a>
-              <a
-                href={`https://www.google.com/maps/dir/?api=1&destination=${x.latitude},${x.longitude}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Naviga
-              </a>
-              {x.profile_id === profileId && (
-                <button onClick={() => removeLocation(x.profile_id)}>
-                  Cancella posizione
-                </button>
-              )}
-            </div>
-          </article>
-        ))}
-      </div>
+      <button
+        className="locationMapToggle"
+        onClick={() => setLocationMapOpen((value) => !value)}
+        aria-expanded={locationMapOpen}
+      >
+        <MapPinned />
+        {locationMapOpen ? "Chiudi mappa posizioni" : "Apri mappa posizioni"}
+        <span>{privateData.locations.length}</span>
+      </button>
+      {locationMapOpen && (
+        <>
+          <PeopleLocationMap locations={privateData.locations} />
+          <div className="locationList">
+            {privateData.locations.map((x) => (
+              <article key={x.profile_id}>
+                <div>
+                  <b>{x.display_name}</b>
+                  <span>
+                    {Number(x.latitude).toFixed(4)}, {Number(x.longitude).toFixed(4)}
+                  </span>
+                  <small>
+                    Ultimo aggiornamento · {new Date(x.updated_at).toLocaleString("it-IT")}
+                  </small>
+                </div>
+                <div className="locationActions">
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${x.latitude},${x.longitude}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Google Maps
+                  </a>
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${x.latitude},${x.longitude}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Naviga
+                  </a>
+                  {x.profile_id === profileId && (
+                    <button onClick={() => removeLocation(x.profile_id)}>
+                      Cancella posizione
+                    </button>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+        </>
+      )}
       <div className="archive">
         <b>Archivio di fine viaggio</b>
         <p>
@@ -3136,7 +3179,7 @@ function VaultOnline({
   );
 }
 
-function UnlockCard({ code, setCode, onUnlock, text }) {
+function UnlockCard({ code, setCode, onUnlock }) {
   const [error, setError] = useState("");
   const unlock = async () => {
     setError("");
@@ -3148,18 +3191,19 @@ function UnlockCard({ code, setCode, onUnlock, text }) {
         <LockKeyhole />
       </div>
       <div>
-        <b>Accesso del gruppo</b>
-        <small>{text}</small>
+        <b>Accesso privato</b>
       </div>
-      <input
-        type="password"
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-        placeholder="Codice gruppo"
-        onKeyDown={(e) => e.key === "Enter" && unlock()}
-      />
-      <button onClick={unlock}>Sblocca</button>
-      {error && <small className="unlockError">{error}</small>}
+      <div className="unlockInline">
+        <input
+          type="password"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          placeholder="Password"
+          onKeyDown={(e) => e.key === "Enter" && unlock()}
+        />
+        <button onClick={unlock}>Accedi</button>
+        {error && <small className="unlockError">{error}</small>}
+      </div>
     </div>
   );
 }
