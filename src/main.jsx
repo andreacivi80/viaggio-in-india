@@ -29,7 +29,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.7.0",
+const VERSION = "1.8.0",
   API = "/api";
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/private`, {
@@ -604,6 +604,7 @@ function App() {
     [mapDay, setMapDay] = useState(null),
     [vaultProfileId, setVaultProfileId] = useState(""),
     [composeOpen, setComposeOpen] = useState(false),
+    [notificationOpen, setNotificationOpen] = useState(false),
     [groupCode, setGroupCode] = useState(
       () => localStorage.getItem("india-group-code") || "",
     ),
@@ -669,11 +670,52 @@ function App() {
             <LockKeyhole size={14} />
             {groupCode ? "Sbloccato" : "Pubblico"}
           </button>
-          <button className="headerIcon" aria-label="Notifiche">
+          <button
+            className="headerIcon"
+            aria-label="Notifiche"
+            onClick={() => setNotificationOpen(!notificationOpen)}
+          >
             <Bell size={18} />
             {syncing && <span className="syncDot" />}
+            {posts.length > 0 && (
+              <span className="notificationBadge">{Math.min(posts.length, 9)}</span>
+            )}
           </button>
         </div>
+        {notificationOpen && (
+          <div className="notificationPanel">
+            <div>
+              <b>Notifiche del viaggio</b>
+              <button
+                aria-label="Chiudi notifiche"
+                onClick={() => setNotificationOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+            {posts.slice(0, 3).map((post) => (
+              <button
+                key={post.id}
+                onClick={() => {
+                  setSelectedDay(Number(post.day_index) || 0);
+                  setTab("diary");
+                  setNotificationOpen(false);
+                }}
+              >
+                <span className="avatar">
+                  {post.author_name?.[0]?.toUpperCase() || "I"}
+                </span>
+                <span>
+                  <b>{post.author_name}</b>
+                  <small>
+                    Nuovo ricordo · {days[post.day_index]?.city || "India"}
+                  </small>
+                </span>
+              </button>
+            ))}
+            {!posts.length && <small>Nessuna nuova attività.</small>}
+          </div>
+        )}
         <div className="heroCopy">
           <p>10 — 23 AGOSTO 2026</p>
           <h1>
@@ -1189,6 +1231,11 @@ function Diary({
                   onChange={(e) => setText(e.target.value)}
                   placeholder="Racconta questo momento…"
                 />
+                <AudioRecorder
+                  onRecorded={(recordedFile) =>
+                    setFiles((current) => [...current, recordedFile].slice(0, 10))
+                  }
+                />
                 <div className="composerActions">
                   <label>
                     <ImageIcon /> Foto
@@ -1289,6 +1336,84 @@ function AttachmentPreview({ file, onRemove }) {
         ×
       </button>
     </article>
+  );
+}
+
+function AudioRecorder({ onRecorded }) {
+  const recorderRef = useRef(null);
+  const streamRef = useRef(null);
+  const timerRef = useRef(null);
+  const chunksRef = useRef([]);
+  const [recording, setRecording] = useState(false);
+  const [seconds, setSeconds] = useState(0);
+  const [error, setError] = useState("");
+  const stopTracks = () => {
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
+  };
+  useEffect(
+    () => () => {
+      clearInterval(timerRef.current);
+      stopTracks();
+    },
+    [],
+  );
+  const start = async () => {
+    setError("");
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+      setError("La registrazione diretta non è supportata da questo browser.");
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      chunksRef.current = [];
+      const recorder = new MediaRecorder(stream);
+      recorderRef.current = recorder;
+      recorder.ondataavailable = (event) => {
+        if (event.data.size) chunksRef.current.push(event.data);
+      };
+      recorder.onstop = () => {
+        const type = recorder.mimeType || "audio/webm";
+        const blob = new Blob(chunksRef.current, { type });
+        onRecorded(
+          new File([blob], `voce-${new Date().toISOString().slice(0, 19)}.webm`, {
+            type,
+          }),
+        );
+        stopTracks();
+      };
+      recorder.start(500);
+      setSeconds(0);
+      setRecording(true);
+      timerRef.current = setInterval(() => setSeconds((value) => value + 1), 1000);
+    } catch {
+      setError("Microfono non disponibile. Controlla il permesso del telefono.");
+      stopTracks();
+    }
+  };
+  const stop = () => {
+    clearInterval(timerRef.current);
+    recorderRef.current?.stop();
+    setRecording(false);
+    navigator.vibrate?.(30);
+  };
+  return (
+    <div className={`audioRecorder ${recording ? "recording" : ""}`}>
+      <Mic />
+      <div>
+        <b>{recording ? "Registrazione in corso" : "Registra un messaggio audio"}</b>
+        <small>
+          {recording
+            ? `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`
+            : "Tocca per iniziare, poi ascoltalo prima di pubblicare"}
+        </small>
+      </div>
+      <button onClick={recording ? stop : start}>
+        {recording ? "Ferma" : "Registra"}
+      </button>
+      {error && <span>{error}</span>}
+    </div>
   );
 }
 
