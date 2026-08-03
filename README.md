@@ -6,7 +6,7 @@ App mobile-first per il viaggio in India del Nord dal 10 al 23 agosto 2026.
 
 Ogni revisione viene prima compilata e collaudata come utente finale su viewport mobile. Solo dopo il superamento della checklist viene pubblicata tramite GitHub Pages.
 
-## Stato revisione 0.1.0
+## Stato revisione 1.0.0
 
 - roadmap fotografica completa di 14 giorni;
 - mappa delle tappe;

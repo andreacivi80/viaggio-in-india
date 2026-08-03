@@ -3,7 +3,7 @@ import {createRoot} from 'react-dom/client'
 import {MapPinned, Route, Camera, Users, LockKeyhole, Mic, MessageCircle, Plus, Trash2, Check, ChevronDown, Plane, MapPin, ShieldCheck, Wifi, ImageIcon} from './icons.jsx'
 import './styles.css'
 
-const VERSION='0.1.0'
+const VERSION='1.0.0'
 const cityImages={
   Delhi:'https://images.unsplash.com/photo-1587474260584-136574528ed5?auto=format&fit=crop&w=1200&q=82',
   Udaipur:'https://images.unsplash.com/photo-1595658658481-d53d3f999875?auto=format&fit=crop&w=1200&q=82',
