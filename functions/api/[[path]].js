@@ -1,3 +1,5 @@
+import webpush from "web-push";
+
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
     status,
@@ -52,6 +54,36 @@ async function createSession(env, profileId) {
     .run();
   return { token, expires_at: expiresAt };
 }
+async function notifySubscribers(env, payload) {
+  if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY) return;
+  webpush.setVapidDetails(
+    "https://viaggio-in-india-2026.pages.dev/",
+    env.VAPID_PUBLIC_KEY,
+    env.VAPID_PRIVATE_KEY,
+  );
+  const subscriptions = await env.DB.prepare(
+    "SELECT id,endpoint,p256dh,auth FROM push_subscriptions",
+  ).all();
+  await Promise.allSettled(
+    subscriptions.results.map(async (subscription) => {
+      try {
+        await webpush.sendNotification(
+          {
+            endpoint: subscription.endpoint,
+            keys: { p256dh: subscription.p256dh, auth: subscription.auth },
+          },
+          JSON.stringify(payload),
+          { TTL: 3600, urgency: "normal" },
+        );
+      } catch (error) {
+        if ([404, 410].includes(error?.statusCode))
+          await env.DB.prepare("DELETE FROM push_subscriptions WHERE id=?")
+            .bind(subscription.id)
+            .run();
+      }
+    }),
+  );
+}
 
 async function saveMedia(env, file, prefix = "public") {
   if (!(file instanceof File) || file.size === 0) return null;
@@ -78,7 +110,7 @@ async function saveMedia(env, file, prefix = "public") {
 }
 
 async function readState(env) {
-  const [profiles, posts, comments, reactions, postMedia] = await Promise.all([
+  const [profiles, posts, comments, reactions, postMedia, syncState] = await Promise.all([
     env.DB.prepare("SELECT * FROM profiles ORDER BY created_at").all(),
     env.DB.prepare(
       "SELECT * FROM posts WHERE visibility='public' ORDER BY created_at DESC",
@@ -88,8 +120,11 @@ async function readState(env) {
       "SELECT post_id, kind, author_name, COUNT(*) AS total FROM reactions GROUP BY post_id, kind, author_name",
     ).all(),
     env.DB.prepare("SELECT * FROM post_media ORDER BY position").all(),
+    env.DB.prepare("SELECT version,updated_at FROM sync_state WHERE id=1").first(),
   ]);
   return {
+    sync_version: Number(syncState?.version || 0),
+    sync_updated_at: syncState?.updated_at || null,
     profiles: profiles.results.map((p) => ({
       ...p,
       avatar_url: mediaUrl(p.avatar_key),
@@ -122,7 +157,8 @@ async function readState(env) {
   };
 }
 
-export async function onRequest({ request, env, params }) {
+export async function onRequest(context) {
+  const { request, env, params } = context;
   const path = (
     Array.isArray(params.path)
       ? params.path.join("/")
@@ -229,6 +265,109 @@ export async function onRequest({ request, env, params }) {
     }
     if (request.method === "GET" && path === "state")
       return json(await readState(env));
+    if (request.method === "GET" && path === "sync/version") {
+      const state = await env.DB.prepare(
+        "SELECT version,updated_at FROM sync_state WHERE id=1",
+      ).first();
+      return json({
+        version: Number(state?.version || 0),
+        updated_at: state?.updated_at || null,
+      });
+    }
+    if (request.method === "GET" && path === "health") {
+      await env.DB.prepare(
+        "INSERT OR IGNORE INTO sync_state(id,version,updated_at) VALUES(1,0,?)",
+      )
+        .bind(now())
+        .run();
+      const cutoff = now();
+      await env.DB.batch([
+        env.DB.prepare("DELETE FROM auth_sessions WHERE expires_at<=?").bind(cutoff),
+        env.DB.prepare(
+          "DELETE FROM profile_invites WHERE expires_at<=? OR used_at IS NOT NULL",
+        ).bind(cutoff),
+      ]);
+      const state = await env.DB.prepare(
+        "SELECT version,updated_at FROM sync_state WHERE id=1",
+      ).first();
+      return json({
+        ok: true,
+        version: Number(state?.version || 0),
+        updated_at: state?.updated_at || null,
+      });
+    }
+    if (request.method === "GET" && path === "places/search") {
+      const query = String(new URL(request.url).searchParams.get("q") || "").trim();
+      if (query.length < 3) return json({ places: [] });
+      const target = new URL("https://photon.komoot.io/api/");
+      target.searchParams.set("q", query);
+      target.searchParams.set("limit", "5");
+      target.searchParams.set("lang", "en");
+      const upstream = await fetch(target, {
+        headers: { accept: "application/json" },
+        cf: { cacheTtl: 86400, cacheEverything: true },
+      });
+      if (!upstream.ok) return json({ places: [] });
+      const data = await upstream.json();
+      const places = (data.features || []).map((feature) => {
+        const properties = feature.properties || {};
+        const coordinates = feature.geometry?.coordinates || [];
+        const parts = [
+          properties.name,
+          properties.city || properties.district,
+          properties.state,
+          properties.country,
+        ].filter(Boolean);
+        return {
+          label: [...new Set(parts)].join(", "),
+          latitude: Number(coordinates[1]),
+          longitude: Number(coordinates[0]),
+        };
+      });
+      return json({ places });
+    }
+    if (request.method === "GET" && path === "push/config")
+      return json({ public_key: env.VAPID_PUBLIC_KEY || "" });
+    if (request.method === "POST" && path === "push/subscribe") {
+      const session = await sessionFromRequest(request, env);
+      const body = await request.json();
+      const subscription = body.subscription || {};
+      const endpoint = String(subscription.endpoint || "");
+      const p256dh = String(subscription.keys?.p256dh || "");
+      const auth = String(subscription.keys?.auth || "");
+      if (!endpoint.startsWith("https://") || !p256dh || !auth)
+        return json({ error: "Iscrizione notifiche non valida" }, 400);
+      const subscriptionId = await tokenHash(endpoint);
+      await env.DB.prepare(
+        `INSERT INTO push_subscriptions(id,endpoint,p256dh,auth,profile_id,visitor_name,created_at,updated_at)
+         VALUES(?,?,?,?,?,?,?,?)
+         ON CONFLICT(endpoint) DO UPDATE SET p256dh=excluded.p256dh,auth=excluded.auth,profile_id=excluded.profile_id,visitor_name=excluded.visitor_name,updated_at=excluded.updated_at`,
+      )
+        .bind(
+          subscriptionId,
+          endpoint,
+          p256dh,
+          auth,
+          session?.profile_id || "",
+          session
+            ? `${session.name} ${session.surname || ""}`.trim()
+            : String(body.visitor_name || "Familiare").trim(),
+          now(),
+          now(),
+        )
+        .run();
+      return json({ ok: true });
+    }
+    if (request.method === "POST" && path === "push/test") {
+      if (!groupOk(request, env)) return json({ error: "Accesso negato" }, 403);
+      await notifySubscribers(env, {
+        title: "India Insieme",
+        body: "Notifica di prova ricevuta correttamente, anche con l’app chiusa.",
+        url: "/",
+        tag: `test-${Date.now()}`,
+      });
+      return json({ ok: true });
+    }
     if (["GET", "HEAD"].includes(request.method) && path.startsWith("media/")) {
       const key = decodeURIComponent(path.slice(6));
       if (key.startsWith("private/")) {
@@ -294,13 +433,14 @@ export async function onRequest({ request, env, params }) {
         surname: String(form.get("surname") || ""),
         age: String(form.get("age") || ""),
         job: String(form.get("job") || ""),
+        origin_city: String(form.get("origin_city") || ""),
         bio: String(form.get("bio") || ""),
         role: form.get("role") === "coordinator" ? "coordinator" : "traveler",
         avatar_key: avatar?.key || null,
         created_at: now(),
       };
       await env.DB.prepare(
-        "INSERT INTO profiles(id,name,surname,age,job,bio,role,avatar_key,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
       )
         .bind(
           row.id,
@@ -308,6 +448,7 @@ export async function onRequest({ request, env, params }) {
           row.surname,
           row.age,
           row.job,
+          row.origin_city,
           row.bio,
           row.role,
           row.avatar_key,
@@ -343,13 +484,14 @@ export async function onRequest({ request, env, params }) {
           : current.role;
       try {
         await env.DB.prepare(
-          "UPDATE profiles SET name=?,surname=?,age=?,job=?,bio=?,role=?,avatar_key=? WHERE id=?",
+          "UPDATE profiles SET name=?,surname=?,age=?,job=?,origin_city=?,bio=?,role=?,avatar_key=? WHERE id=?",
         )
           .bind(
             name,
             String(form.get("surname") || ""),
             String(form.get("age") || ""),
             String(form.get("job") || ""),
+            String(form.get("origin_city") || ""),
             String(form.get("bio") || ""),
             updatedRole,
             avatarKey,
@@ -388,13 +530,16 @@ export async function onRequest({ request, env, params }) {
         day_index: Number(form.get("day_index") || 0),
         visibility: String(form.get("visibility") || "public"),
         text: String(form.get("text") || ""),
+        place_name: String(form.get("place_name") || "").trim(),
+        latitude: form.get("latitude") ? Number(form.get("latitude")) : null,
+        longitude: form.get("longitude") ? Number(form.get("longitude")) : null,
         created_at: now(),
       };
       try {
         for (const file of files)
           savedMedia.push(await saveMedia(env, file, "public"));
         await env.DB.prepare(
-          "INSERT INTO posts(id,author_name,profile_id,day_index,visibility,text,media_key,media_type,media_name,media_size,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+          "INSERT INTO posts(id,author_name,profile_id,day_index,visibility,text,place_name,latitude,longitude,media_key,media_type,media_name,media_size,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         )
           .bind(
             row.id,
@@ -403,6 +548,9 @@ export async function onRequest({ request, env, params }) {
             row.day_index,
             row.visibility,
             row.text,
+            row.place_name,
+            Number.isFinite(row.latitude) ? row.latitude : null,
+            Number.isFinite(row.longitude) ? row.longitude : null,
             null,
             null,
             null,
@@ -433,6 +581,14 @@ export async function onRequest({ request, env, params }) {
         await env.DB.prepare("DELETE FROM posts WHERE id=?").bind(row.id).run();
         throw error;
       }
+      context.waitUntil?.(
+        notifySubscribers(env, {
+          title: row.author_name,
+          body: row.text || "Ha pubblicato un nuovo ricordo del viaggio.",
+          url: "/",
+          tag: `post-${row.id}`,
+        }),
+      );
       return json(
         {
           ...row,
@@ -511,6 +667,14 @@ export async function onRequest({ request, env, params }) {
           row.created_at,
         )
         .run();
+      context.waitUntil?.(
+        notifySubscribers(env, {
+          title: row.author_name,
+          body: row.text || "Ha aggiunto un commento.",
+          url: "/",
+          tag: `comment-${row.id}`,
+        }),
+      );
       return json({ ...row, media_url: mediaUrl(media?.key) }, 201);
     }
     if (request.method === "PUT" && path.startsWith("comments/")) {

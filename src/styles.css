@@ -212,6 +212,7 @@ body {
   max-width: 680px;
   margin: auto;
   min-height: 100vh;
+  min-height: 100dvh;
   background: #fff;
   box-shadow: 0 0 60px #201b1320;
 }
@@ -1951,6 +1952,13 @@ body {
   height: 265px;
   background-position: center 58%;
 }
+.hero.heroFeed {
+  height: 108px;
+  background-position: center 43%;
+}
+.heroFeed .heroCopy {
+  display: none;
+}
 .heroShade {
   background: linear-gradient(
     180deg,
@@ -2442,6 +2450,322 @@ h2 {
 }
 .visitorBar > button:disabled {
   opacity: 0.4;
+}
+.socialHeading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+.socialHeading h2 {
+  margin-bottom: 14px;
+}
+.travelerDirectoryButton {
+  position: relative;
+  flex: 0 0 auto;
+  width: 94px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  margin-bottom: 12px;
+  border: 1px solid #d9cbb8;
+  border-radius: 15px;
+  background: #fffaf2;
+  color: var(--green);
+  box-shadow: 0 7px 18px #173b3014;
+}
+.directoryAvatarStack {
+  display: flex;
+  align-items: center;
+}
+.directoryAvatarStack img,
+.directoryAvatarStack i {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  margin-right: -8px;
+  border: 2px solid #fffaf2;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 900;
+  object-fit: cover;
+}
+.directoryAvatarStack svg {
+  width: 22px;
+  height: 22px;
+}
+.travelerDirectoryButton .directoryCount {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 21px;
+  height: 21px;
+  display: grid;
+  place-items: center;
+  padding: 0 5px;
+  border: 2px solid #fffaf2;
+  border-radius: 999px;
+  background: var(--orange);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+}
+.travelerDirectoryButton > small {
+  max-width: 48px;
+  overflow: hidden;
+  color: var(--green);
+  font-size: 8px;
+  font-weight: 850;
+  text-overflow: ellipsis;
+}
+.directoryBackdrop {
+  position: fixed;
+  z-index: 1400;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: #10241ccc;
+  backdrop-filter: blur(4px);
+}
+.travelerDirectory {
+  width: min(100%, 680px);
+  max-height: min(78vh, 78dvh);
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 16px 16px calc(22px + env(safe-area-inset-bottom));
+  border-radius: 24px 24px 0 0;
+  background: #fffaf2;
+  box-shadow: 0 -20px 60px #0005;
+}
+.directoryHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.directoryHead small {
+  color: var(--orange);
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+}
+.directoryHead h3 {
+  margin: 3px 0 0;
+  font-size: 26px;
+}
+.directoryHead > button {
+  width: 42px;
+  height: 42px;
+  border: 1px solid #dfd2c1;
+  border-radius: 50%;
+  background: #fff;
+  color: var(--ink);
+  font-size: 25px;
+}
+.travelerDirectory > p {
+  margin: 10px 0 13px;
+  color: #665f56;
+  font-size: 13px;
+}
+.directoryList {
+  display: grid;
+  gap: 8px;
+}
+.directoryPerson {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #eadfce;
+  border-radius: 15px;
+  background: #fff;
+}
+.directoryPerson img,
+.directoryPerson > .avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.directoryPerson > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.directoryPerson > div b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.directoryPerson > div small {
+  color: #746b60;
+}
+.directoryPerson code {
+  max-width: 140px;
+  overflow: hidden;
+  padding: 5px 7px;
+  border-radius: 8px;
+  background: #eaf1ed;
+  color: var(--green);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mentionSuggestions {
+  display: grid;
+  gap: 5px;
+  margin: -3px 0 9px;
+  padding: 6px;
+  border: 1px solid #dfd2c1;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 12px 28px #16352b1c;
+}
+.mentionSuggestions button {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--ink);
+  text-align: left;
+}
+.mentionSuggestions button:active {
+  background: #eaf1ed;
+}
+.mentionSuggestions .avatar {
+  width: 34px;
+  height: 34px;
+}
+.mentionSuggestions button > span:last-child {
+  display: flex;
+  flex-direction: column;
+}
+.mentionSuggestions small {
+  color: #746b60;
+}
+mark.mention {
+  padding: 1px 3px;
+  border-radius: 5px;
+  background: #e1f3ea;
+  color: #117348;
+  font-weight: 850;
+}
+.postLocationComposer {
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 10px;
+  border: 1px solid #dfd2c1;
+  border-radius: 13px;
+  background: #fff;
+}
+.postLocationComposer > svg {
+  width: 19px;
+  color: var(--orange);
+}
+.postLocationComposer input {
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+}
+.postLocationComposer button {
+  min-height: 38px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 9px;
+  background: #eaf1ed;
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 850;
+}
+.postLocationComposer .clearPostLocation {
+  grid-column: 2 / -1;
+  justify-self: start;
+  min-height: 30px;
+  color: #a43b2b;
+  background: #fff0ed;
+}
+.placeSuggestions {
+  grid-column: 2 / -1;
+  display: grid;
+  gap: 4px;
+  padding-top: 4px;
+}
+.placeSuggestions button {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 6px;
+  padding: 7px 9px;
+  background: #f5f0e8;
+  color: var(--ink);
+  text-align: left;
+}
+.placeSuggestions button svg {
+  flex: 0 0 auto;
+  width: 15px;
+}
+.placeSuggestions small {
+  color: #746b60;
+  font-size: 9px;
+}
+.postPlace {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  margin-top: 2px;
+  color: #3e6a59;
+  font-size: 10px;
+  font-weight: 750;
+  text-decoration: none;
+}
+.postPlace svg {
+  width: 12px;
+  height: 12px;
+}
+@media (max-width: 390px) {
+  .postLocationComposer {
+    grid-template-columns: 20px minmax(0, 1fr);
+  }
+  .postLocationComposer > button {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
+.liveStatus .livePlaceDetail {
+  margin-top: 2px;
+  color: #6f675e;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0;
+  text-transform: none;
+}
+@media (max-width: 390px) {
+  .directoryPerson {
+    grid-template-columns: 40px minmax(0, 1fr);
+  }
+  .directoryPerson code {
+    grid-column: 2;
+    justify-self: start;
+    max-width: 100%;
+  }
 }
 .identityBar {
   display: grid;

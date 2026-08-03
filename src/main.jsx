@@ -30,7 +30,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.18.0",
+const VERSION = "1.20.0",
   API = "/api";
 const tripDateKeys = Array.from({ length: 14 },
   (_, index) => `2026-08-${String(10 + index).padStart(2, "0")}`,
@@ -42,6 +42,44 @@ const indiaDateKey = (date = new Date()) =>
     month: "2-digit",
     day: "2-digit",
   }).format(date);
+const mentionHandle = (person) =>
+  `${person?.name || ""}_${person?.surname || ""}`
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9_]/gi, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_|_$/g, "");
+const renderCommentText = (value) =>
+  String(value || "")
+    .split(/(@[a-z0-9_]+)/gi)
+    .map((part, index) =>
+      part.startsWith("@") ? (
+        <mark className="mention" key={`${part}-${index}`}>
+          {part}
+        </mark>
+      ) : (
+        part
+      ),
+    );
+const normalizeMobileUpload = async (file) => {
+  if (!(file instanceof File)) return file;
+  const isHeic =
+    /\.(heic|heif)$/i.test(file.name || "") ||
+    /image\/(heic|heif)/i.test(file.type || "");
+  if (!isHeic) return file;
+  const module = await import("heic2any");
+  const converted = await module.default({
+    blob: file,
+    toType: "image/jpeg",
+    quality: 0.9,
+  });
+  const jpeg = Array.isArray(converted) ? converted[0] : converted;
+  return new File(
+    [jpeg],
+    `${String(file.name || "foto").replace(/\.(heic|heif)$/i, "")}.jpg`,
+    { type: "image/jpeg", lastModified: Date.now() },
+  );
+};
 const sessionHeaders = (token, additional = {}) => ({
   ...additional,
   ...(token ? { authorization: `Bearer ${token}` } : {}),
@@ -445,6 +483,13 @@ const load = (k, f) => {
   }
 };
 
+const pushKeyBytes = (value) => {
+  const padded = `${value}${"=".repeat((4 - (value.length % 4)) % 4)}`
+    .replace(/-/g, "+")
+    .replace(/_/g, "/");
+  return Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
+};
+
 function TripMap({ selectedDay, onSelect, onReady }) {
   const el = useRef(null),
     map = useRef(null),
@@ -461,7 +506,7 @@ function TripMap({ selectedDay, onSelect, onReady }) {
       maplibre.current = maplibregl;
       map.current = new maplibregl.Map({
         container: el.current,
-        style: "https://tiles.openfreemap.org/styles/liberty",
+        style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
         center: [77.2, 25.8],
         zoom: 4.5,
         minZoom: 3.5,
@@ -694,7 +739,7 @@ function PeopleLocationMap({ locations }) {
       if (cancelled || !elementRef.current) return;
       mapRef.current = new maplibregl.Map({
         container: elementRef.current,
-        style: "https://tiles.openfreemap.org/styles/liberty",
+        style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
         center: [78.9, 22.6],
         zoom: 3.8,
         minZoom: 3,
@@ -819,7 +864,8 @@ function App() {
     0,
     Math.min(days.length - 1, Number(initialParams.get("day") || 1) - 1),
   );
-  const startsOnMap = initialParams.get("view") === "map";
+  // Ogni nuova apertura parte dalla bacheca. La mappa si apre solo su richiesta.
+  const startsOnMap = false;
   const navigationOriginRef = useRef(
     (() => {
       try {
@@ -829,6 +875,7 @@ function App() {
       }
     })(),
   );
+  const syncVersionRef = useRef(0);
   const [tab, setTab] = useState(startsOnMap ? "map" : "diary"),
     [done, setDone] = useState(() => load("india-done", {})),
     [posts, setPosts] = useState(() => load("india-posts", [])),
@@ -849,9 +896,6 @@ function App() {
     ),
     [sessionProfile, setSessionProfile] = useState(null),
     [publicPreview, setPublicPreview] = useState(false),
-    [syncing, setSyncing] = useState(false),
-    [syncError, setSyncError] = useState(""),
-    [lastSync, setLastSync] = useState(null),
     [lastActivityRead, setLastActivityRead] = useState(
       () => localStorage.getItem("india-activity-read") || "",
     ),
@@ -875,8 +919,6 @@ function App() {
         }
       : null;
     try {
-      setSyncing(true);
-      setSyncError("");
       const r = await fetch(`${API}/state`, {
         cache: "no-store",
         signal: controller.signal,
@@ -885,9 +927,9 @@ function App() {
       const d = await r.json();
       setPosts(d.posts || []);
       setPeople(d.profiles || []);
+      syncVersionRef.current = Number(d.sync_version || 0);
       localStorage.setItem("india-posts", JSON.stringify(d.posts || []));
       localStorage.setItem("india-people", JSON.stringify(d.profiles || []));
-      setLastSync(new Date());
       if (anchorState) {
         requestAnimationFrame(() =>
           requestAnimationFrame(() => {
@@ -902,21 +944,53 @@ function App() {
         );
       }
     } catch (error) {
-      setSyncError(
-        navigator.onLine
-          ? "Sincronizzazione non riuscita · Tocca per riprovare"
-          : "Connessione assente · I dati salvati restano disponibili",
-      );
       console.error("india-sync", error);
     } finally {
       clearTimeout(timeout);
-      setSyncing(false);
     }
   };
   useEffect(() => {
+    const initialUrl = new URL(location.href);
+    if (initialUrl.searchParams.has("view") || initialUrl.searchParams.has("day")) {
+      initialUrl.searchParams.delete("view");
+      initialUrl.searchParams.delete("day");
+      history.replaceState({}, "", initialUrl);
+    }
     refresh();
-    const t = setInterval(refresh, 15000);
-    return () => clearInterval(t);
+    const checkVersion = async () => {
+      if (document.hidden || !navigator.onLine) return;
+      try {
+        const response = await fetch(`${API}/sync/version`, { cache: "no-store" });
+        if (!response.ok) return;
+        const result = await response.json();
+        if (Number(result.version || 0) > syncVersionRef.current) await refresh();
+      } catch {
+        // Il controllo leggero riprova automaticamente al ciclo successivo.
+      }
+    };
+    const onReturn = () => {
+      if (!document.hidden) checkVersion();
+    };
+    const timer = setInterval(checkVersion, 2500);
+    const silentRepair = setInterval(async () => {
+      if (document.hidden || !navigator.onLine) return;
+      try {
+        const response = await fetch(`${API}/health`, { cache: "no-store" });
+        if (!response.ok) return;
+        const result = await response.json();
+        if (Number(result.version || 0) > syncVersionRef.current) await refresh();
+      } catch {
+        // Controllo di salute silenzioso: riprova senza disturbare l'utente.
+      }
+    }, 60000);
+    addEventListener("online", checkVersion);
+    document.addEventListener("visibilitychange", onReturn);
+    return () => {
+      clearInterval(timer);
+      clearInterval(silentRepair);
+      removeEventListener("online", checkVersion);
+      document.removeEventListener("visibilitychange", onReturn);
+    };
   }, []);
   useEffect(() => {
     const timer = setInterval(() => setIndiaToday(indiaDateKey()), 60000);
@@ -1093,17 +1167,53 @@ function App() {
     );
   };
   const enableNotifications = async () => {
-    if (!("Notification" in window)) {
+    const isIos = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isStandalone = matchMedia("(display-mode: standalone)").matches ||
+      navigator.standalone === true;
+    if (isIos && !isStandalone) {
+      setQuickStatus("Su iPhone: aggiungi prima l’app alla schermata Home.");
+      return;
+    }
+    if (!("Notification" in window) || !("serviceWorker" in navigator) || !("PushManager" in window)) {
       setQuickStatus("Notifiche non supportate su questo dispositivo.");
       return;
     }
-    const permission = await Notification.requestPermission();
-    localStorage.setItem("india-notifications", permission);
-    setQuickStatus(
-      permission === "granted"
-        ? "Notifiche attivate."
-        : "Notifiche non autorizzate.",
-    );
+    try {
+      const permission = await Notification.requestPermission();
+      localStorage.setItem("india-notifications", permission);
+      if (permission !== "granted") {
+        setQuickStatus("Notifiche non autorizzate.");
+        return;
+      }
+      const registration = await navigator.serviceWorker.ready;
+      const configResponse = await fetch(`${API}/push/config`, { cache: "no-store" });
+      if (!configResponse.ok) throw new Error("Configurazione non disponibile");
+      const { public_key: publicKey } = await configResponse.json();
+      if (!publicKey) throw new Error("Configurazione non disponibile");
+      let subscription = await registration.pushManager.getSubscription();
+      if (!subscription)
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: pushKeyBytes(publicKey),
+        });
+      const response = await fetch(`${API}/push/subscribe`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          ...sessionHeaders(sessionToken),
+        },
+        body: JSON.stringify({
+          subscription: subscription.toJSON(),
+          visitor_name: localStorage.getItem("india-visitor-name") || "Familiare",
+        }),
+      });
+      if (!response.ok) throw new Error("Iscrizione non riuscita");
+      localStorage.setItem("india-push-enabled", "true");
+      setQuickStatus("Notifiche sul telefono attive.");
+    } catch (error) {
+      console.error("india-push", error);
+      setQuickStatus("Notifiche non attivate. Riprova.");
+    }
   };
   const showMap = (i) => {
     const origin = {
@@ -1178,7 +1288,7 @@ function App() {
   };
   return (
     <div className="app">
-      <header className="hero">
+      <header className={`hero ${tab === "diary" ? "heroFeed" : ""}`}>
         <div className="heroShade" />
         <div className="top">
           <span className="flag">🇮🇳</span>
@@ -1201,7 +1311,6 @@ function App() {
             onClick={toggleActivityPanel}
           >
             <Bell size={18} />
-            {syncing && <span className="syncDot" />}
             {unreadActivityCount > 0 && (
               <span className="notificationBadge">
                 {Math.min(unreadActivityCount, 9)}
@@ -1209,11 +1318,6 @@ function App() {
             )}
           </button>
         </div>
-        {syncError && (
-          <button className="syncErrorToast" onClick={refresh}>
-            Connessione non aggiornata · Riprova
-          </button>
-        )}
         {notificationOpen && (
           <div className="notificationPanel">
             <div>
@@ -1226,7 +1330,9 @@ function App() {
               </button>
             </div>
             <small className="notificationKind">
-              Avvisi nell’app · le notifiche push non sono ancora attive
+              {localStorage.getItem("india-push-enabled") === "true"
+                ? "Notifiche sul telefono attive"
+                : "Avvisi nell’app"}
             </small>
             {activityItems.slice(0, 6).map((item) => (
               <button
@@ -1296,6 +1402,9 @@ function App() {
                 <b>Senza password</b>
                 <span>Puoi vedere la bacheca, commentare, reagire e condividere.</span>
                 <small>Documenti, posizioni e modifiche restano bloccati.</small>
+                <button onClick={enableNotifications}>
+                  <Bell /> Attiva notifiche
+                </button>
               </div>
             ) : currentProfile ? (
               <div className="quickProfileActions">
@@ -1316,7 +1425,10 @@ function App() {
                     : "Documenti e sicurezza"}
                 </button>
                 <button onClick={enableNotifications}>
-                  <Bell /> Attiva notifiche
+                  <Bell />
+                  {localStorage.getItem("india-push-enabled") === "true"
+                    ? "Notifiche attive"
+                    : "Attiva notifiche"}
                 </button>
               </div>
             ) : (
@@ -1387,6 +1499,7 @@ function App() {
             onClick={() => {
               if (id === "publish") {
                 setTab("diary");
+                setSelectedDay(todayTripIndex >= 0 ? todayTripIndex : -1);
                 setComposeOpen(true);
               } else {
                 if (id === "map") showMap(null);
@@ -1601,6 +1714,7 @@ function App() {
         {tab === "diary" && (
           <Diary
             posts={posts}
+            people={people}
             selectedDay={selectedDay}
             setSelectedDay={setSelectedDay}
             groupCode={effectiveGroupCode}
@@ -1678,20 +1792,11 @@ function MapSection({ selectedDay, setSelectedDay, onBack }) {
     positionedDayRef.current = selectedDay;
     placeMapInUsableViewport();
   };
-  useEffect(() => {
-    const handleResize = () => placeMapInUsableViewport();
-    window.addEventListener("resize", handleResize);
-    window.visualViewport?.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      window.visualViewport?.removeEventListener("resize", handleResize);
-    };
-  }, []);
   return (
     <section className="mapSection">
       {onBack && (
         <button className="mapBack" onClick={onBack}>
-          ← Torna al Diario{selectedDay != null ? ` · Giorno ${selectedDay + 1}` : ""}
+          ← Torna alla Bacheca{selectedDay != null ? ` · Giorno ${selectedDay + 1}` : ""}
         </button>
       )}
       <div className="mapHeading">
@@ -1747,6 +1852,7 @@ function MapSection({ selectedDay, setSelectedDay, onBack }) {
 
 function Diary({
   posts,
+  people,
   selectedDay,
   setSelectedDay,
   groupCode,
@@ -1758,8 +1864,19 @@ function Diary({
   deviceProfileName,
   deviceProfileId,
 }) {
-  const today = new Date();
+  const [clock, setClock] = useState(() => Date.now());
+  useEffect(() => {
+    const timer = setInterval(() => setClock(Date.now()), 60000);
+    return () => clearInterval(timer);
+  }, []);
+  const today = new Date(clock);
   const tripStart = new Date("2026-08-10T00:00:00+05:30");
+  const departure = new Date("2026-08-10T18:00:00+02:00");
+  const remainingToDeparture = Math.max(0, departure.getTime() - clock);
+  const countdownDays = Math.floor(remainingToDeparture / 86400000);
+  const countdownHours = Math.floor((remainingToDeparture % 86400000) / 3600000);
+  const countdownMinutes = Math.floor((remainingToDeparture % 3600000) / 60000);
+  const countdownLabel = `${countdownDays}g ${countdownHours}h ${countdownMinutes}m`;
   const liveIndex = Math.max(
     0,
     Math.min(13, Math.floor((today - tripStart) / 86400000)),
@@ -1775,7 +1892,13 @@ function Diary({
     [code, setCode] = useState(""),
     [busy, setBusy] = useState(false),
     [fileStatus, setFileStatus] = useState(""),
-    [feedFilter, setFeedFilter] = useState("all");
+    [feedFilter, setFeedFilter] = useState("all"),
+    [directoryOpen, setDirectoryOpen] = useState(false),
+    [placeName, setPlaceName] = useState(""),
+    [postCoordinates, setPostCoordinates] = useState(null),
+    [locatingPost, setLocatingPost] = useState(false),
+    [placeResults, setPlaceResults] = useState([]),
+    [placeSearching, setPlaceSearching] = useState(false);
   const [editingName, setEditingName] = useState(
     () => !localStorage.getItem("india-visitor-name"),
   );
@@ -1789,8 +1912,48 @@ function Diary({
     localStorage.setItem("india-visitor-name", deviceProfileName);
   }, [deviceProfileName]);
   useEffect(() => localStorage.setItem("india-draft", text), [text]);
-  const addFiles = (incoming) => {
-    const selected = Array.from(incoming || []);
+  useEffect(() => {
+    const query = placeName.trim();
+    if (postCoordinates || query.length < 3) {
+      setPlaceResults([]);
+      setPlaceSearching(false);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      setPlaceSearching(true);
+      try {
+        const response = await fetch(
+          `${API}/places/search?q=${encodeURIComponent(query)}`,
+          { signal: controller.signal },
+        );
+        const result = await response.json();
+        setPlaceResults(result.places || []);
+      } catch (error) {
+        if (error.name !== "AbortError") setPlaceResults([]);
+      } finally {
+        setPlaceSearching(false);
+      }
+    }, 550);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [placeName, postCoordinates]);
+  const addFiles = async (incoming) => {
+    const sourceFiles = Array.from(incoming || []);
+    if (!sourceFiles.length) return;
+    if (sourceFiles.some((file) => /\.(heic|heif)$/i.test(file.name || "")))
+      setFileStatus("Converto la foto iPhone per renderla visibile a tutti…");
+    let selected;
+    try {
+      selected = await Promise.all(sourceFiles.map(normalizeMobileUpload));
+    } catch {
+      setFileStatus(
+        "La foto HEIC non è stata convertita. Sul telefono scegli JPG/Alta compatibilità e riprova.",
+      );
+      return;
+    }
     setFiles((current) => {
       const total = current.length + selected.length;
       if (total > 10) {
@@ -1805,6 +1968,7 @@ function Diary({
   };
   const visiblePosts = posts.filter((p) => {
     if (feedFilter === "all") return true;
+    if (feedFilter === "before") return Number(p.day_index) < 0;
     if (feedFilter === "today") return Number(p.day_index) === liveIndex;
     const mediaTypes = (p.media?.length ? p.media : [p])
       .map((media) => media.media_type)
@@ -1823,6 +1987,11 @@ function Diary({
       f.set("profile_id", deviceProfileId || "");
       f.set("day_index", selectedDay);
       f.set("text", text);
+      f.set("place_name", placeName);
+      if (postCoordinates) {
+        f.set("latitude", String(postCoordinates.latitude));
+        f.set("longitude", String(postCoordinates.longitude));
+      }
       files.forEach((file) => f.append("files", file));
       const r = await fetch(`${API}/posts`, {
         method: "POST",
@@ -1836,6 +2005,9 @@ function Diary({
       setText("");
       localStorage.removeItem("india-draft");
       setFiles([]);
+      setPlaceName("");
+      setPostCoordinates(null);
+      setPlaceResults([]);
       setFileStatus("");
       await refresh();
       setComposeOpen(false);
@@ -1845,20 +2017,71 @@ function Diary({
       setBusy(false);
     }
   };
+  const capturePostLocation = () => {
+    if (!navigator.geolocation) {
+      setFileStatus("Posizione non supportata su questo dispositivo.");
+      return;
+    }
+    setLocatingPost(true);
+    setFileStatus("Cerco la posizione…");
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setPostCoordinates({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+        });
+        setPlaceName((current) => current || "Posizione attuale");
+        setFileStatus("Posizione aggiunta. Puoi modificare il nome del luogo.");
+        setLocatingPost(false);
+      },
+      () => {
+        setFileStatus("Posizione non disponibile. Puoi scrivere il luogo manualmente.");
+        setLocatingPost(false);
+      },
+      { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 },
+    );
+  };
   return (
     <section>
-      <span className="eyebrow">SOCIAL DEL VIAGGIO</span>
-      <h2>Raccontiamola insieme</h2>
+      <div className="socialHeading">
+        <div>
+          <span className="eyebrow">SOCIAL DEL VIAGGIO</span>
+          <h2>Raccontiamola insieme</h2>
+        </div>
+        <button
+          className="travelerDirectoryButton"
+          onClick={() => setDirectoryOpen(true)}
+          aria-label={`Apri elenco viaggiatori, ${people.length} persone`}
+        >
+          <span className="directoryAvatarStack" aria-hidden="true">
+            {people.slice(0, 3).map((person) =>
+              person.avatar_url ? (
+                <img key={person.id} src={person.avatar_url} alt="" />
+              ) : (
+                <i key={person.id}>{person.name?.[0] || "?"}</i>
+              ),
+            )}
+            {!people.length && <Users />}
+          </span>
+          <span className="directoryCount">{people.length}</span>
+          <small>{people.length === 1 ? "viaggiatore" : "viaggiatori"}</small>
+        </button>
+      </div>
       <button className="liveStatus" onClick={() => setSelectedDay(liveIndex)}>
         <span className="liveDot" />
         <div>
           <small>
-            {today < tripStart ? "PROSSIMA TAPPA" : "DOVE SIAMO ORA"}
+            {today < departure ? `PARTENZA TRA ${countdownLabel}` : "DOVE SIAMO ORA"}
           </small>
           <b>
             {liveDay.city} · Giorno {liveIndex + 1}
           </b>
           <span>{liveDay.title}</span>
+          <small className="livePlaceDetail">
+            {today < departure
+              ? "Preparativi prima della partenza"
+              : `${liveDay.city}, India · tappa prevista oggi`}
+          </small>
         </div>
         <MapPinned />
       </button>
@@ -1891,6 +2114,7 @@ function Diary({
       <div className="feedFilters" aria-label="Filtri della bacheca">
         {[
           ["all", "Recenti"],
+          ["before", "Prima della partenza"],
           ["today", "Oggi"],
           ["image", "Foto"],
           ["video", "Video"],
@@ -1915,6 +2139,7 @@ function Diary({
             author={author}
             groupCode={groupCode}
             sessionToken={sessionToken}
+            people={people}
             refresh={refresh}
           />
         ))
@@ -1947,6 +2172,7 @@ function Diary({
                   value={selectedDay}
                   onChange={(e) => setSelectedDay(Number(e.target.value))}
                 >
+                  <option value={-1}>Prima della partenza · Preparativi</option>
                   {days.map((d, i) => (
                     <option value={i} key={i}>
                       Giorno {i + 1} · {d.city}
@@ -1958,6 +2184,54 @@ function Diary({
                   onChange={(e) => setText(e.target.value)}
                   placeholder="Racconta questo momento…"
                 />
+                <div className="postLocationComposer">
+                  <MapPin />
+                  <input
+                    value={placeName}
+                    onChange={(event) => {
+                      setPlaceName(event.target.value);
+                      setPostCoordinates(null);
+                    }}
+                    placeholder="Aggiungi luogo (es. Taj Mahal)"
+                  />
+                  <button type="button" onClick={capturePostLocation} disabled={locatingPost}>
+                    {locatingPost ? "Cerco…" : "Usa posizione"}
+                  </button>
+                  {postCoordinates && (
+                    <button
+                      type="button"
+                      className="clearPostLocation"
+                      onClick={() => {
+                        setPostCoordinates(null);
+                        setPlaceName("");
+                      }}
+                    >
+                      Rimuovi
+                    </button>
+                  )}
+                  {(placeSearching || placeResults.length > 0) && (
+                    <div className="placeSuggestions">
+                      {placeSearching && <small>Cerco luoghi…</small>}
+                      {placeResults.map((place) => (
+                        <button
+                          type="button"
+                          key={`${place.latitude}-${place.longitude}-${place.label}`}
+                          onClick={() => {
+                            setPlaceName(place.label);
+                            setPostCoordinates({
+                              latitude: place.latitude,
+                              longitude: place.longitude,
+                            });
+                            setPlaceResults([]);
+                          }}
+                        >
+                          <MapPin /> {place.label}
+                        </button>
+                      ))}
+                      <small>Dati dei luoghi: OpenStreetMap</small>
+                    </div>
+                  )}
+                </div>
                 <AudioRecorder
                   onRecorded={(recordedFile) => addFiles([recordedFile])}
                 />
@@ -1966,7 +2240,7 @@ function Diary({
                     <ImageIcon /> Galleria foto
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/*,.heic,.heif"
                       multiple
                       onChange={(e) => addFiles(e.target.files)}
                     />
@@ -1975,7 +2249,7 @@ function Diary({
                     <Camera /> Scatta ora
                     <input
                       type="file"
-                      accept="image/*"
+                      accept="image/*,.heic,.heif"
                       capture="environment"
                       onChange={(e) => addFiles(e.target.files)}
                     />
@@ -2034,6 +2308,52 @@ function Diary({
                 text="I familiari possono commentare. Il codice serve per pubblicare foto, video e audio."
               />
             )}
+          </div>
+        </div>
+      )}
+      {directoryOpen && (
+        <div className="directoryBackdrop" onClick={() => setDirectoryOpen(false)}>
+          <div
+            className="travelerDirectory"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Elenco dei viaggiatori"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="directoryHead">
+              <div>
+                <small>IL NOSTRO GRUPPO</small>
+                <h3>Viaggiatori</h3>
+              </div>
+              <button
+                onClick={() => setDirectoryOpen(false)}
+                aria-label="Chiudi elenco viaggiatori"
+              >
+                ×
+              </button>
+            </div>
+            <p>Nei commenti scrivi <b>@</b> e scegli la persona da menzionare.</p>
+            <div className="directoryList">
+              {people.map((person) => (
+                <div key={person.id} className="directoryPerson">
+                  {person.avatar_url ? (
+                    <img src={person.avatar_url} alt="" />
+                  ) : (
+                    <span className="avatar">{person.name?.[0] || "?"}</span>
+                  )}
+                  <div>
+                    <b>{person.name} {person.surname || ""}</b>
+                    <small>
+                      {[
+                        person.role === "coordinator" ? "Coordinatore" : "Viaggiatore",
+                        person.origin_city,
+                      ].filter(Boolean).join(" · ")}
+                    </small>
+                  </div>
+                  <code>@{mentionHandle(person)}</code>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}
@@ -2104,9 +2424,14 @@ function AudioRecorder({ onRecorded }) {
       };
       recorder.onstop = () => {
         const type = recorder.mimeType || "audio/webm";
+        const extension = type.includes("mp4")
+          ? "m4a"
+          : type.includes("ogg")
+            ? "ogg"
+            : "webm";
         const blob = new Blob(chunksRef.current, { type });
         onRecorded(
-          new File([blob], `voce-${new Date().toISOString().slice(0, 19)}.webm`, {
+          new File([blob], `voce-${new Date().toISOString().slice(0, 19)}.${extension}`, {
             type,
           }),
         );
@@ -2223,7 +2548,7 @@ function PostMedia({ items }) {
   );
 }
 
-function Post({ p, author, groupCode, sessionToken, refresh }) {
+function Post({ p, author, groupCode, sessionToken, people, refresh }) {
   const [comment, setComment] = useState(""),
     [replyFile, setReplyFile] = useState(null),
     [menuOpen, setMenuOpen] = useState(false),
@@ -2378,6 +2703,26 @@ function Post({ p, author, groupCode, sessionToken, refresh }) {
   const visibleComments = (p.comments || []).filter(
     (commentItem) => !hiddenCommentIds.includes(commentItem.id),
   );
+  const mentionMatch = comment.match(/(^|\s)@([^\s@]*)$/);
+  const mentionQuery = (mentionMatch?.[2] || "").toLowerCase();
+  const mentionSuggestions = mentionMatch
+    ? (people || [])
+        .filter((person) => {
+          const fullName = `${person.name} ${person.surname || ""}`.toLowerCase();
+          return (
+            !mentionQuery ||
+            fullName.includes(mentionQuery) ||
+            mentionHandle(person).toLowerCase().includes(mentionQuery)
+          );
+        })
+        .slice(0, 5)
+    : [];
+  const addMention = (person) => {
+    if (!mentionMatch) return;
+    const prefix = comment.slice(0, mentionMatch.index) + mentionMatch[1];
+    setComment(`${prefix}@${mentionHandle(person)} `);
+    requestAnimationFrame(() => replyInputRef.current?.focus());
+  };
   return (
     <article className="post" data-scroll-anchor={`post-${p.id}`}>
       <div className="postTop">
@@ -2385,8 +2730,24 @@ function Post({ p, author, groupCode, sessionToken, refresh }) {
         <div>
           <b>{p.author_name}</b>
           <small>
-            Giorno {Number(p.day_index) + 1} · {days[p.day_index]?.city}
+            {Number(p.day_index) < 0
+              ? "Prima della partenza · Preparativi"
+              : `Giorno ${Number(p.day_index) + 1} · ${days[p.day_index]?.city}`}
           </small>
+          {p.place_name && (
+            p.latitude != null && p.longitude != null ? (
+              <a
+                className="postPlace"
+                href={`https://www.google.com/maps?q=${p.latitude},${p.longitude}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <MapPin /> {p.place_name}
+              </a>
+            ) : (
+              <span className="postPlace"><MapPin /> {p.place_name}</span>
+            )
+          )}
         </div>
         {(sessionToken || groupCode) && (
           <div className="postMenu">
@@ -2493,7 +2854,7 @@ function Post({ p, author, groupCode, sessionToken, refresh }) {
                 </div>
               ) : (
                 <>
-                  {x.text && <span>{x.text}</span>}
+                  {x.text && <span>{renderCommentText(x.text)}</span>}
                   {(sessionToken || groupCode || x.visitor_id === visitor()) && x.text && (
                     <div className="commentCommands">
                       <button
@@ -2548,13 +2909,24 @@ function Post({ p, author, groupCode, sessionToken, refresh }) {
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder={author ? "Rispondi…" : "Inserisci il tuo nome sopra"}
+            autoCapitalize="none"
+            autoCorrect="off"
+            enterKeyHint="send"
           />
           <label title="Aggiungi foto, video o audio">
             <Paperclip />
             <input
               type="file"
               accept="image/*,video/*,audio/*,.heic,.heif,.mov,.mp4,.m4a,.aac"
-              onChange={(e) => setReplyFile(e.target.files?.[0] || null)}
+              onChange={async (e) => {
+                const selectedFile = e.target.files?.[0] || null;
+                if (!selectedFile) return setReplyFile(null);
+                try {
+                  setReplyFile(await normalizeMobileUpload(selectedFile));
+                } catch {
+                  setCommentStatus("Foto HEIC non convertita. Riprova in formato JPG.");
+                }
+              }}
             />
           </label>
           <button
@@ -2565,6 +2937,24 @@ function Post({ p, author, groupCode, sessionToken, refresh }) {
             <Send />
           </button>
         </div>
+        {mentionSuggestions.length > 0 && (
+          <div className="mentionSuggestions" role="listbox" aria-label="Persone da menzionare">
+            {mentionSuggestions.map((person) => (
+              <button
+                key={person.id}
+                role="option"
+                onMouseDown={(event) => event.preventDefault()}
+                onClick={() => addMention(person)}
+              >
+                <span className="avatar">{person.name?.[0] || "?"}</span>
+                <span>
+                  <b>{person.name} {person.surname || ""}</b>
+                  <small>@{mentionHandle(person)}</small>
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
         {replyFile && <small>Allegato pronto: {replyFile.name}</small>}
         {commentStatus && (
           <small className="commentStatus" role="status">
@@ -2616,6 +3006,7 @@ function People({
       surname: "",
       age: "",
       job: "",
+      origin_city: "",
       bio: "",
       role: "traveler",
     }),
@@ -2685,6 +3076,7 @@ function People({
         surname: "",
         age: "",
         job: "",
+        origin_city: "",
         bio: "",
         role: "traveler",
       });
@@ -2724,6 +3116,7 @@ function People({
                     surname: "",
                     age: "",
                     job: "",
+                    origin_city: "",
                     bio: "",
                     role: "traveler",
                   });
@@ -2743,7 +3136,18 @@ function People({
             <input
               type="file"
               accept="image/*,.heic,.heif"
-              onChange={(e) => setAvatar(e.target.files?.[0] || null)}
+              onChange={async (e) => {
+                const selectedFile = e.target.files?.[0] || null;
+                if (!selectedFile) return setAvatar(null);
+                try {
+                  setAvatar(await normalizeMobileUpload(selectedFile));
+                } catch {
+                  setFormStatus({
+                    type: "error",
+                    text: "Foto HEIC non convertita. Riprova in formato JPG.",
+                  });
+                }
+              }}
             />
             <span>Aggiungi la tua foto</span>
           </label>
@@ -2769,6 +3173,11 @@ function People({
               onChange={(e) => setForm({ ...form, job: e.target.value })}
             />
           </div>
+          <input
+            placeholder="Da dove vieni (es. Milano)"
+            value={form.origin_city}
+            onChange={(e) => setForm({ ...form, origin_city: e.target.value })}
+          />
           <textarea
             placeholder="Raccontaci qualcosa di te…"
             value={form.bio}
@@ -2825,11 +3234,12 @@ function People({
               <div className="avatar big">{x.name[0]}</div>
             )}
             <h3>
-              {x.name} {x.surname}
+              {x.name} {x.surname}{x.origin_city ? ` · ${x.origin_city}` : ""}
             </h3>
             <small>
               {[
                 x.role === "coordinator" ? "Coordinatore" : "Viaggiatore",
+                x.origin_city,
                 x.age && `${x.age} anni`,
                 x.job,
               ]
@@ -2847,6 +3257,7 @@ function People({
                       surname: x.surname || "",
                       age: x.age || "",
                       job: x.job || "",
+                      origin_city: x.origin_city || "",
                       bio: x.bio || "",
                       role: x.role || "traveler",
                     });

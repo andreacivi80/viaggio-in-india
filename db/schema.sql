@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   surname TEXT DEFAULT '',
   age TEXT DEFAULT '',
   job TEXT DEFAULT '',
+  origin_city TEXT DEFAULT '',
   bio TEXT DEFAULT '',
   role TEXT DEFAULT 'traveler',
   avatar_key TEXT,
@@ -16,6 +17,9 @@ CREATE TABLE IF NOT EXISTS posts (
   day_index INTEGER NOT NULL DEFAULT 0,
   visibility TEXT NOT NULL DEFAULT 'public',
   text TEXT DEFAULT '',
+  place_name TEXT DEFAULT '',
+  latitude REAL,
+  longitude REAL,
   media_key TEXT,
   media_type TEXT,
   media_name TEXT,
@@ -93,5 +97,22 @@ CREATE TABLE IF NOT EXISTS profile_invites (
   expires_at TEXT NOT NULL,
   used_at TEXT
 );
+CREATE TABLE IF NOT EXISTS sync_state (
+  id INTEGER PRIMARY KEY CHECK (id = 1),
+  version INTEGER NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS push_subscriptions (
+  id TEXT PRIMARY KEY,
+  endpoint TEXT NOT NULL UNIQUE,
+  p256dh TEXT NOT NULL,
+  auth TEXT NOT NULL,
+  profile_id TEXT DEFAULT '',
+  visitor_name TEXT DEFAULT '',
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+INSERT OR IGNORE INTO sync_state(id, version, updated_at)
+VALUES(1, 0, CURRENT_TIMESTAMP);
 CREATE INDEX IF NOT EXISTS profile_invites_profile_idx
   ON profile_invites(profile_id, expires_at);

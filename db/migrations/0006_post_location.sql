@@ -1,0 +1,3 @@
+ALTER TABLE posts ADD COLUMN place_name TEXT DEFAULT '';
+ALTER TABLE posts ADD COLUMN latitude REAL;
+ALTER TABLE posts ADD COLUMN longitude REAL;
