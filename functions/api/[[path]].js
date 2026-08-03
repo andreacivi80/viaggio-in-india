@@ -1,4 +1,4 @@
-import webpush from "web-push";
+import { buildPushPayload } from "@block65/webcrypto-web-push";
 
 const json = (data, status = 200) =>
   new Response(JSON.stringify(data), {
@@ -57,25 +57,33 @@ async function createSession(env, profileId) {
 async function notifySubscribers(env, payload) {
   if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY)
     return { configured: false, sent: 0, failed: 0, errors: ["Chiavi push mancanti"] };
-  webpush.setVapidDetails(
-    "https://viaggio-in-india-2026.pages.dev/",
-    env.VAPID_PUBLIC_KEY,
-    env.VAPID_PRIVATE_KEY,
-  );
+  const vapid = {
+    subject: "https://viaggio-in-india-2026.pages.dev/",
+    publicKey: env.VAPID_PUBLIC_KEY,
+    privateKey: env.VAPID_PRIVATE_KEY,
+  };
   const subscriptions = await env.DB.prepare(
     "SELECT id,endpoint,p256dh,auth FROM push_subscriptions",
   ).all();
   const deliveries = await Promise.all(
     subscriptions.results.map(async (subscription) => {
       try {
-        await webpush.sendNotification(
-          {
-            endpoint: subscription.endpoint,
-            keys: { p256dh: subscription.p256dh, auth: subscription.auth },
-          },
-          JSON.stringify(payload),
-          { TTL: 3600, urgency: "normal" },
+        const target = {
+          endpoint: subscription.endpoint,
+          expirationTime: null,
+          keys: { p256dh: subscription.p256dh, auth: subscription.auth },
+        };
+        const request = await buildPushPayload(
+          { data: JSON.stringify(payload), options: { ttl: 3600 } },
+          target,
+          vapid,
         );
+        const response = await fetch(subscription.endpoint, request);
+        if (!response.ok) {
+          const error = new Error((await response.text()).slice(0, 180));
+          error.statusCode = response.status;
+          throw error;
+        }
         return { ok: true };
       } catch (error) {
         if ([404, 410].includes(error?.statusCode))
@@ -104,23 +112,35 @@ async function notifySubscribers(env, payload) {
 
 async function saveMedia(env, file, prefix = "public") {
   if (!(file instanceof File) || file.size === 0) return null;
+  const contentType = String(file.type || "application/octet-stream").toLowerCase();
+  if (
+    prefix.startsWith("public") &&
+    (!/^(image|video|audio)\//.test(contentType) || contentType === "image/svg+xml")
+  ) {
+    const error = new Error("Formato non consentito: usa foto, video o audio del telefono");
+    error.status = 400;
+    throw error;
+  }
   const max = file.type.startsWith("video/")
     ? 25 * 1024 * 1024
     : 12 * 1024 * 1024;
-  if (file.size > max)
-    throw new Error(
+  if (file.size > max) {
+    const error = new Error(
       `File troppo grande: massimo ${Math.round(max / 1024 / 1024)} MB`,
     );
+    error.status = 400;
+    throw error;
+  }
   const key = `${prefix}/${Date.now()}-${id()}.${ext(file.name)}`;
   await env.MEDIA.put(key, await file.arrayBuffer(), {
     metadata: {
-      contentType: file.type || "application/octet-stream",
+      contentType,
       name: file.name || "file",
     },
   });
   return {
     key,
-    type: file.type || "application/octet-stream",
+    type: contentType,
     name: file.name || "file",
     size: file.size,
   };
@@ -386,7 +406,10 @@ export async function onRequest(context) {
       const endpoint = String(subscription.endpoint || "");
       const p256dh = String(subscription.keys?.p256dh || "");
       const auth = String(subscription.keys?.auth || "");
-      if (!endpoint.startsWith("https://") || !p256dh || !auth)
+      if (
+        !endpoint.startsWith("https://") || endpoint.length > 2048 ||
+        !p256dh || p256dh.length > 512 || !auth || auth.length > 256
+      )
         return json({ error: "Iscrizione notifiche non valida" }, 400);
       const subscriptionId = await tokenHash(endpoint);
       await env.DB.prepare(
@@ -445,7 +468,12 @@ export async function onRequest(context) {
           ? "public, max-age=31536000, immutable"
           : "private, no-store",
         "accept-ranges": "bytes",
+        "x-content-type-options": "nosniff",
       };
+      const safeInline = /^(image\/(?!svg\+xml)|video\/|audio\/|application\/pdf)/i.test(
+        headers["content-type"],
+      );
+      headers["content-disposition"] = safeInline ? "inline" : "attachment";
       if (request.method === "HEAD") {
         headers["content-length"] = String(bytes.byteLength);
         return new Response(null, { headers });
@@ -586,6 +614,13 @@ export async function onRequest(context) {
         longitude: form.get("longitude") ? Number(form.get("longitude")) : null,
         created_at: now(),
       };
+      if (
+        (row.latitude !== null &&
+          (!Number.isFinite(row.latitude) || row.latitude < -90 || row.latitude > 90)) ||
+        (row.longitude !== null &&
+          (!Number.isFinite(row.longitude) || row.longitude < -180 || row.longitude > 180))
+      )
+        return json({ error: "Posizione non valida" }, 400);
       try {
         for (const file of files)
           savedMedia.push(await saveMedia(env, file, "public"));
@@ -694,15 +729,22 @@ export async function onRequest(context) {
         ? `${session.name} ${session.surname || ""}`.trim()
         : String(form.get("author_name") || "").trim();
       if (!author) return json({ error: "Inserisci il nome" }, 400);
+      const postId = String(form.get("post_id") || "");
+      if (!postId) return json({ error: "Contenuto non valido" }, 400);
+      const targetPost = await env.DB.prepare("SELECT id FROM posts WHERE id=?")
+        .bind(postId)
+        .first();
+      if (!targetPost) return json({ error: "Contenuto non trovato" }, 404);
       const media = await saveMedia(env, form.get("file"), "public");
       const row = {
         id: id(),
-        post_id: String(form.get("post_id") || ""),
+        post_id: postId,
         author_name: author,
         profile_id: session?.profile_id || "",
         text: String(form.get("text") || ""),
         created_at: now(),
       };
+      if (!row.text.trim() && !media) return json({ error: "Commento vuoto" }, 400);
       await env.DB.prepare(
         "INSERT INTO comments(id,post_id,author_name,profile_id,visitor_id,text,media_key,media_type,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
       )
@@ -773,6 +815,12 @@ export async function onRequest(context) {
     }
     if (request.method === "POST" && path === "reactions") {
       const b = await request.json();
+      if (!String(b.post_id || "") || !String(b.visitor_id || ""))
+        return json({ error: "Reazione non valida" }, 400);
+      const targetPost = await env.DB.prepare("SELECT id FROM posts WHERE id=?")
+        .bind(String(b.post_id))
+        .first();
+      if (!targetPost) return json({ error: "Contenuto non trovato" }, 404);
       const kind = ["like", "heart", "laugh", "wow", "clap", "fire"].includes(
         b.kind,
       )
@@ -831,6 +879,13 @@ export async function onRequest(context) {
       const session = await sessionFromRequest(request, env);
       if (!session) return json({ error: "Accesso personale richiesto" }, 401);
       const b = await request.json();
+      const latitude = Number(b.latitude);
+      const longitude = Number(b.longitude);
+      if (
+        !Number.isFinite(latitude) || latitude < -90 || latitude > 90 ||
+        !Number.isFinite(longitude) || longitude < -180 || longitude > 180
+      )
+        return json({ error: "Posizione non valida" }, 400);
       if (
         session.role !== "coordinator" &&
         String(b.profile_id || "") !== session.profile_id
@@ -842,8 +897,8 @@ export async function onRequest(context) {
         .bind(
           b.profile_id,
           b.display_name,
-          Number(b.latitude),
-          Number(b.longitude),
+          latitude,
+          longitude,
           now(),
         )
         .run();
@@ -871,8 +926,10 @@ export async function onRequest(context) {
         (session.role !== "coordinator" && session.profile_id !== profileId)
       )
         return json({ error: "Documento non autorizzato" }, 403);
-      const media = await saveMedia(env, form.get("file"), "private");
       const type = String(form.get("doc_type"));
+      if (!["passport", "visa", "tickets", "insurance"].includes(type))
+        return json({ error: "Tipo documento non valido" }, 400);
+      const media = await saveMedia(env, form.get("file"), "private");
       const previous = await env.DB.prepare(
         "SELECT file_key FROM document_status WHERE profile_id=? AND doc_type=?",
       )
@@ -926,6 +983,6 @@ export async function onRequest(context) {
     }
     return json({ error: "Endpoint non trovato" }, 404);
   } catch (error) {
-    return json({ error: error.message || "Errore server" }, 500);
+    return json({ error: error.message || "Errore server" }, error.status || 500);
   }
 }
