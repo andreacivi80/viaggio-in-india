@@ -55,7 +55,8 @@ async function createSession(env, profileId) {
   return { token, expires_at: expiresAt };
 }
 async function notifySubscribers(env, payload) {
-  if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY) return;
+  if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY)
+    return { configured: false, sent: 0, failed: 0, errors: ["Chiavi push mancanti"] };
   webpush.setVapidDetails(
     "https://viaggio-in-india-2026.pages.dev/",
     env.VAPID_PUBLIC_KEY,
@@ -64,7 +65,7 @@ async function notifySubscribers(env, payload) {
   const subscriptions = await env.DB.prepare(
     "SELECT id,endpoint,p256dh,auth FROM push_subscriptions",
   ).all();
-  await Promise.allSettled(
+  const deliveries = await Promise.all(
     subscriptions.results.map(async (subscription) => {
       try {
         await webpush.sendNotification(
@@ -75,14 +76,30 @@ async function notifySubscribers(env, payload) {
           JSON.stringify(payload),
           { TTL: 3600, urgency: "normal" },
         );
+        return { ok: true };
       } catch (error) {
         if ([404, 410].includes(error?.statusCode))
           await env.DB.prepare("DELETE FROM push_subscriptions WHERE id=?")
             .bind(subscription.id)
             .run();
+        return {
+          ok: false,
+          status: Number(error?.statusCode || 0),
+          message: String(error?.body || error?.message || "Invio non riuscito").slice(0, 180),
+        };
       }
     }),
   );
+  const errors = deliveries.filter((delivery) => !delivery.ok);
+  return {
+    configured: true,
+    sent: deliveries.length - errors.length,
+    failed: errors.length,
+    errors: errors.slice(0, 3).map((error) => ({
+      status: error.status,
+      message: error.message,
+    })),
+  };
 }
 
 async function saveMedia(env, file, prefix = "public") {
@@ -326,6 +343,40 @@ export async function onRequest(context) {
       });
       return json({ places });
     }
+    if (request.method === "GET" && path === "places/reverse") {
+      const source = new URL(request.url).searchParams;
+      const latitude = Number(source.get("lat"));
+      const longitude = Number(source.get("lon"));
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude))
+        return json({ error: "Coordinate non valide" }, 400);
+      const target = new URL("https://photon.komoot.io/reverse");
+      target.searchParams.set("lat", String(latitude));
+      target.searchParams.set("lon", String(longitude));
+      target.searchParams.set("lang", "en");
+      const upstream = await fetch(target, {
+        headers: { accept: "application/json" },
+        cf: { cacheTtl: 86400, cacheEverything: true },
+      });
+      if (!upstream.ok) return json({ place: null });
+      const data = await upstream.json();
+      const feature = data.features?.[0];
+      const properties = feature?.properties || {};
+      const parts = [
+        properties.name,
+        properties.city || properties.district,
+        properties.state,
+        properties.country,
+      ].filter(Boolean);
+      return json({
+        place: feature
+          ? {
+              label: [...new Set(parts)].join(", "),
+              latitude,
+              longitude,
+            }
+          : null,
+      });
+    }
     if (request.method === "GET" && path === "push/config")
       return json({ public_key: env.VAPID_PUBLIC_KEY || "" });
     if (request.method === "POST" && path === "push/subscribe") {
@@ -360,13 +411,13 @@ export async function onRequest(context) {
     }
     if (request.method === "POST" && path === "push/test") {
       if (!groupOk(request, env)) return json({ error: "Accesso negato" }, 403);
-      await notifySubscribers(env, {
+      const delivery = await notifySubscribers(env, {
         title: "India Insieme",
         body: "Notifica di prova ricevuta correttamente, anche con l’app chiusa.",
         url: "/",
         tag: `test-${Date.now()}`,
       });
-      return json({ ok: true });
+      return json({ ok: delivery.sent > 0 && delivery.failed === 0, delivery });
     }
     if (["GET", "HEAD"].includes(request.method) && path.startsWith("media/")) {
       const key = decodeURIComponent(path.slice(6));
