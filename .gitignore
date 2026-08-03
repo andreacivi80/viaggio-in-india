@@ -2,3 +2,5 @@ node_modules/
 dist/
 .env*
 !.env.example
+.dev-output.log
+.dev-error.log
