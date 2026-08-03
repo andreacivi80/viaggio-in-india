@@ -4,6 +4,8 @@ const responseSecurityHeaders = {
   "x-content-type-options": "nosniff",
   "referrer-policy": "strict-origin-when-cross-origin",
   "x-frame-options": "SAMEORIGIN",
+  "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+  "content-security-policy": "default-src 'none'; frame-ancestors 'none'",
   "permissions-policy": "camera=(self), microphone=(self), geolocation=(self)",
 };
 const json = (data, status = 200, additionalHeaders = {}) =>
@@ -134,6 +136,15 @@ async function claimInitialProfile(env, profileId) {
   ]);
   return { token, expires_at: expiresAt };
 }
+function canViewPost(post, session = null, guest = null) {
+  const visibility = String(post?.visibility || "public");
+  if (visibility === "public") return true;
+  if (visibility === "family") return Boolean(session || guest);
+  if (visibility === "group") return Boolean(session);
+  if (visibility === "private")
+    return Boolean(session && session.profile_id === post.profile_id);
+  return false;
+}
 async function notifySubscribers(env, payload) {
   if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY)
     return { configured: false, sent: 0, failed: 0, errors: ["Chiavi push mancanti"] };
@@ -143,10 +154,24 @@ async function notifySubscribers(env, payload) {
     privateKey: env.VAPID_PRIVATE_KEY,
   };
   const subscriptions = await env.DB.prepare(
-    "SELECT id,endpoint,p256dh,auth FROM push_subscriptions",
+    "SELECT id,endpoint,p256dh,auth,profile_id,guest_visitor_id FROM push_subscriptions",
   ).all();
+  const authorizedSubscriptions = subscriptions.results.filter((subscription) => {
+    const hasProfile = Boolean(subscription.profile_id);
+    const hasGuest = Boolean(subscription.guest_visitor_id);
+    if (payload.author_profile_id && subscription.profile_id === payload.author_profile_id)
+      return false;
+    if (payload.author_guest_id && subscription.guest_visitor_id === payload.author_guest_id)
+      return false;
+    if (!payload.visibility || payload.visibility === "public") return true;
+    if (payload.visibility === "family") return hasProfile || hasGuest;
+    if (payload.visibility === "group") return hasProfile;
+    if (payload.visibility === "private")
+      return subscription.profile_id === payload.author_profile_id;
+    return false;
+  });
   const deliveries = await Promise.all(
-    subscriptions.results.map(async (subscription) => {
+    authorizedSubscriptions.map(async (subscription) => {
       try {
         const target = {
           endpoint: subscription.endpoint,
@@ -194,7 +219,7 @@ async function saveMedia(env, file, prefix = "public") {
   if (!(file instanceof File) || file.size === 0) return null;
   const contentType = String(file.type || "application/octet-stream").toLowerCase();
   if (
-    prefix.startsWith("public") &&
+    (prefix.startsWith("public") || prefix.startsWith("restricted")) &&
     (!/^(image|video|audio)\//.test(contentType) || contentType === "image/svg+xml")
   ) {
     const error = new Error("Formato non consentito: usa foto, video o audio del telefono");
@@ -226,12 +251,10 @@ async function saveMedia(env, file, prefix = "public") {
   };
 }
 
-async function readState(env, viewer = null) {
+async function readState(env, session = null, guest = null) {
   const [profiles, posts, comments, reactions, postMedia, syncState] = await Promise.all([
     env.DB.prepare("SELECT * FROM profiles ORDER BY created_at").all(),
-    env.DB.prepare(
-      "SELECT * FROM posts WHERE visibility='public' ORDER BY created_at DESC",
-    ).all(),
+    env.DB.prepare("SELECT * FROM posts ORDER BY created_at DESC").all(),
     env.DB.prepare("SELECT * FROM comments ORDER BY created_at").all(),
     env.DB.prepare(
       "SELECT post_id, kind, author_name, COUNT(*) AS total FROM reactions GROUP BY post_id, kind, author_name",
@@ -241,7 +264,7 @@ async function readState(env, viewer = null) {
   ]);
   const profileById = new Map(profiles.results.map((profile) => [profile.id, profile]));
   const publicName = (profileId, fallback) => {
-    if (viewer) return fallback;
+    if (session) return fallback;
     const profile = profileById.get(profileId);
     if (!profile) return fallback;
     const initial = String(profile.surname || "").trim().slice(0, 1);
@@ -251,7 +274,7 @@ async function readState(env, viewer = null) {
     sync_version: Number(syncState?.version || 0),
     sync_updated_at: syncState?.updated_at || null,
     profiles: profiles.results.map((p) =>
-      viewer
+      session
         ? { ...p, avatar_url: mediaUrl(p.avatar_key) }
         : {
             id: p.id,
@@ -263,7 +286,7 @@ async function readState(env, viewer = null) {
             created_at: p.created_at,
           },
     ),
-    posts: posts.results.map((p) => ({
+    posts: posts.results.filter((p) => canViewPost(p, session, guest)).map((p) => ({
       ...p,
       author_name: publicName(p.profile_id, p.author_name),
       media_url: mediaUrl(p.media_key),
@@ -466,8 +489,9 @@ export async function onRequest(context) {
       }, 201);
     }
     if (request.method === "GET" && path === "state") {
-      const viewer = await sessionFromRequest(request, env);
-      return json(await readState(env, viewer));
+      const session = await sessionFromRequest(request, env);
+      const guest = session ? null : await guestFromRequest(request, env);
+      return json(await readState(env, session, guest));
     }
     if (request.method === "GET" && path === "sync/version") {
       const state = await env.DB.prepare(
@@ -574,6 +598,7 @@ export async function onRequest(context) {
       return json({ public_key: env.VAPID_PUBLIC_KEY || "" });
     if (request.method === "POST" && path === "push/subscribe") {
       const session = await sessionFromRequest(request, env);
+      const guest = session ? null : await guestFromRequest(request, env);
       const body = await request.json();
       const subscription = body.subscription || {};
       const endpoint = String(subscription.endpoint || "");
@@ -586,9 +611,9 @@ export async function onRequest(context) {
         return json({ error: "Iscrizione notifiche non valida" }, 400);
       const subscriptionId = await tokenHash(endpoint);
       await env.DB.prepare(
-        `INSERT INTO push_subscriptions(id,endpoint,p256dh,auth,profile_id,visitor_name,created_at,updated_at)
-         VALUES(?,?,?,?,?,?,?,?)
-         ON CONFLICT(endpoint) DO UPDATE SET p256dh=excluded.p256dh,auth=excluded.auth,profile_id=excluded.profile_id,visitor_name=excluded.visitor_name,updated_at=excluded.updated_at`,
+        `INSERT INTO push_subscriptions(id,endpoint,p256dh,auth,profile_id,guest_visitor_id,visitor_name,created_at,updated_at)
+         VALUES(?,?,?,?,?,?,?,?,?)
+         ON CONFLICT(endpoint) DO UPDATE SET p256dh=excluded.p256dh,auth=excluded.auth,profile_id=excluded.profile_id,guest_visitor_id=excluded.guest_visitor_id,visitor_name=excluded.visitor_name,updated_at=excluded.updated_at`,
       )
         .bind(
           subscriptionId,
@@ -596,9 +621,10 @@ export async function onRequest(context) {
           p256dh,
           auth,
           session?.profile_id || "",
+          guest?.visitor_id || "",
           session
             ? `${session.name} ${session.surname || ""}`.trim()
-            : String(body.visitor_name || "Familiare").trim(),
+            : guest?.display_name || String(body.visitor_name || "Familiare").trim(),
           now(),
           now(),
         )
@@ -632,10 +658,27 @@ export async function onRequest(context) {
         )
           return json({ error: "Documento non autorizzato" }, 403);
       }
+      if (key.startsWith("restricted/")) {
+        const session = await sessionFromRequest(request, env);
+        const guest = session ? null : await guestFromRequest(request, env);
+        const post = await env.DB.prepare(
+          `SELECT p.profile_id,p.visibility
+           FROM posts p
+           LEFT JOIN post_media m ON m.post_id=p.id
+           LEFT JOIN comments c ON c.post_id=p.id
+           WHERE p.media_key=? OR m.media_key=? OR c.media_key=?
+           LIMIT 1`,
+        )
+          .bind(key, key, key)
+          .first();
+        if (!post || !canViewPost(post, session, guest))
+          return json({ error: "Contenuto non autorizzato" }, 403);
+      }
       const meta = await env.MEDIA.getWithMetadata(key, { type: "arrayBuffer" });
       if (!meta.value) return new Response("Not found", { status: 404 });
       const bytes = meta.value;
       const headers = {
+        ...responseSecurityHeaders,
         "content-type": meta.metadata?.contentType || "application/octet-stream",
         "cache-control": key.startsWith("public/")
           ? "public, max-age=31536000, immutable"
@@ -775,12 +818,15 @@ export async function onRequest(context) {
           400,
         );
       const savedMedia = [];
+      const requestedVisibility = String(form.get("visibility") || "public");
+      if (!["public", "family", "group", "private"].includes(requestedVisibility))
+        return json({ error: "Visibilità non valida" }, 400);
       const row = {
         id: id(),
         author_name: `${session.name} ${session.surname || ""}`.trim(),
         profile_id: session.profile_id,
         day_index: Number(form.get("day_index") || 0),
-        visibility: String(form.get("visibility") || "public"),
+        visibility: requestedVisibility,
         text: String(form.get("text") || ""),
         place_name: String(form.get("place_name") || "").trim(),
         latitude: form.get("latitude") ? Number(form.get("latitude")) : null,
@@ -795,8 +841,11 @@ export async function onRequest(context) {
       )
         return json({ error: "Posizione non valida" }, 400);
       try {
+        const mediaPrefix = row.visibility === "public"
+          ? "public"
+          : `restricted/${row.id}`;
         for (const file of files)
-          savedMedia.push(await saveMedia(env, file, "public"));
+          savedMedia.push(await saveMedia(env, file, mediaPrefix));
         await env.DB.prepare(
           "INSERT INTO posts(id,author_name,profile_id,day_index,visibility,text,place_name,latitude,longitude,media_key,media_type,media_name,media_size,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         )
@@ -840,14 +889,17 @@ export async function onRequest(context) {
         await env.DB.prepare("DELETE FROM posts WHERE id=?").bind(row.id).run();
         throw error;
       }
-      context.waitUntil?.(
-        notifySubscribers(env, {
+      if (request.headers.get("x-qa-silent") !== "true")
+        context.waitUntil?.(
+          notifySubscribers(env, {
           title: row.author_name,
           body: row.text || "Ha pubblicato un nuovo ricordo del viaggio.",
-          url: "/",
+          url: `/?post=${encodeURIComponent(row.id)}`,
           tag: `post-${row.id}`,
-        }),
-      );
+          visibility: row.visibility,
+          author_profile_id: row.profile_id,
+          }),
+        );
       return json(
         {
           ...row,
@@ -915,11 +967,18 @@ export async function onRequest(context) {
         : guest.display_name;
       const postId = String(form.get("post_id") || "");
       if (!postId) return json({ error: "Contenuto non valido" }, 400);
-      const targetPost = await env.DB.prepare("SELECT id FROM posts WHERE id=?")
+      const targetPost = await env.DB.prepare(
+        "SELECT id,profile_id,visibility FROM posts WHERE id=?",
+      )
         .bind(postId)
         .first();
       if (!targetPost) return json({ error: "Contenuto non trovato" }, 404);
-      const media = await saveMedia(env, form.get("file"), "public");
+      if (!canViewPost(targetPost, session, guest))
+        return json({ error: "Contenuto non autorizzato" }, 403);
+      const commentPrefix = targetPost.visibility === "public"
+        ? "public/comments"
+        : `restricted/${targetPost.id}/comments`;
+      const media = await saveMedia(env, form.get("file"), commentPrefix);
       const row = {
         id: id(),
         post_id: postId,
@@ -944,14 +1003,18 @@ export async function onRequest(context) {
           row.created_at,
         )
         .run();
-      context.waitUntil?.(
-        notifySubscribers(env, {
+      if (request.headers.get("x-qa-silent") !== "true")
+        context.waitUntil?.(
+          notifySubscribers(env, {
           title: row.author_name,
           body: row.text || "Ha aggiunto un commento.",
-          url: "/",
+          url: `/?post=${encodeURIComponent(row.post_id)}&comment=${encodeURIComponent(row.id)}`,
           tag: `comment-${row.id}`,
-        }),
-      );
+          visibility: targetPost.visibility,
+          author_profile_id: row.profile_id,
+          author_guest_id: guest?.visitor_id || "",
+          }),
+        );
       return json({ ...row, media_url: mediaUrl(media?.key) }, 201);
     }
     if (request.method === "PUT" && path.startsWith("comments/")) {
@@ -1018,10 +1081,14 @@ export async function onRequest(context) {
         visitorId,
       );
       if (limited) return limited;
-      const targetPost = await env.DB.prepare("SELECT id FROM posts WHERE id=?")
+      const targetPost = await env.DB.prepare(
+        "SELECT id,profile_id,visibility FROM posts WHERE id=?",
+      )
         .bind(String(b.post_id))
         .first();
       if (!targetPost) return json({ error: "Contenuto non trovato" }, 404);
+      if (!canViewPost(targetPost, session, guest))
+        return json({ error: "Contenuto non autorizzato" }, 403);
       const kind = ["like", "heart", "laugh", "wow", "clap", "fire"].includes(
         b.kind,
       )

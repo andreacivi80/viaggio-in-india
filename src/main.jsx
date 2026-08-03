@@ -30,7 +30,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.24.0",
+const VERSION = "1.25.0",
   API = "/api";
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
@@ -104,6 +104,10 @@ async function guestHeaders(displayName) {
   }
   return { "x-guest-token": token };
 }
+const storedGuestHeaders = () => {
+  const token = localStorage.getItem("india-guest-token") || "";
+  return token ? { "x-guest-token": token } : {};
+};
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/auth/group`, {
     method: "POST",
@@ -965,6 +969,10 @@ function App() {
     : indiaToday;
   const todayTripIndex = tripDateKeys.indexOf(activeDateKey);
   const effectiveGroupCode = publicPreview ? "" : groupCode;
+  const sessionTokenRef = useRef(sessionToken);
+  useEffect(() => {
+    sessionTokenRef.current = sessionToken;
+  }, [sessionToken]);
   const refresh = async () => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
@@ -980,7 +988,9 @@ function App() {
     try {
       const r = await fetch(`${API}/state`, {
         cache: "no-store",
-        headers: sessionHeaders(sessionToken),
+        headers: sessionTokenRef.current
+          ? sessionHeaders(sessionTokenRef.current)
+          : storedGuestHeaders(),
         signal: controller.signal,
       });
       if (!r.ok) throw Error();
@@ -1052,6 +1062,25 @@ function App() {
       document.removeEventListener("visibilitychange", onReturn);
     };
   }, []);
+  const deepLinkHandledRef = useRef("");
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const postId = params.get("post");
+    if (!postId || !posts.some((post) => post.id === postId)) return;
+    const commentId = params.get("comment");
+    const key = `${postId}:${commentId || ""}`;
+    if (deepLinkHandledRef.current === key) return;
+    deepLinkHandledRef.current = key;
+    setTab("diary");
+    requestAnimationFrame(() => {
+      const target = document.querySelector(
+        commentId
+          ? `[data-comment-id="${CSS.escape(commentId)}"]`
+          : `[data-scroll-anchor="post-${CSS.escape(postId)}"]`,
+      );
+      target?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }, [posts]);
   useEffect(() => {
     const timer = setInterval(() => setIndiaToday(indiaDateKey()), 60000);
     return () => clearInterval(timer);
@@ -1288,6 +1317,7 @@ function App() {
         headers: {
           "content-type": "application/json",
           ...sessionHeaders(sessionToken),
+          ...(!sessionToken ? storedGuestHeaders() : {}),
         },
         body: JSON.stringify({
           subscription: subscription.toJSON(),
@@ -2007,6 +2037,7 @@ function Diary({
     [locatingPost, setLocatingPost] = useState(false),
     [placeResults, setPlaceResults] = useState([]),
     [placeSearching, setPlaceSearching] = useState(false);
+  const [postVisibility, setPostVisibility] = useState("public");
   const [editingName, setEditingName] = useState(
     () => !localStorage.getItem("india-visitor-name"),
   );
@@ -2095,6 +2126,7 @@ function Diary({
       f.set("profile_id", deviceProfileId || "");
       f.set("day_index", selectedDay);
       f.set("text", text);
+      f.set("visibility", postVisibility);
       f.set("place_name", placeName);
       if (postCoordinates) {
         f.set("latitude", String(postCoordinates.latitude));
@@ -2114,6 +2146,7 @@ function Diary({
       setPlaceName("");
       setPostCoordinates(null);
       setPlaceResults([]);
+      setPostVisibility("public");
       setFileStatus("");
       await refresh();
       setComposeOpen(false);
@@ -2301,6 +2334,18 @@ function Diary({
                   onChange={(e) => setText(e.target.value)}
                   placeholder="Racconta questo momento…"
                 />
+                <label className="visibilityPicker">
+                  <span>Chi può vederlo</span>
+                  <select
+                    value={postVisibility}
+                    onChange={(event) => setPostVisibility(event.target.value)}
+                  >
+                    <option value="public">Pubblico · anche chi riceve il link</option>
+                    <option value="family">Familiari · ospiti con un nome</option>
+                    <option value="group">Solo gruppo · viaggiatori collegati</option>
+                    <option value="private">Solo io</option>
+                  </select>
+                </label>
                 <div className="postLocationComposer">
                   <MapPin />
                   <input
@@ -2857,6 +2902,15 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
               ? "Prima della partenza · Preparativi"
               : `Giorno ${Number(p.day_index) + 1} · ${days[p.day_index]?.city}`}
           </small>
+          {p.visibility && p.visibility !== "public" && (
+            <small className="postVisibility">
+              {p.visibility === "family"
+                ? "Familiari"
+                : p.visibility === "group"
+                  ? "Solo gruppo"
+                  : "Solo io"}
+            </small>
+          )}
           {p.place_name && (
             p.latitude != null && p.longitude != null ? (
               <a
@@ -2949,7 +3003,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
       )}
       <div className="comments">
         {(showAllComments ? visibleComments : visibleComments.slice(-2)).map((x) => (
-          <div className="comment" key={x.id}>
+          <div className="comment" key={x.id} data-comment-id={x.id}>
             <i className="commentAvatar">
               {x.author_name?.[0]?.toUpperCase() || "?"}
             </i>

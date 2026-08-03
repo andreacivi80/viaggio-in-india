@@ -1660,6 +1660,27 @@ footer small {
     animation-duration: 0.01ms !important;
   }
 }
+.visibilityPicker {
+  display: grid;
+  gap: 6px;
+  color: var(--color-muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+.visibilityPicker select {
+  width: 100%;
+}
+.postVisibility {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 4px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--color-secondary-soft);
+  color: var(--color-secondary) !important;
+  font-size: 10px !important;
+  font-weight: 800;
+}
 .diaryNavigator {
   display: grid;
   grid-template-columns: 48px 1fr 48px;
