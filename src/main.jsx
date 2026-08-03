@@ -16,12 +16,11 @@ import {
   Plane,
   MapPin,
   ShieldCheck,
-  Wifi,
   ImageIcon,
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.3.0",
+const VERSION = "1.3.1",
   API = "/api";
 const cityImages = {
   Delhi:
@@ -457,7 +456,11 @@ function TripMap({ selectedDay, onSelect }) {
       node.setAttribute("aria-label", `Tappa ${i + 1}: ${name}`);
       node.onclick = () => onSelect?.(days.findIndex((d) => d.city === name));
       const [lat, lng] = places[name];
-      const marker = new maplibregl.Marker({ element: node, anchor: "center" })
+      const marker = new maplibregl.Marker({
+        element: node,
+        anchor: "center",
+        offset: name === "Delhi" ? [i === 0 ? -16 : 16, 0] : [0, 0],
+      })
         .setLngLat([lng, lat])
         .setPopup(
           new maplibregl.Popup({ offset: 18 }).setHTML(
@@ -981,13 +984,6 @@ function Diary({
                 ×
               </button>
             </div>
-            <div className="dataSaver">
-              <Wifi />
-              <div>
-                <b>Modalità pochi giga</b>
-                <small>Il contenuto sarà visibile su tutti i telefoni.</small>
-              </div>
-            </div>
             {groupCode ? (
               <div className="composer">
                 <div className="groupBadge">
@@ -1058,9 +1054,7 @@ function Diary({
 
 function Post({ p, author, groupCode, refresh }) {
   const [comment, setComment] = useState(""),
-    [audio, setAudio] = useState(null),
-    [gate, setGate] = useState(false),
-    [deleteCode, setDeleteCode] = useState("");
+    [audio, setAudio] = useState(null);
   const visitor = () => {
     let v = localStorage.getItem("india-visitor-id");
     if (!v) {
@@ -1092,9 +1086,10 @@ function Post({ p, author, groupCode, refresh }) {
     } else alert((await r.json()).error);
   };
   const remove = async () => {
+    if (!confirm("Vuoi eliminare definitivamente questo contenuto?")) return;
     const r = await fetch(`${API}/posts/${p.id}`, {
       method: "DELETE",
-      headers: { "x-group-code": deleteCode || groupCode },
+      headers: { "x-group-code": groupCode },
     });
     if (r.ok) refresh();
     else alert("Codice non corretto");
@@ -1112,23 +1107,11 @@ function Post({ p, author, groupCode, refresh }) {
           </small>
         </div>
         {groupCode && (
-          <button onClick={() => setGate(!gate)}>
+          <button onClick={remove} aria-label="Elimina questo contenuto">
             <Trash2 />
           </button>
         )}
       </div>
-      {gate && (
-        <div className="deleteGate">
-          <b>Cancellazione protetta</b>
-          <input
-            type="password"
-            value={deleteCode}
-            onChange={(e) => setDeleteCode(e.target.value)}
-            placeholder="Codice gruppo"
-          />
-          <button onClick={remove}>Elimina</button>
-        </div>
-      )}
       {p.media_type?.startsWith("image") && (
         <img src={p.media_url} alt="Ricordo del viaggio" loading="lazy" />
       )}
