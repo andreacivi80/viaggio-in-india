@@ -200,7 +200,11 @@ export async function onRequest({ request, env, params }) {
     }
     if (request.method === "POST" && path === "reactions") {
       const b = await request.json();
-      const kind = ["like", "heart"].includes(b.kind) ? b.kind : "heart";
+      const kind = ["like", "heart", "laugh", "wow", "clap", "fire"].includes(
+        b.kind,
+      )
+        ? b.kind
+        : "heart";
       await env.DB.prepare(
         "INSERT OR IGNORE INTO reactions(id,post_id,visitor_id,kind,created_at) VALUES(?,?,?,?,?)",
       )

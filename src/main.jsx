@@ -20,7 +20,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.3.1",
+const VERSION = "1.5.0",
   API = "/api";
 const cityImages = {
   Delhi:
@@ -447,9 +447,29 @@ function TripMap({ selectedDay, onSelect }) {
       "Varanasi",
       "Delhi",
     ];
+    const dayMarkerIndexes = [
+      [0],
+      [0],
+      [0, 1],
+      [1],
+      [1, 2, 3],
+      [3],
+      [3, 4],
+      [4],
+      [4, 5],
+      [5, 6],
+      [6],
+      [6],
+      [6, 7],
+      [7],
+    ];
+    const visibleMarkerIndexes =
+      selectedDay == null
+        ? sequence.map((_, i) => i)
+        : dayMarkerIndexes[selectedDay];
     sequence.forEach((name, i) => {
-      const active =
-        day && (name === day.from || name === day.to || name === day.via);
+      if (!visibleMarkerIndexes.includes(i)) return;
+      const active = Boolean(day);
       const node = document.createElement("button");
       node.className = `vectorMarker ${active ? "active" : ""}`;
       node.textContent = String(i + 1);
@@ -459,7 +479,10 @@ function TripMap({ selectedDay, onSelect }) {
       const marker = new maplibregl.Marker({
         element: node,
         anchor: "center",
-        offset: name === "Delhi" ? [i === 0 ? -16 : 16, 0] : [0, 0],
+        offset:
+          selectedDay == null && name === "Delhi"
+            ? [i === 0 ? -16 : 16, 0]
+            : [0, 0],
       })
         .setLngLat([lng, lat])
         .setPopup(
@@ -593,6 +616,9 @@ function App() {
   useEffect(() => {
     if (groupCode) localStorage.setItem("india-group-code", groupCode);
   }, [groupCode]);
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [tab]);
   const completed = useMemo(
     () => Object.values(done).filter(Boolean).length,
     [done],
@@ -609,8 +635,15 @@ function App() {
         <div className="top">
           <span className="flag">🇮🇳</span>
           <span className="brand">INDIA INSIEME</span>
+          <button
+            className={`accessPill ${groupCode ? "unlocked" : ""}`}
+            onClick={() => setTab("vault")}
+          >
+            <LockKeyhole size={14} />
+            {groupCode ? "Sbloccato" : "Pubblico"}
+          </button>
           <span className="version">
-            REV {VERSION}
+            {VERSION}
             {syncing ? " · ↻" : ""}
           </span>
         </div>
@@ -814,19 +847,29 @@ function App() {
 
 function MapSection({ selectedDay, setSelectedDay }) {
   const d = selectedDay == null ? null : days[selectedDay];
+  const mapShellRef = useRef(null);
+  const focusMap = (dayIndex) => {
+    setSelectedDay(dayIndex);
+    requestAnimationFrame(() => {
+      mapShellRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    });
+  };
   return (
-    <section>
+    <section className="mapSection">
       <div className="mapHeading">
         <div>
           <span className="eyebrow">CARTINA REALE DELL’INDIA</span>
           <h2>{d ? `${d.from} → ${d.to}` : "Tutto l’itinerario"}</h2>
         </div>
-        {d && <button onClick={() => setSelectedDay(null)}>Vedi tutto</button>}
+        {d && <button onClick={() => focusMap(null)}>Vedi tutto</button>}
       </div>
-      <div className="mapShell">
+      <div className="mapShell" ref={mapShellRef}>
         <TripMap
           selectedDay={selectedDay}
-          onSelect={(i) => i >= 0 && setSelectedDay(i)}
+          onSelect={(i) => i >= 0 && focusMap(i)}
         />
         {d && (
           <div className="mapTrip">
@@ -852,7 +895,7 @@ function MapSection({ selectedDay, setSelectedDay }) {
           <button
             key={i}
             className={selectedDay === i ? "active" : ""}
-            onClick={() => setSelectedDay(i)}
+            onClick={() => focusMap(i)}
           >
             <b>{i + 1}</b>
             <span>{x.city}</span>
@@ -897,6 +940,9 @@ function Diary({
     ),
     [code, setCode] = useState(""),
     [busy, setBusy] = useState(false);
+  const [editingName, setEditingName] = useState(
+    () => !localStorage.getItem("india-visitor-name"),
+  );
   useEffect(() => {
     if (author) localStorage.setItem("india-visitor-name", author);
   }, [author]);
@@ -945,15 +991,32 @@ function Diary({
         </div>
         <MapPinned />
       </button>
-      <div className="visitorBar">
-        <div className="avatar">{author?.[0]?.toUpperCase() || "?"}</div>
-        <input
-          value={author}
-          onChange={(e) => setAuthor(e.target.value)}
-          placeholder="Il tuo nome"
-        />
-        <small>Serve per commentare e rispondere</small>
-      </div>
+      {author && !editingName ? (
+        <div className="identityBar">
+          <div className="avatar">{author[0].toUpperCase()}</div>
+          <div>
+            <small>STAI PARTECIPANDO COME</small>
+            <b>{author}</b>
+          </div>
+          <button onClick={() => setEditingName(true)}>Modifica</button>
+        </div>
+      ) : (
+        <div className="visitorBar">
+          <div className="avatar">{author?.[0]?.toUpperCase() || "?"}</div>
+          <input
+            value={author}
+            onChange={(e) => setAuthor(e.target.value)}
+            placeholder="Inserisci il tuo nome una sola volta"
+          />
+          <button
+            disabled={!author.trim()}
+            onClick={() => setEditingName(false)}
+          >
+            Salva
+          </button>
+          <small>Rimarrà memorizzato soltanto su questo dispositivo</small>
+        </div>
+      )}
       {posts.length ? (
         posts.map((p) => (
           <Post
@@ -1054,7 +1117,7 @@ function Diary({
 
 function Post({ p, author, groupCode, refresh }) {
   const [comment, setComment] = useState(""),
-    [audio, setAudio] = useState(null);
+    [replyFile, setReplyFile] = useState(null);
   const visitor = () => {
     let v = localStorage.getItem("india-visitor-id");
     if (!v) {
@@ -1072,16 +1135,16 @@ function Post({ p, author, groupCode, refresh }) {
     refresh();
   };
   const send = async () => {
-    if (!author.trim() || (!comment.trim() && !audio)) return;
+    if (!author.trim() || (!comment.trim() && !replyFile)) return;
     const f = new FormData();
     f.set("post_id", p.id);
     f.set("author_name", author.trim());
     f.set("text", comment);
-    if (audio) f.set("file", audio);
+    if (replyFile) f.set("file", replyFile);
     const r = await fetch(`${API}/comments`, { method: "POST", body: f });
     if (r.ok) {
       setComment("");
-      setAudio(null);
+      setReplyFile(null);
       refresh();
     } else alert((await r.json()).error);
   };
@@ -1123,12 +1186,18 @@ function Post({ p, author, groupCode, refresh }) {
       )}
       {p.text && <p className="postCaption">{p.text}</p>}
       <div className="reactions">
-        <button onClick={() => react("heart")}>
-          ♥ <b>{count("heart")}</b>
-        </button>
-        <button onClick={() => react("like")}>
-          👍 <b>{count("like")}</b>
-        </button>
+        {[
+          ["heart", "❤️"],
+          ["like", "👍"],
+          ["laugh", "😂"],
+          ["wow", "😮"],
+          ["clap", "👏"],
+          ["fire", "🔥"],
+        ].map(([kind, emoji]) => (
+          <button key={kind} onClick={() => react(kind)} aria-label={kind}>
+            {emoji} <b>{count(kind) || ""}</b>
+          </button>
+        ))}
         <span>
           <MessageCircle /> {p.comments?.length || 0}
         </span>
@@ -1141,6 +1210,21 @@ function Post({ p, author, groupCode, refresh }) {
             {x.media_type?.startsWith("audio") && (
               <audio controls src={x.media_url} />
             )}
+            {x.media_type?.startsWith("image") && (
+              <img
+                src={x.media_url}
+                alt={`Risposta di ${x.author_name}`}
+                loading="lazy"
+              />
+            )}
+            {x.media_type?.startsWith("video") && (
+              <video
+                controls
+                playsInline
+                preload="metadata"
+                src={x.media_url}
+              />
+            )}
           </div>
         ))}
         <div className="reply">
@@ -1149,17 +1233,17 @@ function Post({ p, author, groupCode, refresh }) {
             onChange={(e) => setComment(e.target.value)}
             placeholder={author ? "Rispondi…" : "Inserisci il tuo nome sopra"}
           />
-          <label>
-            <Mic />
+          <label title="Aggiungi foto, video o audio">
+            <Plus />
             <input
               type="file"
-              accept="audio/*,.m4a,.aac"
-              onChange={(e) => setAudio(e.target.files?.[0] || null)}
+              accept="image/*,video/*,audio/*,.heic,.heif,.mov,.mp4,.m4a,.aac"
+              onChange={(e) => setReplyFile(e.target.files?.[0] || null)}
             />
           </label>
           <button onClick={send}>Invia</button>
         </div>
-        {audio && <small>Audio pronto: {audio.name}</small>}
+        {replyFile && <small>Allegato pronto: {replyFile.name}</small>}
       </div>
     </article>
   );
@@ -1345,6 +1429,10 @@ function VaultOnline({ people, groupCode, setGroupCode }) {
       () =>
         alert("Posizione non disponibile: controlla i permessi del telefono."),
     );
+  const lockDevice = () => {
+    localStorage.removeItem("india-group-code");
+    setGroupCode("");
+  };
   if (!groupCode)
     return (
       <section>
@@ -1368,8 +1456,13 @@ function VaultOnline({ people, groupCode, setGroupCode }) {
     <section>
       <span className="eyebrow">AREA RISERVATA</span>
       <h2>Documenti e sicurezza</h2>
-      <div className="privateBadge">
-        <ShieldCheck /> Area privata aperta
+      <div className="privateTop">
+        <div className="privateBadge">
+          <ShieldCheck /> Dispositivo sbloccato
+        </div>
+        <button onClick={lockDevice}>
+          <LockKeyhole /> Blocca
+        </button>
       </div>
       <label className="personSelect">
         Cartella di
