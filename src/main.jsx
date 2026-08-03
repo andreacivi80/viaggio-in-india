@@ -21,7 +21,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.2.0",
+const VERSION = "1.2.1",
   API = "/api";
 const cityImages = {
   Delhi:
@@ -357,6 +357,7 @@ function TripMap({ selectedDay, onSelect }) {
     maplibre = useRef(null),
     markers = useRef([]);
   const [ready, setReady] = useState(false);
+  const [visualReady, setVisualReady] = useState(false);
   const day = selectedDay == null ? null : days[selectedDay];
   useEffect(() => {
     if (!el.current || map.current) return;
@@ -422,6 +423,7 @@ function TripMap({ selectedDay, onSelect }) {
           },
         });
         setReady(true);
+        map.current.once("idle", () => setVisualReady(true));
       });
     });
     return () => {
@@ -432,6 +434,7 @@ function TripMap({ selectedDay, onSelect }) {
   }, []);
   useEffect(() => {
     if (!map.current || !ready || !maplibre.current) return;
+    setVisualReady(false);
     const maplibregl = maplibre.current;
     markers.current.forEach((x) => x.remove());
     markers.current = [];
@@ -515,13 +518,23 @@ function TripMap({ selectedDay, onSelect }) {
         duration: 700,
       });
     }
+    map.current.once("idle", () => setVisualReady(true));
   }, [selectedDay, ready]);
   return (
-    <div
-      className="realMap"
-      ref={el}
-      aria-label="Mappa interattiva reale dell’itinerario in India"
-    />
+    <div className="realMapWrap">
+      <div
+        className="realMap"
+        ref={el}
+        aria-label="Mappa interattiva reale dell’itinerario in India"
+      />
+      {!visualReady && (
+        <div className="mapLoading">
+          <MapPinned />
+          <b>Disegno il percorso sulla cartina…</b>
+          <small>Cartografia vettoriale ad alta definizione</small>
+        </div>
+      )}
+    </div>
   );
 }
 
