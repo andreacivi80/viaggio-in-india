@@ -253,6 +253,31 @@ test("retry autenticati non duplicano pubblicazioni e documenti", {
   })).status, 200);
 });
 
+test("il proprietario vede e revoca un dispositivo secondario", {
+  skip: !process.env.QA_SESSION_TOKEN || !process.env.QA_SECOND_DEVICE_ID,
+}, async () => {
+  const authorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
+  const listResponse = await request("/api/auth/devices", {
+    headers: { authorization },
+    cache: "no-store",
+  });
+  assert.equal(listResponse.status, 200);
+  const devices = (await listResponse.json()).devices;
+  assert.ok(devices.some((device) => device.current));
+  assert.ok(devices.some((device) => device.device_id === process.env.QA_SECOND_DEVICE_ID));
+  const revoke = await request(
+    `/api/auth/devices/${encodeURIComponent(process.env.QA_SECOND_DEVICE_ID)}`,
+    { method: "DELETE", headers: { authorization } },
+  );
+  assert.equal(revoke.status, 200);
+  const after = await (await request("/api/auth/devices", {
+    headers: { authorization },
+    cache: "no-store",
+  })).json();
+  assert.ok(!after.devices.some((device) => device.device_id === process.env.QA_SECOND_DEVICE_ID));
+  assert.equal((await request("/api/auth/session", { headers: { authorization } })).status, 200);
+});
+
 test("health API risponde e non usa il computer locale", async () => {
   const response = await request("/api/health", { cache: "no-store" });
   assert.equal(response.status, 200);

@@ -49,7 +49,7 @@ async function sessionFromRequest(request, env) {
     Date.now() - 21 * 24 * 60 * 60 * 1000,
   ).toISOString();
   const session = await env.DB.prepare(
-    `SELECT s.profile_id,s.expires_at,s.last_used_at,p.name,p.surname,p.role
+    `SELECT s.profile_id,s.device_id,s.device_name,s.expires_at,s.last_used_at,p.name,p.surname,p.role
      FROM auth_sessions s
      JOIN profiles p ON p.id=s.profile_id
      WHERE s.token_hash=? AND s.revoked_at IS NULL AND s.expires_at>?
@@ -68,16 +68,27 @@ async function sessionFromRequest(request, env) {
   }
   return session || null;
 }
-async function createSession(env, profileId) {
+function deviceNameFromRequest(request) {
+  const supplied = String(request.headers.get("x-device-name") || "").trim();
+  if (supplied) return supplied.slice(0, 80);
+  const userAgent = String(request.headers.get("user-agent") || "");
+  if (/iphone|ipad|ipod/i.test(userAgent)) return "iPhone o iPad";
+  if (/android/i.test(userAgent)) return "Telefono Android";
+  if (/windows/i.test(userAgent)) return "Computer Windows";
+  if (/macintosh|mac os/i.test(userAgent)) return "Computer Mac";
+  return "Dispositivo";
+}
+async function createSession(env, profileId, deviceName = "Dispositivo") {
   const token = secureToken();
+  const deviceId = id();
   const createdAt = now();
   const expiresAt = futureIso(24 * 30);
   await env.DB.prepare(
-    "INSERT INTO auth_sessions(token_hash,profile_id,created_at,last_used_at,expires_at,revoked_at) VALUES(?,?,?,?,?,NULL)",
+    "INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES(?,?,?,?,?,?,?,NULL)",
   )
-    .bind(await tokenHash(token), profileId, createdAt, createdAt, expiresAt)
+    .bind(await tokenHash(token), profileId, deviceId, deviceName, createdAt, createdAt, expiresAt)
     .run();
-  return { token, expires_at: expiresAt };
+  return { token, expires_at: expiresAt, device_id: deviceId };
 }
 async function guestFromRequest(request, env) {
   const token = String(request.headers.get("x-guest-token") || "").trim();
@@ -180,8 +191,9 @@ async function abandonIdempotentOperation(env, operationHash) {
     .bind(operationHash)
     .run();
 }
-async function claimInitialProfile(env, profileId) {
+async function claimInitialProfile(env, profileId, deviceName = "Dispositivo") {
   const token = secureToken();
+  const deviceId = id();
   const tokenDigest = await tokenHash(token);
   const createdAt = now();
   const expiresAt = futureIso(24 * 30);
@@ -190,10 +202,10 @@ async function claimInitialProfile(env, profileId) {
       "INSERT INTO profile_device_claims(profile_id,claimed_at) VALUES(?,?)",
     ).bind(profileId, createdAt),
     env.DB.prepare(
-      "INSERT INTO auth_sessions(token_hash,profile_id,created_at,last_used_at,expires_at,revoked_at) VALUES(?,?,?,?,?,NULL)",
-    ).bind(tokenDigest, profileId, createdAt, createdAt, expiresAt),
+      "INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES(?,?,?,?,?,?,?,NULL)",
+    ).bind(tokenDigest, profileId, deviceId, deviceName, createdAt, createdAt, expiresAt),
   ]);
-  return { token, expires_at: expiresAt };
+  return { token, expires_at: expiresAt, device_id: deviceId };
 }
 function canViewPost(post, session = null, guest = null) {
   const visibility = String(post?.visibility || "public");
@@ -405,7 +417,7 @@ export async function onRequest(context) {
       if (!profile) return json({ error: "Profilo non trovato" }, 404);
       let issued;
       try {
-        issued = await claimInitialProfile(env, profile.id);
+        issued = await claimInitialProfile(env, profile.id, deviceNameFromRequest(request));
       } catch (error) {
         if (/UNIQUE|constraint/i.test(String(error?.message || error)))
           return json(
@@ -452,7 +464,7 @@ export async function onRequest(context) {
         return json({ error: "Invito già utilizzato" }, 409);
       let issued;
       try {
-        issued = await createSession(env, invite.profile_id);
+        issued = await createSession(env, invite.profile_id, deviceNameFromRequest(request));
       } catch (error) {
         await env.DB.prepare(
           "UPDATE profile_invites SET used_at=NULL WHERE token_hash=? AND used_at=?",
@@ -515,6 +527,46 @@ export async function onRequest(context) {
         )
           .bind(now(), await tokenHash(token))
           .run();
+      return json({ ok: true });
+    }
+    if (request.method === "GET" && path === "auth/devices") {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Sessione non valida" }, 401);
+      const devices = await env.DB.prepare(
+        `SELECT device_id,device_name,created_at,last_used_at,expires_at
+         FROM auth_sessions
+         WHERE profile_id=? AND revoked_at IS NULL AND expires_at>?
+         ORDER BY COALESCE(last_used_at,created_at) DESC`,
+      )
+        .bind(session.profile_id, now())
+        .all();
+      return json({
+        devices: devices.results.map((device) => ({
+          ...device,
+          current: device.device_id === session.device_id,
+        })),
+      });
+    }
+    if (request.method === "DELETE" && path.startsWith("auth/devices/")) {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Sessione non valida" }, 401);
+      const deviceId = path.slice("auth/devices/".length);
+      const result = await env.DB.prepare(
+        "UPDATE auth_sessions SET revoked_at=? WHERE device_id=? AND profile_id=? AND revoked_at IS NULL",
+      )
+        .bind(now(), deviceId, session.profile_id)
+        .run();
+      if (!result.meta?.changes) return json({ error: "Dispositivo non trovato" }, 404);
+      return json({ ok: true, current_revoked: deviceId === session.device_id });
+    }
+    if (request.method === "POST" && path === "auth/logout-all") {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Sessione non valida" }, 401);
+      await env.DB.prepare(
+        "UPDATE auth_sessions SET revoked_at=? WHERE profile_id=? AND revoked_at IS NULL",
+      )
+        .bind(now(), session.profile_id)
+        .run();
       return json({ ok: true });
     }
     if (request.method === "POST" && path === "auth/invites") {

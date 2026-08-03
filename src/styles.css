@@ -669,6 +669,40 @@ body {
   width: 15px;
   height: 15px;
 }
+.deviceManager {
+  margin: 10px 0 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+.deviceManager summary {
+  padding: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.deviceManager > div {
+  padding: 0 12px 12px;
+}
+.deviceRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 9px 0;
+  border-top: 1px solid var(--color-border);
+}
+.deviceRow span { display: flex; flex-direction: column; min-width: 0; }
+.deviceRow small { color: var(--color-text-secondary); }
+.deviceRow button,
+.revokeAll {
+  border: 0;
+  border-radius: 9px;
+  padding: 8px 10px;
+  font-weight: 800;
+}
+.deviceRow button { background: #f3e5dc; color: #9d452b; }
+.revokeAll { width: 100%; background: #9d452b; color: #fff; margin-top: 6px; }
 .rolePreview {
   display: grid;
   grid-template-columns: 1fr auto auto;
