@@ -3,6 +3,7 @@
   "name": "viaggio-in-india-2026",
   "pages_build_output_dir": "./dist",
   "compatibility_date": "2026-08-03",
+  "compatibility_flags": ["nodejs_compat"],
   "d1_databases": [
     {
       "binding": "DB",

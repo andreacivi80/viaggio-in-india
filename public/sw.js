@@ -1,4 +1,4 @@
-const CACHE = "india-insieme-v1.18.0";
+const CACHE = "india-insieme-v1.20.0";
 self.addEventListener("install", (event) => {
   self.skipWaiting();
   event.waitUntil(
@@ -42,5 +42,36 @@ self.addEventListener("fetch", (event) => {
       .catch(() =>
         caches.match(event.request).then((hit) => hit || caches.match("./")),
       ),
+  );
+});
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data?.json() || {};
+  } catch {
+    data = { body: event.data?.text() || "Nuovo aggiornamento dal viaggio." };
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title || "India Insieme", {
+      body: data.body || "Nuovo aggiornamento dal viaggio.",
+      icon: "./icon.svg",
+      badge: "./icon.svg",
+      tag: data.tag || "india-update",
+      renotify: true,
+      data: { url: data.url || "/" },
+    }),
+  );
+});
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  event.waitUntil(
+    clients.matchAll({ type: "window", includeUncontrolled: true }).then((windows) => {
+      const existing = windows.find((client) => "focus" in client);
+      if (existing) {
+        existing.navigate(event.notification.data?.url || "/");
+        return existing.focus();
+      }
+      return clients.openWindow(event.notification.data?.url || "/");
+    }),
   );
 });
