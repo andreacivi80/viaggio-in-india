@@ -1,7 +1,7 @@
 {
   "name": "viaggio-in-india",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
@@ -9,6 +9,7 @@
     "test": "npm run build"
   },
   "dependencies": {
+    "leaflet": "^1.9.4",
     "react": "19.2.6",
     "react-dom": "19.2.6"
   },

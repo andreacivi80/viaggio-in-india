@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "viaggio-in-india-2026",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-08-03",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "viaggio-in-india-db",
+      "database_id": "6521ae69-bd1f-4704-941e-6c72095a7489"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "MEDIA",
+      "id": "1c59ca1f330747c5bc2998c734cc7284"
+    }
+  ]
+}
