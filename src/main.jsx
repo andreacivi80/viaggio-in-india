@@ -31,8 +31,16 @@ import {
 import "./styles.css";
 import { flushOfflineQueue, queueFormRequest } from "./offlineQueue.js";
 
-const VERSION = "1.27.0",
+const VERSION = "1.28.0",
   API = "/api";
+const deviceName = () => {
+  const userAgent = navigator.userAgent || "";
+  if (/iPhone|iPad|iPod/i.test(userAgent)) return "iPhone o iPad";
+  if (/Android/i.test(userAgent)) return "Telefono Android";
+  if (/Windows/i.test(userAgent)) return "Computer Windows";
+  if (/Macintosh|Mac OS/i.test(userAgent)) return "Computer Mac";
+  return "Dispositivo";
+};
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
   (_, index) => `2026-08-${String(10 + index).padStart(2, "0")}`,
@@ -93,7 +101,7 @@ async function guestHeaders(displayName) {
   if (!token || storedName !== normalizedName) {
     const response = await fetch(`${API}/auth/guest`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", "x-device-name": deviceName() },
       body: JSON.stringify({ display_name: normalizedName }),
     });
     const result = await response.json().catch(() => ({}));
@@ -1161,7 +1169,7 @@ function App() {
     sessionStorage.setItem("india-pending-invite", inviteToken);
     fetch(`${API}/auth/claim`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", "x-device-name": deviceName() },
       body: JSON.stringify({ invite_token: inviteToken }),
     })
       .then(async (response) => {
@@ -1241,6 +1249,7 @@ function App() {
       headers: {
         "content-type": "application/json",
         "x-group-code": groupCode,
+        "x-device-name": deviceName(),
       },
       body: JSON.stringify({ profile_id: person.id }),
     });
@@ -3593,14 +3602,23 @@ function VaultOnline({
     [documentStatus, setDocumentStatus] = useState(""),
     [pendingDocumentDelete, setPendingDocumentDelete] = useState(""),
     [locationMapOpen, setLocationMapOpen] = useState(false),
-    [viewMode, setViewMode] = useState("traveler");
+    [viewMode, setViewMode] = useState("traveler"),
+    [devices, setDevices] = useState([]);
   const refresh = async () => {
     if (!sessionToken) return;
-    const r = await fetch(`${API}/private`, {
-      headers: sessionHeaders(sessionToken),
-      cache: "no-store",
-    });
-    if (r.ok) setPrivateData(await r.json());
+    const [privateResponse, devicesResponse] = await Promise.all([
+      fetch(`${API}/private`, {
+        headers: sessionHeaders(sessionToken),
+        cache: "no-store",
+      }),
+      fetch(`${API}/auth/devices`, {
+        headers: sessionHeaders(sessionToken),
+        cache: "no-store",
+      }),
+    ]);
+    if (privateResponse.ok) setPrivateData(await privateResponse.json());
+    if (devicesResponse.ok)
+      setDevices((await devicesResponse.json()).devices || []);
   };
   useEffect(() => {
     if (sessionToken) refresh();
@@ -3767,6 +3785,22 @@ function VaultOnline({
     setSessionToken("");
     setGroupCode("");
   };
+  const revokeDevice = async (device) => {
+    const response = await fetch(
+      `${API}/auth/devices/${encodeURIComponent(device.device_id)}`,
+      { method: "DELETE", headers: sessionHeaders(sessionToken) },
+    );
+    if (!response.ok) return;
+    if (device.current) await lockDevice();
+    else await refresh();
+  };
+  const revokeAllDevices = async () => {
+    const response = await fetch(`${API}/auth/logout-all`, {
+      method: "POST",
+      headers: sessionHeaders(sessionToken),
+    });
+    if (response.ok) await lockDevice();
+  };
   if (!sessionToken)
     return (
       <section>
@@ -3802,6 +3836,27 @@ function VaultOnline({
           <LockKeyhole /> Blocca
         </button>
       </div>
+      <details className="deviceManager">
+        <summary>Dispositivi collegati ({devices.length})</summary>
+        <div>
+          {devices.map((device) => (
+            <div className="deviceRow" key={device.device_id}>
+              <span>
+                <b>{device.device_name || "Dispositivo"}</b>
+                <small>{device.current ? "Questo dispositivo" : `Ultimo uso ${new Date(device.last_used_at).toLocaleDateString("it-IT")}`}</small>
+              </span>
+              <button onClick={() => revokeDevice(device)}>
+                {device.current ? "Esci" : "Revoca"}
+              </button>
+            </div>
+          ))}
+          {devices.length > 1 && (
+            <button className="revokeAll" onClick={revokeAllDevices}>
+              Disconnetti tutti i dispositivi
+            </button>
+          )}
+        </div>
+      </details>
       <div className="rolePreview" aria-label="Anteprima del ruolo">
         <div>
           <small>ANTEPRIMA SCHERMATA</small>

@@ -82,6 +82,8 @@ CREATE INDEX IF NOT EXISTS reactions_post_idx ON reactions(post_id);
 CREATE TABLE IF NOT EXISTS auth_sessions (
   token_hash TEXT PRIMARY KEY,
   profile_id TEXT NOT NULL,
+  device_id TEXT UNIQUE,
+  device_name TEXT DEFAULT 'Dispositivo',
   created_at TEXT NOT NULL,
   last_used_at TEXT NOT NULL,
   expires_at TEXT NOT NULL,
