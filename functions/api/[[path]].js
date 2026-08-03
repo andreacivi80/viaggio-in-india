@@ -39,7 +39,7 @@ async function saveMedia(env, file, prefix = "public") {
 }
 
 async function readState(env) {
-  const [profiles, posts, comments, reactions] = await Promise.all([
+  const [profiles, posts, comments, reactions, postMedia] = await Promise.all([
     env.DB.prepare("SELECT * FROM profiles ORDER BY created_at").all(),
     env.DB.prepare(
       "SELECT * FROM posts WHERE visibility='public' ORDER BY created_at DESC",
@@ -48,6 +48,7 @@ async function readState(env) {
     env.DB.prepare(
       "SELECT post_id, kind, COUNT(*) AS total FROM reactions GROUP BY post_id, kind",
     ).all(),
+    env.DB.prepare("SELECT * FROM post_media ORDER BY position").all(),
   ]);
   return {
     profiles: profiles.results.map((p) => ({
@@ -57,6 +58,23 @@ async function readState(env) {
     posts: posts.results.map((p) => ({
       ...p,
       media_url: mediaUrl(p.media_key),
+      media: [
+        ...(p.media_key
+          ? [
+              {
+                id: `legacy-${p.id}`,
+                media_url: mediaUrl(p.media_key),
+                media_type: p.media_type,
+                media_name: p.media_name,
+                media_size: p.media_size,
+                position: 0,
+              },
+            ]
+          : []),
+        ...postMedia.results
+          .filter((m) => m.post_id === p.id)
+          .map((m) => ({ ...m, media_url: mediaUrl(m.media_key) })),
+      ],
       comments: comments.results
         .filter((c) => c.post_id === p.id)
         .map((c) => ({ ...c, media_url: mediaUrl(c.media_key) })),
@@ -124,12 +142,50 @@ export async function onRequest({ request, env, params }) {
         .run();
       return json({ ...row, avatar_url: mediaUrl(row.avatar_key) }, 201);
     }
+    if (request.method === "PUT" && path.startsWith("profiles/")) {
+      if (!groupOk(request, env))
+        return json({ error: "Accesso del gruppo richiesto" }, 403);
+      const profileId = path.slice(9);
+      const current = await env.DB.prepare(
+        "SELECT * FROM profiles WHERE id=?",
+      )
+        .bind(profileId)
+        .first();
+      if (!current) return json({ error: "Viaggiatore non trovato" }, 404);
+      const form = await request.formData();
+      const name = String(form.get("name") || "").trim();
+      if (!name) return json({ error: "Nome richiesto" }, 400);
+      const avatar = await saveMedia(env, form.get("avatar"), "public/avatars");
+      if (avatar && current.avatar_key) await env.MEDIA.delete(current.avatar_key);
+      const avatarKey = avatar?.key || current.avatar_key || null;
+      await env.DB.prepare(
+        "UPDATE profiles SET name=?,surname=?,age=?,job=?,bio=?,avatar_key=? WHERE id=?",
+      )
+        .bind(
+          name,
+          String(form.get("surname") || ""),
+          String(form.get("age") || ""),
+          String(form.get("job") || ""),
+          String(form.get("bio") || ""),
+          avatarKey,
+          profileId,
+        )
+        .run();
+      return json({ ok: true, id: profileId, avatar_url: mediaUrl(avatarKey) });
+    }
     if (request.method === "POST" && path === "posts") {
       if (!groupOk(request, env))
         return json({ error: "Codice del gruppo richiesto" }, 403);
       const form = await request.formData();
-      const file = form.get("file");
-      const media = await saveMedia(env, file, "public");
+      const files = form
+        .getAll("files")
+        .concat(form.get("file") ? [form.get("file")] : [])
+        .filter((file) => file instanceof File && file.size > 0)
+        .slice(0, 10);
+      const savedMedia = [];
+      for (const file of files) {
+        savedMedia.push(await saveMedia(env, file, "public"));
+      }
       const row = {
         id: id(),
         author_name: String(form.get("author_name") || "Viaggiatore"),
@@ -149,14 +205,42 @@ export async function onRequest({ request, env, params }) {
           row.day_index,
           row.visibility,
           row.text,
-          media?.key || null,
-          media?.type || null,
-          media?.name || null,
-          media?.size || 0,
+          null,
+          null,
+          null,
+          0,
           row.created_at,
         )
         .run();
-      return json({ ...row, media_url: mediaUrl(media?.key) }, 201);
+      if (savedMedia.length) {
+        await env.DB.batch(
+          savedMedia.map((media, position) =>
+            env.DB.prepare(
+              "INSERT INTO post_media(id,post_id,media_key,media_type,media_name,media_size,position,created_at) VALUES(?,?,?,?,?,?,?,?)",
+            ).bind(
+              id(),
+              row.id,
+              media.key,
+              media.type,
+              media.name,
+              media.size,
+              position,
+              row.created_at,
+            ),
+          ),
+        );
+      }
+      return json(
+        {
+          ...row,
+          media: savedMedia.map((media, position) => ({
+            ...media,
+            position,
+            media_url: mediaUrl(media.key),
+          })),
+        },
+        201,
+      );
     }
     if (request.method === "DELETE" && path.startsWith("posts/")) {
       if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
@@ -165,7 +249,14 @@ export async function onRequest({ request, env, params }) {
         .bind(postId)
         .first();
       if (p?.media_key) await env.MEDIA.delete(p.media_key);
+      const mediaRows = await env.DB.prepare(
+        "SELECT media_key FROM post_media WHERE post_id=?",
+      )
+        .bind(postId)
+        .all();
+      await Promise.all(mediaRows.results.map((m) => env.MEDIA.delete(m.media_key)));
       await env.DB.batch([
+        env.DB.prepare("DELETE FROM post_media WHERE post_id=?").bind(postId),
         env.DB.prepare("DELETE FROM comments WHERE post_id=?").bind(postId),
         env.DB.prepare("DELETE FROM reactions WHERE post_id=?").bind(postId),
         env.DB.prepare("DELETE FROM posts WHERE id=?").bind(postId),

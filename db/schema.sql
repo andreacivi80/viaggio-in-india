@@ -21,6 +21,18 @@ CREATE TABLE IF NOT EXISTS posts (
   media_size INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS post_media (
+  id TEXT PRIMARY KEY,
+  post_id TEXT NOT NULL,
+  media_key TEXT NOT NULL,
+  media_type TEXT,
+  media_name TEXT,
+  media_size INTEGER DEFAULT 0,
+  position INTEGER DEFAULT 0,
+  created_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_post_media_post ON post_media(post_id, position);
 CREATE TABLE IF NOT EXISTS comments (
   id TEXT PRIMARY KEY,
   post_id TEXT NOT NULL,

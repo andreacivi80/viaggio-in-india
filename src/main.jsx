@@ -29,7 +29,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.6.0",
+const VERSION = "1.7.0",
   API = "/api";
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/private`, {
@@ -602,6 +602,7 @@ function App() {
     [open, setOpen] = useState(0),
     [selectedDay, setSelectedDay] = useState(0),
     [mapDay, setMapDay] = useState(null),
+    [vaultProfileId, setVaultProfileId] = useState(""),
     [composeOpen, setComposeOpen] = useState(false),
     [groupCode, setGroupCode] = useState(
       () => localStorage.getItem("india-group-code") || "",
@@ -638,10 +639,21 @@ function App() {
     () => Object.values(done).filter(Boolean).length,
     [done],
   );
+  const centerMapOnScreen = () => {
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() =>
+        document.querySelector(".mapShell")?.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+        }),
+      ),
+    );
+  };
   const showMap = (i) => {
     setSelectedDay(i);
     setMapDay(i);
     setTab("map");
+    centerMapOnScreen();
   };
   return (
     <div className="app">
@@ -674,6 +686,7 @@ function App() {
             onClick={() => {
               setMapDay(null);
               setTab("map");
+              centerMapOnScreen();
             }}
           >
             <MapPinned /> Apri la mappa reale del viaggio
@@ -695,7 +708,10 @@ function App() {
               if (id === "publish") {
                 setTab("diary");
                 setComposeOpen(true);
-              } else setTab(id);
+              } else {
+                setTab(id);
+                if (id === "map") centerMapOnScreen();
+              }
             }}
           >
             <I size={20} />
@@ -714,6 +730,28 @@ function App() {
               <button className="progress" onClick={() => setDone({})}>
                 <b>{completed}</b>
                 <small>spuntate</small>
+              </button>
+            </div>
+            <div className="diaryNavigator">
+              <button
+                aria-label="Giorno precedente"
+                disabled={open === 0}
+                onClick={() => setOpen(Math.max(0, open - 1))}
+              >
+                ←
+              </button>
+              <div>
+                <small>SCEGLI LA GIORNATA</small>
+                <b>
+                  Giorno {open + 1} di {days.length} · {days[open]?.city}
+                </b>
+              </div>
+              <button
+                aria-label="Giorno successivo"
+                disabled={open === days.length - 1}
+                onClick={() => setOpen(Math.min(days.length - 1, open + 1))}
+              >
+                →
               </button>
             </div>
             <div className="diaryDayPicker" aria-label="Seleziona la giornata">
@@ -886,6 +924,10 @@ function App() {
             groupCode={groupCode}
             setGroupCode={setGroupCode}
             refresh={refresh}
+            onOpenPrivate={(profileId) => {
+              setVaultProfileId(profileId);
+              setTab("vault");
+            }}
           />
         )}{" "}
         {tab === "vault" && (
@@ -894,14 +936,10 @@ function App() {
             groupCode={groupCode}
             setGroupCode={setGroupCode}
             onOpenGroup={() => setTab("people")}
+            preferredProfileId={vaultProfileId}
           />
         )}
       </main>
-      <footer>
-        <span>🇮🇳</span>
-        <p>Un viaggio si misura negli amici, non nei chilometri.</p>
-        <small>India Insieme · il nostro diario condiviso</small>
-      </footer>
     </div>
   );
 }
@@ -995,7 +1033,7 @@ function Diary({
   const [text, setText] = useState(
       () => localStorage.getItem("india-draft") || "",
     ),
-    [file, setFile] = useState(null),
+    [files, setFiles] = useState([]),
     [author, setAuthor] = useState(
       () => localStorage.getItem("india-visitor-name") || "",
     ),
@@ -1015,14 +1053,14 @@ function Diary({
     return p.media_type?.startsWith(feedFilter);
   });
   const add = async () => {
-    if (!groupCode || (!text.trim() && !file)) return;
+    if (!groupCode || (!text.trim() && !files.length)) return;
     setBusy(true);
     try {
       const f = new FormData();
       f.set("author_name", author || "Viaggiatore");
       f.set("day_index", selectedDay);
       f.set("text", text);
-      if (file) f.set("file", file);
+      files.forEach((file) => f.append("files", file));
       const r = await fetch(`${API}/posts`, {
         method: "POST",
         headers: { "x-group-code": groupCode },
@@ -1032,7 +1070,7 @@ function Diary({
       if (!r.ok) throw Error(j.error);
       setText("");
       localStorage.removeItem("india-draft");
-      setFile(null);
+      setFiles([]);
       await refresh();
       setComposeOpen(false);
     } catch (e) {
@@ -1157,7 +1195,12 @@ function Diary({
                     <input
                       type="file"
                       accept="image/*,.heic,.heif"
-                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                      multiple
+                      onChange={(e) =>
+                        setFiles((current) =>
+                          [...current, ...Array.from(e.target.files || [])].slice(0, 10),
+                        )
+                      }
                     />
                   </label>
                   <label>
@@ -1165,7 +1208,12 @@ function Diary({
                     <input
                       type="file"
                       accept="video/*,.mov,.mp4"
-                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                      multiple
+                      onChange={(e) =>
+                        setFiles((current) =>
+                          [...current, ...Array.from(e.target.files || [])].slice(0, 10),
+                        )
+                      }
                     />
                   </label>
                   <label>
@@ -1173,15 +1221,35 @@ function Diary({
                     <input
                       type="file"
                       accept="audio/*,.m4a,.aac"
-                      onChange={(e) => setFile(e.target.files?.[0] || null)}
+                      multiple
+                      onChange={(e) =>
+                        setFiles((current) =>
+                          [...current, ...Array.from(e.target.files || [])].slice(0, 10),
+                        )
+                      }
                     />
                   </label>
                   <button disabled={busy} onClick={add}>
                     <Plus /> {busy ? "Invio…" : "Pubblica"}
                   </button>
                 </div>
-                {file && (
-                  <small className="selected">Pronto: {file.name}</small>
+                {files.length > 0 && (
+                  <div className="attachmentPreviews">
+                    <b>{files.length} allegati pronti</b>
+                    <div>
+                      {files.map((file, index) => (
+                        <AttachmentPreview
+                          key={`${file.name}-${file.lastModified}-${index}`}
+                          file={file}
+                          onRemove={() =>
+                            setFiles((current) =>
+                              current.filter((_, itemIndex) => itemIndex !== index),
+                            )
+                          }
+                        />
+                      ))}
+                    </div>
+                  </div>
                 )}
               </div>
             ) : (
@@ -1196,6 +1264,93 @@ function Diary({
         </div>
       )}
     </section>
+  );
+}
+
+function AttachmentPreview({ file, onRemove }) {
+  const [url, setUrl] = useState("");
+  useEffect(() => {
+    const objectUrl = URL.createObjectURL(file);
+    setUrl(objectUrl);
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [file]);
+  return (
+    <article>
+      {file.type.startsWith("image/") ? (
+        <img src={url} alt={`Anteprima ${file.name}`} />
+      ) : file.type.startsWith("video/") ? (
+        <video src={url} muted playsInline />
+      ) : (
+        <Mic />
+      )}
+      <span>{file.name}</span>
+      <small>{(file.size / 1024 / 1024).toFixed(1)} MB</small>
+      <button onClick={onRemove} aria-label={`Rimuovi ${file.name}`}>
+        ×
+      </button>
+    </article>
+  );
+}
+
+function PostMedia({ items }) {
+  const [active, setActive] = useState(0);
+  useEffect(() => setActive(0), [items.length]);
+  if (!items.length) return null;
+  const current = items[Math.min(active, items.length - 1)];
+  return (
+    <div className="postMediaCarousel">
+      {current.media_type?.startsWith("image") && (
+        <img src={current.media_url} alt="Ricordo del viaggio" loading="lazy" />
+      )}
+      {current.media_type?.startsWith("video") && (
+        <video controls playsInline preload="metadata" src={current.media_url} />
+      )}
+      {current.media_type?.startsWith("audio") && (
+        <div className="audioCard">
+          <Mic />
+          <div>
+            <b>Messaggio audio</b>
+            <small>{current.media_name || "Voce dal viaggio"}</small>
+          </div>
+          <audio controls preload="metadata" src={current.media_url} />
+        </div>
+      )}
+      {items.length > 1 && (
+        <>
+          <span className="mediaCounter">
+            {active + 1}/{items.length}
+          </span>
+          <button
+            className="mediaPrev"
+            disabled={active === 0}
+            onClick={() => setActive((index) => Math.max(0, index - 1))}
+            aria-label="Contenuto precedente"
+          >
+            ‹
+          </button>
+          <button
+            className="mediaNext"
+            disabled={active === items.length - 1}
+            onClick={() =>
+              setActive((index) => Math.min(items.length - 1, index + 1))
+            }
+            aria-label="Contenuto successivo"
+          >
+            ›
+          </button>
+          <div className="mediaDots">
+            {items.map((_, index) => (
+              <button
+                key={index}
+                className={active === index ? "active" : ""}
+                onClick={() => setActive(index)}
+                aria-label={`Vai al contenuto ${index + 1}`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -1271,15 +1426,15 @@ function Post({ p, author, groupCode, refresh }) {
           </div>
         )}
       </div>
-      {p.media_type?.startsWith("image") && (
-        <img src={p.media_url} alt="Ricordo del viaggio" loading="lazy" />
-      )}
-      {p.media_type?.startsWith("video") && (
-        <video controls playsInline preload="metadata" src={p.media_url} />
-      )}{" "}
-      {p.media_type?.startsWith("audio") && (
-        <audio controls preload="metadata" src={p.media_url} />
-      )}
+      <PostMedia
+        items={
+          p.media?.length
+            ? p.media
+            : p.media_url
+              ? [{ media_url: p.media_url, media_type: p.media_type }]
+              : []
+        }
+      />
       {p.text && <p className="postCaption">{p.text}</p>}
       <div className="postActions">
         <button onClick={() => react("heart")} aria-label="Mi piace">
@@ -1361,7 +1516,13 @@ function Post({ p, author, groupCode, refresh }) {
   );
 }
 
-function People({ people, groupCode, setGroupCode, refresh }) {
+function People({
+  people,
+  groupCode,
+  setGroupCode,
+  refresh,
+  onOpenPrivate,
+}) {
   const [form, setForm] = useState({
       name: "",
       surname: "",
@@ -1372,7 +1533,8 @@ function People({ people, groupCode, setGroupCode, refresh }) {
     [avatar, setAvatar] = useState(null),
     [code, setCode] = useState(""),
     [saving, setSaving] = useState(false),
-    [formStatus, setFormStatus] = useState({ type: "", text: "" });
+    [formStatus, setFormStatus] = useState({ type: "", text: "" }),
+    [editingId, setEditingId] = useState("");
   const add = async () => {
     if (!form.name.trim()) {
       setFormStatus({ type: "error", text: "Inserisci almeno il nome." });
@@ -1385,15 +1547,24 @@ function People({ people, groupCode, setGroupCode, refresh }) {
       const f = new FormData();
       Object.entries(form).forEach(([k, v]) => f.set(k, v));
       if (avatar) f.set("avatar", avatar);
-      const r = await fetch(`${API}/profiles`, {
-        method: "POST",
+      const r = await fetch(
+        editingId ? `${API}/profiles/${editingId}` : `${API}/profiles`,
+        {
+        method: editingId ? "PUT" : "POST",
         headers: { "x-group-code": groupCode },
         body: f,
-      });
+        },
+      );
       if (!r.ok) throw Error((await r.json()).error || "Salvataggio non riuscito");
       setForm({ name: "", surname: "", age: "", job: "", bio: "" });
       setAvatar(null);
-      setFormStatus({ type: "success", text: "Viaggiatore inserito correttamente." });
+      setEditingId("");
+      setFormStatus({
+        type: "success",
+        text: editingId
+          ? "Profilo aggiornato correttamente."
+          : "Viaggiatore inserito correttamente.",
+      });
       await refresh();
     } catch {
       await refresh();
@@ -1411,6 +1582,20 @@ function People({ people, groupCode, setGroupCode, refresh }) {
       <h2>Facce, nomi e storie</h2>
       {groupCode ? (
         <div className="profileForm">
+          {editingId && (
+            <div className="editingProfile">
+              <b>Stai modificando questo viaggiatore</b>
+              <button
+                onClick={() => {
+                  setEditingId("");
+                  setForm({ name: "", surname: "", age: "", job: "", bio: "" });
+                  setAvatar(null);
+                }}
+              >
+                Annulla
+              </button>
+            </div>
+          )}
           <label className="avatarPicker">
             {avatar ? (
               <img src={URL.createObjectURL(avatar)} alt="Anteprima" />
@@ -1457,7 +1642,12 @@ function People({ people, groupCode, setGroupCode, refresh }) {
             </div>
           )}
           <button onClick={add} disabled={saving}>
-            <Plus /> {saving ? "Salvataggio…" : "Inserisci viaggiatore"}
+            <Plus />{" "}
+            {saving
+              ? "Salvataggio…"
+              : editingId
+                ? "Salva modifiche"
+                : "Inserisci viaggiatore"}
           </button>
         </div>
       ) : (
@@ -1483,6 +1673,32 @@ function People({ people, groupCode, setGroupCode, refresh }) {
               {[x.age && `${x.age} anni`, x.job].filter(Boolean).join(" · ")}
             </small>
             <p>{x.bio}</p>
+            {groupCode && (
+              <div className="profileActions">
+                <button
+                  onClick={() => {
+                    setEditingId(x.id);
+                    setForm({
+                      name: x.name || "",
+                      surname: x.surname || "",
+                      age: x.age || "",
+                      job: x.job || "",
+                      bio: x.bio || "",
+                    });
+                    setAvatar(null);
+                    document.querySelector(".profileForm")?.scrollIntoView({
+                      behavior: "smooth",
+                      block: "start",
+                    });
+                  }}
+                >
+                  Modifica profilo
+                </button>
+                <button onClick={() => onOpenPrivate(x.id)}>
+                  <ShieldCheck /> Documenti e posizione
+                </button>
+              </div>
+            )}
           </article>
         ))}
       </div>
@@ -1497,7 +1713,13 @@ function People({ people, groupCode, setGroupCode, refresh }) {
   );
 }
 
-function VaultOnline({ people, groupCode, setGroupCode, onOpenGroup }) {
+function VaultOnline({
+  people,
+  groupCode,
+  setGroupCode,
+  onOpenGroup,
+  preferredProfileId,
+}) {
   const [code, setCode] = useState(""),
     [privateData, setPrivateData] = useState({ documents: [], locations: [] }),
     [profileId, setProfileId] = useState(""),
@@ -1514,6 +1736,10 @@ function VaultOnline({ people, groupCode, setGroupCode, onOpenGroup }) {
     if (groupCode) refresh();
   }, [groupCode]);
   useEffect(() => {
+    if (preferredProfileId && people.some((p) => p.id === preferredProfileId)) {
+      setProfileId(preferredProfileId);
+      return;
+    }
     if (profileId || !people.length) return;
     const savedName = (localStorage.getItem("india-visitor-name") || "")
       .trim()
@@ -1524,7 +1750,7 @@ function VaultOnline({ people, groupCode, setGroupCode, onOpenGroup }) {
           savedName || person.name.trim().toLowerCase() === savedName,
     );
     if (match) setProfileId(match.id);
-  }, [people]);
+  }, [people, preferredProfileId]);
   const upload = async (type, file) => {
     if (!file || !profileId) return;
     setBusy(type);
