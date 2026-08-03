@@ -1,7 +1,7 @@
 {
   "name":"India Insieme 2026",
   "short_name":"India Insieme",
-  "start_url":"/",
+  "start_url":".",
   "display":"standalone",
   "background_color":"#f8f5ef",
   "theme_color":"#f97316",
