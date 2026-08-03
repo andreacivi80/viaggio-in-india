@@ -717,10 +717,6 @@ body {
   bottom: 34px;
   padding: 0 22px;
 }
-.hero:not(.heroFeed) .heroCopy {
-  top: 100px;
-  bottom: auto;
-}
 .heroCopy > p,
 .eyebrow {
   font-size: 11px;
@@ -2018,6 +2014,15 @@ body {
 .hero {
   height: 265px;
   background-position: center 58%;
+}
+.hero:not(.heroFeed) {
+  height: auto;
+  min-height: 330px;
+}
+.hero:not(.heroFeed) .heroCopy {
+  position: relative;
+  inset: auto;
+  padding: 18px 22px 28px;
 }
 .hero.heroFeed {
   height: 145px;
@@ -3950,8 +3955,16 @@ mark.mention {
   .hero {
     height: 225px;
   }
+  .hero:not(.heroFeed) {
+    height: auto;
+    min-height: 310px;
+  }
   .heroCopy {
     bottom: 18px;
+  }
+  .hero:not(.heroFeed) .heroCopy {
+    inset: auto;
+    padding: 14px 18px 24px;
   }
   .hero h1 {
     font-size: 27px;

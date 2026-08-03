@@ -25,12 +25,17 @@ test("dominio, revisione, mappa e Service Worker sono coerenti", async () => {
   assert.match(page.headers.get("content-security-policy") || "", /default-src 'self'/);
   const html = await page.text();
   const asset = html.match(/src="([^"]+\.js)"/)?.[1];
+  const stylesheet = html.match(/href="([^"]+\.css)"/)?.[1];
   assert.ok(asset, "bundle JavaScript non trovato");
+  assert.ok(stylesheet, "foglio di stile non trovato");
   const bundle = await (await request(asset, { cache: "no-store" })).text();
+  const css = await (await request(stylesheet, { cache: "no-store" })).text();
   assert.match(bundle, new RegExp(packageData.version.replaceAll(".", "\\.")));
   assert.match(bundle, /tiles\.openfreemap\.org\/styles\/liberty/);
   assert.doesNotMatch(bundle, /192\.168\./);
   assert.doesNotMatch(bundle, /india26/i);
+  assert.match(css, /\.hero:not\(\.heroFeed\)\{height:auto;min-height:330px\}/);
+  assert.doesNotMatch(css, /\.hero:not\(\.heroFeed\) \.heroCopy\{top:100px/);
   const worker = await (await request("/sw.js", { cache: "no-store" })).text();
   assert.match(worker, new RegExp(packageData.version.replaceAll(".", "\\.")));
 });
@@ -53,6 +58,18 @@ test("documenti e posizioni private sono negate al pubblico", async () => {
     (await request("/api/locations/profilo-non-autorizzato", { method: "DELETE" })).status,
     403,
   );
+});
+
+test("il pubblico non può eliminare pubblicazioni nemmeno forzando la richiesta", async () => {
+  const state = await (await request("/api/state", { cache: "no-store" })).json();
+  assert.ok(state.posts.length > 0, "nessuna pubblicazione disponibile per il controllo");
+  const postId = state.posts[0].id;
+  const denied = await request(`/api/posts/${encodeURIComponent(postId)}`, {
+    method: "DELETE",
+  });
+  assert.equal(denied.status, 403);
+  const after = await (await request("/api/state", { cache: "no-store" })).json();
+  assert.ok(after.posts.some((post) => post.id === postId), "la pubblicazione è stata eliminata dal pubblico");
 });
 
 test("commenti e reazioni richiedono un'identità server", async () => {
