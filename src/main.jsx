@@ -22,7 +22,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.1.0",
+const VERSION = "1.1.1",
   API = "/api";
 const cityImages = {
   Delhi:
@@ -841,6 +841,23 @@ function Diary({
         />
         <small>Serve per commentare e rispondere</small>
       </div>
+      {posts.length ? (
+        posts.map((p) => (
+          <Post
+            key={p.id}
+            p={p}
+            author={author}
+            groupCode={groupCode}
+            refresh={refresh}
+          />
+        ))
+      ) : (
+        <Empty
+          icon={Camera}
+          title="Il diario è pronto"
+          text="Il primo ricordo pubblicato apparirà qui per tutti."
+        />
+      )}
       <div className="dataSaver">
         <Wifi />
         <div>
@@ -905,23 +922,6 @@ function Diary({
           setCode={setCode}
           onUnlock={() => code === "india26" && setGroupCode(code)}
           text="I familiari possono già commentare e mettere cuori. Il codice serve per pubblicare nuovi ricordi."
-        />
-      )}
-      {posts.length ? (
-        posts.map((p) => (
-          <Post
-            key={p.id}
-            p={p}
-            author={author}
-            groupCode={groupCode}
-            refresh={refresh}
-          />
-        ))
-      ) : (
-        <Empty
-          icon={Camera}
-          title="Il diario è pronto"
-          text="Il primo ricordo pubblicato apparirà qui per tutti."
         />
       )}
     </section>
