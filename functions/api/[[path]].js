@@ -121,6 +121,65 @@ async function rateLimit(env, request, scope, limit, windowSeconds, actor = "") 
     { "retry-after": String(retryAfter) },
   );
 }
+
+async function beginIdempotentOperation(env, request, scope, actorId) {
+  const key = String(request.headers.get("x-idempotency-key") || "").trim();
+  if (!key) return { operationHash: "" };
+  if (!/^[a-zA-Z0-9:_-]{16,160}$/.test(key))
+    return { response: json({ error: "Identificativo operazione non valido" }, 400) };
+  const operationHash = await tokenHash(`${scope}:${actorId}:${key}`);
+  const createdAt = now();
+  const expiresAt = futureIso(24);
+  const inserted = await env.DB.prepare(
+    `INSERT OR IGNORE INTO idempotency_operations
+     (operation_hash,scope,actor_id,state,response_status,response_json,created_at,expires_at)
+     VALUES(?,?,?,'processing',NULL,NULL,?,?)`,
+  )
+    .bind(operationHash, scope, actorId, createdAt, expiresAt)
+    .run();
+  if (Number(inserted?.meta?.changes || 0) > 0) return { operationHash };
+  const existing = await env.DB.prepare(
+    "SELECT state,response_status,response_json FROM idempotency_operations WHERE operation_hash=?",
+  )
+    .bind(operationHash)
+    .first();
+  if (existing?.state === "completed" && existing.response_json) {
+    return {
+      response: json(
+        JSON.parse(existing.response_json),
+        Number(existing.response_status || 200),
+        { "idempotency-replayed": "true" },
+      ),
+    };
+  }
+  return {
+    response: json(
+      { error: "Operazione già in elaborazione. Riprova tra pochi secondi." },
+      409,
+      { "retry-after": "2" },
+    ),
+  };
+}
+
+async function completeIdempotentOperation(env, operationHash, payload, status = 200) {
+  if (!operationHash) return;
+  await env.DB.prepare(
+    `UPDATE idempotency_operations
+     SET state='completed',response_status=?,response_json=?
+     WHERE operation_hash=?`,
+  )
+    .bind(status, JSON.stringify(payload), operationHash)
+    .run();
+}
+
+async function abandonIdempotentOperation(env, operationHash) {
+  if (!operationHash) return;
+  await env.DB.prepare(
+    "DELETE FROM idempotency_operations WHERE operation_hash=? AND state='processing'",
+  )
+    .bind(operationHash)
+    .run();
+}
 async function claimInitialProfile(env, profileId) {
   const token = secureToken();
   const tokenDigest = await tokenHash(token);
@@ -513,6 +572,7 @@ export async function onRequest(context) {
         env.DB.prepare("DELETE FROM auth_sessions WHERE expires_at<=?").bind(cutoff),
         env.DB.prepare("DELETE FROM guest_sessions WHERE expires_at<=?").bind(cutoff),
         env.DB.prepare("DELETE FROM rate_limits WHERE expires_at<=?").bind(cutoff),
+        env.DB.prepare("DELETE FROM idempotency_operations WHERE expires_at<=?").bind(cutoff),
         env.DB.prepare(
           "DELETE FROM profile_invites WHERE expires_at<=? OR used_at IS NOT NULL",
         ).bind(cutoff),
@@ -840,6 +900,13 @@ export async function onRequest(context) {
           (!Number.isFinite(row.longitude) || row.longitude < -180 || row.longitude > 180))
       )
         return json({ error: "Posizione non valida" }, 400);
+      const operation = await beginIdempotentOperation(
+        env,
+        request,
+        "create-post",
+        session.profile_id,
+      );
+      if (operation.response) return operation.response;
       try {
         const mediaPrefix = row.visibility === "public"
           ? "public"
@@ -887,6 +954,7 @@ export async function onRequest(context) {
       } catch (error) {
         await Promise.all(savedMedia.map((media) => env.MEDIA.delete(media.key)));
         await env.DB.prepare("DELETE FROM posts WHERE id=?").bind(row.id).run();
+        await abandonIdempotentOperation(env, operation.operationHash);
         throw error;
       }
       if (request.headers.get("x-qa-silent") !== "true")
@@ -900,17 +968,16 @@ export async function onRequest(context) {
           author_profile_id: row.profile_id,
           }),
         );
-      return json(
-        {
-          ...row,
-          media: savedMedia.map((media, position) => ({
-            ...media,
-            position,
-            media_url: mediaUrl(media.key),
-          })),
-        },
-        201,
-      );
+      const payload = {
+        ...row,
+        media: savedMedia.map((media, position) => ({
+          ...media,
+          position,
+          media_url: mediaUrl(media.key),
+        })),
+      };
+      await completeIdempotentOperation(env, operation.operationHash, payload, 201);
+      return json(payload, 201);
     }
     if (request.method === "DELETE" && path.startsWith("posts/")) {
       const session = await sessionFromRequest(request, env);
@@ -975,34 +1042,59 @@ export async function onRequest(context) {
       if (!targetPost) return json({ error: "Contenuto non trovato" }, 404);
       if (!canViewPost(targetPost, session, guest))
         return json({ error: "Contenuto non autorizzato" }, 403);
+      const commentText = String(form.get("text") || "");
+      const commentFile = form.get("file");
+      if (
+        !commentText.trim() &&
+        (!(commentFile instanceof File) || commentFile.size === 0)
+      )
+        return json({ error: "Commento vuoto" }, 400);
+      const operation = await beginIdempotentOperation(
+        env,
+        request,
+        "create-comment",
+        session?.profile_id || guest.visitor_id,
+      );
+      if (operation.response) return operation.response;
       const commentPrefix = targetPost.visibility === "public"
         ? "public/comments"
         : `restricted/${targetPost.id}/comments`;
-      const media = await saveMedia(env, form.get("file"), commentPrefix);
+      let media;
+      try {
+        media = await saveMedia(env, commentFile, commentPrefix);
+      } catch (error) {
+        await abandonIdempotentOperation(env, operation.operationHash);
+        throw error;
+      }
       const row = {
         id: id(),
         post_id: postId,
         author_name: author,
         profile_id: session?.profile_id || "",
-        text: String(form.get("text") || ""),
+        text: commentText,
         created_at: now(),
       };
-      if (!row.text.trim() && !media) return json({ error: "Commento vuoto" }, 400);
-      await env.DB.prepare(
-        "INSERT INTO comments(id,post_id,author_name,profile_id,visitor_id,text,media_key,media_type,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
-      )
-        .bind(
-          row.id,
-          row.post_id,
-          row.author_name,
-          row.profile_id,
-          guest?.visitor_id || "",
-          row.text,
-          media?.key || null,
-          media?.type || null,
-          row.created_at,
+      try {
+        await env.DB.prepare(
+          "INSERT INTO comments(id,post_id,author_name,profile_id,visitor_id,text,media_key,media_type,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
         )
-        .run();
+          .bind(
+            row.id,
+            row.post_id,
+            row.author_name,
+            row.profile_id,
+            guest?.visitor_id || "",
+            row.text,
+            media?.key || null,
+            media?.type || null,
+            row.created_at,
+          )
+          .run();
+      } catch (error) {
+        if (media?.key) await env.MEDIA.delete(media.key);
+        await abandonIdempotentOperation(env, operation.operationHash);
+        throw error;
+      }
       if (request.headers.get("x-qa-silent") !== "true")
         context.waitUntil?.(
           notifySubscribers(env, {
@@ -1015,7 +1107,9 @@ export async function onRequest(context) {
           author_guest_id: guest?.visitor_id || "",
           }),
         );
-      return json({ ...row, media_url: mediaUrl(media?.key) }, 201);
+      const payload = { ...row, media_url: mediaUrl(media?.key) };
+      await completeIdempotentOperation(env, operation.operationHash, payload, 201);
+      return json(payload, 201);
     }
     if (request.method === "PUT" && path.startsWith("comments/")) {
       const commentId = path.slice(9);
@@ -1094,6 +1188,13 @@ export async function onRequest(context) {
       )
         ? b.kind
         : "heart";
+      const operation = await beginIdempotentOperation(
+        env,
+        request,
+        "toggle-reaction",
+        visitorId,
+      );
+      if (operation.response) return operation.response;
       const existing = await env.DB.prepare(
         "SELECT kind FROM reactions WHERE post_id=? AND visitor_id=? LIMIT 1",
       )
@@ -1104,20 +1205,31 @@ export async function onRequest(context) {
       )
         .bind(b.post_id, visitorId)
         .run();
-      if (existing?.kind === kind) return json({ ok: true, reaction: null });
-      await env.DB.prepare(
-        "INSERT INTO reactions(id,post_id,visitor_id,author_name,kind,created_at) VALUES(?,?,?,?,?,?)",
-      )
-        .bind(
-          id(),
-          b.post_id,
-          visitorId,
-          authorName,
-          kind,
-          now(),
+      if (existing?.kind === kind) {
+        const payload = { ok: true, reaction: null };
+        await completeIdempotentOperation(env, operation.operationHash, payload);
+        return json(payload);
+      }
+      try {
+        await env.DB.prepare(
+          "INSERT INTO reactions(id,post_id,visitor_id,author_name,kind,created_at) VALUES(?,?,?,?,?,?)",
         )
-        .run();
-      return json({ ok: true, reaction: kind });
+          .bind(
+            id(),
+            b.post_id,
+            visitorId,
+            authorName,
+            kind,
+            now(),
+          )
+          .run();
+      } catch (error) {
+        await abandonIdempotentOperation(env, operation.operationHash);
+        throw error;
+      }
+      const payload = { ok: true, reaction: kind };
+      await completeIdempotentOperation(env, operation.operationHash, payload);
+      return json(payload);
     }
     if (path === "private" && request.method === "GET") {
       const session = await sessionFromRequest(request, env);
@@ -1197,7 +1309,20 @@ export async function onRequest(context) {
       const type = String(form.get("doc_type"));
       if (!["passport", "visa", "tickets", "insurance"].includes(type))
         return json({ error: "Tipo documento non valido" }, 400);
-      const media = await saveMedia(env, form.get("file"), "private");
+      const operation = await beginIdempotentOperation(
+        env,
+        request,
+        `upload-document-${type}`,
+        session.profile_id,
+      );
+      if (operation.response) return operation.response;
+      let media;
+      try {
+        media = await saveMedia(env, form.get("file"), "private");
+      } catch (error) {
+        await abandonIdempotentOperation(env, operation.operationHash);
+        throw error;
+      }
       const previous = await env.DB.prepare(
         "SELECT file_key FROM document_status WHERE profile_id=? AND doc_type=?",
       )
@@ -1222,11 +1347,14 @@ export async function onRequest(context) {
           .run();
       } catch (error) {
         if (media?.key) await env.MEDIA.delete(media.key);
+        await abandonIdempotentOperation(env, operation.operationHash);
         throw error;
       }
       if (media?.key && previous?.file_key && previous.file_key !== media.key)
         await env.MEDIA.delete(previous.file_key);
-      return json({ ok: true });
+      const payload = { ok: true, profile_id: profileId, doc_type: type };
+      await completeIdempotentOperation(env, operation.operationHash, payload);
+      return json(payload);
     }
     if (path.startsWith("documents/") && request.method === "DELETE") {
       const [, profileId, type] = path.split("/");
