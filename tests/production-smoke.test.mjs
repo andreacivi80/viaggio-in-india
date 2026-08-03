@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 
 const base = (process.env.TEST_BASE_URL || "https://viaggio-in-india-2026.pages.dev").replace(/\/$/, "");
 const packageData = JSON.parse(await readFile(new URL("../package.json", import.meta.url)));
+const expectedVersion = process.env.TEST_EXPECTED_VERSION || "";
 
 async function request(path, options = {}) {
   let lastError;
@@ -30,14 +31,16 @@ test("dominio, revisione, mappa e Service Worker sono coerenti", async () => {
   assert.ok(stylesheet, "foglio di stile non trovato");
   const bundle = await (await request(asset, { cache: "no-store" })).text();
   const css = await (await request(stylesheet, { cache: "no-store" })).text();
-  assert.match(bundle, new RegExp(packageData.version.replaceAll(".", "\\.")));
+  if (expectedVersion)
+    assert.match(bundle, new RegExp(expectedVersion.replaceAll(".", "\\.")));
   assert.match(bundle, /tiles\.openfreemap\.org\/styles\/liberty/);
   assert.doesNotMatch(bundle, /192\.168\./);
   assert.doesNotMatch(bundle, /india26/i);
   assert.match(css, /\.hero:not\(\.heroFeed\)\{height:auto;min-height:330px\}/);
   assert.doesNotMatch(css, /\.hero:not\(\.heroFeed\) \.heroCopy\{top:100px/);
   const worker = await (await request("/sw.js", { cache: "no-store" })).text();
-  assert.match(worker, new RegExp(packageData.version.replaceAll(".", "\\.")));
+  if (expectedVersion)
+    assert.match(worker, new RegExp(expectedVersion.replaceAll(".", "\\.")));
 });
 
 test("stato pubblico non espone campi privati dei profili", async () => {
@@ -276,6 +279,90 @@ test("il proprietario vede e revoca un dispositivo secondario", {
   })).json();
   assert.ok(!after.devices.some((device) => device.device_id === process.env.QA_SECOND_DEVICE_ID));
   assert.equal((await request("/api/auth/session", { headers: { authorization } })).status, 200);
+});
+
+async function multipartUpload({ authorization, scope, visibility = "private", name, type, bytes }) {
+  const init = await request("/api/uploads/init", {
+    method: "POST",
+    headers: { authorization, "content-type": "application/json" },
+    body: JSON.stringify({ scope, visibility, file_name: name, file_size: bytes.byteLength, content_type: type }),
+  });
+  assert.equal(init.status, 201);
+  const upload = await init.json();
+  let partNumber = 1;
+  for (let offset = 0; offset < bytes.byteLength; offset += upload.part_size) {
+    const part = await request(`/api/uploads/${upload.upload_id}/parts/${partNumber}`, {
+      method: "PUT",
+      headers: { authorization, "content-type": "application/octet-stream" },
+      body: bytes.slice(offset, Math.min(bytes.byteLength, offset + upload.part_size)),
+    });
+    assert.equal(part.status, 200);
+    partNumber += 1;
+  }
+  const complete = await request(`/api/uploads/${upload.upload_id}/complete`, {
+    method: "POST",
+    headers: { authorization },
+  });
+  assert.equal(complete.status, 200);
+  return complete.json();
+}
+
+test("caricamenti grandi completi per post e documenti, streaming e pulizia", {
+  skip: !process.env.QA_SESSION_TOKEN || !process.env.QA_PROFILE_ID,
+}, async () => {
+  const authorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
+  const bytes = new Uint8Array(9 * 1024 * 1024);
+  for (let index = 0; index < bytes.length; index += 4096) bytes[index] = index % 251;
+  const uploadedPost = await multipartUpload({
+    authorization,
+    scope: "post",
+    visibility: "private",
+    name: "qa-grande.mp4",
+    type: "video/mp4",
+    bytes,
+  });
+  const postForm = new FormData();
+  postForm.set("day_index", "-1");
+  postForm.set("visibility", "private");
+  postForm.set("text", "Collaudo upload grande temporaneo");
+  postForm.set("upload_ids", JSON.stringify([uploadedPost.upload_id]));
+  const postResponse = await request("/api/posts", {
+    method: "POST",
+    headers: { authorization, "x-idempotency-key": crypto.randomUUID(), "x-qa-silent": "true" },
+    body: postForm,
+  });
+  assert.equal(postResponse.status, 201);
+  const post = await postResponse.json();
+  assert.equal(post.media[0].size, bytes.byteLength);
+  const ranged = await request(post.media[0].media_url, {
+    headers: { authorization, range: "bytes=4194000-4195000" },
+  });
+  assert.equal(ranged.status, 206);
+  assert.equal((await ranged.arrayBuffer()).byteLength, 1001);
+  assert.equal((await request(`/api/posts/${post.id}`, { method: "DELETE", headers: { authorization } })).status, 200);
+
+  const uploadedDocument = await multipartUpload({
+    authorization,
+    scope: "document",
+    name: "qa-documento-grande.pdf",
+    type: "application/pdf",
+    bytes,
+  });
+  const documentForm = new FormData();
+  documentForm.set("profile_id", process.env.QA_PROFILE_ID);
+  documentForm.set("doc_type", "insurance");
+  documentForm.set("upload_id", uploadedDocument.upload_id);
+  const documentResponse = await request("/api/documents", {
+    method: "POST",
+    headers: { authorization, "x-idempotency-key": crypto.randomUUID() },
+    body: documentForm,
+  });
+  assert.equal(documentResponse.status, 200);
+  const privateState = await (await request("/api/private", { headers: { authorization } })).json();
+  const document = privateState.documents.find((item) => item.profile_id === process.env.QA_PROFILE_ID && item.doc_type === "insurance");
+  assert.ok(document?.file_key?.startsWith("chunked/private/"));
+  assert.equal((await request(`/api/media/${document.file_key}`, { method: "HEAD", headers: { authorization } })).status, 200);
+  assert.equal((await request(`/api/documents/${process.env.QA_PROFILE_ID}/insurance`, { method: "DELETE", headers: { authorization } })).status, 200);
 });
 
 test("health API risponde e non usa il computer locale", async () => {

@@ -5,9 +5,9 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 - Sezioni sorgente: 100
 - Caselle sorgente complessive: 2.537
 - Controlli distinti: 1812
-- Controlli superati con evidenza: 31
+- Controlli superati con evidenza: 41
 - Controlli falliti aperti: 0
-- Controlli non ancora eseguiti: 1781
+- Controlli non ancora eseguiti: 1771
 - Sezioni completamente chiuse: 0/100
 - Stati ammessi: SUPERATO, FALLITO, NON ESEGUITO, BLOCCATO FISICO
 
@@ -168,11 +168,11 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0153 | 11 | modifica della copertina; | NON ESEGUITO | — |
 | T-0154 | 11 | pausa; | NON ESEGUITO | — |
 | T-0155 | 11 | percentuale complessiva; | NON ESEGUITO | — |
-| T-0156 | 11 | percentuale per ogni file; | NON ESEGUITO | — |
+| T-0156 | 11 | percentuale per ogni file; | SUPERATO | resumable-upload: avanzamento del singolo file verificato fino al 100% |
 | T-0157 | 11 | quota giornaliera per utente; | NON ESEGUITO | — |
 | T-0158 | 11 | retry del singolo file; | NON ESEGUITO | — |
 | T-0159 | 11 | riordinamento allegati; | NON ESEGUITO | — |
-| T-0160 | 11 | ripresa; | NON ESEGUITO | — |
+| T-0160 | 11 | ripresa; | SUPERATO | resumable-upload: ripresa da parti già confermate |
 | T-0161 | 11 | rotazione e ritaglio fotografie; | NON ESEGUITO | — |
 | T-0162 | 11 | stima del consumo dati; | NON ESEGUITO | — |
 | T-0163 | 11 | stima del tempo; | NON ESEGUITO | — |
@@ -191,7 +191,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0176 | 12 | Rifiutare HTML e JavaScript. | NON ESEGUITO | — |
 | T-0177 | 12 | Rifiutare SVG pericolosi. | NON ESEGUITO | — |
 | T-0178 | 12 | Scansione antivirus. | NON ESEGUITO | — |
-| T-0179 | 12 | Validazione delle dimensioni reali. | NON ESEGUITO | — |
+| T-0179 | 12 | Validazione delle dimensioni reali. | SUPERATO | QA 1.29.0: dimensione reale da 9 MB ricomposta e verificata dal server |
 | T-0180 | 12 | Verifica della firma reale del file. | NON ESEGUITO | — |
 | T-0181 | 13 | Aggiungere alternativa offline. | NON ESEGUITO | — |
 | T-0182 | 13 | Aggiungere data e ora locale dell’India. | NON ESEGUITO | — |
@@ -265,7 +265,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0250 | 16 | Esportazione CSV. | NON ESEGUITO | — |
 | T-0251 | 16 | Esportazione JSON. | NON ESEGUITO | — |
 | T-0252 | 16 | funziona con dati reali o anonimizzati; | NON ESEGUITO | — |
-| T-0253 | 16 | funziona dopo chiusura e riapertura; | NON ESEGUITO | — |
+| T-0253 | 16 | funziona dopo chiusura e riapertura; | SUPERATO | resumable-upload: manifesto persistente ripreso dopo riapertura simulata |
 | T-0254 | 16 | funziona su Android; | NON ESEGUITO | — |
 | T-0255 | 16 | funziona su iPhone; | NON ESEGUITO | — |
 | T-0256 | 16 | funziona sul dominio Cloudflare; | NON ESEGUITO | — |
@@ -569,7 +569,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0554 | 31 | Simulare rete 3G. | NON ESEGUITO | — |
 | T-0555 | 31 | Verificare invio automatico una sola volta. | NON ESEGUITO | — |
 | T-0556 | 31 | Verificare presenza della bozza e degli allegati. | NON ESEGUITO | — |
-| T-0557 | 31 | Verificare ripresa senza duplicazione. | NON ESEGUITO | — |
+| T-0557 | 31 | Verificare ripresa senza duplicazione. | SUPERATO | resumable-upload: parte già confermata non viene inviata due volte |
 | T-0558 | 32 | 1.000 commenti. | NON ESEGUITO | — |
 | T-0559 | 32,59 | 1.000 post. | NON ESEGUITO | — |
 | T-0560 | 32 | 10 allegati per post. | NON ESEGUITO | — |
@@ -833,7 +833,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0818 | 44 | verificare che il pulsante non rimanga bloccato su “Invio”; | NON ESEGUITO | — |
 | T-0819 | 44 | verificare che non esistano duplicati; | NON ESEGUITO | — |
 | T-0820 | 44 | verificare che non esistano file orfani; | NON ESEGUITO | — |
-| T-0821 | 44 | verificare lo stato dell’operazione alla riapertura; | NON ESEGUITO | — |
+| T-0821 | 44 | verificare lo stato dell’operazione alla riapertura; | SUPERATO | resumable-upload: stato server riletto prima della ripresa |
 | T-0822 | 44,62 | verificare possibilità di riprovare. | NON ESEGUITO | — |
 | T-0823 | 45 | Aggiungere un messaggio “Aggiornamento disponibile”. | NON ESEGUITO | — |
 | T-0824 | 45 | Aprire due schede con versioni differenti. | NON ESEGUITO | — |
@@ -937,7 +937,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0922 | 49 | Verificare che due video non vengano riprodotti contemporaneamente. | NON ESEGUITO | — |
 | T-0923 | 49 | Verificare che la riproduzione non ricominci dopo un aggiornamento del feed. | NON ESEGUITO | — |
 | T-0924 | 49 | Verificare messaggio corretto per file non riproducibile. | NON ESEGUITO | — |
-| T-0925 | 49 | Verificare richieste Range 206. | NON ESEGUITO | — |
+| T-0925 | 49 | Verificare richieste Range 206. | SUPERATO | QA 1.29.0: lettura Range attraversa due parti e restituisce HTTP 206 |
 | T-0926 | 50 | Mostrare chiaramente se l’orario è italiano o indiano. | NON ESEGUITO | — |
 | T-0927 | 50 | Pubblicazione alle 00:00. | NON ESEGUITO | — |
 | T-0928 | 50 | Pubblicazione alle 23:59. | NON ESEGUITO | — |
@@ -1696,7 +1696,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1681 | 94 | Gestire errore nel caricamento della pagina successiva. | NON ESEGUITO | — |
 | T-1682 | 94 | Inserire un nuovo post mentre si scorre. | NON ESEGUITO | — |
 | T-1683 | 94 | Mostrare chiaramente “Non ci sono altri contenuti”. | NON ESEGUITO | — |
-| T-1684 | 94 | Permettere di riprovare senza ricominciare dall’inizio. | NON ESEGUITO | — |
+| T-1684 | 94 | Permettere di riprovare senza ricominciare dall’inizio. | SUPERATO | resumable-upload: errore temporaneo ritentato senza ricominciare il file |
 | T-1685 | 94 | Raggiungere la fine del feed. | NON ESEGUITO | — |
 | T-1686 | 94 | Scorrere e caricare i successivi. | NON ESEGUITO | — |
 | T-1687 | 94 | Tornare al filtro precedente. | NON ESEGUITO | — |
@@ -1738,7 +1738,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1723 | 96 | Pausa e ripresa. | NON ESEGUITO | — |
 | T-1724 | 96 | PDF del diario. | NON ESEGUITO | — |
 | T-1725 | 96 | Ripresa dopo perdita della rete. | NON ESEGUITO | — |
-| T-1726 | 96 | Suddivisione in più parti se troppo grande. | NON ESEGUITO | — |
+| T-1726 | 96 | Suddivisione in più parti se troppo grande. | SUPERATO | resumable-upload: file da 9 MB suddiviso e completato in tre parti |
 | T-1727 | 96 | ZIP completo. | NON ESEGUITO | — |
 | T-1728 | 97 | Il Coordinatore controlla i documenti. | NON ESEGUITO | — |
 | T-1729 | 97 | Il Coordinatore revoca un dispositivo di prova. | NON ESEGUITO | — |
@@ -1812,7 +1812,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1797 | 100 | prova con computer del programmatore spento; | NON ESEGUITO | — |
 | T-1798 | 100 | prova con utilizzatore non esperto; | NON ESEGUITO | — |
 | T-1799 | 100 | prova generale con tutto il gruppo; | NON ESEGUITO | — |
-| T-1800 | 100 | ripresa upload; | NON ESEGUITO | — |
+| T-1800 | 100 | ripresa upload; | SUPERATO | resumable-upload: ripresa upload coperta da prova automatica |
 | T-1801 | 100 | sicurezza delle posizioni; | NON ESEGUITO | — |
 | T-1802 | 100 | sincronizzazione incrementale; | NON ESEGUITO | — |
 | T-1803 | 100 | test Android; | NON ESEGUITO | — |

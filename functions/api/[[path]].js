@@ -322,6 +322,90 @@ async function saveMedia(env, file, prefix = "public") {
   };
 }
 
+const UPLOAD_PART_SIZE = 4 * 1024 * 1024;
+const uploadLimit = (contentType, scope) => {
+  if (scope === "document") return 80 * 1024 * 1024;
+  if (contentType.startsWith("video/")) return 500 * 1024 * 1024;
+  return 120 * 1024 * 1024;
+};
+function validateUploadDescription({ contentType, fileName, fileSize, scope }) {
+  if (!['post', 'document'].includes(scope)) throw Object.assign(new Error("Destinazione non valida"), { status: 400 });
+  if (!Number.isInteger(fileSize) || fileSize <= 0 || fileSize > uploadLimit(contentType, scope))
+    throw Object.assign(new Error("Dimensione del file non consentita"), { status: 400 });
+  if (scope === "post" && (!/^(image|video|audio)\//.test(contentType) || contentType === "image/svg+xml"))
+    throw Object.assign(new Error("Per il diario usa foto, video o audio"), { status: 400 });
+  if (scope === "document" && /(?:html|javascript|svg|xml)/i.test(contentType))
+    throw Object.assign(new Error("Formato documento non consentito"), { status: 400 });
+  if (!String(fileName || "").trim()) throw Object.assign(new Error("Nome file mancante"), { status: 400 });
+}
+const chunkKey = (uploadId, partNumber) => `upload-chunks/${uploadId}/${partNumber}`;
+async function digestHex(bytes) {
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+async function deleteStoredMedia(env, key) {
+  if (!key) return;
+  if (!key.startsWith("chunked/")) {
+    await env.MEDIA.delete(key);
+    return;
+  }
+  const upload = await env.DB.prepare("SELECT id FROM upload_sessions WHERE object_key=?")
+    .bind(key).first();
+  if (!upload) return;
+  const parts = await env.DB.prepare("SELECT part_number FROM upload_parts WHERE upload_session_id=?")
+    .bind(upload.id).all();
+  await Promise.all(parts.results.map((part) => env.MEDIA.delete(chunkKey(upload.id, part.part_number))));
+  await env.DB.prepare("DELETE FROM upload_parts WHERE upload_session_id=?").bind(upload.id).run();
+  await env.DB.prepare("DELETE FROM upload_sessions WHERE id=?").bind(upload.id).run();
+}
+async function chunkedMedia(env, request, key, headers) {
+  const upload = await env.DB.prepare(
+    "SELECT id,content_type,file_name,file_size FROM upload_sessions WHERE object_key=? AND status IN ('completed','consumed')",
+  ).bind(key).first();
+  if (!upload) return new Response("Not found", { status: 404 });
+  const parts = await env.DB.prepare(
+    "SELECT part_number,part_size FROM upload_parts WHERE upload_session_id=? ORDER BY part_number",
+  ).bind(upload.id).all();
+  let start = 0;
+  let end = Number(upload.file_size) - 1;
+  const range = request.headers.get("range")?.match(/bytes=(\d*)-(\d*)/);
+  if (range) {
+    start = range[1] ? Number(range[1]) : 0;
+    end = Math.min(range[2] ? Number(range[2]) : end, end);
+    if (start > end || start >= Number(upload.file_size))
+      return new Response(null, { status: 416, headers: { "content-range": `bytes */${upload.file_size}` } });
+  }
+  headers["content-type"] = upload.content_type;
+  headers["content-disposition"] = /^(image\/|video\/|audio\/|application\/pdf)/i.test(upload.content_type)
+    ? `inline; filename*=UTF-8''${encodeURIComponent(upload.file_name)}`
+    : `attachment; filename*=UTF-8''${encodeURIComponent(upload.file_name)}`;
+  headers["content-length"] = String(end - start + 1);
+  if (range) headers["content-range"] = `bytes ${start}-${end}/${upload.file_size}`;
+  if (request.method === "HEAD") return new Response(null, { status: range ? 206 : 200, headers });
+  const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        let offset = 0;
+        for (const part of parts.results) {
+          const partStart = offset;
+          const partEnd = offset + Number(part.part_size) - 1;
+          offset = partEnd + 1;
+          if (partEnd < start || partStart > end) continue;
+          const bytes = await env.MEDIA.get(chunkKey(upload.id, part.part_number), { type: "arrayBuffer" });
+          if (!bytes) throw new Error("Parte del file non disponibile");
+          const from = Math.max(0, start - partStart);
+          const to = Math.min(bytes.byteLength, end - partStart + 1);
+          controller.enqueue(new Uint8Array(bytes).slice(from, to));
+        }
+        controller.close();
+      } catch (error) {
+        controller.error(error);
+      }
+    },
+  });
+  return new Response(stream, { status: range ? 206 : 200, headers });
+}
+
 async function readState(env, session = null, guest = null) {
   const [profiles, posts, comments, reactions, postMedia, syncState] = await Promise.all([
     env.DB.prepare("SELECT * FROM profiles ORDER BY created_at").all(),
@@ -753,9 +837,100 @@ export async function onRequest(context) {
       });
       return json({ ok: delivery.sent > 0 && delivery.failed === 0, delivery });
     }
+    if (request.method === "POST" && path === "uploads/init") {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 403);
+      const body = await request.json();
+      const scope = String(body.scope || "post");
+      const visibility = scope === "post" && ["public", "family", "group", "private"].includes(body.visibility)
+        ? body.visibility : "private";
+      const contentType = String(body.content_type || "application/octet-stream").toLowerCase();
+      const fileName = String(body.file_name || "file").slice(0, 180);
+      const fileSize = Number(body.file_size);
+      validateUploadDescription({ contentType, fileName, fileSize, scope });
+      const uploadId = id();
+      const accessPrefix = scope === "document" ? "private" : visibility === "public" ? "public" : "restricted";
+      const objectKey = `chunked/${accessPrefix}/${uploadId}.${ext(fileName)}`;
+      const createdAt = now();
+      await env.DB.prepare(
+        `INSERT INTO upload_sessions(id,profile_id,upload_id,object_key,scope,visibility,content_type,file_name,file_size,status,created_at,expires_at)
+         VALUES(?,?,?,?,?,?,?,?,?,'uploading',?,?)`,
+      ).bind(uploadId, session.profile_id, uploadId, objectKey, scope, visibility, contentType, fileName, fileSize, createdAt, futureIso(48)).run();
+      return json({ upload_id: uploadId, part_size: UPLOAD_PART_SIZE, uploaded_parts: [] }, 201);
+    }
+    const uploadStatusMatch = path.match(/^uploads\/([^/]+)$/);
+    if (uploadStatusMatch && request.method === "GET") {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 403);
+      const upload = await env.DB.prepare(
+        "SELECT id,profile_id,status,file_name,file_size,expires_at FROM upload_sessions WHERE id=?",
+      ).bind(uploadStatusMatch[1]).first();
+      if (!upload || upload.profile_id !== session.profile_id) return json({ error: "Caricamento non trovato" }, 404);
+      const parts = await env.DB.prepare(
+        "SELECT part_number,part_size,etag FROM upload_parts WHERE upload_session_id=? ORDER BY part_number",
+      ).bind(upload.id).all();
+      return json({ ...upload, part_size: UPLOAD_PART_SIZE, uploaded_parts: parts.results });
+    }
+    const uploadPartMatch = path.match(/^uploads\/([^/]+)\/parts\/(\d+)$/);
+    if (uploadPartMatch && request.method === "PUT") {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 403);
+      const upload = await env.DB.prepare(
+        "SELECT * FROM upload_sessions WHERE id=? AND status='uploading' AND expires_at>?",
+      ).bind(uploadPartMatch[1], now()).first();
+      if (!upload || upload.profile_id !== session.profile_id) return json({ error: "Caricamento non disponibile" }, 404);
+      const partNumber = Number(uploadPartMatch[2]);
+      const expectedParts = Math.ceil(Number(upload.file_size) / UPLOAD_PART_SIZE);
+      if (!Number.isInteger(partNumber) || partNumber < 1 || partNumber > expectedParts)
+        return json({ error: "Numero parte non valido" }, 400);
+      const bytes = await request.arrayBuffer();
+      const expectedSize = partNumber === expectedParts
+        ? Number(upload.file_size) - UPLOAD_PART_SIZE * (expectedParts - 1)
+        : UPLOAD_PART_SIZE;
+      if (bytes.byteLength !== expectedSize) return json({ error: "Dimensione parte non valida" }, 400);
+      const etag = await digestHex(bytes);
+      await env.MEDIA.put(chunkKey(upload.id, partNumber), bytes, {
+        metadata: { uploadId: upload.id, partNumber: String(partNumber), etag },
+      });
+      await env.DB.prepare(
+        `INSERT INTO upload_parts(upload_session_id,part_number,part_size,etag,updated_at)
+         VALUES(?,?,?,?,?) ON CONFLICT(upload_session_id,part_number)
+         DO UPDATE SET part_size=excluded.part_size,etag=excluded.etag,updated_at=excluded.updated_at`,
+      ).bind(upload.id, partNumber, bytes.byteLength, etag, now()).run();
+      return json({ ok: true, part_number: partNumber, etag });
+    }
+    const uploadCompleteMatch = path.match(/^uploads\/([^/]+)\/complete$/);
+    if (uploadCompleteMatch && request.method === "POST") {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 403);
+      const upload = await env.DB.prepare("SELECT * FROM upload_sessions WHERE id=?")
+        .bind(uploadCompleteMatch[1]).first();
+      if (!upload || upload.profile_id !== session.profile_id) return json({ error: "Caricamento non trovato" }, 404);
+      if (upload.status === "completed" || upload.status === "consumed")
+        return json({ ok: true, upload_id: upload.id, media: { key: upload.object_key, type: upload.content_type, name: upload.file_name, size: upload.file_size } });
+      const summary = await env.DB.prepare(
+        "SELECT COUNT(*) AS total_parts,COALESCE(SUM(part_size),0) AS total_size,MIN(part_number) AS first_part,MAX(part_number) AS last_part FROM upload_parts WHERE upload_session_id=?",
+      ).bind(upload.id).first();
+      const expectedParts = Math.ceil(Number(upload.file_size) / UPLOAD_PART_SIZE);
+      if (Number(summary.total_parts) !== expectedParts || Number(summary.total_size) !== Number(upload.file_size) || Number(summary.first_part) !== 1 || Number(summary.last_part) !== expectedParts)
+        return json({ error: "Caricamento incompleto", uploaded_parts: Number(summary.total_parts), expected_parts: expectedParts }, 409);
+      await env.DB.prepare("UPDATE upload_sessions SET status='completed',completed_at=? WHERE id=?")
+        .bind(now(), upload.id).run();
+      return json({ ok: true, upload_id: upload.id, media: { key: upload.object_key, type: upload.content_type, name: upload.file_name, size: upload.file_size } });
+    }
+    if (uploadStatusMatch && request.method === "DELETE") {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 403);
+      const upload = await env.DB.prepare("SELECT id,profile_id,object_key,status FROM upload_sessions WHERE id=?")
+        .bind(uploadStatusMatch[1]).first();
+      if (!upload || upload.profile_id !== session.profile_id || upload.status === "consumed")
+        return json({ error: "Caricamento non eliminabile" }, 403);
+      await deleteStoredMedia(env, upload.object_key);
+      return json({ ok: true });
+    }
     if (["GET", "HEAD"].includes(request.method) && path.startsWith("media/")) {
       const key = decodeURIComponent(path.slice(6));
-      if (key.startsWith("private/")) {
+      if (key.startsWith("private/") || key.startsWith("chunked/private/")) {
         const session = await sessionFromRequest(request, env);
         if (!session) return json({ error: "Accesso negato" }, 403);
         const document = await env.DB.prepare(
@@ -770,7 +945,7 @@ export async function onRequest(context) {
         )
           return json({ error: "Documento non autorizzato" }, 403);
       }
-      if (key.startsWith("restricted/")) {
+      if (key.startsWith("restricted/") || key.startsWith("chunked/restricted/")) {
         const session = await sessionFromRequest(request, env);
         const guest = session ? null : await guestFromRequest(request, env);
         const post = await env.DB.prepare(
@@ -785,6 +960,15 @@ export async function onRequest(context) {
           .first();
         if (!post || !canViewPost(post, session, guest))
           return json({ error: "Contenuto non autorizzato" }, 403);
+      }
+      if (key.startsWith("chunked/")) {
+        const chunkHeaders = {
+          ...responseSecurityHeaders,
+          "cache-control": key.startsWith("chunked/public/") ? "public, max-age=31536000, immutable" : "private, no-store",
+          "accept-ranges": "bytes",
+          "x-content-type-options": "nosniff",
+        };
+        return chunkedMedia(env, request, key, chunkHeaders);
       }
       const meta = await env.MEDIA.getWithMetadata(key, { type: "arrayBuffer" });
       if (!meta.value) return new Response("Not found", { status: 404 });
@@ -906,11 +1090,11 @@ export async function onRequest(context) {
           )
           .run();
       } catch (error) {
-        if (avatar?.key) await env.MEDIA.delete(avatar.key);
+        if (avatar?.key) await deleteStoredMedia(env, avatar.key);
         throw error;
       }
       if (avatar?.key && current.avatar_key)
-        await env.MEDIA.delete(current.avatar_key);
+        await deleteStoredMedia(env, current.avatar_key);
       return json({ ok: true, id: profileId, avatar_url: mediaUrl(avatarKey) });
     }
     if (request.method === "POST" && path === "posts") {
@@ -922,10 +1106,18 @@ export async function onRequest(context) {
         .getAll("files")
         .concat(form.get("file") ? [form.get("file")] : [])
         .filter((file) => file instanceof File && file.size > 0);
-      if (files.length > 10)
+      let uploadIds;
+      try {
+        uploadIds = JSON.parse(String(form.get("upload_ids") || "[]"));
+      } catch {
+        return json({ error: "Elenco caricamenti non valido" }, 400);
+      }
+      if (!Array.isArray(uploadIds)) return json({ error: "Elenco caricamenti non valido" }, 400);
+      uploadIds = [...new Set(uploadIds.map(String).filter(Boolean))];
+      if (files.length + uploadIds.length > 10)
         return json(
           {
-            error: `Puoi caricare massimo 10 contenuti per volta. Hai selezionato ${files.length} elementi.`,
+            error: `Puoi caricare massimo 10 contenuti per volta. Hai selezionato ${files.length + uploadIds.length} elementi.`,
           },
           400,
         );
@@ -933,6 +1125,15 @@ export async function onRequest(context) {
       const requestedVisibility = String(form.get("visibility") || "public");
       if (!["public", "family", "group", "private"].includes(requestedVisibility))
         return json({ error: "Visibilità non valida" }, 400);
+      const uploadedMedia = [];
+      for (const uploadId of uploadIds) {
+        const upload = await env.DB.prepare(
+          `SELECT id,object_key,content_type,file_name,file_size FROM upload_sessions
+           WHERE id=? AND profile_id=? AND scope='post' AND visibility=? AND status='completed' AND consumed_at IS NULL AND expires_at>?`,
+        ).bind(uploadId, session.profile_id, requestedVisibility, now()).first();
+        if (!upload) return json({ error: "Caricamento grande non valido o già utilizzato" }, 409);
+        uploadedMedia.push({ uploadId: upload.id, key: upload.object_key, type: upload.content_type, name: upload.file_name, size: upload.file_size });
+      }
       const row = {
         id: id(),
         author_name: `${session.name} ${session.surname || ""}`.trim(),
@@ -965,6 +1166,7 @@ export async function onRequest(context) {
           : `restricted/${row.id}`;
         for (const file of files)
           savedMedia.push(await saveMedia(env, file, mediaPrefix));
+        savedMedia.push(...uploadedMedia);
         await env.DB.prepare(
           "INSERT INTO posts(id,author_name,profile_id,day_index,visibility,text,place_name,latitude,longitude,media_key,media_type,media_name,media_size,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         )
@@ -1003,8 +1205,14 @@ export async function onRequest(context) {
             ),
           );
         }
+        if (uploadedMedia.length)
+          await env.DB.batch(uploadedMedia.map((media) =>
+            env.DB.prepare("UPDATE upload_sessions SET status='consumed',consumed_at=? WHERE id=? AND status='completed'")
+              .bind(row.created_at, media.uploadId),
+          ));
       } catch (error) {
-        await Promise.all(savedMedia.map((media) => env.MEDIA.delete(media.key)));
+        await Promise.all(savedMedia.filter((media) => !media.uploadId).map((media) => deleteStoredMedia(env, media.key)));
+        await env.DB.prepare("DELETE FROM post_media WHERE post_id=?").bind(row.id).run();
         await env.DB.prepare("DELETE FROM posts WHERE id=?").bind(row.id).run();
         await abandonIdempotentOperation(env, operation.operationHash);
         throw error;
@@ -1043,20 +1251,20 @@ export async function onRequest(context) {
       if (!p) return json({ error: "Contenuto non trovato" }, 404);
       if (session.role !== "coordinator" && p.profile_id !== session.profile_id)
         return json({ error: "Non puoi eliminare questo contenuto" }, 403);
-      if (p?.media_key) await env.MEDIA.delete(p.media_key);
+      if (p?.media_key) await deleteStoredMedia(env, p.media_key);
       const mediaRows = await env.DB.prepare(
         "SELECT media_key FROM post_media WHERE post_id=?",
       )
         .bind(postId)
         .all();
-      await Promise.all(mediaRows.results.map((m) => env.MEDIA.delete(m.media_key)));
+      await Promise.all(mediaRows.results.map((m) => deleteStoredMedia(env, m.media_key)));
       const commentMediaRows = await env.DB.prepare(
         "SELECT media_key FROM comments WHERE post_id=? AND media_key IS NOT NULL",
       )
         .bind(postId)
         .all();
       await Promise.all(
-        commentMediaRows.results.map((media) => env.MEDIA.delete(media.media_key)),
+        commentMediaRows.results.map((media) => deleteStoredMedia(env, media.media_key)),
       );
       await env.DB.batch([
         env.DB.prepare("DELETE FROM post_media WHERE post_id=?").bind(postId),
@@ -1143,7 +1351,7 @@ export async function onRequest(context) {
           )
           .run();
       } catch (error) {
-        if (media?.key) await env.MEDIA.delete(media.key);
+        if (media?.key) await deleteStoredMedia(env, media.key);
         await abandonIdempotentOperation(env, operation.operationHash);
         throw error;
       }
@@ -1203,7 +1411,7 @@ export async function onRequest(context) {
       if (!ownsComment)
         return json({ error: "Non puoi eliminare questo commento" }, 403);
       await env.DB.prepare("DELETE FROM comments WHERE id=?").bind(commentId).run();
-      if (existing.media_key) await env.MEDIA.delete(existing.media_key);
+      if (existing.media_key) await deleteStoredMedia(env, existing.media_key);
       return json({ ok: true });
     }
     if (request.method === "POST" && path === "reactions") {
@@ -1370,7 +1578,15 @@ export async function onRequest(context) {
       if (operation.response) return operation.response;
       let media;
       try {
-        media = await saveMedia(env, form.get("file"), "private");
+        const uploadId = String(form.get("upload_id") || "");
+        if (uploadId) {
+          const upload = await env.DB.prepare(
+            `SELECT id,object_key,content_type,file_name,file_size FROM upload_sessions
+             WHERE id=? AND profile_id=? AND scope='document' AND status='completed' AND consumed_at IS NULL AND expires_at>?`,
+          ).bind(uploadId, session.profile_id, now()).first();
+          if (!upload) throw Object.assign(new Error("Caricamento documento non valido o già utilizzato"), { status: 409 });
+          media = { uploadId: upload.id, key: upload.object_key, type: upload.content_type, name: upload.file_name, size: upload.file_size };
+        } else media = await saveMedia(env, form.get("file"), "private");
       } catch (error) {
         await abandonIdempotentOperation(env, operation.operationHash);
         throw error;
@@ -1397,13 +1613,16 @@ export async function onRequest(context) {
             now(),
           )
           .run();
+        if (media?.uploadId)
+          await env.DB.prepare("UPDATE upload_sessions SET status='consumed',consumed_at=? WHERE id=? AND status='completed'")
+            .bind(now(), media.uploadId).run();
       } catch (error) {
-        if (media?.key) await env.MEDIA.delete(media.key);
+        if (media?.key && !media.uploadId) await deleteStoredMedia(env, media.key);
         await abandonIdempotentOperation(env, operation.operationHash);
         throw error;
       }
       if (media?.key && previous?.file_key && previous.file_key !== media.key)
-        await env.MEDIA.delete(previous.file_key);
+        await deleteStoredMedia(env, previous.file_key);
       const payload = { ok: true, profile_id: profileId, doc_type: type };
       await completeIdempotentOperation(env, operation.operationHash, payload);
       return json(payload);
@@ -1421,7 +1640,7 @@ export async function onRequest(context) {
       )
         .bind(profileId, type)
         .first();
-      if (doc?.file_key) await env.MEDIA.delete(doc.file_key);
+      if (doc?.file_key) await deleteStoredMedia(env, doc.file_key);
       await env.DB.prepare(
         "DELETE FROM document_status WHERE profile_id=? AND doc_type=?",
       )
