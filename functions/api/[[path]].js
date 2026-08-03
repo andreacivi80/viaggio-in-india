@@ -92,22 +92,43 @@ export async function onRequest({ request, env, params }) {
   try {
     if (request.method === "GET" && path === "state")
       return json(await readState(env));
-    if (request.method === "GET" && path.startsWith("media/")) {
+    if (["GET", "HEAD"].includes(request.method) && path.startsWith("media/")) {
       const key = decodeURIComponent(path.slice(6));
       if (key.startsWith("private/") && !groupOk(request, env))
         return json({ error: "Accesso negato" }, 403);
-      const value = await env.MEDIA.get(key, { type: "arrayBuffer" });
-      if (!value) return new Response("Not found", { status: 404 });
-      const meta = await env.MEDIA.getWithMetadata(key, { type: "stream" });
-      return new Response(meta.value, {
-        headers: {
-          "content-type":
-            meta.metadata?.contentType || "application/octet-stream",
-          "cache-control": key.startsWith("public/")
-            ? "public, max-age=31536000, immutable"
-            : "private, no-store",
-        },
-      });
+      const meta = await env.MEDIA.getWithMetadata(key, { type: "arrayBuffer" });
+      if (!meta.value) return new Response("Not found", { status: 404 });
+      const bytes = meta.value;
+      const headers = {
+        "content-type": meta.metadata?.contentType || "application/octet-stream",
+        "cache-control": key.startsWith("public/")
+          ? "public, max-age=31536000, immutable"
+          : "private, no-store",
+        "accept-ranges": "bytes",
+      };
+      if (request.method === "HEAD") {
+        headers["content-length"] = String(bytes.byteLength);
+        return new Response(null, { headers });
+      }
+      const range = request.headers.get("range")?.match(/bytes=(\d*)-(\d*)/);
+      if (range) {
+        const start = range[1] ? Number(range[1]) : 0;
+        const end = Math.min(
+          range[2] ? Number(range[2]) : bytes.byteLength - 1,
+          bytes.byteLength - 1,
+        );
+        if (start > end || start >= bytes.byteLength)
+          return new Response(null, {
+            status: 416,
+            headers: { "content-range": `bytes */${bytes.byteLength}` },
+          });
+        const chunk = bytes.slice(start, end + 1);
+        headers["content-range"] = `bytes ${start}-${end}/${bytes.byteLength}`;
+        headers["content-length"] = String(chunk.byteLength);
+        return new Response(chunk, { status: 206, headers });
+      }
+      headers["content-length"] = String(bytes.byteLength);
+      return new Response(bytes, { headers });
     }
     if (request.method === "POST" && path === "profiles") {
       if (!groupOk(request, env))
@@ -338,6 +359,15 @@ export async function onRequest({ request, env, params }) {
           Number(b.longitude),
           now(),
         )
+        .run();
+      return json({ ok: true });
+    }
+    if (path.startsWith("locations/") && request.method === "DELETE") {
+      if (!groupOk(request, env))
+        return json({ error: "Accesso del gruppo richiesto" }, 403);
+      const profileId = path.slice(10);
+      await env.DB.prepare("DELETE FROM locations WHERE profile_id=?")
+        .bind(profileId)
         .run();
       return json({ ok: true });
     }

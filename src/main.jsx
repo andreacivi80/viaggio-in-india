@@ -29,7 +29,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.8.1",
+const VERSION = "1.9.0",
   API = "/api";
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/private`, {
@@ -63,6 +63,60 @@ const places = {
   Varanasi: [25.3176, 82.9739],
 };
 const roadPaths = {
+  "Delhi-arrival": [
+    [28.5562, 77.1],
+    [28.5535, 77.2588],
+    [28.6127, 77.2295],
+    [28.6315, 77.2167],
+  ],
+  "Delhi-old-city": [
+    [28.5355, 77.278],
+    [28.6562, 77.241],
+    [28.6506, 77.2303],
+    [28.6507, 77.2334],
+    [28.6315, 77.2167],
+  ],
+  "Udaipur-local": [
+    [24.5854, 73.7125],
+    [24.5764, 73.6835],
+    [24.572, 73.675],
+    [24.5938, 73.6398],
+    [24.6031, 73.6853],
+    [24.5854, 73.7125],
+  ],
+  "Jodhpur-local": [
+    [26.2389, 73.0243],
+    [26.298, 73.018],
+    [26.289, 73.024],
+    [26.281, 73.018],
+    [26.2389, 73.0243],
+  ],
+  "Jaipur-local": [
+    [26.9124, 75.7873],
+    [26.916, 75.859],
+    [26.9855, 75.8513],
+    [26.926, 75.8235],
+    [26.9124, 75.7873],
+  ],
+  "Varanasi-ghats": [
+    [25.3176, 82.9739],
+    [25.3109, 83.0107],
+    [25.306, 83.011],
+    [25.282, 83.006],
+    [25.3176, 82.9739],
+  ],
+  "Varanasi-river": [
+    [25.3109, 83.0107],
+    [25.323, 83.021],
+    [25.337, 83.026],
+    [25.3176, 82.9739],
+  ],
+  "Delhi-finale": [
+    [28.6139, 77.209],
+    [28.5933, 77.2507],
+    [28.6127, 77.2773],
+    [28.5562, 77.1],
+  ],
   "Udaipur-Jodhpur": [
     [24.585, 73.712],
     [24.667, 73.639],
@@ -121,6 +175,7 @@ const days = [
     transport: "Taxi + metro",
     from: "Delhi",
     to: "Delhi",
+    path: "Delhi-arrival",
     checks: [
       "Lotus Temple",
       "Pranzo locale",
@@ -140,6 +195,7 @@ const days = [
     transport: "Metro + risciò",
     from: "Delhi",
     to: "Delhi",
+    path: "Delhi-old-city",
     checks: ["Tour Sanjay Colony", "Red Fort", "Chandni Chowk", "Jama Masjid"],
   },
   {
@@ -173,6 +229,7 @@ const days = [
     transport: "Tuk-tuk + barca",
     from: "Udaipur",
     to: "Udaipur",
+    path: "Udaipur-local",
     checks: ["Tour guidato", "Barca al tramonto", "City Palace", "Shopping"],
   },
   {
@@ -208,6 +265,7 @@ const days = [
     transport: "A piedi + tuk-tuk",
     from: "Jodhpur",
     to: "Jodhpur",
+    path: "Jodhpur-local",
     checks: [
       "Walking tour",
       "Colazione tipica",
@@ -242,6 +300,7 @@ const days = [
     transport: "Tuk-tuk + van",
     from: "Jaipur",
     to: "Jaipur",
+    path: "Jaipur-local",
     checks: ["Galta Ji", "Amber Fort", "Foto di gruppo", "Cena Tattoo Café"],
   },
   {
@@ -295,6 +354,7 @@ const days = [
     transport: "A piedi + barca",
     from: "Varanasi",
     to: "Varanasi",
+    path: "Varanasi-ghats",
     checks: [
       "Arrivo e check-in",
       "Walking tour ghat",
@@ -314,6 +374,7 @@ const days = [
     transport: "Barca + a piedi",
     from: "Varanasi",
     to: "Varanasi",
+    path: "Varanasi-river",
     checks: [
       "Barca all’alba",
       "Tempo libero",
@@ -352,6 +413,7 @@ const days = [
     transport: "Metro + taxi",
     from: "Delhi",
     to: "Delhi",
+    path: "Delhi-finale",
     checks: [
       "Check-out",
       "Saluti",
@@ -368,7 +430,7 @@ const load = (k, f) => {
   }
 };
 
-function TripMap({ selectedDay, onSelect }) {
+function TripMap({ selectedDay, onSelect, onReady }) {
   const el = useRef(null),
     map = useRef(null),
     maplibre = useRef(null),
@@ -444,7 +506,10 @@ function TripMap({ selectedDay, onSelect }) {
           },
         });
         setReady(true);
-        map.current.once("idle", () => setVisualReady(true));
+        map.current.once("idle", () => {
+          setVisualReady(true);
+          onReady?.();
+        });
       });
     });
     return () => {
@@ -571,14 +636,17 @@ function TripMap({ selectedDay, onSelect }) {
       );
       map.current.fitBounds(bounds, {
         padding: { top: 55, right: 45, bottom: 100, left: 45 },
-        maxZoom: day ? 7.2 : 5.2,
+        maxZoom: day ? (day.from === day.to ? 11 : 7.2) : 5.2,
         duration: 950,
         bearing: 0,
         pitch: 0,
         essential: true,
       });
     }
-    map.current.once("idle", () => setVisualReady(true));
+    map.current.once("idle", () => {
+      setVisualReady(true);
+      onReady?.();
+    });
   }, [selectedDay, ready]);
   return (
     <div className="realMapWrap">
@@ -598,33 +666,198 @@ function TripMap({ selectedDay, onSelect }) {
   );
 }
 
+function PeopleLocationMap({ locations }) {
+  const elementRef = useRef(null);
+  const mapRef = useRef(null);
+  const markersRef = useRef([]);
+  const tripMarkersRef = useRef([]);
+  const [mapReady, setMapReady] = useState(false);
+  useEffect(() => {
+    if (!elementRef.current || mapRef.current) return;
+    let cancelled = false;
+    import("maplibre-gl").then(({ default: maplibregl }) => {
+      if (cancelled || !elementRef.current) return;
+      mapRef.current = new maplibregl.Map({
+        container: elementRef.current,
+        style: "https://tiles.openfreemap.org/styles/liberty",
+        center: [78.9, 22.6],
+        zoom: 3.8,
+        minZoom: 3,
+        attributionControl: false,
+      });
+      mapRef.current.addControl(
+        new maplibregl.NavigationControl({ showCompass: false }),
+        "top-right",
+      );
+      mapRef.current.once("load", () => {
+        const routeCities = [
+          "Delhi",
+          "Udaipur",
+          "Jodhpur",
+          "Jaipur",
+          "Agra",
+          "Varanasi",
+          "Delhi",
+        ];
+        mapRef.current.addSource("group-trip-context", {
+          type: "geojson",
+          data: {
+            type: "Feature",
+            geometry: {
+              type: "LineString",
+              coordinates: routeCities.map((city) => {
+                const [lat, lng] = places[city];
+                return [lng, lat];
+              }),
+            },
+          },
+        });
+        mapRef.current.addLayer({
+          id: "group-trip-context-line",
+          type: "line",
+          source: "group-trip-context",
+          paint: {
+            "line-color": "#e96824",
+            "line-width": 3,
+            "line-opacity": 0.72,
+            "line-dasharray": [2, 1.5],
+          },
+        });
+        tripMarkersRef.current = routeCities.slice(0, -1).map((city, index) => {
+          const node = document.createElement("div");
+          node.className = "tripContextMarker";
+          node.textContent = String(index + 1);
+          const [lat, lng] = places[city];
+          return new maplibregl.Marker({ element: node })
+            .setLngLat([lng, lat])
+            .setPopup(
+              new maplibregl.Popup({ offset: 14 }).setText(
+                `${index + 1}. ${city}`,
+              ),
+            )
+            .addTo(mapRef.current);
+        });
+        setMapReady(true);
+      });
+      mapRef.current.addControl(
+        new maplibregl.AttributionControl({ compact: true }),
+        "bottom-right",
+      );
+    });
+    return () => {
+      cancelled = true;
+      mapRef.current?.remove();
+      mapRef.current = null;
+      tripMarkersRef.current = [];
+    };
+  }, []);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapReady) return;
+    const render = async () => {
+      const { default: maplibregl } = await import("maplibre-gl");
+      markersRef.current.forEach((marker) => marker.remove());
+      markersRef.current = locations.map((location) => {
+        const node = document.createElement("div");
+        node.className = "personMapMarker";
+        node.textContent = location.display_name?.[0]?.toUpperCase() || "•";
+        return new maplibregl.Marker({ element: node })
+          .setLngLat([Number(location.longitude), Number(location.latitude)])
+          .setPopup(
+            new maplibregl.Popup({ offset: 18 }).setHTML(
+              `<strong>${location.display_name}</strong><br><small>${new Date(location.updated_at).toLocaleString("it-IT")}</small>`,
+            ),
+          )
+          .addTo(map);
+      });
+      map.resize();
+      if (!locations.length) {
+        map.easeTo({ center: [78.9, 22.6], zoom: 3.8, duration: 500 });
+      } else if (locations.length === 1) {
+        map.easeTo({
+          center: [Number(locations[0].longitude), Number(locations[0].latitude)],
+          zoom: 10,
+          duration: 700,
+        });
+      } else {
+        const bounds = locations.reduce(
+          (value, location) =>
+            value.extend([
+              Number(location.longitude),
+              Number(location.latitude),
+            ]),
+          new maplibregl.LngLatBounds(),
+        );
+        map.fitBounds(bounds, { padding: 55, maxZoom: 10, duration: 700 });
+      }
+    };
+    render();
+  }, [locations, mapReady]);
+  return (
+    <div className="peopleLocationMap" ref={elementRef} aria-label="Posizioni del gruppo sulla cartina dell'India" />
+  );
+}
+
 function App() {
-  const [tab, setTab] = useState("diary"),
+  const initialParams = new URLSearchParams(location.search);
+  const initialDay = Math.max(
+    0,
+    Math.min(days.length - 1, Number(initialParams.get("day") || 1) - 1),
+  );
+  const startsOnMap = initialParams.get("view") === "map";
+  const navigationOriginRef = useRef(
+    (() => {
+      try {
+        return JSON.parse(sessionStorage.getItem("india-map-origin"));
+      } catch {
+        return null;
+      }
+    })(),
+  );
+  const [tab, setTab] = useState(startsOnMap ? "map" : "diary"),
     [done, setDone] = useState(() => load("india-done", {})),
     [posts, setPosts] = useState(() => load("india-posts", [])),
     [people, setPeople] = useState(() => load("india-people", [])),
-    [open, setOpen] = useState(0),
+    [open, setOpen] = useState(initialDay),
     [selectedDay, setSelectedDay] = useState(0),
-    [mapDay, setMapDay] = useState(null),
+    [mapDay, setMapDay] = useState(startsOnMap ? initialDay : null),
     [vaultProfileId, setVaultProfileId] = useState(""),
     [composeOpen, setComposeOpen] = useState(false),
     [notificationOpen, setNotificationOpen] = useState(false),
+    [quickProfileOpen, setQuickProfileOpen] = useState(false),
+    [quickStatus, setQuickStatus] = useState(""),
     [groupCode, setGroupCode] = useState(
       () => localStorage.getItem("india-group-code") || "",
     ),
-    [syncing, setSyncing] = useState(false);
+    [syncing, setSyncing] = useState(false),
+    [syncError, setSyncError] = useState(""),
+    [lastSync, setLastSync] = useState(null);
   const refresh = async () => {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
     try {
       setSyncing(true);
-      const r = await fetch(`${API}/state`, { cache: "no-store" });
+      setSyncError("");
+      const r = await fetch(`${API}/state`, {
+        cache: "no-store",
+        signal: controller.signal,
+      });
       if (!r.ok) throw Error();
       const d = await r.json();
       setPosts(d.posts || []);
       setPeople(d.profiles || []);
       localStorage.setItem("india-posts", JSON.stringify(d.posts || []));
       localStorage.setItem("india-people", JSON.stringify(d.profiles || []));
-    } catch {
+      setLastSync(new Date());
+    } catch (error) {
+      setSyncError(
+        navigator.onLine
+          ? "Sincronizzazione non riuscita · Tocca per riprovare"
+          : "Connessione assente · I dati salvati restano disponibili",
+      );
+      console.error("india-sync", error);
     } finally {
+      clearTimeout(timeout);
       setSyncing(false);
     }
   };
@@ -632,6 +865,45 @@ function App() {
     refresh();
     const t = setInterval(refresh, 15000);
     return () => clearInterval(t);
+  }, []);
+  const restoreNavigationOrigin = (origin) => {
+    if (!origin) return;
+    setTab(origin.tab || "roadmap");
+    if (Number.isInteger(origin.day)) {
+      setOpen(origin.day);
+      setSelectedDay(origin.day);
+    }
+    document.fonts?.ready.then(() => {
+      const target = document.getElementById(
+        origin.contentId || `day-${Number(origin.day) + 1}`,
+      );
+      if (!target) {
+        window.scrollTo({ top: origin.scrollY || 0, behavior: "auto" });
+        return;
+      }
+      const observer = new ResizeObserver(() => {
+        observer.disconnect();
+        window.scrollTo({ top: origin.scrollY || target.offsetTop, behavior: "auto" });
+      });
+      observer.observe(target);
+    });
+  };
+  useEffect(() => {
+    const onPopState = () => {
+      const params = new URLSearchParams(location.search);
+      if (params.get("view") === "map") {
+        const dayIndex = Math.max(
+          0,
+          Math.min(days.length - 1, Number(params.get("day") || 1) - 1),
+        );
+        setMapDay(dayIndex);
+        setTab("map");
+      } else {
+        restoreNavigationOrigin(navigationOriginRef.current);
+      }
+    };
+    window.addEventListener("popstate", onPopState);
+    return () => window.removeEventListener("popstate", onPopState);
   }, []);
   useEffect(
     () => localStorage.setItem("india-done", JSON.stringify(done)),
@@ -644,21 +916,93 @@ function App() {
     () => Object.values(done).filter(Boolean).length,
     [done],
   );
-  const centerMapOnScreen = () => {
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() =>
-        document.querySelector(".mapShell")?.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        }),
-      ),
+  const activeProfileId =
+    vaultProfileId || localStorage.getItem("india-profile-id") || "";
+  const currentProfile = people.find((person) => person.id === activeProfileId);
+  const quickShareLocation = () => {
+    if (!currentProfile || !groupCode) return;
+    setQuickStatus("Cerco la posizione…");
+    navigator.geolocation?.getCurrentPosition(
+      async (position) => {
+        const response = await fetch(`${API}/locations`, {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+            "x-group-code": groupCode,
+          },
+          body: JSON.stringify({
+            profile_id: currentProfile.id,
+            display_name:
+              `${currentProfile.name} ${currentProfile.surname || ""}`.trim(),
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+          }),
+        });
+        setQuickStatus(
+          response.ok
+            ? "Posizione condivisa adesso."
+            : "Posizione non inviata. Riprova.",
+        );
+      },
+      () => setQuickStatus("Permesso posizione non disponibile."),
+    );
+  };
+  const quickRemoveLocation = async () => {
+    if (!currentProfile || !groupCode) return;
+    const response = await fetch(`${API}/locations/${currentProfile.id}`, {
+      method: "DELETE",
+      headers: { "x-group-code": groupCode },
+    });
+    setQuickStatus(
+      response.ok ? "Posizione cancellata." : "Cancellazione non riuscita.",
+    );
+  };
+  const enableNotifications = async () => {
+    if (!("Notification" in window)) {
+      setQuickStatus("Notifiche non supportate su questo dispositivo.");
+      return;
+    }
+    const permission = await Notification.requestPermission();
+    localStorage.setItem("india-notifications", permission);
+    setQuickStatus(
+      permission === "granted"
+        ? "Notifiche attivate."
+        : "Notifiche non autorizzate.",
     );
   };
   const showMap = (i) => {
-    setSelectedDay(i);
+    const origin = {
+      page: tab,
+      tab,
+      tripId: "india-2026",
+      day: Number.isInteger(i) ? i : open,
+      dayId: `giorno-${String((Number.isInteger(i) ? i : open) + 1).padStart(2, "0")}`,
+      contentId: `day-${(Number.isInteger(i) ? i : open) + 1}`,
+      scrollY: window.scrollY,
+      source: tab === "roadmap" ? "diario" : tab,
+    };
+    navigationOriginRef.current = origin;
+    sessionStorage.setItem("india-map-origin", JSON.stringify(origin));
+    if (Number.isInteger(i)) setSelectedDay(i);
     setMapDay(i);
     setTab("map");
-    centerMapOnScreen();
+    const url = new URL(location.href);
+    url.searchParams.set("view", "map");
+    if (Number.isInteger(i))
+      url.searchParams.set("day", String(i + 1).padStart(2, "0"));
+    else url.searchParams.delete("day");
+    history.pushState({ view: "map", day: i }, "", url);
+  };
+  const returnFromMap = () => {
+    if (history.state?.view === "map" && navigationOriginRef.current) {
+      history.back();
+    } else {
+      const url = new URL(location.href);
+      url.searchParams.delete("view");
+      url.searchParams.delete("day");
+      history.replaceState({}, "", url);
+      restoreNavigationOrigin(navigationOriginRef.current);
+    }
   };
   return (
     <div className="app">
@@ -669,10 +1013,13 @@ function App() {
           <span className="brand">INDIA INSIEME</span>
           <button
             className={`accessPill ${groupCode ? "unlocked" : ""}`}
-            onClick={() => setTab("vault")}
+            onClick={() => {
+              setQuickProfileOpen(!quickProfileOpen);
+              setNotificationOpen(false);
+            }}
           >
-            <LockKeyhole size={14} />
-            {groupCode ? "Sbloccato" : "Pubblico"}
+            <CircleUserRound size={15} />
+            {currentProfile?.name || (groupCode ? "Profilo" : "Pubblico")}
           </button>
           <button
             className="headerIcon"
@@ -687,6 +1034,12 @@ function App() {
           </button>
         </div>
         <span className="versionBadge">REV {VERSION}</span>
+        <button className={`syncStateBadge ${syncError ? "error" : ""}`} onClick={refresh}>
+          {syncing
+            ? "Sincronizzazione…"
+            : syncError ||
+              `Sincronizzato${lastSync ? ` · ${lastSync.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })}` : ""}`}
+        </button>
         {notificationOpen && (
           <div className="notificationPanel">
             <div>
@@ -721,6 +1074,60 @@ function App() {
             {!posts.length && <small>Nessuna nuova attività.</small>}
           </div>
         )}
+        {quickProfileOpen && (
+          <div className="quickProfilePanel">
+            <div className="quickProfileHead">
+              <span className="avatar">
+                {currentProfile?.name?.[0]?.toUpperCase() || "?"}
+              </span>
+              <div>
+                <b>
+                  {currentProfile
+                    ? `${currentProfile.name} ${currentProfile.surname || ""}`.trim()
+                    : "Scegli il tuo profilo"}
+                </b>
+                <small>{groupCode ? "Dispositivo sbloccato" : "Accesso pubblico"}</small>
+              </div>
+              <button
+                aria-label="Chiudi pannello personale"
+                onClick={() => setQuickProfileOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+            {currentProfile ? (
+              <div className="quickProfileActions">
+                <button onClick={quickShareLocation}>
+                  <MapPin /> Condividi posizione
+                </button>
+                <button onClick={quickRemoveLocation}>Cancella posizione</button>
+                <button
+                  onClick={() => {
+                    setVaultProfileId(currentProfile.id);
+                    setTab("vault");
+                    setQuickProfileOpen(false);
+                  }}
+                >
+                  <ShieldCheck /> Documenti e sicurezza
+                </button>
+                <button onClick={enableNotifications}>
+                  <Bell /> Attiva notifiche
+                </button>
+              </div>
+            ) : (
+              <button
+                className="chooseProfileButton"
+                onClick={() => {
+                  setTab("people");
+                  setQuickProfileOpen(false);
+                }}
+              >
+                Vai al Gruppo e scegli il tuo nome
+              </button>
+            )}
+            {quickStatus && <small className="quickStatus">{quickStatus}</small>}
+          </div>
+        )}
         <div className="heroCopy">
           <p>10 — 23 AGOSTO 2026</p>
           <h1>
@@ -731,9 +1138,7 @@ function App() {
           <button
             className="heroRoute"
             onClick={() => {
-              setMapDay(null);
-              setTab("map");
-              centerMapOnScreen();
+              showMap(null);
             }}
           >
             <MapPinned /> Apri la mappa reale del viaggio
@@ -756,8 +1161,8 @@ function App() {
                 setTab("diary");
                 setComposeOpen(true);
               } else {
-                setTab(id);
-                if (id === "map") centerMapOnScreen();
+                if (id === "map") showMap(null);
+                else setTab(id);
               }
             }}
           >
@@ -824,7 +1229,11 @@ function App() {
             </div>
             <div className="dayList">
               {days.map((d, i) => (
-                <article className={`day ${open === i ? "open" : ""}`} key={i}>
+                <article
+                  id={`day-${i + 1}`}
+                  className={`day ${open === i ? "open" : ""}`}
+                  key={i}
+                >
                   <button
                     className="dayHero"
                     onClick={() => setOpen(i)}
@@ -951,7 +1360,11 @@ function App() {
           </section>
         )}
         {tab === "map" && (
-          <MapSection selectedDay={mapDay} setSelectedDay={setMapDay} />
+          <MapSection
+            selectedDay={mapDay}
+            setSelectedDay={setMapDay}
+            onBack={returnFromMap}
+          />
         )}{" "}
         {tab === "diary" && (
           <Diary
@@ -963,6 +1376,11 @@ function App() {
             refresh={refresh}
             composeOpen={composeOpen}
             setComposeOpen={setComposeOpen}
+            deviceProfileName={
+              currentProfile
+                ? `${currentProfile.name} ${currentProfile.surname || ""}`.trim()
+                : ""
+            }
           />
         )}{" "}
         {tab === "people" && (
@@ -991,20 +1409,52 @@ function App() {
   );
 }
 
-function MapSection({ selectedDay, setSelectedDay }) {
+function MapSection({ selectedDay, setSelectedDay, onBack }) {
   const d = selectedDay == null ? null : days[selectedDay];
   const mapShellRef = useRef(null);
-  const focusMap = (dayIndex) => {
-    setSelectedDay(dayIndex);
-    requestAnimationFrame(() => {
-      mapShellRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    });
+  const positionedDayRef = useRef(Symbol("not-positioned"));
+  const placeMapInUsableViewport = () => {
+    const shell = mapShellRef.current;
+    if (!shell) return;
+    const rect = shell.getBoundingClientRect();
+    const viewportHeight = window.visualViewport?.height || window.innerHeight;
+    const navHeight =
+      document.querySelector(".tabs")?.getBoundingClientRect().height || 0;
+    const usableBottom = viewportHeight - navHeight - 10;
+    const desiredTop = Math.max(96, (usableBottom - rect.height) / 2);
+    const target = Math.max(0, window.scrollY + rect.top - desiredTop);
+    window.scrollTo({ top: target, behavior: "smooth" });
   };
+  const focusMap = (dayIndex) => {
+    positionedDayRef.current = Symbol("not-positioned");
+    setSelectedDay(dayIndex);
+    const url = new URL(location.href);
+    url.searchParams.set("view", "map");
+    if (dayIndex == null) url.searchParams.delete("day");
+    else url.searchParams.set("day", String(dayIndex + 1).padStart(2, "0"));
+    history.replaceState({ view: "map", day: dayIndex }, "", url);
+  };
+  const positionMapOnce = () => {
+    if (positionedDayRef.current === selectedDay) return;
+    positionedDayRef.current = selectedDay;
+    placeMapInUsableViewport();
+  };
+  useEffect(() => {
+    const handleResize = () => placeMapInUsableViewport();
+    window.addEventListener("resize", handleResize);
+    window.visualViewport?.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      window.visualViewport?.removeEventListener("resize", handleResize);
+    };
+  }, []);
   return (
     <section className="mapSection">
+      {onBack && (
+        <button className="mapBack" onClick={onBack}>
+          ← Torna al Diario{selectedDay != null ? ` · Giorno ${selectedDay + 1}` : ""}
+        </button>
+      )}
       <div className="mapHeading">
         <div>
           <span className="eyebrow">CARTINA REALE DELL’INDIA</span>
@@ -1034,6 +1484,7 @@ function MapSection({ selectedDay, setSelectedDay }) {
         <TripMap
           selectedDay={selectedDay}
           onSelect={(i) => i >= 0 && focusMap(i)}
+          onReady={positionMapOnce}
         />
       </div>
       <div className="routeChips">
@@ -1051,11 +1502,6 @@ function MapSection({ selectedDay, setSelectedDay }) {
           </button>
         ))}
       </div>
-      <p className="mapNote">
-        Le strade in van seguono il tracciato stradale; voli e treni sono
-        rappresentati come collegamenti tratteggiati. Distanze e tempi sono
-        indicativi e possono cambiare.
-      </p>
     </section>
   );
 }
@@ -1069,6 +1515,7 @@ function Diary({
   refresh,
   composeOpen,
   setComposeOpen,
+  deviceProfileName,
 }) {
   const today = new Date();
   const tripStart = new Date("2026-08-10T00:00:00+05:30");
@@ -1093,11 +1540,23 @@ function Diary({
   useEffect(() => {
     if (author) localStorage.setItem("india-visitor-name", author);
   }, [author]);
+  useEffect(() => {
+    if (!deviceProfileName) return;
+    setAuthor(deviceProfileName);
+    setEditingName(false);
+    localStorage.setItem("india-visitor-name", deviceProfileName);
+  }, [deviceProfileName]);
   useEffect(() => localStorage.setItem("india-draft", text), [text]);
   const visiblePosts = posts.filter((p) => {
     if (feedFilter === "all") return true;
     if (feedFilter === "today") return Number(p.day_index) === liveIndex;
-    return p.media_type?.startsWith(feedFilter);
+    const mediaTypes = (p.media?.length ? p.media : [p])
+      .map((media) => media.media_type)
+      .filter(Boolean);
+    if (feedFilter === "text") return mediaTypes.length === 0 && Boolean(p.text);
+    if (feedFilter === "mixed")
+      return new Set(mediaTypes.map((type) => type.split("/")[0])).size > 1;
+    return mediaTypes.some((type) => type.startsWith(feedFilter));
   });
   const add = async () => {
     if (!groupCode || (!text.trim() && !files.length)) return;
@@ -1176,6 +1635,8 @@ function Diary({
           ["image", "Foto"],
           ["video", "Video"],
           ["audio", "Audio"],
+          ["mixed", "Misti"],
+          ["text", "Solo testo"],
         ].map(([id, label]) => (
           <button
             key={id}
@@ -1426,60 +1887,72 @@ function PostMedia({ items }) {
   const [active, setActive] = useState(0);
   useEffect(() => setActive(0), [items.length]);
   if (!items.length) return null;
-  const current = items[Math.min(active, items.length - 1)];
+  const visualItems = items.filter(
+    (item) => !item.media_type?.startsWith("audio"),
+  );
+  const audioItems = items.filter((item) =>
+    item.media_type?.startsWith("audio"),
+  );
+  const current = visualItems[Math.min(active, visualItems.length - 1)];
   return (
-    <div className="postMediaCarousel">
-      {current.media_type?.startsWith("image") && (
-        <img src={current.media_url} alt="Ricordo del viaggio" loading="lazy" />
-      )}
-      {current.media_type?.startsWith("video") && (
-        <video controls playsInline preload="metadata" src={current.media_url} />
-      )}
-      {current.media_type?.startsWith("audio") && (
-        <div className="audioCard">
-          <Mic />
-          <div>
-            <b>Messaggio audio</b>
-            <small>{current.media_name || "Voce dal viaggio"}</small>
-          </div>
-          <audio controls preload="metadata" src={current.media_url} />
+    <div className="postMediaCollection">
+      {current && (
+        <div className="postMediaCarousel">
+          {current.media_type?.startsWith("image") && (
+            <img src={current.media_url} alt="Ricordo del viaggio" loading="lazy" />
+          )}
+          {current.media_type?.startsWith("video") && (
+            <video controls playsInline preload="metadata" src={current.media_url} />
+          )}
+          {visualItems.length > 1 && (
+            <>
+              <span className="mediaCounter">
+                {active + 1}/{visualItems.length}
+              </span>
+              <button
+                className="mediaPrev"
+                disabled={active === 0}
+                onClick={() => setActive((index) => Math.max(0, index - 1))}
+                aria-label="Contenuto precedente"
+              >
+                ‹
+              </button>
+              <button
+                className="mediaNext"
+                disabled={active === visualItems.length - 1}
+                onClick={() =>
+                  setActive((index) =>
+                    Math.min(visualItems.length - 1, index + 1),
+                  )
+                }
+                aria-label="Contenuto successivo"
+              >
+                ›
+              </button>
+              <div className="mediaDots">
+                {visualItems.map((_, index) => (
+                  <button
+                    key={index}
+                    className={active === index ? "active" : ""}
+                    onClick={() => setActive(index)}
+                    aria-label={`Vai al contenuto ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       )}
-      {items.length > 1 && (
-        <>
-          <span className="mediaCounter">
-            {active + 1}/{items.length}
-          </span>
-          <button
-            className="mediaPrev"
-            disabled={active === 0}
-            onClick={() => setActive((index) => Math.max(0, index - 1))}
-            aria-label="Contenuto precedente"
-          >
-            ‹
-          </button>
-          <button
-            className="mediaNext"
-            disabled={active === items.length - 1}
-            onClick={() =>
-              setActive((index) => Math.min(items.length - 1, index + 1))
-            }
-            aria-label="Contenuto successivo"
-          >
-            ›
-          </button>
-          <div className="mediaDots">
-            {items.map((_, index) => (
-              <button
-                key={index}
-                className={active === index ? "active" : ""}
-                onClick={() => setActive(index)}
-                aria-label={`Vai al contenuto ${index + 1}`}
-              />
-            ))}
+      {audioItems.map((audioItem, index) => (
+        <div className="audioCard" key={audioItem.id || audioItem.media_url}>
+          <Mic />
+          <div>
+            <b>Audio {index + 1} · Messaggio vocale</b>
+            <small>{audioItem.media_name || "Voce dal viaggio"}</small>
           </div>
-        </>
-      )}
+          <audio controls preload="metadata" src={audioItem.media_url} />
+        </div>
+      ))}
     </div>
   );
 }
@@ -1488,7 +1961,12 @@ function Post({ p, author, groupCode, refresh }) {
   const [comment, setComment] = useState(""),
     [replyFile, setReplyFile] = useState(null),
     [menuOpen, setMenuOpen] = useState(false),
-    [saved, setSaved] = useState(false);
+    [saved, setSaved] = useState(false),
+    [confirmDelete, setConfirmDelete] = useState(false),
+    [sendingComment, setSendingComment] = useState(false),
+    [commentStatus, setCommentStatus] = useState(""),
+    [showAllComments, setShowAllComments] = useState(false);
+  const replyInputRef = useRef(null);
   const visitor = () => {
     let v = localStorage.getItem("india-visitor-id");
     if (!v) {
@@ -1506,27 +1984,52 @@ function Post({ p, author, groupCode, refresh }) {
     refresh();
   };
   const send = async () => {
-    if (!author.trim() || (!comment.trim() && !replyFile)) return;
+    const commentAuthor =
+      author.trim() || (localStorage.getItem("india-visitor-name") || "").trim();
+    if (!commentAuthor) {
+      setCommentStatus("Prima seleziona il tuo profilo nel Gruppo.");
+      return;
+    }
+    if (!comment.trim() && !replyFile) {
+      setCommentStatus("Scrivi un commento oppure aggiungi un allegato.");
+      return;
+    }
+    setSendingComment(true);
+    setCommentStatus("Invio in corso…");
     const f = new FormData();
     f.set("post_id", p.id);
-    f.set("author_name", author.trim());
+    f.set("author_name", commentAuthor);
     f.set("text", comment);
     if (replyFile) f.set("file", replyFile);
-    const r = await fetch(`${API}/comments`, { method: "POST", body: f });
-    if (r.ok) {
+    try {
+      const r = await fetch(`${API}/comments`, { method: "POST", body: f });
+      if (!r.ok) {
+        const response = await r.json().catch(() => ({}));
+        throw Error(
+          response.error || "Commento non inviato. Tocca per riprovare.",
+        );
+      }
       setComment("");
       setReplyFile(null);
-      refresh();
-    } else alert((await r.json()).error);
+      await refresh();
+      setCommentStatus("Commento pubblicato.");
+    } catch (error) {
+      setCommentStatus(
+        error.message || "Commento non inviato. Tocca per riprovare.",
+      );
+    } finally {
+      setSendingComment(false);
+    }
   };
   const remove = async () => {
-    if (!confirm("Vuoi eliminare definitivamente questo contenuto?")) return;
     const r = await fetch(`${API}/posts/${p.id}`, {
       method: "DELETE",
       headers: { "x-group-code": groupCode },
     });
-    if (r.ok) refresh();
-    else alert("Codice non corretto");
+    if (r.ok) {
+      setConfirmDelete(false);
+      refresh();
+    }
   };
   const count = (k) =>
     Number(p.reactions?.find((x) => x.kind === k)?.total || 0);
@@ -1549,7 +2052,13 @@ function Post({ p, author, groupCode, refresh }) {
               <MoreHorizontal />
             </button>
             {menuOpen && (
-              <button className="postDelete" onClick={remove}>
+              <button
+                className="postDelete"
+                onClick={() => {
+                  setMenuOpen(false);
+                  setConfirmDelete(true);
+                }}
+              >
                 <Trash2 /> Elimina
               </button>
             )}
@@ -1570,7 +2079,10 @@ function Post({ p, author, groupCode, refresh }) {
         <button onClick={() => react("heart")} aria-label="Mi piace">
           <Heart /> <span>Mi piace</span>
         </button>
-        <button aria-label="Commenta">
+        <button
+          aria-label="Commenta"
+          onClick={() => replyInputRef.current?.focus()}
+        >
           <MessageCircle /> <span>Commenta</span>
         </button>
         <button
@@ -1593,7 +2105,7 @@ function Post({ p, author, groupCode, refresh }) {
         </small>
       )}
       <div className="comments">
-        {(p.comments || []).slice(-2).map((x) => (
+        {(showAllComments ? p.comments || [] : (p.comments || []).slice(-2)).map((x) => (
           <div className="comment" key={x.id}>
             <b>{x.author_name}</b>
             {x.text && <span>{x.text}</span>}
@@ -1618,12 +2130,18 @@ function Post({ p, author, groupCode, refresh }) {
           </div>
         ))}
         {p.comments?.length > 2 && (
-          <button className="allComments">
-            Visualizza tutti i {p.comments.length} commenti
+          <button
+            className="allComments"
+            onClick={() => setShowAllComments(!showAllComments)}
+          >
+            {showAllComments
+              ? "Mostra soltanto gli ultimi commenti"
+              : `Visualizza tutti i ${p.comments.length} commenti`}
           </button>
         )}
         <div className="reply">
           <input
+            ref={replyInputRef}
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             placeholder={author ? "Rispondi…" : "Inserisci il tuo nome sopra"}
@@ -1636,12 +2154,34 @@ function Post({ p, author, groupCode, refresh }) {
               onChange={(e) => setReplyFile(e.target.files?.[0] || null)}
             />
           </label>
-          <button onClick={send} aria-label="Invia commento">
+          <button
+            onClick={send}
+            aria-label="Invia commento"
+            disabled={sendingComment}
+          >
             <Send />
           </button>
         </div>
         {replyFile && <small>Allegato pronto: {replyFile.name}</small>}
+        {commentStatus && (
+          <small className="commentStatus" role="status">
+            {commentStatus}
+          </small>
+        )}
       </div>
+      {confirmDelete && (
+        <div className="confirmOverlay" onClick={() => setConfirmDelete(false)}>
+          <div className="confirmCard" onClick={(event) => event.stopPropagation()}>
+            <Trash2 />
+            <h3>Eliminare questo contenuto?</h3>
+            <p>Verranno rimossi il post e i suoi allegati.</p>
+            <div>
+              <button onClick={() => setConfirmDelete(false)}>Annulla</button>
+              <button onClick={remove}>Elimina</button>
+            </div>
+          </div>
+        </div>
+      )}
     </article>
   );
 }
@@ -1685,7 +2225,14 @@ function People({
         body: f,
         },
       );
-      if (!r.ok) throw Error((await r.json()).error || "Salvataggio non riuscito");
+      const result = await r.json();
+      if (!r.ok) throw Error(result.error || "Salvataggio non riuscito");
+      const currentId = editingId || result.id;
+      localStorage.setItem("india-profile-id", currentId);
+      localStorage.setItem(
+        "india-visitor-name",
+        `${form.name} ${form.surname}`.trim(),
+      );
       setForm({ name: "", surname: "", age: "", job: "", bio: "" });
       setAvatar(null);
       setEditingId("");
@@ -1824,7 +2371,16 @@ function People({
                 >
                   Modifica profilo
                 </button>
-                <button onClick={() => onOpenPrivate(x.id)}>
+                <button
+                  onClick={() => {
+                    localStorage.setItem("india-profile-id", x.id);
+                    localStorage.setItem(
+                      "india-visitor-name",
+                      `${x.name} ${x.surname || ""}`.trim(),
+                    );
+                    onOpenPrivate(x.id);
+                  }}
+                >
                   <ShieldCheck /> Documenti e posizione
                 </button>
               </div>
@@ -1868,9 +2424,15 @@ function VaultOnline({
   useEffect(() => {
     if (preferredProfileId && people.some((p) => p.id === preferredProfileId)) {
       setProfileId(preferredProfileId);
+      localStorage.setItem("india-profile-id", preferredProfileId);
       return;
     }
     if (profileId || !people.length) return;
+    const savedProfileId = localStorage.getItem("india-profile-id") || "";
+    if (savedProfileId && people.some((p) => p.id === savedProfileId)) {
+      setProfileId(savedProfileId);
+      return;
+    }
     const savedName = (localStorage.getItem("india-visitor-name") || "")
       .trim()
       .toLowerCase();
@@ -1929,6 +2491,13 @@ function VaultOnline({
       () =>
         alert("Posizione non disponibile: controlla i permessi del telefono."),
     );
+  const removeLocation = async (targetProfileId) => {
+    const response = await fetch(`${API}/locations/${targetProfileId}`, {
+      method: "DELETE",
+      headers: { "x-group-code": groupCode },
+    });
+    if (response.ok) refresh();
+  };
   const lockDevice = () => {
     localStorage.removeItem("india-group-code");
     setGroupCode("");
@@ -1969,7 +2538,18 @@ function VaultOnline({
           Chi sei?
           <select
             value={profileId}
-            onChange={(e) => setProfileId(e.target.value)}
+            onChange={(e) => {
+              setProfileId(e.target.value);
+              localStorage.setItem("india-profile-id", e.target.value);
+              const selectedPerson = people.find(
+                (person) => person.id === e.target.value,
+              );
+              if (selectedPerson)
+                localStorage.setItem(
+                  "india-visitor-name",
+                  `${selectedPerson.name} ${selectedPerson.surname || ""}`.trim(),
+                );
+            }}
           >
             <option value="">Seleziona il tuo profilo</option>
             {people.map((p) => (
@@ -2043,20 +2623,41 @@ function VaultOnline({
           Aggiorna ora
         </button>
       </div>
+      <PeopleLocationMap locations={privateData.locations} />
       <div className="locationList">
         {privateData.locations.map((x) => (
-          <a
-            key={x.profile_id}
-            href={`https://www.openstreetmap.org/?mlat=${x.latitude}&mlon=${x.longitude}#map=15/${x.latitude}/${x.longitude}`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            <b>{x.display_name}</b>
-            <span>
-              {Number(x.latitude).toFixed(4)}, {Number(x.longitude).toFixed(4)}
-            </span>
-            <small>{new Date(x.updated_at).toLocaleString("it-IT")}</small>
-          </a>
+          <article key={x.profile_id}>
+            <div>
+              <b>{x.display_name}</b>
+              <span>
+                {Number(x.latitude).toFixed(4)}, {Number(x.longitude).toFixed(4)}
+              </span>
+              <small>
+                Ultimo aggiornamento · {new Date(x.updated_at).toLocaleString("it-IT")}
+              </small>
+            </div>
+            <div className="locationActions">
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${x.latitude},${x.longitude}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Google Maps
+              </a>
+              <a
+                href={`https://www.google.com/maps/dir/?api=1&destination=${x.latitude},${x.longitude}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Naviga
+              </a>
+              {x.profile_id === profileId && (
+                <button onClick={() => removeLocation(x.profile_id)}>
+                  Cancella posizione
+                </button>
+              )}
+            </div>
+          </article>
         ))}
       </div>
       <div className="archive">
