@@ -219,7 +219,7 @@ body {
 .hero {
   height: 430px;
   position: relative;
-  background: url("https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=88")
+  background: url("/cities/agra.jpg")
     center/cover;
   color: white;
 }
@@ -230,8 +230,10 @@ body {
 }
 .top {
   position: relative;
+  z-index: 6;
   display: flex;
   align-items: center;
+  min-height: 62px;
   padding: 18px 20px;
 }
 .flag {
@@ -714,6 +716,10 @@ body {
   position: absolute;
   bottom: 34px;
   padding: 0 22px;
+}
+.hero:not(.heroFeed) .heroCopy {
+  top: 100px;
+  bottom: auto;
 }
 .heroCopy > p,
 .eyebrow {

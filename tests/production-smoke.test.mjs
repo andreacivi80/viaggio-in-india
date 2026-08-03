@@ -101,6 +101,17 @@ test("health API risponde e non usa il computer locale", async () => {
   assert.equal(Number.isFinite(Number(health.version)), true);
 });
 
+test("tutte le fotografie delle città sono locali e disponibili", async () => {
+  for (const city of ["delhi", "udaipur", "ranakpur", "jodhpur", "jaipur", "agra", "varanasi"]) {
+    const response = await request(`/cities/${city}.jpg`);
+    assert.equal(response.status, 200, `foto ${city} non disponibile`);
+    assert.match(response.headers.get("content-type") || "", /^image\/jpeg/);
+    const bytes = new Uint8Array(await response.arrayBuffer());
+    assert.ok(bytes.byteLength > 10_000, `foto ${city} troppo piccola o vuota`);
+    assert.deepEqual(Array.from(bytes.slice(0, 3)), [0xff, 0xd8, 0xff], `foto ${city} non è un JPEG valido`);
+  }
+});
+
 test("rate limiting blocca una raffica di accessi errati", { skip: process.env.RUN_ABUSE !== "true" }, async () => {
   const statuses = [];
   for (let index = 0; index < 12; index += 1) {
