@@ -6,6 +6,7 @@ import {
   Route,
   Camera,
   Users,
+  PersonStanding,
   LockKeyhole,
   Mic,
   MessageCircle,
@@ -30,7 +31,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.20.0",
+const VERSION = "1.21.0",
   API = "/api";
 const tripDateKeys = Array.from({ length: 14 },
   (_, index) => `2026-08-${String(10 + index).padStart(2, "0")}`,
@@ -726,6 +727,51 @@ function TripMap({ selectedDay, onSelect, onReady }) {
   );
 }
 
+function GoogleTripMap({ selectedDay, onReady }) {
+  const day = selectedDay == null ? null : days[selectedDay];
+  const place = (value) => `${value === "Delhi" ? "New Delhi" : value}, India`;
+  const mapQuery = day
+    ? day.from === day.to
+      ? place(day.to)
+      : `${place(day.from)} to ${place(day.to)}`
+    : "Northern India";
+  const zoom = day ? (day.km <= 35 ? 11 : day.km <= 120 ? 8 : 6) : 5;
+  const embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=${zoom}&output=embed`;
+  const directions = new URL("https://www.google.com/maps/dir/");
+  directions.searchParams.set("api", "1");
+  if (day) {
+    directions.searchParams.set("origin", place(day.from));
+    directions.searchParams.set("destination", place(day.to));
+  } else {
+    directions.searchParams.set("origin", "New Delhi, India");
+    directions.searchParams.set("destination", "New Delhi, India");
+    directions.searchParams.set(
+      "waypoints",
+      "Udaipur, India|Jodhpur, India|Jaipur, India|Agra, India|Varanasi, India",
+    );
+  }
+  return (
+    <div className="googleTripMap">
+      <iframe
+        key={`${selectedDay}-${embedUrl}`}
+        title={day ? `Google Maps: ${day.from} - ${day.to}` : "Google Maps: itinerario India"}
+        src={embedUrl}
+        loading="eager"
+        allowFullScreen
+        referrerPolicy="no-referrer-when-downgrade"
+        onLoad={onReady}
+      />
+      <div className="googleMapCaption">
+        <span>Google Maps</span>
+        <b>{day ? `${day.from} → ${day.to}` : "India del Nord"}</b>
+        <a href={directions.toString()} target="_blank" rel="noreferrer">
+          Apri percorso
+        </a>
+      </div>
+    </div>
+  );
+}
+
 function PeopleLocationMap({ locations }) {
   const elementRef = useRef(null);
   const mapRef = useRef(null);
@@ -887,6 +933,7 @@ function App() {
     [composeOpen, setComposeOpen] = useState(false),
     [notificationOpen, setNotificationOpen] = useState(false),
     [quickProfileOpen, setQuickProfileOpen] = useState(false),
+    [travelersOpen, setTravelersOpen] = useState(false),
     [quickStatus, setQuickStatus] = useState(""),
     [groupCode, setGroupCode] = useState(
       () => localStorage.getItem("india-group-code") || "",
@@ -1730,6 +1777,8 @@ function App() {
                 : ""
             }
             deviceProfileId={currentProfile?.id || ""}
+            directoryOpen={travelersOpen}
+            setDirectoryOpen={setTravelersOpen}
           />
         )}{" "}
         {tab === "people" && (
@@ -1825,9 +1874,8 @@ function MapSection({ selectedDay, setSelectedDay, onBack }) {
         </div>
       )}
       <div className="mapShell" ref={mapShellRef}>
-        <TripMap
+        <GoogleTripMap
           selectedDay={selectedDay}
-          onSelect={(i) => i >= 0 && focusMap(i)}
           onReady={positionMapOnce}
         />
       </div>
@@ -1863,10 +1911,13 @@ function Diary({
   setComposeOpen,
   deviceProfileName,
   deviceProfileId,
+  directoryOpen,
+  setDirectoryOpen,
 }) {
+  const locationRequestRef = useRef(0);
   const [clock, setClock] = useState(() => Date.now());
   useEffect(() => {
-    const timer = setInterval(() => setClock(Date.now()), 60000);
+    const timer = setInterval(() => setClock(Date.now()), 1000);
     return () => clearInterval(timer);
   }, []);
   const today = new Date(clock);
@@ -1876,7 +1927,8 @@ function Diary({
   const countdownDays = Math.floor(remainingToDeparture / 86400000);
   const countdownHours = Math.floor((remainingToDeparture % 86400000) / 3600000);
   const countdownMinutes = Math.floor((remainingToDeparture % 3600000) / 60000);
-  const countdownLabel = `${countdownDays}g ${countdownHours}h ${countdownMinutes}m`;
+  const countdownSeconds = Math.floor((remainingToDeparture % 60000) / 1000);
+  const countdownLabel = `${countdownDays}g ${countdownHours}h ${countdownMinutes}m ${countdownSeconds}s`;
   const liveIndex = Math.max(
     0,
     Math.min(13, Math.floor((today - tripStart) / 86400000)),
@@ -1893,7 +1945,6 @@ function Diary({
     [busy, setBusy] = useState(false),
     [fileStatus, setFileStatus] = useState(""),
     [feedFilter, setFeedFilter] = useState("all"),
-    [directoryOpen, setDirectoryOpen] = useState(false),
     [placeName, setPlaceName] = useState(""),
     [postCoordinates, setPostCoordinates] = useState(null),
     [locatingPost, setLocatingPost] = useState(false),
@@ -2017,6 +2068,14 @@ function Diary({
       setBusy(false);
     }
   };
+  const clearPostLocation = () => {
+    locationRequestRef.current += 1;
+    setPostCoordinates(null);
+    setPlaceName("");
+    setPlaceResults([]);
+    setLocatingPost(false);
+    setFileStatus("Posizione rimossa.");
+  };
   const capturePostLocation = () => {
     if (!navigator.geolocation) {
       setFileStatus("Posizione non supportata su questo dispositivo.");
@@ -2024,17 +2083,38 @@ function Diary({
     }
     setLocatingPost(true);
     setFileStatus("Cerco la posizione…");
+    const requestId = locationRequestRef.current + 1;
+    locationRequestRef.current = requestId;
     navigator.geolocation.getCurrentPosition(
-      (position) => {
-        setPostCoordinates({
+      async (position) => {
+        const coordinates = {
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
-        });
-        setPlaceName((current) => current || "Posizione attuale");
-        setFileStatus("Posizione aggiunta. Puoi modificare il nome del luogo.");
-        setLocatingPost(false);
+        };
+        try {
+          const response = await fetch(
+            `${API}/places/reverse?lat=${coordinates.latitude}&lon=${coordinates.longitude}`,
+            { cache: "no-store" },
+          );
+          const result = response.ok ? await response.json() : null;
+          if (locationRequestRef.current !== requestId) return;
+          const resolvedName = result?.place?.label ||
+            `${coordinates.latitude.toFixed(5)}, ${coordinates.longitude.toFixed(5)}`;
+          setPostCoordinates(coordinates);
+          setPlaceName(resolvedName);
+          setFileStatus(`Posizione pronta: ${resolvedName}`);
+        } catch {
+          if (locationRequestRef.current !== requestId) return;
+          const fallback = `${coordinates.latitude.toFixed(5)}, ${coordinates.longitude.toFixed(5)}`;
+          setPostCoordinates(coordinates);
+          setPlaceName(fallback);
+          setFileStatus(`Posizione pronta: ${fallback}`);
+        } finally {
+          if (locationRequestRef.current === requestId) setLocatingPost(false);
+        }
       },
       () => {
+        if (locationRequestRef.current !== requestId) return;
         setFileStatus("Posizione non disponibile. Puoi scrivere il luogo manualmente.");
         setLocatingPost(false);
       },
@@ -2049,22 +2129,15 @@ function Diary({
           <h2>Raccontiamola insieme</h2>
         </div>
         <button
-          className="travelerDirectoryButton"
+          className="travelerDirectoryButton simple"
           onClick={() => setDirectoryOpen(true)}
           aria-label={`Apri elenco viaggiatori, ${people.length} persone`}
         >
-          <span className="directoryAvatarStack" aria-hidden="true">
-            {people.slice(0, 3).map((person) =>
-              person.avatar_url ? (
-                <img key={person.id} src={person.avatar_url} alt="" />
-              ) : (
-                <i key={person.id}>{person.name?.[0] || "?"}</i>
-              ),
-            )}
-            {!people.length && <Users />}
+          <PersonStanding aria-hidden="true" />
+          <span>
+            <b>Viaggiatori</b>
+            <small>{people.length}</small>
           </span>
-          <span className="directoryCount">{people.length}</span>
-          <small>{people.length === 1 ? "viaggiatore" : "viaggiatori"}</small>
         </button>
       </div>
       <button className="liveStatus" onClick={() => setSelectedDay(liveIndex)}>
@@ -2201,10 +2274,7 @@ function Diary({
                     <button
                       type="button"
                       className="clearPostLocation"
-                      onClick={() => {
-                        setPostCoordinates(null);
-                        setPlaceName("");
-                      }}
+                      onClick={clearPostLocation}
                     >
                       Rimuovi
                     </button>
@@ -2622,6 +2692,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
         );
       }
       setComment("");
+      if (replyInputRef.current) replyInputRef.current.style.height = "";
       setReplyFile(null);
       await refresh();
       setCommentStatus("Commento pubblicato.");
@@ -2904,14 +2975,18 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
           </button>
         )}
         <div className="reply">
-          <input
+          <textarea
             ref={replyInputRef}
             value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder={author ? "Rispondi…" : "Inserisci il tuo nome sopra"}
-            autoCapitalize="none"
-            autoCorrect="off"
-            enterKeyHint="send"
+            rows={1}
+            onChange={(event) => {
+              setComment(event.target.value);
+              event.currentTarget.style.height = "auto";
+              event.currentTarget.style.height = `${Math.min(event.currentTarget.scrollHeight, 150)}px`;
+            }}
+            placeholder={author ? "Scrivi un commento…" : "Inserisci il tuo nome sopra"}
+            autoCapitalize="sentences"
+            autoCorrect="on"
           />
           <label title="Aggiungi foto, video o audio">
             <Paperclip />

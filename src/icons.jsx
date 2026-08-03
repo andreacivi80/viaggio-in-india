@@ -3,6 +3,7 @@ export {
   Route,
   Camera,
   Users,
+  PersonStanding,
   LockKeyhole,
   Mic,
   MessageCircle,
