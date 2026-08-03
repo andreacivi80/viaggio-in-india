@@ -1148,6 +1148,14 @@ h2 {
   display: flex;
   flex-direction: column;
 }
+.mapTrip em {
+  font-style: normal;
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: #f5a46f;
+  font-weight: 800;
+}
 .mapTrip small {
   color: #cbdad4;
 }

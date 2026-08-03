@@ -21,7 +21,7 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 
-const VERSION = "1.2.2",
+const VERSION = "1.3.0",
   API = "/api";
 const cityImages = {
   Delhi:
@@ -504,9 +504,18 @@ function TripMap({ selectedDay, onSelect }) {
       type: "FeatureCollection",
       features,
     });
+    map.current.stop();
+    map.current.resize();
     if (fitPoints.length === 1) {
       const [lat, lng] = fitPoints[0];
-      map.current.flyTo({ center: [lng, lat], zoom: 10.5, duration: 700 });
+      map.current.flyTo({
+        center: [lng, lat],
+        zoom: 10.5,
+        bearing: 0,
+        pitch: 0,
+        duration: 900,
+        essential: true,
+      });
     } else {
       const bounds = fitPoints.reduce(
         (box, [lat, lng]) => box.extend([lng, lat]),
@@ -515,7 +524,10 @@ function TripMap({ selectedDay, onSelect }) {
       map.current.fitBounds(bounds, {
         padding: { top: 55, right: 45, bottom: 100, left: 45 },
         maxZoom: day ? 7.2 : 5.2,
-        duration: 700,
+        duration: 950,
+        bearing: 0,
+        pitch: 0,
+        essential: true,
       });
     }
     map.current.once("idle", () => setVisualReady(true));
@@ -823,6 +835,7 @@ function MapSection({ selectedDay, setSelectedDay }) {
                   : "🚐"}
             </span>
             <div>
+              <em>Giorno {selectedDay + 1}</em>
               <b>{d.transport}</b>
               <small>
                 {d.km} km · {d.time}
