@@ -135,6 +135,7 @@ CREATE TABLE IF NOT EXISTS push_subscriptions (
   p256dh TEXT NOT NULL,
   auth TEXT NOT NULL,
   profile_id TEXT DEFAULT '',
+  guest_visitor_id TEXT DEFAULT '',
   visitor_name TEXT DEFAULT '',
   created_at TEXT NOT NULL,
   updated_at TEXT NOT NULL

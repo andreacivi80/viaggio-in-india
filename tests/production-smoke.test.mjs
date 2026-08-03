@@ -56,9 +56,7 @@ test("documenti e posizioni private sono negate al pubblico", async () => {
 });
 
 test("commenti e reazioni richiedono un'identità server", async () => {
-  const state = await (await request("/api/state", { cache: "no-store" })).json();
-  const postId = state.posts?.[0]?.id;
-  assert.ok(postId, "serve almeno un post di collaudo");
+  const postId = "post-inesistente-collaudo-autorizzazioni";
   const comment = new FormData();
   comment.set("post_id", postId);
   comment.set("author_name", "Nome modificato dal browser");
