@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.7",
+const VERSION = "1.37.8",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -2311,7 +2311,6 @@ function Diary({
 }) {
   const locationRequestRef = useRef(0);
   const postOperationRef = useRef("");
-  const directoryTouchRef = useRef({ y: 0, scrollTop: 0 });
   const [clock, setClock] = useState(() => Date.now());
   useEffect(() => {
     const timer = setInterval(() => setClock(Date.now()), 1000);
@@ -2898,21 +2897,7 @@ function Diary({
               </button>
             </div>
             <p>Nei commenti scrivi <b>@</b> e scegli la persona da menzionare.</p>
-            <div
-              className="directoryList"
-              onTouchStart={(event) => {
-                directoryTouchRef.current = {
-                  y: event.touches[0]?.clientY || 0,
-                  scrollTop: event.currentTarget.scrollTop,
-                };
-              }}
-              onTouchMove={(event) => {
-                const currentY = event.touches[0]?.clientY;
-                if (typeof currentY !== "number") return;
-                event.currentTarget.scrollTop = directoryTouchRef.current.scrollTop +
-                  directoryTouchRef.current.y - currentY;
-              }}
-            >
+            <div className="directoryList">
               {sortTravelers(people).map((person) => (
                 <div key={person.id} className={`directoryPerson gender-${person.gender || "unspecified"}`}>
                   {person.avatar_url ? (
@@ -2993,13 +2978,20 @@ function PdfDocumentViewer({ url, bytes, name }) {
           const availableWidth = Math.max(260, host.clientWidth - 16);
           const scale = Math.min(2.2, availableWidth / baseViewport.width);
           const viewport = page.getViewport({ scale });
+          const outputScale = Math.min(Math.max(window.devicePixelRatio || 1, 2), 3);
           const canvas = document.createElement("canvas");
           canvas.className = "pdfPageCanvas";
-          canvas.width = Math.ceil(viewport.width);
-          canvas.height = Math.ceil(viewport.height);
+          canvas.width = Math.ceil(viewport.width * outputScale);
+          canvas.height = Math.ceil(viewport.height * outputScale);
+          canvas.style.width = `${Math.ceil(viewport.width)}px`;
+          canvas.style.height = `${Math.ceil(viewport.height)}px`;
           canvas.setAttribute("aria-label", `${name}, pagina ${pageNumber}`);
           host.appendChild(canvas);
-          await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+          await page.render({
+            canvasContext: canvas.getContext("2d"),
+            viewport,
+            transform: [outputScale, 0, 0, outputScale, 0, 0],
+          }).promise;
         }
         if (!cancelled) setStatus("");
       } catch {

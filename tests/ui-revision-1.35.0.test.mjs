@@ -54,8 +54,9 @@ test("l'elenco viaggiatori scorre senza muovere lo sfondo", () => {
   assert.match(source, /document\.body\.style\.top = `-\$\{scrollY\}px`/);
   assert.match(source, /window\.scrollTo\(0, scrollY\)/);
   assert.doesNotMatch(source, /document\.body\.style\.touchAction = "none"/);
-  assert.match(styles, /\.travelerDirectory \{[\s\S]*?height: min\(82vh, 82dvh\)/);
-  assert.match(styles, /\.directoryList \{[\s\S]*?flex: 1 1 auto;[\s\S]*?overflow-y: auto/);
+  assert.match(styles, /\.travelerDirectory \{[\s\S]*?height: min\(78vh, 78dvh\)/);
+  assert.match(styles, /\.directoryList \{[\s\S]*?flex: 1 1 auto;[\s\S]*?height: 0;[\s\S]*?overflow-y: scroll/);
+  assert.match(styles, /\.directoryList \{[\s\S]*?touch-action: pan-y/);
   assert.match(styles, /\.directoryBackdrop \{[\s\S]*?touch-action: pan-y/);
   assert.match(styles, /\.directoryHead > button \{[\s\S]*?pointer-events: auto/);
   assert.match(styles, /\.directoryPerson \.coordinatorRole \{[\s\S]*?font-weight: 950/);
@@ -65,7 +66,8 @@ test("il PDF viene renderizzato internamente pagina per pagina su cellulare", ()
   assert.match(source, /function PdfDocumentViewer/);
   assert.match(source, /await import\("pdfjs-dist\/legacy\/build\/pdf\.mjs"\)/);
   assert.match(source, /data: new Uint8Array\(bytes\.slice\(0\)\)/);
-  assert.match(source, /page\.render\(\{ canvasContext: canvas\.getContext\("2d"\), viewport \}\)/);
+  assert.match(source, /const outputScale = Math\.min\(Math\.max\(window\.devicePixelRatio \|\| 1, 2\), 3\)/);
+  assert.match(source, /transform: \[outputScale, 0, 0, outputScale, 0, 0\]/);
   assert.match(source, /<PdfDocumentViewer url=\{documentPreview\.url\} bytes=\{documentPreview\.bytes\}/);
   assert.match(source, /Apri nel lettore PDF del telefono/);
   assert.match(styles, /\.pdfDocumentViewer \{[\s\S]*?overflow-y: auto/);

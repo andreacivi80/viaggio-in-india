@@ -84,9 +84,14 @@ async function expectRenderedPdfPixels(canvas) {
   const viewer = canvas.locator("xpath=ancestor::*[contains(@class,'pdfDocumentViewer')]");
   await expect(viewer.getByRole("status")).toHaveCount(0, { timeout: 20_000 });
   await expect(canvas).toBeVisible({ timeout: 20_000 });
-  const dimensions = await canvas.evaluate((node) => ({ width: node.width, height: node.height }));
-  expect(dimensions.width).toBeGreaterThan(250);
-  expect(dimensions.height).toBeGreaterThan(250);
+  const dimensions = await canvas.evaluate((node) => ({
+    width: node.width,
+    height: node.height,
+    cssWidth: node.getBoundingClientRect().width,
+    cssHeight: node.getBoundingClientRect().height,
+  }));
+  expect(dimensions.width).toBeGreaterThan(dimensions.cssWidth * 1.8);
+  expect(dimensions.height).toBeGreaterThan(dimensions.cssHeight * 1.8);
   const visiblePng = await canvas.screenshot();
   expect(visiblePng.byteLength).toBeGreaterThan(12_000);
 }
@@ -105,6 +110,8 @@ test("18 viaggiatori scorrono fino ad Andrea, mantengono ordine e colori, la X r
   await expect(rows.nth(13)).toContainText("Andrea");
   await expect(rows.nth(14)).toContainText("NonIndicato1");
   await expect(rows.first().locator(".coordinatorRole")).toHaveText("Coordinatrice");
+  const tallestRow = await rows.evaluateAll((nodes) => Math.max(...nodes.map((node) => node.getBoundingClientRect().height)));
+  expect(tallestRow).toBeLessThanOrEqual(48);
 
   const femaleColor = await rows.nth(1).evaluate((node) => getComputedStyle(node).backgroundColor);
   const maleColor = await rows.nth(7).evaluate((node) => getComputedStyle(node).backgroundColor);
