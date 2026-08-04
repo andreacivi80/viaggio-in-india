@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.12",
+const VERSION = "1.37.13",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";

@@ -8,10 +8,11 @@ Questa regola vale per **ogni revisione**, senza eccezioni.
 4. Se un controllo L1 o L2 fallisce, la revisione **non si pubblica**.
 5. Una revisione si dichiara pubblicata soltanto dopo verifica della versione sul dominio stabile.
 
-## Livello 2 della revisione 1.37.12
+## Livello 2 della revisione 1.37.13
 
 - 18 viaggiatori presenti.
-- Righe dell’elenco rapido alte al massimo 38 px.
+- Foto dei viaggiatori da 36 px, circa una volta e mezza rispetto alla revisione precedente.
+- Righe dell’elenco rapido comprese tra 40 e 46 px, con testo e chiocciola ancora compatti.
 - `@nome` visibile accanto al nome, senza uscire dalla scheda.
 - Quattro scorrimenti touch consecutivi nell’elenco rapido.
 - Quattro scorrimenti touch consecutivi in “Gruppo · Facce, nomi e storie”.

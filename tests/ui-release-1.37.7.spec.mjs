@@ -114,7 +114,8 @@ test("18 viaggiatori scorrono fino ad Andrea, mantengono ordine e colori, la X r
   await expect(rows.first().locator(".coordinatorRole")).toHaveText("Coordinatrice");
   await page.screenshot({ path: testInfo.outputPath("viaggiatori-inizio.png") });
   const tallestRow = await rows.evaluateAll((nodes) => Math.max(...nodes.map((node) => node.getBoundingClientRect().height)));
-  expect(tallestRow).toBeLessThanOrEqual(34);
+  expect(tallestRow).toBeGreaterThanOrEqual(40);
+  expect(tallestRow).toBeLessThanOrEqual(46);
 
   const femaleColor = await rows.nth(1).evaluate((node) => getComputedStyle(node).backgroundColor);
   const maleColor = await rows.nth(7).evaluate((node) => getComputedStyle(node).backgroundColor);

@@ -2915,18 +2915,18 @@ h2 {
 .directoryPerson {
   min-width: 0;
   display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
+  grid-template-columns: 36px minmax(0, 1fr);
   align-items: center;
-  gap: 3px;
-  padding: 1px 4px;
+  gap: 4px;
+  padding: 2px 6px;
   border: 1px solid #eadfce;
   border-radius: 12px;
   background: #fff;
 }
 .directoryPerson img,
 .directoryPerson > .avatar {
-  width: 22px;
-  height: 22px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -3105,12 +3105,12 @@ mark.mention {
 }
 @media (max-width: 390px) {
   .directoryPerson {
-    grid-template-columns: 22px minmax(0, 1fr);
+    grid-template-columns: 36px minmax(0, 1fr);
   }
   .directoryPerson img,
   .directoryPerson > .avatar {
-    width: 22px;
-    height: 22px;
+    width: 36px;
+    height: 36px;
   }
 }
 .identityBar {
