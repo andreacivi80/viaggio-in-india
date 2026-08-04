@@ -1878,32 +1878,33 @@ footer small {
   aspect-ratio: 16 / 9;
   background: #111;
 }
-.photoAudioOverlay {
-  position: absolute;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
-  display: grid;
-  grid-template-columns: 24px auto 1fr;
-  align-items: center;
-  gap: 7px;
-  padding: 9px 10px;
-  border: 1px solid #ffffff66;
-  border-radius: 14px;
-  background: #102d25df;
-  color: #fff;
-  backdrop-filter: blur(10px);
+.photoAudioOverlay { position: absolute; left: 12px; bottom: 12px; z-index: 3; max-width: calc(100% - 24px); }
+.compactPhotoAudio {
+  display: grid; grid-template-columns: 38px minmax(92px, 1fr) auto; align-items: center; gap: 8px;
+  width: min(245px, calc(100vw - 58px)); padding: 7px 10px 7px 7px;
+  border: 1px solid #ffffff5c; border-radius: 999px; background: #102d25e8; color: #fff;
+  box-shadow: 0 7px 22px #00000035; backdrop-filter: blur(12px);
 }
-.photoAudioOverlay span {
-  font-size: 11px;
-  font-weight: 800;
-  white-space: nowrap;
+.compactAudioPlay {
+  width: 38px; height: 38px; min-height: 38px; padding: 0; border: 1px solid #ffffff73;
+  border-radius: 50%; background: #f97316; color: #fff; font-size: 15px; line-height: 1;
+  box-shadow: 0 3px 10px #00000030;
 }
-.photoAudioOverlay audio {
-  width: 100%;
-  min-width: 0;
-  height: 32px;
-}
+.compactAudioPlay span { display: block; transform: translateX(1px); }
+.compactPhotoAudio.isPlaying .compactAudioPlay span { transform: none; }
+.compactAudioBody { min-width: 0; display: grid; gap: 3px; }
+.compactAudioLabel { overflow: hidden; color: #fff; font-size: 10px; font-weight: 900; line-height: 1; text-overflow: ellipsis; white-space: nowrap; }
+.compactAudioWave { position: relative; height: 14px; display: flex; align-items: center; justify-content: space-between; gap: 2px; }
+.compactAudioWave > span { width: 3px; height: 6px; border-radius: 999px; background: #ffffffb8; }
+.compactAudioWave > span:nth-child(2n) { height: 11px; }
+.compactAudioWave > span:nth-child(3n) { height: 8px; }
+.compactPhotoAudio.isPlaying .compactAudioWave > span { animation: compactAudioPulse 0.75s ease-in-out infinite alternate; }
+.compactPhotoAudio.isPlaying .compactAudioWave > span:nth-child(2n) { animation-delay: -0.25s; }
+.compactPhotoAudio.isPlaying .compactAudioWave > span:nth-child(3n) { animation-delay: -0.5s; }
+.compactAudioWave input { position: absolute; inset: -5px 0; width: 100%; height: 24px; margin: 0; opacity: 0; cursor: pointer; }
+.compactPhotoAudio small { color: #ffffffd9; font-size: 9px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.compactAudioElement { display: none; }
+@keyframes compactAudioPulse { from { transform: scaleY(0.55); opacity: 0.65; } to { transform: scaleY(1.2); opacity: 1; } }
 .mediaCounter {
   position: absolute;
   top: 10px;

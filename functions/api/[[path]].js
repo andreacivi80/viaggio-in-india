@@ -25,6 +25,15 @@ const groupOk = (request, env) =>
   Boolean(env.GROUP_CODE) && request.headers.get("x-group-code") === env.GROUP_CODE;
 const ext = (name) =>
   (name?.split(".").pop() || "bin").replace(/[^a-z0-9]/gi, "").toLowerCase();
+const normalizeStoredContentType = (contentType, fileName = "") => {
+  const provided = String(contentType || "").trim().toLowerCase();
+  const extension = ext(fileName);
+  const generic = !provided || provided === "application/octet-stream" || provided === "binary/octet-stream";
+  if (extension === "pdf" && (generic || provided === "application/pdf")) return "application/pdf";
+  if (["jpg", "jpeg"].includes(extension) && generic) return "image/jpeg";
+  if (extension === "png" && generic) return "image/png";
+  return provided || "application/octet-stream";
+};
 const mediaUrl = (key) => {
   if (!key) return null;
   if (String(key).startsWith("static:")) return String(key).slice(7);
@@ -298,7 +307,7 @@ async function notifySubscribers(env, payload) {
 
 async function saveMedia(env, file, prefix = "public") {
   if (!(file instanceof File) || file.size === 0) return null;
-  const contentType = String(file.type || "application/octet-stream").toLowerCase();
+  const contentType = normalizeStoredContentType(file.type, file.name);
   if (
     (prefix.startsWith("public") || prefix.startsWith("restricted")) &&
     (!/^(image|video|audio)\//.test(contentType) || contentType === "image/svg+xml")
@@ -307,7 +316,7 @@ async function saveMedia(env, file, prefix = "public") {
     error.status = 400;
     throw error;
   }
-  const max = file.type.startsWith("video/")
+  const max = contentType.startsWith("video/")
     ? 25 * 1024 * 1024
     : 12 * 1024 * 1024;
   if (file.size > max) {
@@ -405,8 +414,9 @@ async function chunkedMedia(env, request, key, headers) {
     if (start > end || start >= Number(upload.file_size))
       return new Response(null, { status: 416, headers: { "content-range": `bytes */${upload.file_size}` } });
   }
-  headers["content-type"] = upload.content_type;
-  headers["content-disposition"] = /^(image\/|video\/|audio\/|application\/pdf)/i.test(upload.content_type)
+  const servedContentType = normalizeStoredContentType(upload.content_type, upload.file_name);
+  headers["content-type"] = servedContentType;
+  headers["content-disposition"] = /^(image\/|video\/|audio\/|application\/pdf)/i.test(servedContentType)
     ? `inline; filename*=UTF-8''${encodeURIComponent(upload.file_name)}`
     : `attachment; filename*=UTF-8''${encodeURIComponent(upload.file_name)}`;
   headers["content-length"] = String(end - start + 1);
@@ -1079,7 +1089,7 @@ export async function onRequest(context) {
       const bytes = meta.value;
       const headers = {
         ...responseSecurityHeaders,
-        "content-type": meta.metadata?.contentType || "application/octet-stream",
+        "content-type": normalizeStoredContentType(meta.metadata?.contentType, meta.metadata?.name || key),
         "cache-control": key.startsWith("public/")
           ? "public, max-age=31536000, immutable"
           : "private, no-store",

@@ -38,7 +38,7 @@ import {
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
 
-const VERSION = "1.36.0",
+const VERSION = "1.36.1",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -2984,15 +2984,9 @@ function PostMedia({ items }) {
               )}
               {index === 0 && photoAudio && (
                 <div className="photoAudioOverlay">
-                  <Mic />
-                  <span>Ascolta il racconto</span>
-                  <BackgroundAudio
-                    src={photoAudio.media_url}
-                    title={photoAudio.media_name || "Racconto dalla foto"}
-                  />
+                  <BackgroundAudio compact src={photoAudio.media_url} title={photoAudio.media_name || "Racconto dalla foto"} />
                 </div>
-              )}
-            </div>
+              )}            </div>
           ))}
           {visualItems.length > 1 && (
             <span className="mediaCounter">{visualItems.length} contenuti · scorri</span>
@@ -3016,23 +3010,23 @@ function PostMedia({ items }) {
   );
 }
 
-function BackgroundAudio({ src, title = "Messaggio dal viaggio", className = "" }) {
+function BackgroundAudio({ src, title = "Messaggio dal viaggio", className = "", compact = false }) {
   const audioRef = useRef(null);
-
+  const [playing, setPlaying] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const formatAudioTime = (value) => {
+    const safeValue = Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+    return `${Math.floor(safeValue / 60)}:${String(safeValue % 60).padStart(2, "0")}`;
+  };
   const activateMediaSession = () => {
     const audio = audioRef.current;
+    setPlaying(true);
     if (!audio || !("mediaSession" in navigator)) return;
     try {
       navigator.mediaSession.metadata = new MediaMetadata({
-        title,
-        artist: "India insieme",
-        album: "Viaggio in India 2026",
-        artwork: [
-          {
-            src: "/cities/india-insieme-collage.png",
-            type: "image/png",
-          },
-        ],
+        title, artist: "India insieme", album: "Viaggio in India 2026",
+        artwork: [{ src: "/cities/india-insieme-collage.png", type: "image/png" }],
       });
       navigator.mediaSession.setActionHandler("play", () => audio.play());
       navigator.mediaSession.setActionHandler("pause", () => audio.pause());
@@ -3040,42 +3034,56 @@ function BackgroundAudio({ src, title = "Messaggio dal viaggio", className = "" 
         audio.currentTime = Math.max(0, audio.currentTime - (details.seekOffset || 10));
       });
       navigator.mediaSession.setActionHandler("seekforward", (details) => {
-        audio.currentTime = Math.min(
-          Number.isFinite(audio.duration) ? audio.duration : audio.currentTime + 10,
-          audio.currentTime + (details.seekOffset || 10),
-        );
+        audio.currentTime = Math.min(Number.isFinite(audio.duration) ? audio.duration : audio.currentTime + 10, audio.currentTime + (details.seekOffset || 10));
       });
       navigator.mediaSession.setActionHandler("seekto", (details) => {
         if (Number.isFinite(details.seekTime)) audio.currentTime = details.seekTime;
       });
       navigator.mediaSession.playbackState = "playing";
-    } catch {
-      // Il lettore nativo continua a funzionare anche sui browser senza Media Session completa.
-    }
+    } catch {}
   };
-
   const markPaused = () => {
+    setPlaying(false);
     if (!("mediaSession" in navigator)) return;
-    try {
-      navigator.mediaSession.playbackState = "paused";
-    } catch {
-      // Compatibilità con browser mobili meno recenti.
-    }
+    try { navigator.mediaSession.playbackState = "paused"; } catch {}
   };
-
-  return (
-    <audio
-      ref={audioRef}
-      className={className}
-      controls
-      preload="metadata"
-      playsInline
-      src={src}
-      onPlay={activateMediaSession}
-      onPause={markPaused}
-      onEnded={markPaused}
+  const togglePlayback = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.paused) audio.play().catch(() => {});
+    else audio.pause();
+  };
+  const audioElement = (
+    <audio ref={audioRef} className={compact ? "compactAudioElement" : className}
+      controls={!compact} preload="metadata" playsInline src={src}
+      onLoadedMetadata={(event) => setDuration(Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : 0)}
+      onDurationChange={(event) => setDuration(Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : 0)}
+      onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime || 0)}
+      onPlay={activateMediaSession} onPause={markPaused}
+      onEnded={() => { setPlaying(false); setCurrentTime(0); markPaused(); }}
       data-background-audio="true"
     />
+  );
+  if (!compact) return audioElement;
+  return (
+    <div className={`compactPhotoAudio ${playing ? "isPlaying" : ""}`}>
+      <button type="button" className="compactAudioPlay" onClick={togglePlayback}
+        aria-label={playing ? "Metti in pausa il racconto" : "Ascolta il racconto"}>
+        <span aria-hidden="true">{playing ? "Ⅱ" : "▶"}</span>
+      </button>
+      <div className="compactAudioBody">
+        <span className="compactAudioLabel">{playing ? "In ascolto" : "Ascolta il racconto"}</span>
+        <div className="compactAudioWave">
+          <span /><span /><span /><span /><span /><span /><span /><span /><span />
+          <input type="range" min="0" max={duration || 0} step="0.1"
+            value={Math.min(currentTime, duration || 0)}
+            onChange={(event) => { if (audioRef.current) audioRef.current.currentTime = Number(event.target.value); }}
+            aria-label="Posizione del racconto audio" />
+        </div>
+      </div>
+      <small>{formatAudioTime(currentTime)} / {formatAudioTime(duration)}</small>
+      {audioElement}
+    </div>
   );
 }
 
