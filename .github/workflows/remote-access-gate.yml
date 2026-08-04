@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - codex/remote-access-gate-1-33-1
+      - codex/qa-candidate-1-33-1
   pull_request:
     branches:
       - main
