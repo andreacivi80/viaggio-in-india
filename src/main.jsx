@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.15",
+const VERSION = "1.37.16",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -809,13 +809,8 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         .addTo(map.current);
       markers.current.push(marker);
     });
-    const uniqueHotels = [...new Map(
-      days
-        .filter((tripDay) => tripDay.hotel?.place)
-        .map((tripDay) => [tripDay.hotel.place, tripDay.hotel]),
-    ).values()];
     const specialStops = selectedDay == null
-      ? uniqueHotels.map((hotel) => ["🏨", hotel.name, places[hotel.place]])
+      ? []
       : [
           ...(selectedDay === 0 ? [["✈", "Aeroporto DEL", places["Aeroporto DEL"]]] : []),
           ...(day?.hotel?.place ? [["🏨", day.hotel.name, places[day.hotel.place]]] : []),
@@ -831,7 +826,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         const marker = new maplibregl.Marker({
           element: node,
           anchor: "center",
-          offset: selectedDay == null ? [0, 17] : [0, 12],
+          offset: [0, 12],
         })
           .setLngLat([lng, lat])
           .setPopup(new maplibregl.Popup({ offset: 18 }).setHTML(`<strong>${label}</strong>`))

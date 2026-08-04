@@ -33,3 +33,10 @@ Questa regola vale per **ogni revisione**, senza eccezioni.
 - Zoom touch più stretto e leggibile per tratte locali fino a 40 km.
 - Hotel, città e percorso restano tutti dentro l'inquadratura sui due profili Samsung.
 - Regressione completa Livello 1 obbligatoria prima della pubblicazione.
+
+## Livello 2 della revisione 1.37.16
+
+- Mappa generale priva di icone hotel.
+- Otto tappe numerate e linee del percorso generale invariate.
+- Hotel ancora visibile nel dettaglio di ogni giornata interessata.
+- Zoom e ricentratura giornalieri invariati.

@@ -68,13 +68,14 @@ test("gli spostamenti brevi occupano una porzione leggibile della cartina", asyn
   await page.screenshot({ path: testInfo.outputPath("zoom-udaipur-mobile.png") });
 });
 
-test("la cartina ridistribuisce ogni giornata sull'hotel e mostra tutti gli hotel nell'insieme", async ({ page }, testInfo) => {
+test("la cartina ridistribuisce ogni giornata sull'hotel e lascia pulita la vista generale", async ({ page }, testInfo) => {
   await mockState(page);
   await page.goto("/?view=map&day=3", { waitUntil: "networkidle" });
   const map = page.locator(".realMap");
   await expect(map).toBeVisible();
   for (const [dayIndex, hotelName] of hotelDays) {
     await page.locator(".routeChips button").nth(dayIndex).tap();
+    await expect(page.locator(".mapLoading")).toBeHidden({ timeout: 30_000 });
     const marker = page.locator(`.specialTripMarker[aria-label="${hotelName}"]`);
     await expect(marker).toBeVisible({ timeout: 20_000 });
     const [mapBox, markerBox] = await Promise.all([map.boundingBox(), marker.boundingBox()]);
@@ -85,7 +86,7 @@ test("la cartina ridistribuisce ogni giornata sull'hotel e mostra tutti gli hote
   }
   await page.getByRole("button", { name: "Vedi tutto" }).tap();
   await expect(page.locator(".vectorMarker")).toHaveCount(8);
-  await expect(page.locator(".specialTripMarker")).toHaveCount(6);
+  await expect(page.locator(".specialTripMarker")).toHaveCount(0);
   await expect(page.locator(".mapLoading")).toBeHidden({ timeout: 30_000 });
   await page.screenshot({ path: testInfo.outputPath("mappa-hotel-completa.png") });
 });
