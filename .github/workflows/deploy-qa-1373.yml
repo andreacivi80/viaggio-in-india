@@ -1,0 +1,38 @@
+name: Pubblica QA 1.37.3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/deploy-qa-1373.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-qa-1373
+  cancel-in-progress: false
+
+jobs:
+  test-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Installazione pulita
+        run: npm ci
+      - name: Test e compilazione
+        run: npm test
+      - name: Browser Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Test UI di primo livello
+        run: npm run test:ui-critical
+      - name: Pubblicazione Cloudflare Pages QA
+        run: npx wrangler pages deploy dist --project-name viaggio-in-india-2026-qa --branch main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
