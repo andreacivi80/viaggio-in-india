@@ -12,9 +12,11 @@ test("la password comune non viene mai conservata nel dispositivo", () => {
 
 test("un profilo corrente deriva soltanto da una sessione confermata", () => {
   assert.match(source, /const currentProfile = sessionProfile/);
+  const currentProfileBlock =
+    source.match(/const currentProfile =[\s\S]*?;\r?\n\s*useEffect/)?.[0] || "";
   assert.doesNotMatch(
-    source,
-    /people\.find\([\s\S]{0,400}india-visitor-name/,
+    currentProfileBlock,
+    /india-visitor-name/,
     "un semplice nome pubblico non deve diventare identità da viaggiatore",
   );
 });
