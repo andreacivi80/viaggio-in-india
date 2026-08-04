@@ -7,7 +7,16 @@ const coreTables = "profiles|posts|post_media|comments|reactions|document_status
 
 test("le migrazioni sono numerate, additive e non cancellano dati reali", async () => {
   const names = (await readdir(migrationDirectory)).filter((name) => name.endsWith(".sql")).sort();
-  assert.equal(new Set(names.map((name) => name.slice(0, 4))).size, names.length);
+  const byNumber = new Map();
+  for (const name of names) {
+    const number = name.slice(0, 4);
+    byNumber.set(number, [...(byNumber.get(number) || []), name]);
+  }
+  const legacyDuplicates = [...byNumber.values()].filter((group) => group.length > 1);
+  assert.deepEqual(legacyDuplicates, [[
+    "0010_post_visibility_and_push_audience.sql",
+    "0010_profile_gender.sql",
+  ]], "sono ammesse soltanto le due migrazioni storiche 0010 già applicate");
   for (const name of names) {
     const sql = await readFile(new URL(name, migrationDirectory), "utf8");
     assert.doesNotMatch(sql, /\bDROP\s+(?:TABLE|COLUMN)\b/i, `${name}: DROP distruttivo`);
