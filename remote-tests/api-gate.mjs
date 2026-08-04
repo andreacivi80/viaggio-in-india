@@ -101,7 +101,7 @@ await check("coordinatore pubblica contenuto", async () => {
   form.set("day_index", "0");
   const { response, body } = await request("posts", {
     method: "POST",
-    headers: { authorization: `Bearer ${coordinatorToken}`, "x-idempotency-key": "qa-post-1", "x-qa-silent": "true" },
+    headers: { authorization: `Bearer ${coordinatorToken}`, "x-idempotency-key": "qa-post-operation-0001", "x-qa-silent": "true" },
     body: form,
   });
   assert.equal(response.status, 201);
@@ -126,7 +126,7 @@ await check("visitatore commenta contenuto pubblico", async () => {
   form.set("text", "Commento QA");
   const { response, body } = await request("comments", {
     method: "POST",
-    headers: { "x-guest-token": guestToken, "x-idempotency-key": "qa-comment-1", "x-qa-silent": "true" },
+    headers: { "x-guest-token": guestToken, "x-idempotency-key": "qa-comment-operation-0001", "x-qa-silent": "true" },
     body: form,
   });
   assert.equal(response.status, 201);
