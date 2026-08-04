@@ -1657,6 +1657,10 @@ function App() {
                 setTab("diary");
                 setSelectedDay(todayTripIndex >= 0 ? todayTripIndex : -1);
                 setComposeOpen(true);
+              } else if (id === "people" && (!sessionToken || !currentProfile)) {
+                setPublicPreview(false);
+                setNotificationOpen(false);
+                setQuickProfileOpen(true);
               } else {
                 if (id === "map") showMap(null);
                 else setTab(id);
