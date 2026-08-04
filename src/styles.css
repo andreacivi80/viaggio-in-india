@@ -1763,12 +1763,16 @@ footer small {
 .diaryNavigator > button {
   width: 48px;
   height: 48px;
+  display: grid;
+  place-items: center;
+  padding: 0;
   border: 1px solid var(--color-border);
   border-radius: 50%;
   background: var(--color-surface);
   color: var(--color-secondary);
   font-size: 23px;
   font-weight: 800;
+  line-height: 1;
 }
 .diaryNavigator > button:disabled {
   opacity: 0.35;
@@ -2641,6 +2645,18 @@ h2 {
   color: #174834;
   font-size: 13px;
   font-weight: 800;
+}
+.diaryNavigator .diaryArrow {
+  width: 22px;
+  height: 22px;
+  display: block;
+  stroke-width: 2.5;
+}
+.diaryNavigator .diaryArrow.previous {
+  transform: rotate(90deg);
+}
+.diaryNavigator .diaryArrow.next {
+  transform: rotate(-90deg);
 }
 .publishNotice svg {
   width: 17px;
@@ -4668,7 +4684,7 @@ mark.mention {
   width: max-content;
   max-width: calc(100% - 38px);
   margin-top: 5px;
-  overflow: hidden;
+  overflow: visible;
   padding: 3px 7px;
   border: 1px solid #ffffff42;
   border-radius: 999px;
@@ -4676,18 +4692,18 @@ mark.mention {
   color: #fff;
   font-size: 10px;
   font-weight: 800;
-  line-height: 1.2;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.15;
+  text-overflow: clip;
+  white-space: normal;
   text-shadow: 0 1px 4px #000;
 }
 /* Revisione 1.37.10: spazio e contrasto costanti per meteo e ora locale. */
 .dayHero {
-  height: 112px;
+  height: 128px;
 }
 @media (max-width: 420px) {
   .dayHero {
-    height: 112px;
+    height: 128px;
   }
 }
 .myDocumentsButton {

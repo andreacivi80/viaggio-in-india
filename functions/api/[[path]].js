@@ -29,6 +29,14 @@ const imdStations = {
   Agra: "42259",
   Varanasi: "42479",
 };
+const weatherCoordinates = {
+  Delhi: [28.6139, 77.209],
+  Udaipur: [24.5854, 73.7125],
+  Jodhpur: [26.2389, 73.0243],
+  Jaipur: [26.9124, 75.7873],
+  Agra: [27.1767, 78.0081],
+  Varanasi: [25.3176, 82.9739],
+};
 const monthNumber = {
   Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06",
   Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12",
@@ -65,9 +73,44 @@ async function readImdForecast(city, stationId) {
       min,
       max,
       description: cells[cells.length - 1] || "",
+      source: "IMD",
     });
   }
   return entries;
+}
+const wmoDescription = (code) => {
+  if ([95, 96, 99].includes(code)) return "Temporali";
+  if ([65, 67, 75, 77, 82, 86].includes(code)) return "Pioggia forte";
+  if ([53, 55, 57, 61, 63, 66, 73, 80, 81, 85].includes(code)) return "Pioggia moderata";
+  if ([51, 56, 71].includes(code)) return "Pioggia leggera";
+  if ([1, 2].includes(code)) return "Parzialmente nuvoloso";
+  if (code === 3 || [45, 48].includes(code)) return "Nuvoloso";
+  return "Sereno";
+};
+async function readExtendedForecast(city, coordinates) {
+  const target = new URL("https://api.open-meteo.com/v1/forecast");
+  target.searchParams.set("latitude", String(coordinates[0]));
+  target.searchParams.set("longitude", String(coordinates[1]));
+  target.searchParams.set("daily", "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max");
+  target.searchParams.set("timezone", "Asia/Kolkata");
+  target.searchParams.set("forecast_days", "16");
+  const upstream = await fetch(target, {
+    headers: { accept: "application/json" },
+    cf: { cacheTtl: 1800, cacheEverything: true },
+  });
+  if (!upstream.ok) return [];
+  const daily = (await upstream.json()).daily || {};
+  return (daily.time || []).map((date, index) => ({
+    date,
+    city,
+    min: Math.round(Number(daily.temperature_2m_min?.[index])),
+    max: Math.round(Number(daily.temperature_2m_max?.[index])),
+    description: wmoDescription(Number(daily.weather_code?.[index])),
+    rain_probability: Number.isFinite(Number(daily.precipitation_probability_max?.[index]))
+      ? Math.round(Number(daily.precipitation_probability_max[index]))
+      : null,
+    source: "Open-Meteo",
+  })).filter((entry) => Number.isFinite(entry.min) && Number.isFinite(entry.max));
 }
 const groupOk = (request, env) =>
   Boolean(env.GROUP_CODE) && request.headers.get("x-group-code") === env.GROUP_CODE;
@@ -899,12 +942,26 @@ export async function onRequest(context) {
       });
     }
     if (request.method === "GET" && path === "weather") {
-      const settled = await Promise.allSettled(
-        Object.entries(imdStations).map(([city, station]) => readImdForecast(city, station)),
+      const [imdSettled, extendedSettled] = await Promise.all([
+        Promise.allSettled(
+          Object.entries(imdStations).map(([city, station]) => readImdForecast(city, station)),
+        ),
+        Promise.allSettled(
+          Object.entries(weatherCoordinates).map(([city, coordinates]) => readExtendedForecast(city, coordinates)),
+        ),
+      ]);
+      const merged = new Map();
+      for (const result of extendedSettled)
+        if (result.status === "fulfilled")
+          for (const forecast of result.value) merged.set(`${forecast.date}:${forecast.city}`, forecast);
+      for (const result of imdSettled)
+        if (result.status === "fulfilled")
+          for (const forecast of result.value) merged.set(`${forecast.date}:${forecast.city}`, forecast);
+      const forecasts = [...merged.values()].sort(
+        (a, b) => a.date.localeCompare(b.date) || a.city.localeCompare(b.city),
       );
-      const forecasts = settled.flatMap((result) => result.status === "fulfilled" ? result.value : []);
       return json(
-        { source: "India Meteorological Department", timezone: "Asia/Kolkata", forecasts },
+        { source: "IMD con estensione Open-Meteo", timezone: "Asia/Kolkata", forecasts },
         200,
         { "cache-control": "public, max-age=900, s-maxage=1800" },
       );

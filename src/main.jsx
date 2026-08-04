@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.10",
+const VERSION = "1.37.11",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -65,16 +65,17 @@ const tripDateKeys = Array.from({ length: 14 },
 );
 const conciseWeather = (description = "") => {
   const value = String(description).toLowerCase();
-  if (value.includes("heavy rain")) return "🌧️ Pioggia forte";
-  if (value.includes("moderate rain")) return "🌧️ Pioggia moderata";
-  if (value.includes("continuous rain")) return "🌧️ Pioggia continua";
-  if (value.includes("light rain") || value.includes("drizzle")) return "🌦️ Pioggia leggera";
-  if (value.includes("thunder")) return "⛈️ Temporali";
-  if (value.includes("partly cloudy")) return "⛅ Parzialmente nuvoloso";
-  if (value.includes("cloud")) return "☁️ Nuvoloso";
-  if (value.includes("clear")) return "☀️ Sereno";
+  if (value.includes("heavy rain") || value.includes("pioggia forte")) return "🌧️ Pioggia forte";
+  if (value.includes("moderate rain") || value.includes("pioggia moderata")) return "🌧️ Pioggia moderata";
+  if (value.includes("continuous rain") || value.includes("pioggia continua")) return "🌧️ Pioggia continua";
+  if (value.includes("light rain") || value.includes("drizzle") || value.includes("pioggia leggera")) return "🌦️ Pioggia leggera";
+  if (value.includes("thunder") || value.includes("temporali")) return "⛈️ Temporali";
+  if (value.includes("partly cloudy") || value.includes("parzialmente nuvoloso")) return "⛅ Parzialmente nuvoloso";
+  if (value.includes("cloud") || value.includes("nuvoloso")) return "☁️ Nuvoloso";
+  if (value.includes("clear") || value.includes("sereno")) return "☀️ Sereno";
   return "🌤️ Meteo IMD";
 };
+const weatherIcon = (description) => conciseWeather(description).split(" ")[0];
 const indiaDateKey = (date = new Date()) =>
   new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Kolkata",
@@ -1391,10 +1392,6 @@ function App() {
   useEffect(() => {
     if (!sessionToken) setSessionProfile(null);
   }, [sessionToken]);
-  const completed = useMemo(
-    () => Object.values(done).filter(Boolean).length,
-    [done],
-  );
   const activeProfileId = sessionProfile?.id || "";
   const currentProfile = sessionProfile
     ? people.find((person) => person.id === sessionProfile.id) || sessionProfile
@@ -1938,10 +1935,6 @@ function App() {
                 <span className="eyebrow">DIARIO DI BORDO</span>
                 <h2>La storia, giorno per giorno</h2>
               </div>
-              <button className="progress" onClick={() => setDone({})}>
-                <b>{completed}</b>
-                <small>spuntate</small>
-              </button>
             </div>
             <div className="diaryNavigator">
               <button
@@ -1949,7 +1942,7 @@ function App() {
                 disabled={open === 0}
                 onClick={() => setOpen(Math.max(0, open - 1))}
               >
-                ←
+                <ChevronDown className="diaryArrow previous" aria-hidden="true" />
               </button>
               <div>
                 <small>SCEGLI LA GIORNATA</small>
@@ -1962,7 +1955,7 @@ function App() {
                 disabled={open === days.length - 1}
                 onClick={() => setOpen(Math.min(days.length - 1, open + 1))}
               >
-                →
+                <ChevronDown className="diaryArrow next" aria-hidden="true" />
               </button>
             </div>
             <div className="diaryDayPicker" aria-label="Seleziona la giornata">
@@ -1989,6 +1982,7 @@ function App() {
                   <small>{day.city}</small>
                   {forecast && (
                     <em className="dayPickerWeather" title={forecast.description}>
+                      <span aria-hidden="true">{weatherIcon(forecast.description)}</span>{" "}
                       {forecast.max}°/{forecast.min}°
                     </em>
                   )}
@@ -2035,7 +2029,7 @@ function App() {
                         {d.transport} · {d.km} km
                       </span>
                       <span className="dayWeatherLine" title={forecast?.description || "Ora locale India"}>
-                        {forecast ? `${forecast.max}° / ${forecast.min}° · ${conciseWeather(forecast.description)} · ` : ""}
+                        {forecast ? `${forecast.max}° / ${forecast.min}° · ${conciseWeather(forecast.description)}${Number.isFinite(forecast.rain_probability) ? ` · Pioggia ${forecast.rain_probability}%` : ""} · ` : ""}
                         Ora India {indiaTime}
                       </span>
                     </div>
