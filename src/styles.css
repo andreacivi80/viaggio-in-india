@@ -4665,10 +4665,14 @@ mark.mention {
 }
 .dayWeatherLine {
   display: block;
-  width: 100%;
+  width: max-content;
   max-width: calc(100% - 38px);
-  margin-top: 4px;
+  margin-top: 5px;
   overflow: hidden;
+  padding: 3px 7px;
+  border: 1px solid #ffffff42;
+  border-radius: 999px;
+  background: #0b2e28d9;
   color: #fff;
   font-size: 10px;
   font-weight: 800;
@@ -4676,6 +4680,15 @@ mark.mention {
   text-overflow: ellipsis;
   white-space: nowrap;
   text-shadow: 0 1px 4px #000;
+}
+/* Revisione 1.37.10: spazio e contrasto costanti per meteo e ora locale. */
+.dayHero {
+  height: 112px;
+}
+@media (max-width: 420px) {
+  .dayHero {
+    height: 112px;
+  }
 }
 .myDocumentsButton {
   min-height: 44px;

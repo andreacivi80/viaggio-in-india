@@ -27,3 +27,49 @@ test("meteo IMD e ora India restano compatti nella prima giornata disponibile", 
   expect(geometry.scrollWidth).toBeLessThanOrEqual(geometry.clientWidth + 1);
   expect(geometry.lineHeight).toBeLessThanOrEqual(24);
 });
+
+test("meteo e ora non si sovrappongono sulle quattordici fotografie", async ({ page }) => {
+  const cities = ["Delhi", "Delhi", "Udaipur", "Udaipur", "Jodhpur", "Jodhpur", "Jaipur", "Jaipur", "Agra", "Agra", "Varanasi", "Varanasi", "Varanasi", "Delhi"];
+  const forecasts = cities.map((city, index) => ({
+    date: `2026-08-${String(10 + index).padStart(2, "0")}`,
+    city,
+    min: 24,
+    max: 34,
+    description: index % 2 ? "Generally cloudy sky with moderate rain" : "Partly cloudy sky with one or two spells of rain or thundershowers",
+  }));
+  await page.route("**/api/state", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ sync_version: 1, profiles: [], posts: [] }),
+  }));
+  await page.route("**/api/weather", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ source: "India Meteorological Department", timezone: "Asia/Kolkata", forecasts }),
+  }));
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: "Viaggio", exact: true }).tap();
+
+  for (let index = 0; index < 14; index += 1) {
+    await page.getByRole("button", { name: new RegExp(`Giorno ${index + 1},`) }).tap();
+    const hero = page.locator(`#day-${index + 1} .dayHero`);
+    const geometry = await hero.evaluate((node) => {
+      const line = node.querySelector(".dayWeatherLine");
+      const heroBox = node.getBoundingClientRect();
+      const lineBox = line.getBoundingClientRect();
+      return {
+        overflow: node.scrollWidth - node.clientWidth,
+        lineTop: lineBox.top,
+        lineBottom: lineBox.bottom,
+        heroTop: heroBox.top,
+        heroBottom: heroBox.bottom,
+        background: getComputedStyle(line).backgroundColor,
+      };
+    });
+    expect(geometry.overflow).toBeLessThanOrEqual(1);
+    expect(geometry.lineTop).toBeGreaterThanOrEqual(geometry.heroTop);
+    expect(geometry.lineBottom).toBeLessThanOrEqual(geometry.heroBottom);
+    expect(geometry.background).toMatch(/^rgba?\(/);
+    expect(geometry.background).not.toBe("rgba(0, 0, 0, 0)");
+  }
+});
