@@ -957,9 +957,7 @@ function App() {
     [travelersOpen, setTravelersOpen] = useState(false),
     [quickStatus, setQuickStatus] = useState(""),
     [accessCode, setAccessCode] = useState(""),
-    [groupCode, setGroupCode] = useState(
-      () => localStorage.getItem("india-group-code") || "",
-    ),
+    [groupCode, setGroupCode] = useState(""),
     [sessionToken, setSessionToken] = useState(
       () => localStorage.getItem("india-session-token") || "",
     ),
@@ -1159,8 +1157,12 @@ function App() {
     [done],
   );
   useEffect(() => {
-    if (groupCode) localStorage.setItem("india-group-code", groupCode);
-  }, [groupCode]);
+    localStorage.removeItem("india-group-code");
+    if (!localStorage.getItem("india-session-token")) {
+      localStorage.removeItem("india-profile-id");
+      localStorage.removeItem("india-role");
+    }
+  }, []);
   useEffect(() => {
     const inviteToken =
       new URLSearchParams(location.search).get("invite") ||
@@ -1222,18 +1224,12 @@ function App() {
     [done],
   );
   const activeProfileId =
-    sessionProfile?.id || vaultProfileId || localStorage.getItem("india-profile-id") || "";
-  const storedVisitorName = (
-    localStorage.getItem("india-visitor-name") || ""
-  ).trim().toLowerCase();
+    sessionProfile?.id || (sessionToken ? vaultProfileId : "");
   const currentProfile =
-    people.find((person) => person.id === activeProfileId) ||
-    people.find(
-      (person) =>
-        `${person.name} ${person.surname || ""}`.trim().toLowerCase() ===
-          storedVisitorName ||
-        person.name.trim().toLowerCase() === storedVisitorName,
-    );
+    sessionProfile ||
+    (sessionToken
+      ? people.find((person) => person.id === activeProfileId) || null
+      : null);
   useEffect(() => {
     if (!currentProfile) return;
     localStorage.setItem("india-profile-id", currentProfile.id);
@@ -1442,18 +1438,16 @@ function App() {
           <span className="flag">🇮🇳</span>
           <span className="versionBadge">REV {VERSION}</span>
           <button
-            className={`accessPill ${effectiveGroupCode || effectiveSessionToken ? "unlocked" : ""}`}
+            className={`accessPill ${effectiveSessionToken && currentProfile ? "unlocked" : ""}`}
             onClick={() => {
               setQuickProfileOpen(!quickProfileOpen);
               setNotificationOpen(false);
             }}
           >
             <CircleUserRound size={15} />
-            {effectiveSessionToken
-              ? currentProfile?.name || "Profilo"
-              : effectiveGroupCode
-                ? "Scegli nome"
-                : "Pubblico"}
+            {effectiveSessionToken && currentProfile
+              ? currentProfile.name
+              : "Pubblico"}
           </button>
           <button
             className="headerIcon"
@@ -1531,11 +1525,9 @@ function App() {
                     : "Scegli il tuo profilo"}
                 </b>
                 <small>
-                  {sessionToken
+                  {sessionToken && currentProfile
                     ? "Accesso personale attivo"
-                    : effectiveGroupCode
-                      ? "Dispositivo sbloccato"
-                      : "Accesso pubblico"}
+                    : "Accesso pubblico"}
                 </small>
               </div>
               <button
@@ -1553,8 +1545,8 @@ function App() {
                 Vista pubblica
               </button>
               <button
-                className={!publicPreview && (groupCode || sessionToken) ? "active" : ""}
-                disabled={!groupCode && !sessionToken}
+                className={!publicPreview && sessionToken && currentProfile ? "active" : ""}
+                disabled={!sessionToken || !currentProfile}
                 onClick={() => setPublicPreview(false)}
               >
                 Vista gruppo
