@@ -4733,3 +4733,43 @@ mark.mention {
     align-self: end;
   }
 }
+
+
+/* Revisione 1.37.4: audio discreto sulla foto, senza capsula o barra. */
+.photoAudioOverlay {
+  left: 10px;
+  bottom: 10px;
+  max-width: 34px;
+}
+.compactPhotoAudio {
+  display: block;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  overflow: hidden;
+}
+.compactAudioPlay {
+  width: 34px;
+  height: 34px;
+  min-height: 34px;
+  padding: 0;
+  border: 1px solid #ffffffa8;
+  border-radius: 50%;
+  background: #102d25b8;
+  color: #fff;
+  box-shadow: 0 2px 8px #00000038;
+  backdrop-filter: blur(4px);
+}
+.compactAudioPlay:hover,
+.compactAudioPlay:focus-visible {
+  background: #102d25de;
+}
+.compactAudioBody,
+.compactPhotoAudio > small {
+  display: none;
+}
