@@ -38,7 +38,7 @@ import {
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
 
-const VERSION = "1.34.1",
+const VERSION = "1.35.0",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -1691,16 +1691,20 @@ function App() {
                   <button
                     type="button"
                     className={bootstrapForm.role === "traveler" ? "active" : ""}
+                    aria-pressed={bootstrapForm.role === "traveler"}
                     onClick={() => setBootstrapForm({ ...bootstrapForm, role: "traveler" })}
                   >
-                    Viaggiatore
+                    <span>Viaggiatore</span>
+                    {bootstrapForm.role === "traveler" && <Check aria-hidden="true" />}
                   </button>
                   <button
                     type="button"
                     className={bootstrapForm.role === "coordinator" ? "active" : ""}
+                    aria-pressed={bootstrapForm.role === "coordinator"}
                     onClick={() => setBootstrapForm({ ...bootstrapForm, role: "coordinator" })}
                   >
-                    Coordinatore
+                    <span>Coordinatore</span>
+                    {bootstrapForm.role === "coordinator" && <Check aria-hidden="true" />}
                   </button>
                 </div>
                 <input
@@ -2055,7 +2059,7 @@ function App() {
             setDirectoryOpen={setTravelersOpen}
           />
         )}{" "}
-        {tab === "people" && (
+        {tab === "people" && verifiedSessionToken && (
           <People
             people={people}
             groupCode={effectiveGroupCode}
@@ -2068,6 +2072,22 @@ function App() {
               setTab("vault");
             }}
           />
+        )}{" "}
+        {tab === "people" && !verifiedSessionToken && (
+          <section className="privateGroupGate" aria-label="Accesso privato richiesto">
+            <LockKeyhole aria-hidden="true" />
+            <h2>Gruppo privato</h2>
+            <p>Inserisci la password per vedere il gruppo e collegare il tuo profilo.</p>
+            <button
+              type="button"
+              onClick={() => {
+                setPublicPreview(false);
+                setQuickProfileOpen(true);
+              }}
+            >
+              Accedi
+            </button>
+          </section>
         )}{" "}
         {tab === "vault" && (
           <VaultOnline
@@ -2946,7 +2966,10 @@ function PostMedia({ items }) {
                 <div className="photoAudioOverlay">
                   <Mic />
                   <span>Ascolta il racconto</span>
-                  <audio controls preload="metadata" src={photoAudio.media_url} />
+                  <BackgroundAudio
+                    src={photoAudio.media_url}
+                    title={photoAudio.media_name || "Racconto dalla foto"}
+                  />
                 </div>
               )}
             </div>
@@ -2963,10 +2986,76 @@ function PostMedia({ items }) {
             <b>{audioItem.media_name || `Messaggio vocale ${index + 1}`}</b>
             <small>Premi Play per ascoltare l’audio di questo ricordo</small>
           </div>
-          <audio controls preload="metadata" src={audioItem.media_url} />
+          <BackgroundAudio
+            src={audioItem.media_url}
+            title={audioItem.media_name || `Messaggio vocale ${index + 1}`}
+          />
         </div>
       ))}
     </div>
+  );
+}
+
+function BackgroundAudio({ src, title = "Messaggio dal viaggio", className = "" }) {
+  const audioRef = useRef(null);
+
+  const activateMediaSession = () => {
+    const audio = audioRef.current;
+    if (!audio || !("mediaSession" in navigator)) return;
+    try {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title,
+        artist: "India insieme",
+        album: "Viaggio in India 2026",
+        artwork: [
+          {
+            src: "/cities/india-insieme-collage.png",
+            type: "image/png",
+          },
+        ],
+      });
+      navigator.mediaSession.setActionHandler("play", () => audio.play());
+      navigator.mediaSession.setActionHandler("pause", () => audio.pause());
+      navigator.mediaSession.setActionHandler("seekbackward", (details) => {
+        audio.currentTime = Math.max(0, audio.currentTime - (details.seekOffset || 10));
+      });
+      navigator.mediaSession.setActionHandler("seekforward", (details) => {
+        audio.currentTime = Math.min(
+          Number.isFinite(audio.duration) ? audio.duration : audio.currentTime + 10,
+          audio.currentTime + (details.seekOffset || 10),
+        );
+      });
+      navigator.mediaSession.setActionHandler("seekto", (details) => {
+        if (Number.isFinite(details.seekTime)) audio.currentTime = details.seekTime;
+      });
+      navigator.mediaSession.playbackState = "playing";
+    } catch {
+      // Il lettore nativo continua a funzionare anche sui browser senza Media Session completa.
+    }
+  };
+
+  const markPaused = () => {
+    if (!("mediaSession" in navigator)) return;
+    try {
+      navigator.mediaSession.playbackState = "paused";
+    } catch {
+      // Compatibilità con browser mobili meno recenti.
+    }
+  };
+
+  return (
+    <audio
+      ref={audioRef}
+      className={className}
+      controls
+      preload="metadata"
+      playsInline
+      src={src}
+      onPlay={activateMediaSession}
+      onPause={markPaused}
+      onEnded={markPaused}
+      data-background-audio="true"
+    />
   );
 }
 
@@ -3349,7 +3438,10 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
               )}
             </div>
             {x.media_type?.startsWith("audio") && (
-              <audio controls src={x.media_url} />
+              <BackgroundAudio
+                src={x.media_url}
+                title={`Risposta audio di ${x.author_name}`}
+              />
             )}
             {x.media_type?.startsWith("image") && (
               <img
@@ -3812,6 +3904,7 @@ function VaultOnline({
     [profileId, setProfileId] = useState(""),
     [busy, setBusy] = useState(""),
     [documentStatus, setDocumentStatus] = useState(""),
+    [documentPreview, setDocumentPreview] = useState(null),
     [pendingDocumentDelete, setPendingDocumentDelete] = useState(""),
     [locationMapOpen, setLocationMapOpen] = useState(false),
     [viewMode, setViewMode] = useState("traveler"),
@@ -3969,42 +4062,38 @@ function VaultOnline({
   };
   const openDocument = async (doc, download = false) => {
     setDocumentStatus("Apertura del documento…");
-    const previewWindow = download ? null : window.open("about:blank", "_blank");
-    if (previewWindow) previewWindow.opener = null;
     const response = await fetch(
       `${API}/media/${encodeURIComponent(doc.file_key)}`,
       { headers: sessionHeaders(sessionToken) },
     );
     if (!response.ok) {
-      previewWindow?.close();
       setDocumentStatus("Documento non disponibile. Tocca Riprova.");
       return;
     }
-    const blobUrl = URL.createObjectURL(await response.blob());
+    const documentBlob = await response.blob();
+    const blobUrl = URL.createObjectURL(documentBlob);
     if (download) {
       const link = document.createElement("a");
       link.href = blobUrl;
       link.download = doc.file_name || "documento";
+      document.body.appendChild(link);
       link.click();
+      link.remove();
       setDocumentStatus("Download avviato.");
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
     } else {
-      if (previewWindow) {
-        previewWindow.document.title = doc.file_name || "Documento";
-        previewWindow.document.body.style.margin = "0";
-        previewWindow.document.body.style.background = "#f4efe6";
-        const frame = previewWindow.document.createElement("iframe");
-        frame.title = doc.file_name || "Documento";
-        frame.src = blobUrl;
-        frame.style.width = "100vw";
-        frame.style.height = "100vh";
-        frame.style.border = "0";
-        previewWindow.document.body.appendChild(frame);
-        setDocumentStatus("Documento aperto.");
-      } else {
-        setDocumentStatus("Il telefono ha bloccato l’apertura. Consenti i popup e riprova.");
-      }
+      if (documentPreview?.url) URL.revokeObjectURL(documentPreview.url);
+      setDocumentPreview({
+        url: blobUrl,
+        name: doc.file_name || "Documento",
+        type: documentBlob.type || response.headers.get("content-type") || "",
+      });
+      setDocumentStatus("Documento aperto.");
     }
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+  };
+  const closeDocumentPreview = () => {
+    if (documentPreview?.url) URL.revokeObjectURL(documentPreview.url);
+    setDocumentPreview(null);
   };
   const locate = () =>
     navigator.geolocation?.getCurrentPosition(
@@ -4318,6 +4407,30 @@ function VaultOnline({
           <button onClick={onOpenGroup}>Vai al Gruppo</button>
         </div>
       ) : null}
+      {documentPreview && (
+        <div className="documentPreviewOverlay" role="dialog" aria-modal="true" aria-label={documentPreview.name}>
+          <div className="documentPreviewCard">
+            <header>
+              <b>{documentPreview.name}</b>
+              <div>
+                <a href={documentPreview.url} target="_blank" rel="noreferrer">Apri a schermo intero</a>
+                <a href={documentPreview.url} download={documentPreview.name}>Scarica</a>
+                <button type="button" onClick={closeDocumentPreview} aria-label="Chiudi documento">×</button>
+              </div>
+            </header>
+            {documentPreview.type.startsWith("image/") ? (
+              <img src={documentPreview.url} alt={documentPreview.name} />
+            ) : documentPreview.type === "application/pdf" ? (
+              <iframe src={documentPreview.url} title={documentPreview.name} />
+            ) : (
+              <div className="documentPreviewFallback">
+                <p>Questo formato non può essere mostrato direttamente dal telefono.</p>
+                <a href={documentPreview.url} download={documentPreview.name}>Scarica il documento</a>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
       {pendingDocumentDelete && (
         <div className="confirmOverlay" onClick={() => setPendingDocumentDelete("")}>
           <div className="confirmCard" onClick={(event) => event.stopPropagation()}>
