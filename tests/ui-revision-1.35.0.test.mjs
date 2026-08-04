@@ -30,13 +30,13 @@ test("l'audio associato alla foto usa i controlli per la riproduzione in backgro
   assert.match(source, /className="photoAudioOverlay"[\s\S]*?<BackgroundAudio/);
 });
 
-test("graffetta e invio restano touch-friendly con icone più piccole", () => {
-  assert.match(styles, /\.reply label,\s*\n\s*\.reply button \{[\s\S]*?width: 44px;[\s\S]*?height: 44px;/);
-  assert.match(styles, /\.reply label svg,\s*\n\s*\.reply button svg \{\s*\n\s*width: 15px;\s*\n\s*height: 15px;/);
+test("graffetta e invio usano i controlli compatti della revisione 1.37.3", () => {
+  assert.match(styles, /\.reply label,\s*\n\s*\.reply button \{\s*\n\s*width: 36px;\s*\n\s*height: 36px;/);
+  assert.match(styles, /\.reply label svg,\s*\n\s*\.reply button svg \{\s*\n\s*width: 13px;\s*\n\s*height: 13px;/);
 });
 
 test("Apri documento usa un visualizzatore interno e mantiene il download", () => {
-  assert.match(source, /className="documentPreviewOverlay"/);
+  assert.match(source, /documentPreviewOverlay\$\{/);
   assert.match(source, /documentPreview\.type === "application\/pdf"/);
   assert.match(source, /documentPreview\.type\.startsWith\("image\/"\)/);
   assert.match(source, /download=\{documentPreview\.name\}/);
