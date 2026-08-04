@@ -38,7 +38,7 @@ import {
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
 
-const VERSION = "1.35.0",
+const VERSION = "1.35.1",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -1550,7 +1550,7 @@ function App() {
       <header className={`hero ${tab === "diary" ? "heroFeed" : ""}`}>
         <div className="heroShade" />
         <div className="top">
-          <span className="flag" role="img" aria-label="Bandiera dell’India">🇮🇳</span>
+          <img className="flag" src="/cities/india-flag-real.png" alt="Bandiera dell’India" />
           <span className="versionBadge">REV {VERSION}</span>
           <button
             className={`accessPill ${effectiveSessionToken ? "unlocked" : ""}`}
@@ -4408,12 +4408,20 @@ function VaultOnline({
         </div>
       ) : null}
       {documentPreview && (
-        <div className="documentPreviewOverlay" role="dialog" aria-modal="true" aria-label={documentPreview.name}>
+        <div className={`documentPreviewOverlay${documentPreview.fullscreen ? " isFullscreen" : ""}`} role="dialog" aria-modal="true" aria-label={documentPreview.name}>
           <div className="documentPreviewCard">
             <header>
               <b>{documentPreview.name}</b>
               <div>
-                <a href={documentPreview.url} target="_blank" rel="noreferrer">Apri a schermo intero</a>
+                {documentPreview.fullscreen ? (
+                  <button type="button" className="documentBackButton" onClick={() => setDocumentPreview((current) => ({ ...current, fullscreen: false }))}>
+                    ← Torna ai documenti
+                  </button>
+                ) : (
+                  <button type="button" onClick={() => setDocumentPreview((current) => ({ ...current, fullscreen: true }))}>
+                    Apri a schermo intero
+                  </button>
+                )}
                 <a href={documentPreview.url} download={documentPreview.name}>Scarica</a>
                 <button type="button" onClick={closeDocumentPreview} aria-label="Chiudi documento">×</button>
               </div>
