@@ -36,8 +36,22 @@ export async function queueFormRequest({
   operationKey,
 }) {
   const entries = [];
-  for (const [name, value] of form.entries())
-    entries.push({ name, value });
+  for (const [name, value] of form.entries()) {
+    const isFile = typeof Blob !== "undefined" && value instanceof Blob;
+    entries.push({
+      name,
+      value,
+      ...(isFile
+        ? {
+            isFile: true,
+            filename:
+              typeof value.name === "string" && value.name
+                ? value.name
+                : "allegato",
+          }
+        : {}),
+    });
+  }
   await transact("readwrite", (store) => store.put({
     id,
     endpoint,
@@ -100,7 +114,11 @@ export async function flushOfflineQueue() {
     const identity = await authorizationHeaders(item);
     if (!identity) continue;
     const form = new FormData();
-    for (const entry of item.entries) form.append(entry.name, entry.value);
+    for (const entry of item.entries) {
+      if (entry.isFile && entry.value instanceof Blob)
+        form.append(entry.name, entry.value, entry.filename || "allegato");
+      else form.append(entry.name, entry.value);
+    }
     try {
       const response = await fetch(item.endpoint, {
         method: item.method,
