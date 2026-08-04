@@ -3011,6 +3011,58 @@ function AudioRecorder({ onRecorded }) {
   );
 }
 
+function SocialVideo({ src, title = "Video dal viaggio" }) {
+  const videoRef = useRef(null);
+  const [playing, setPlaying] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const formatTime = (value) => {
+    const safe = Number.isFinite(value) ? Math.max(0, Math.floor(value)) : 0;
+    return `${Math.floor(safe / 60)}:${String(safe % 60).padStart(2, "0")}`;
+  };
+  const toggle = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) video.play().catch(() => {});
+    else video.pause();
+  };
+  return (
+    <div className={`socialVideo ${playing ? "isPlaying" : ""}`}>
+      <video
+        ref={videoRef}
+        playsInline
+        preload="metadata"
+        src={src}
+        aria-label={title}
+        onClick={toggle}
+        onLoadedMetadata={(event) => setDuration(Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : 0)}
+        onDurationChange={(event) => setDuration(Number.isFinite(event.currentTarget.duration) ? event.currentTarget.duration : 0)}
+        onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime || 0)}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onEnded={() => { setPlaying(false); setCurrentTime(0); }}
+      />
+      <div className="socialVideoControls">
+        <button type="button" onClick={toggle} aria-label={playing ? "Metti in pausa il video" : "Riproduci il video"}>
+          <span aria-hidden="true">{playing ? "Ⅱ" : "▶"}</span>
+        </button>
+        <input
+          type="range"
+          min="0"
+          max={duration || 0}
+          step="0.1"
+          value={Math.min(currentTime, duration || 0)}
+          onChange={(event) => {
+            if (videoRef.current) videoRef.current.currentTime = Number(event.target.value);
+          }}
+          aria-label="Posizione del video"
+        />
+        <small>{formatTime(currentTime)} / {formatTime(duration)}</small>
+      </div>
+    </div>
+  );
+}
+
 function PostMedia({ items }) {
   const visualItems = items.filter(
     (item) => !item.media_type?.startsWith("audio"),
@@ -3033,7 +3085,10 @@ function PostMedia({ items }) {
                 <img src={item.media_url} alt="Ricordo del viaggio" loading="lazy" />
               )}
               {item.media_type?.startsWith("video") && (
-                <video controls playsInline preload="metadata" src={item.media_url} />
+                <SocialVideo
+                  src={item.media_url}
+                  title={item.media_name || "Video dal viaggio"}
+                />
               )}
               {index === 0 && photoAudio && (
                 <div className="photoAudioOverlay">
