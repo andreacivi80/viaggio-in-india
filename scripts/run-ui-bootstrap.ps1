@@ -31,7 +31,7 @@ try {
   $env:TEST_BASE_URL = $BaseUrl
   $env:QA_BOOTSTRAP_NAME = $coordinatorName
   $env:QA_BOOTSTRAP_POST = $postMarker
-  & npx playwright test tests/ui-bootstrap.spec.mjs
+  & npx playwright test tests/ui-bootstrap.spec.mjs --config playwright.release.config.mjs
   $testExit = $LASTEXITCODE
 }
 finally {
@@ -46,6 +46,16 @@ DELETE FROM profile_invites WHERE profile_id IN (SELECT id FROM profiles WHERE n
 DELETE FROM auth_sessions WHERE profile_id IN (SELECT id FROM profiles WHERE name='$coordinatorName');
 DELETE FROM profile_device_claims WHERE profile_id IN (SELECT id FROM profiles WHERE name='$coordinatorName');
 DELETE FROM profiles WHERE name='$coordinatorName';
+DELETE FROM comments WHERE post_id IN (SELECT id FROM posts WHERE text IN ('$postMarker-Samsung-S20-FE','$postMarker-Samsung-vecchio','$postMarker-iPhone-piccolo'));
+DELETE FROM reactions WHERE post_id IN (SELECT id FROM posts WHERE text IN ('$postMarker-Samsung-S20-FE','$postMarker-Samsung-vecchio','$postMarker-iPhone-piccolo'));
+DELETE FROM post_media WHERE post_id IN (SELECT id FROM posts WHERE text IN ('$postMarker-Samsung-S20-FE','$postMarker-Samsung-vecchio','$postMarker-iPhone-piccolo'));
+DELETE FROM posts WHERE text IN ('$postMarker-Samsung-S20-FE','$postMarker-Samsung-vecchio','$postMarker-iPhone-piccolo');
+DELETE FROM document_status WHERE profile_id IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo'));
+DELETE FROM locations WHERE profile_id IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo'));
+DELETE FROM profile_invites WHERE profile_id IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo')) OR created_by IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo'));
+DELETE FROM auth_sessions WHERE profile_id IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo'));
+DELETE FROM profile_device_claims WHERE profile_id IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo'));
+DELETE FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo');
 "@
   $compactCleanupSql = ($cleanupSql -replace '\s+', ' ').Trim()
   if (-not (Invoke-D1Sql $compactCleanupSql)) {

@@ -92,7 +92,7 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
   expect(video.byteLength).toBeGreaterThan(0);
   const audio = makeWave();
   try {
-    await page.getByRole("button", { name: "Pubblica" }).click();
+    await page.getByRole("button", { name: "Pubblica" }).tap();
     const sheet = page.locator(".uploadSheet");
     await sheet.locator('input[accept^="image"]').first().setInputFiles(photoPath);
     await expect(sheet.getByText("1 allegati pronti")).toBeVisible();
@@ -116,7 +116,7 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
     const responsePromise = page.waitForResponse(
       (response) => response.url().includes("/api/posts") && response.request().method() === "POST",
     );
-    await sheet.locator(".composerActions > button").click();
+    await sheet.locator(".composerActions > button").tap();
     const response = await responsePromise;
     expect(response.status()).toBe(201);
     createdPostId = (await response.json()).id;
@@ -142,7 +142,7 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
     await expect(videoPlayer).toBeVisible();
     await expect.poll(() => videoPlayer.evaluate((element) => element.duration)).toBeGreaterThan(0);
 
-    await page.getByRole("button", { name: "Pubblica" }).click();
+    await page.getByRole("button", { name: "Pubblica" }).tap();
     const secondSheet = page.locator(".uploadSheet");
     const photoBytes = await readFile(photoPath);
     const tenPhotos = Array.from({ length: 10 }, (_, index) => ({

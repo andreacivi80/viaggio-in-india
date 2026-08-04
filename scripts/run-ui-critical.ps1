@@ -1,6 +1,7 @@
 param(
   [Parameter(Mandatory = $true)][string]$BaseUrl,
-  [string[]]$TestFiles = @("tests/ui-critical.spec.mjs", "tests/ui-navigation.spec.mjs", "tests/ui-social.spec.mjs", "tests/ui-media.spec.mjs", "tests/ui-documents.spec.mjs", "tests/ui-location.spec.mjs", "tests/ui-people.spec.mjs", "tests/ui-role-live.spec.mjs", "tests/ui-responsive.spec.mjs", "tests/ui-secondary.spec.mjs")
+  [string[]]$TestFiles = @("tests/ui-critical.spec.mjs", "tests/ui-navigation.spec.mjs", "tests/ui-social.spec.mjs", "tests/ui-media.spec.mjs", "tests/ui-documents.spec.mjs", "tests/ui-location.spec.mjs", "tests/ui-people.spec.mjs", "tests/ui-role-live.spec.mjs", "tests/ui-responsive.spec.mjs", "tests/ui-secondary.spec.mjs"),
+  [string]$Project = "Samsung-S20-FE"
 )
 
 $ErrorActionPreference = "Stop"
@@ -49,7 +50,7 @@ try {
   $env:QA_UI_COORDINATOR_NAME = $coordinatorName
   $env:QA_UI_COORDINATOR_INVITE_TOKEN = $coordinatorInviteToken
   $env:QA_UI_MANAGED_PROFILE_NAME = $managedProfileName
-  & npx playwright test @TestFiles
+  & npx playwright test @TestFiles --config playwright.release.config.mjs --project=$Project
   $testExit = $LASTEXITCODE
 }
 finally {

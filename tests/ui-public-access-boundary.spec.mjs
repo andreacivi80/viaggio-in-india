@@ -14,7 +14,7 @@ test("telefono nuovo: Gruppo richiede la password e non concede identità person
     })))
     .toEqual({ groupCode: null, sessionToken: null });
 
-  await page.getByRole("button", { name: "Gruppo" }).click();
+  await page.getByRole("button", { name: "Gruppo" }).tap();
   await expect(page.getByText("Accesso privato", { exact: true })).toBeVisible();
   await expect(page.getByPlaceholder("Password")).toBeVisible();
   await expect(page.getByText("Entra nel gruppo", { exact: true })).toHaveCount(0);
@@ -30,15 +30,15 @@ test("telefono già usato: il vecchio codice salvato viene eliminato e Gruppo re
     .poll(() => page.evaluate(() => localStorage.getItem("india-group-code")))
     .toBe(null);
   await expect(page.locator(".accessPill")).toContainText("Pubblico");
-  await page.getByRole("button", { name: "Gruppo" }).click();
+  await page.getByRole("button", { name: "Gruppo" }).tap();
   await expect(page.getByPlaceholder("Password")).toBeVisible();
 });
 
 test("password comune verificata: non resta salvata e non crea una sessione personale", async ({ page }) => {
   await page.goto(baseUrl, { waitUntil: "networkidle" });
-  await page.getByRole("button", { name: "Gruppo" }).click();
+  await page.getByRole("button", { name: "Gruppo" }).tap();
   await page.getByPlaceholder("Password").fill("india26");
-  await page.getByRole("button", { name: "Accedi", exact: true }).click();
+  await page.locator(".quickProfilePanel").getByRole("button", { name: "Accedi", exact: true }).tap();
 
   await expect
     .poll(() => page.evaluate(() => localStorage.getItem("india-group-code")))
@@ -67,6 +67,6 @@ test("password comune verificata: non resta salvata e non crea una sessione pers
   expect([401, 403]).toContain(postResponse.status());
 
   await page.reload({ waitUntil: "networkidle" });
-  await page.getByRole("button", { name: "Gruppo" }).click();
+  await page.getByRole("button", { name: "Gruppo" }).tap();
   await expect(page.getByPlaceholder("Password")).toBeVisible();
 });

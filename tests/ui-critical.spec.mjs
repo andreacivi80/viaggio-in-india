@@ -8,7 +8,7 @@ const canMutateQa = process.env.QA_UI_ALLOW_REGISTRATION === "true";
 test("un dispositivo pubblico non vede comandi o dati privati", async ({ page }) => {
   await page.goto("/", { waitUntil: "networkidle" });
   await expect(page.locator(".accessPill")).toContainText("Pubblico");
-  await page.getByRole("button", { name: "Gruppo", exact: true }).click();
+  await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
   await expect(page.getByText("Accesso privato", { exact: true })).toBeVisible();
   await expect(page.getByPlaceholder("Password")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Documenti e sicurezza" })).toHaveCount(0);
@@ -22,9 +22,9 @@ test("un dispositivo pubblico non vede comandi o dati privati", async ({ page })
 
 test("una password errata non sblocca il gruppo", async ({ page }) => {
   await page.goto("/", { waitUntil: "networkidle" });
-  await page.getByRole("button", { name: "Gruppo", exact: true }).click();
+  await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
   await page.getByPlaceholder("Password").fill("codice-sbagliato");
-  await page.getByRole("button", { name: "Accedi", exact: true }).click();
+  await page.locator(".quickProfilePanel").getByRole("button", { name: "Accedi", exact: true }).tap();
   await expect(page.getByText("Codice non corretto", { exact: true })).toBeVisible();
   await expect(page.locator(".accessPill")).toContainText("Pubblico");
   await expect(page.getByRole("heading", { name: "Documenti e sicurezza" })).toHaveCount(0);
@@ -32,7 +32,7 @@ test("una password errata non sblocca il gruppo", async ({ page }) => {
 
 test("senza sessione il compositore resta chiuso", async ({ page }) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
-  await page.getByRole("button", { name: "Pubblica", exact: true }).click();
+  await page.getByRole("button", { name: "Pubblica", exact: true }).tap();
   const sheet = page.locator(".uploadSheet");
   await expect(sheet.getByText("Accesso privato", { exact: true })).toBeVisible();
   await expect(sheet.getByText("Pubblicazione del gruppo")).toHaveCount(0);
@@ -42,19 +42,19 @@ test("senza sessione il compositore resta chiuso", async ({ page }) => {
 test("password corretta porta alla scelta del ruolo e alla creazione del profilo", async ({ page }) => {
   test.skip(!groupCode || !canMutateQa, "Registrazione abilitata soltanto nell'ambiente QA isolato");
   await page.goto("/", { waitUntil: "networkidle" });
-  await page.getByRole("button", { name: "Gruppo", exact: true }).click();
+  await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
   await page.getByPlaceholder("Password").fill(groupCode);
-  await page.getByRole("button", { name: "Accedi", exact: true }).click();
+  await page.locator(".quickProfilePanel").getByRole("button", { name: "Accedi", exact: true }).tap();
   await expect(page.getByText("Entra nel gruppo", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Viaggiatore", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Coordinatore", exact: true })).toBeVisible();
 
   const uniqueName = `QA ${Date.now()}`;
   await page.getByPlaceholder("Nome *").fill(uniqueName);
-  await page.getByRole("button", { name: "Viaggiatore", exact: true }).click();
-  await page.getByRole("button", { name: "Crea profilo e accedi", exact: true }).click();
+  await page.getByRole("button", { name: "Viaggiatore", exact: true }).tap();
+  await page.getByRole("button", { name: "Crea profilo e accedi", exact: true }).tap();
   await expect(page.locator(".accessPill")).toContainText("QA");
-  await page.getByRole("button", { name: "Gruppo", exact: true }).click();
+  await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
   await expect(page.getByRole("button", { name: "Documenti e sicurezza", exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Griglia coordinatore", exact: true })).toHaveCount(0);
 });
@@ -67,7 +67,7 @@ test("un token locale falso viene rimosso senza perdere la bozza", async ({ page
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await expect.poll(() => page.evaluate(() => localStorage.getItem("india-session-token"))).toBe(null);
   expect(await page.evaluate(() => localStorage.getItem("india-draft"))).toBe("Bozza da conservare");
-  await page.getByRole("button", { name: "Pubblica", exact: true }).click();
+  await page.getByRole("button", { name: "Pubblica", exact: true }).tap();
   await expect(page.locator(".uploadSheet").getByText("Accesso privato", { exact: true })).toBeVisible();
 });
 

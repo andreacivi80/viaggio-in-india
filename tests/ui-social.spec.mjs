@@ -76,7 +76,7 @@ test("visitatore e viaggiatore interagiscono senza ereditare comandi non autoriz
     await guestPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
     const guestName = `Visitatore ${Date.now().toString().slice(-6)}`;
     await guestPage.locator(".visitorBar input").fill(guestName);
-    await guestPage.locator(".visitorBar").getByRole("button", { name: "Salva" }).click();
+    await guestPage.locator(".visitorBar").getByRole("button", { name: "Salva" }).tap();
     expect(await guestPage.evaluate(() => localStorage.getItem("india-visitor-name"))).toBe(guestName);
     const guestPost = guestPage.locator(".post").filter({ hasText: postText });
     await expect(guestPost).toBeVisible();
@@ -85,10 +85,10 @@ test("visitatore e viaggiatore interagiscono senza ereditare comandi non autoriz
     const reactionResponse = guestPage.waitForResponse(
       (response) => response.url().includes("/api/reactions") && response.request().method() === "POST",
     );
-    await guestPost.getByRole("button", { name: "Mi piace" }).click();
+    await guestPost.getByRole("button", { name: "Mi piace" }).tap();
     expect((await reactionResponse).status()).toBe(200);
     await expect(guestPost.locator(".likesSummary")).toContainText(guestName);
-    await guestPost.locator(".likesSummary").click();
+    await guestPost.locator(".likesSummary").tap();
     await expect(guestPost.locator(".likerList")).toContainText(guestName);
 
     await observerPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
@@ -100,7 +100,7 @@ test("visitatore e viaggiatore interagiscono senza ereditare comandi non autoriz
       (response) => response.url().includes("/api/comments") && response.request().method() === "POST",
     );
     await guestPost.getByPlaceholder("Scrivi un commento…").fill(commentText);
-    await guestPost.getByRole("button", { name: "Invia commento" }).click();
+    await guestPost.getByRole("button", { name: "Invia commento" }).tap();
     expect((await commentResponse).status()).toBe(201);
     const ownComment = guestPost.locator(".comment").filter({ hasText: commentText });
     await expect(ownComment).toContainText(guestName);
@@ -118,13 +118,13 @@ test("visitatore e viaggiatore interagiscono senza ereditare comandi non autoriz
     await expect(observerComment.getByRole("button", { name: /Modifica|Elimina/ })).toHaveCount(0);
 
     const editedText = `${commentText} modificato`;
-    await reloadedOwnComment.getByRole("button", { name: "Modifica" }).click();
+    await reloadedOwnComment.getByRole("button", { name: "Modifica" }).tap();
     const commentEditor = reloadedGuestPost.locator(".commentEditor");
     await commentEditor.getByRole("textbox", { name: "Modifica commento" }).fill(editedText);
     const editResponse = guestPage.waitForResponse(
       (response) => response.url().includes("/api/comments/") && response.request().method() === "PUT",
     );
-    await commentEditor.getByRole("button", { name: "Salva modifica commento" }).click();
+    await commentEditor.getByRole("button", { name: "Salva modifica commento" }).tap();
     expect((await editResponse).status()).toBe(200);
     await expect(reloadedGuestPost.getByText(editedText)).toBeVisible();
     await observerPage.bringToFront();
@@ -132,12 +132,12 @@ test("visitatore e viaggiatore interagiscono senza ereditare comandi non autoriz
 
     await guestPage.bringToFront();
     const editedComment = reloadedGuestPost.locator(".comment").filter({ hasText: editedText });
-    await editedComment.getByRole("button", { name: "Elimina" }).click();
+    await editedComment.getByRole("button", { name: "Elimina" }).tap();
     const confirm = guestPage.locator(".confirmCard").filter({ hasText: "Eliminare questo commento?" });
     const deleteResponse = guestPage.waitForResponse(
       (response) => response.url().includes("/api/comments/") && response.request().method() === "DELETE",
     );
-    await confirm.getByRole("button", { name: "Elimina" }).click();
+    await confirm.getByRole("button", { name: "Elimina" }).tap();
     expect((await deleteResponse).status()).toBe(200);
     await expect(reloadedGuestPost.getByText(editedText)).toHaveCount(0);
     await observerPage.bringToFront();
@@ -147,7 +147,7 @@ test("visitatore e viaggiatore interagiscono senza ereditare comandi non autoriz
     const removeReaction = guestPage.waitForResponse(
       (response) => response.url().includes("/api/reactions") && response.request().method() === "POST",
     );
-    await reloadedGuestPost.getByRole("button", { name: "Mi piace" }).click();
+    await reloadedGuestPost.getByRole("button", { name: "Mi piace" }).tap();
     expect((await removeReaction).status()).toBe(200);
     await expect(reloadedGuestPost.getByText(guestName)).toHaveCount(0);
   } finally {

@@ -18,7 +18,7 @@ test("bacheca armonica: i comandi non coprono il Taj Mahal", async ({ browser },
     await page.goto(baseUrl, { waitUntil: "networkidle" });
     const hero = page.locator(".hero");
     await expect(hero).toBeVisible();
-    expect(await hero.evaluate((element) => getComputedStyle(element).backgroundImage)).toContain("agra.jpg");
+    expect(await hero.evaluate((element) => getComputedStyle(element).backgroundImage)).toContain("taj-hero-v2.webp");
 
     const heroBox = await hero.boundingBox();
     const controlLocators = [

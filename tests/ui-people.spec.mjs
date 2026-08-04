@@ -48,7 +48,7 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     await tapBottom(coordinatorPage, "Gruppo");
     const form = coordinatorPage.locator(".profileForm");
     await expect(form).toBeVisible();
-    await form.getByRole("button", { name: "Inserisci viaggiatore" }).click();
+    await form.getByRole("button", { name: "Inserisci viaggiatore" }).tap();
     await expect(form.getByRole("status")).toContainText("Inserisci almeno il nome.");
 
     await form.getByPlaceholder("Nome *").fill(managedName);
@@ -60,7 +60,7 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     const createResponse = coordinatorPage.waitForResponse(
       (response) => response.url().endsWith("/api/profiles") && response.request().method() === "POST",
     );
-    await form.getByRole("button", { name: "Inserisci viaggiatore" }).click();
+    await form.getByRole("button", { name: "Inserisci viaggiatore" }).tap();
     expect((await createResponse).status()).toBe(201);
     await expect(form.getByRole("status")).toContainText("Viaggiatore inserito correttamente.");
 
@@ -80,7 +80,7 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     const updateResponse = coordinatorPage.waitForResponse(
       (response) => response.url().includes("/api/profiles/") && response.request().method() === "PUT",
     );
-    await form.getByRole("button", { name: "Salva modifiche" }).click();
+    await form.getByRole("button", { name: "Salva modifiche" }).tap();
     expect((await updateResponse).status()).toBe(200);
     await expect(form.getByRole("status")).toContainText("Profilo aggiornato correttamente.");
     card = coordinatorPage.locator(".peopleGrid article").filter({ hasText: managedName });
@@ -91,7 +91,7 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     const inviteResponse = coordinatorPage.waitForResponse(
       (response) => response.url().endsWith("/api/auth/invites") && response.request().method() === "POST",
     );
-    await card.getByRole("button", { name: "Crea invito personale" }).click();
+    await card.getByRole("button", { name: "Crea invito personale" }).tap();
     expect((await inviteResponse).status()).toBe(201);
     await expect(
       coordinatorPage.getByRole("status").filter({ hasText: `Invito pronto per ${managedName}` }),

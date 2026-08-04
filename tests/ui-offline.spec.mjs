@@ -31,12 +31,12 @@ test("invio offline sopravvive alla chiusura e parte una sola volta al ritorno d
   expect(sessionToken).toBeTruthy();
   const marker = `Offline QA ${Date.now()}`;
   try {
-    await page.getByRole("button", { name: "Pubblica", exact: true }).click();
+    await page.getByRole("button", { name: "Pubblica", exact: true }).tap();
     const sheet = page.locator(".uploadSheet");
     await sheet.getByPlaceholder("Racconta questo momento…").fill(marker);
     await sheet.locator('input[accept^="image"]').first().setInputFiles(photoPath);
     await context.setOffline(true);
-    await sheet.locator(".composerActions > button").click();
+    await sheet.locator(".composerActions > button").tap();
     await expect(page.getByText("Salvato nel telefono. Sarà pubblicato automaticamente quando torna la rete.")).toBeVisible();
     await expect.poll(() => offlineCount(page)).toBe(1);
 

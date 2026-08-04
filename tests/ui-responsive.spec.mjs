@@ -55,7 +55,7 @@ test("pubblicazione e commenti restano usabili senza zoom involontario su iPhone
       await page.goto(`${baseUrl}/?invite=${encodeURIComponent(deviceInviteToken)}`, {
         waitUntil: "networkidle",
       });
-      await page.getByRole("button", { name: "Pubblica" }).click();
+      await page.getByRole("button", { name: "Pubblica" }).tap();
       const sheet = page.locator(".uploadSheet");
       await expect(sheet.getByText("Pubblicazione del gruppo")).toBeVisible();
       const composerText = sheet.getByPlaceholder("Racconta questo momento…");
@@ -66,7 +66,7 @@ test("pubblicazione e commenti restano usabili senza zoom involontario su iPhone
       const responsePromise = page.waitForResponse(
         (response) => response.url().endsWith("/api/posts") && response.request().method() === "POST",
       );
-      await sheet.locator(".composerActions > button").click();
+      await sheet.locator(".composerActions > button").tap();
       expect((await responsePromise).status()).toBe(201);
       const post = page.locator(".post").filter({ hasText: marker });
       await expect(post).toBeVisible();

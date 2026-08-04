@@ -2819,15 +2819,15 @@ h2 {
   justify-content: center;
   background: #10241ccc;
   backdrop-filter: blur(4px);
-  overflow: hidden;
+  overflow: visible;
   overscroll-behavior: none;
   touch-action: pan-y;
 }
 .travelerDirectory {
   width: min(100%, 680px);
-  height: min(78vh, 78dvh);
-  max-height: min(78vh, 78dvh);
-  overflow: auto;
+  height: min(82vh, 82dvh);
+  max-height: min(82vh, 82dvh);
+  overflow: hidden;
   overscroll-behavior: contain;
   padding: 16px 16px calc(22px + env(safe-area-inset-bottom));
   border-radius: 24px 24px 0 0;
@@ -2835,7 +2835,8 @@ h2 {
   box-shadow: 0 -20px 60px #0005;
 }
 .directoryHead {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 2;
   flex: 0 0 auto;
   display: flex;
@@ -2874,24 +2875,24 @@ h2 {
 }
 .directoryList {
   display: grid;
-  gap: 8px;
+  gap: 5px;
   pointer-events: auto;
 }
 .directoryPerson {
   min-width: 0;
   display: grid;
-  grid-template-columns: 44px minmax(0, 1fr) auto;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
+  gap: 7px;
+  padding: 7px 8px;
   border: 1px solid #eadfce;
   border-radius: 15px;
   background: #fff;
 }
 .directoryPerson img,
 .directoryPerson > .avatar {
-  width: 44px;
-  height: 44px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -2911,7 +2912,7 @@ h2 {
 .directoryPerson code {
   max-width: 140px;
   overflow: hidden;
-  padding: 5px 7px;
+  padding: 4px 6px;
   border-radius: 8px;
   background: #eaf1ed;
   color: var(--green);
@@ -3547,6 +3548,16 @@ mark.mention {
   color: #553820;
   text-align: center;
   font-weight: 800;
+}
+.pdfNativeFallback {
+  display: block;
+  margin: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--green);
+  text-align: center;
+  font-weight: 900;
 }
 .pdfPages {
   display: grid;
@@ -4625,7 +4636,8 @@ mark.mention {
   overflow-y: auto;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
+  touch-action: none;
+  scrollbar-gutter: stable;
   padding: 1px 2px calc(12px + env(safe-area-inset-bottom));
 }
 .directoryPerson .coordinatorRole {

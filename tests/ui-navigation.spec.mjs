@@ -23,7 +23,6 @@ test("i cinque comandi inferiori aprono schermate reali senza pagina bianca", as
   const cases = [
     ["Viaggio", "La storia, giorno per giorno"],
     ["Mappa", "Tutto l’itinerario"],
-    ["Gruppo", "Facce, nomi e storie"],
     ["Bacheca", "Raccontiamocele insieme"],
   ];
   for (const [buttonName, heading] of cases) {
@@ -34,6 +33,9 @@ test("i cinque comandi inferiori aprono schermate reali senza pagina bianca", as
     await expect(page.locator("main")).toBeVisible();
     expect(await page.locator("main").evaluate((node) => node.getBoundingClientRect().height)).toBeGreaterThan(100);
   }
+  await tapCenter(page, page.locator(".tabs").getByRole("button", { name: "Gruppo" }));
+  await expect(page.locator(".quickProfilePanel").getByPlaceholder("Password")).toBeVisible();
+  await page.getByRole("button", { name: "Chiudi pannello personale" }).tap();
   await tapCenter(page, page.locator(".tabs").getByRole("button", { name: "Pubblica" }));
   await expect(page.getByRole("heading", { name: "Che cosa vuoi condividere?" })).toBeVisible();
   await expect(page.locator(".uploadSheet").getByText("Accesso privato")).toBeVisible();
@@ -46,7 +48,7 @@ test("tutte le quattordici giornate si aprono con foto e contenuto", async ({ pa
   const dayButtons = page.locator(".diaryDayPicker button");
   await expect(dayButtons).toHaveCount(14);
   for (let index = 0; index < 14; index += 1) {
-    await dayButtons.nth(index).click();
+    await dayButtons.nth(index).tap();
     const article = page.locator(".day").nth(index);
     await expect(article).toHaveClass(/open/);
     await expect(page.locator(".day.open")).toHaveCount(1);
@@ -67,21 +69,21 @@ test("tutte le quattordici giornate si aprono con foto e contenuto", async ({ pa
 test("spunte e navigazione del diario restano coerenti dopo il ricaricamento", async ({ page }) => {
   await openApp(page);
   await tapCenter(page, page.locator(".tabs").getByRole("button", { name: "Viaggio" }));
-  await page.locator(".diaryDayPicker button").first().click();
+  await page.locator(".diaryDayPicker button").first().tap();
   const firstDay = page.locator(".day").first();
   await expect(firstDay.getByRole("button", { name: "Giorno precedente" })).toBeDisabled();
   const firstCheck = firstDay.locator('.checks input[type="checkbox"]').first();
-  await firstDay.locator(".checks label").first().click();
+  await firstDay.locator(".checks label").first().tap();
   await expect(firstCheck).toBeChecked();
-  await firstDay.getByRole("button", { name: "Giorno successivo" }).click();
+  await firstDay.getByRole("button", { name: "Giorno successivo" }).tap();
   await expect(page.locator(".day").nth(1)).toHaveClass(/open/);
-  await page.locator(".day").nth(1).getByRole("button", { name: "Giorno precedente" }).click();
+  await page.locator(".day").nth(1).getByRole("button", { name: "Giorno precedente" }).tap();
   await expect(firstDay).toHaveClass(/open/);
-  await page.locator(".diaryDayPicker button").last().click();
+  await page.locator(".diaryDayPicker button").last().tap();
   await expect(page.locator(".day").last().getByRole("button", { name: "Giorno successivo" })).toBeDisabled();
   await page.reload({ waitUntil: "domcontentloaded" });
   await tapCenter(page, page.locator(".tabs").getByRole("button", { name: "Viaggio" }));
-  await page.locator(".diaryDayPicker button").first().click();
+  await page.locator(".diaryDayPicker button").first().tap();
   await expect(page.locator(".day").first().locator('.checks input[type="checkbox"]').first()).toBeChecked();
 });
 
@@ -97,7 +99,7 @@ test("la mappa seleziona automaticamente tutte le tappe e torna alla bacheca", a
   const routeButtons = page.locator(".routeChips button");
   await expect(routeButtons).toHaveCount(14);
   for (let index = 0; index < 14; index += 1) {
-    await routeButtons.nth(index).click();
+    await routeButtons.nth(index).tap();
     await expect(routeButtons.nth(index)).toHaveClass(/active/);
     await expect(page.locator(".mapTrip")).toContainText(`Giorno ${index + 1}`);
     await expect(page.locator(".vectorMarker").first()).toBeVisible();
@@ -117,10 +119,10 @@ test("la mappa seleziona automaticamente tutte le tappe e torna alla bacheca", a
       expect(marker.bottom).toBeLessThanOrEqual(mapBounds.y + mapBounds.height);
     }
   }
-  await page.getByRole("button", { name: "Vedi tutto" }).click();
+  await page.getByRole("button", { name: "Vedi tutto" }).tap();
   await expect(page.getByRole("heading", { name: "Tutto l’itinerario" })).toBeVisible();
   await expect(page.locator(".vectorMarker")).toHaveCount(8);
-  await page.getByRole("button", { name: /Torna alla Bacheca/ }).click();
+  await page.getByRole("button", { name: /Torna alla Bacheca/ }).tap();
   await expect(page.getByRole("heading", { name: "Raccontiamocele insieme" })).toBeVisible();
 });
 
@@ -128,8 +130,7 @@ test("la vista pubblica del gruppo non espone documenti o comandi di modifica", 
   await openApp(page);
   const groupButton = page.locator(".tabs").getByRole("button", { name: "Gruppo" });
   await tapCenter(page, groupButton);
-  await expect(groupButton).toHaveClass(/active/);
-  await expect(page.getByRole("heading", { name: "Facce, nomi e storie" })).toBeVisible();
+  await expect(page.locator(".quickProfilePanel").getByPlaceholder("Password")).toBeVisible();
   await expect(page.getByText("Documenti e sicurezza")).toHaveCount(0);
   await expect(page.getByRole("button", { name: /Crea invito|Modifica|Elimina/i })).toHaveCount(0);
 });

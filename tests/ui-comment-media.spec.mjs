@@ -36,7 +36,7 @@ test("commenti con audio e video reali vengono salvati e riprodotti", async ({ p
       const responsePromise = page.waitForResponse(
         (response) => response.url().includes("/api/comments") && response.request().method() === "POST",
       );
-      await post.getByRole("button", { name: "Invia commento" }).click();
+      await post.getByRole("button", { name: "Invia commento" }).tap();
       const response = await responsePromise;
       expect(response.status()).toBe(201);
       const comment = post.locator(".comment").filter({ hasText: text });

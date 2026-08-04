@@ -23,7 +23,7 @@ const tapBottom = async (page, name) => {
 };
 
 const openPersonalPanel = async (page) => {
-  await page.locator("button.accessPill").click();
+  await page.locator("button.accessPill").tap();
   await expect(page.locator(".quickProfilePanel")).toBeVisible();
 };
 
@@ -48,14 +48,14 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
     const locationResponse = travelerPage.waitForResponse(
       (response) => response.url().endsWith("/api/locations") && response.request().method() === "POST",
     );
-    await travelerPage.getByRole("button", { name: "Condividi posizione" }).click();
+    await travelerPage.getByRole("button", { name: "Condividi posizione" }).tap();
     expect((await locationResponse).status()).toBe(200);
     await expect(travelerPage.getByText("Posizione condivisa adesso.")).toBeVisible();
 
-    await travelerPage.getByRole("button", { name: "Documenti e sicurezza" }).click();
+    await travelerPage.getByRole("button", { name: "Documenti e sicurezza" }).tap();
     const mapToggle = travelerPage.getByRole("button", { name: /Apri mappa posizioni/ });
     await expect(mapToggle).toContainText(/\d+/);
-    await mapToggle.click();
+    await mapToggle.tap();
     const travelerLocation = travelerPage.locator(".locationList article").filter({ hasText: travelerName });
     await expect(travelerLocation).toContainText("28.6139, 77.2090");
     await expect(travelerLocation.getByRole("link", { name: "Google Maps" })).toHaveAttribute(
@@ -73,19 +73,19 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
     await expect(travelerPage.locator(".personMapMarker").filter({ hasText: travelerName[0] }).first()).toBeVisible({
       timeout: 20_000,
     });
-    await travelerPage.getByRole("button", { name: /Chiudi mappa posizioni/ }).click();
+    await travelerPage.getByRole("button", { name: /Chiudi mappa posizioni/ }).tap();
     await expect(travelerPage.locator(".peopleLocationMap")).toHaveCount(0);
 
     await coordinatorPage.goto(`${baseUrl}/?invite=${encodeURIComponent(coordinatorInvite)}`, {
       waitUntil: "networkidle",
     });
     await openPersonalPanel(coordinatorPage);
-    await coordinatorPage.getByRole("button", { name: "Griglia coordinatore" }).click();
-    await coordinatorPage.getByRole("button", { name: /Apri mappa posizioni/ }).click();
+    await coordinatorPage.getByRole("button", { name: "Griglia coordinatore" }).tap();
+    await coordinatorPage.getByRole("button", { name: /Apri mappa posizioni/ }).tap();
     const syncedLocation = coordinatorPage.locator(".locationList article").filter({ hasText: travelerName });
     await expect(syncedLocation).toContainText("28.6139, 77.2090", { timeout: 15_000 });
     await expect(syncedLocation.getByRole("button", { name: "Cancella posizione" })).toHaveCount(0);
-    await coordinatorPage.getByRole("button", { name: /Chiudi mappa posizioni/ }).click();
+    await coordinatorPage.getByRole("button", { name: /Chiudi mappa posizioni/ }).tap();
     await expect(coordinatorPage.locator(".peopleLocationMap")).toHaveCount(0);
 
     await publicPage.goto(baseUrl, { waitUntil: "networkidle" });
@@ -99,7 +99,7 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
     const deleteResponse = travelerPage.waitForResponse(
       (response) => response.url().includes("/api/locations/") && response.request().method() === "DELETE",
     );
-    await travelerPage.getByRole("button", { name: "Cancella posizione" }).click();
+    await travelerPage.getByRole("button", { name: "Cancella posizione" }).tap();
     expect((await deleteResponse).status()).toBe(200);
     await expect(travelerPage.getByText("Posizione cancellata.")).toBeVisible();
     await expect(syncedLocation).toHaveCount(0, { timeout: 15_000 });
@@ -109,7 +109,7 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
     travelerPage.on("request", (request) => {
       if (request.url().endsWith("/api/locations") && request.method() === "POST") deniedRequestCount += 1;
     });
-    await travelerPage.getByRole("button", { name: "Condividi posizione" }).click();
+    await travelerPage.getByRole("button", { name: "Condividi posizione" }).tap();
     await expect(travelerPage.getByText("Permesso posizione non disponibile.")).toBeVisible();
     expect(deniedRequestCount).toBe(0);
   } finally {

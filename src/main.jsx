@@ -37,9 +37,9 @@ import {
   sanitizeProfilesForPublicCache,
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
-import pdfWorkerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
+import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.6",
+const VERSION = "1.37.7",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -773,7 +773,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         new maplibregl.LngLatBounds(),
       );
       map.current.fitBounds(bounds, {
-        padding: { top: 55, right: 45, bottom: 100, left: 45 },
+        padding: { top: 112, right: 56, bottom: 108, left: 56 },
         maxZoom: day ? (day.km <= 25 ? 11.5 : day.km <= 120 ? 8.5 : 7.2) : 5.2,
         duration: 950,
         bearing: 0,
@@ -1033,10 +1033,24 @@ function App() {
 
   useEffect(() => {
     if (!travelersOpen) return undefined;
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const scrollY = window.scrollY;
+    const previous = {
+      position: document.body.style.position,
+      top: document.body.style.top,
+      left: document.body.style.left,
+      right: document.body.style.right,
+      width: document.body.style.width,
+      overflow: document.body.style.overflow,
+    };
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = "0";
+    document.body.style.right = "0";
+    document.body.style.width = "100%";
+    document.body.style.overflow = "visible";
     return () => {
-      document.body.style.overflow = previousOverflow;
+      Object.assign(document.body.style, previous);
+      window.scrollTo(0, scrollY);
     };
   }, [travelersOpen]);
   const simulatedDate = initialParams.get("simulateDate");
@@ -2297,6 +2311,7 @@ function Diary({
 }) {
   const locationRequestRef = useRef(0);
   const postOperationRef = useRef("");
+  const directoryTouchRef = useRef({ y: 0, scrollTop: 0 });
   const [clock, setClock] = useState(() => Date.now());
   useEffect(() => {
     const timer = setInterval(() => setClock(Date.now()), 1000);
@@ -2883,7 +2898,21 @@ function Diary({
               </button>
             </div>
             <p>Nei commenti scrivi <b>@</b> e scegli la persona da menzionare.</p>
-            <div className="directoryList">
+            <div
+              className="directoryList"
+              onTouchStart={(event) => {
+                directoryTouchRef.current = {
+                  y: event.touches[0]?.clientY || 0,
+                  scrollTop: event.currentTarget.scrollTop,
+                };
+              }}
+              onTouchMove={(event) => {
+                const currentY = event.touches[0]?.clientY;
+                if (typeof currentY !== "number") return;
+                event.currentTarget.scrollTop = directoryTouchRef.current.scrollTop +
+                  directoryTouchRef.current.y - currentY;
+              }}
+            >
               {sortTravelers(people).map((person) => (
                 <div key={person.id} className={`directoryPerson gender-${person.gender || "unspecified"}`}>
                   {person.avatar_url ? (
@@ -2938,7 +2967,7 @@ function AttachmentPreview({ file, onRemove }) {
   );
 }
 
-function PdfDocumentViewer({ url, name }) {
+function PdfDocumentViewer({ url, bytes, name }) {
   const pagesRef = useRef(null);
   const [status, setStatus] = useState("Caricamento PDF…");
   useEffect(() => {
@@ -2946,9 +2975,13 @@ function PdfDocumentViewer({ url, name }) {
     let loadingTask;
     (async () => {
       try {
-        const pdfjs = await import("pdfjs-dist");
+        const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs");
         pdfjs.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
-        loadingTask = pdfjs.getDocument(url);
+        loadingTask = pdfjs.getDocument({
+          data: new Uint8Array(bytes.slice(0)),
+          isEvalSupported: false,
+          useWorkerFetch: false,
+        });
         const pdf = await loadingTask.promise;
         const host = pagesRef.current;
         if (!host || cancelled) return;
@@ -2970,18 +3003,23 @@ function PdfDocumentViewer({ url, name }) {
         }
         if (!cancelled) setStatus("");
       } catch {
-        if (!cancelled) setStatus("Impossibile visualizzare il PDF. Puoi comunque scaricarlo.");
+        if (!cancelled) setStatus("Impossibile visualizzare il PDF in questa finestra.");
       }
     })();
     return () => {
       cancelled = true;
       loadingTask?.destroy?.();
     };
-  }, [url, name]);
+  }, [url, bytes, name]);
   return (
     <div className="pdfDocumentViewer">
       {status && <p role="status">{status}</p>}
       <div ref={pagesRef} className="pdfPages" />
+      {status === "Impossibile visualizzare il PDF in questa finestra." && (
+        <a className="pdfNativeFallback" href={url} target="_blank" rel="noreferrer">
+          Apri nel lettore PDF del telefono
+        </a>
+      )}
     </div>
   );
 }
@@ -4241,6 +4279,7 @@ function VaultOnline({
       if (documentPreview?.url) URL.revokeObjectURL(documentPreview.url);
       setDocumentPreview({
         url: blobUrl,
+        bytes: await previewBlob.arrayBuffer(),
         name: doc.file_name || "Documento",
         type: isPdf ? "application/pdf" : responseType,
       });
@@ -4642,7 +4681,7 @@ function VaultOnline({
             {documentPreview.type.startsWith("image/") ? (
               <img src={documentPreview.url} alt={documentPreview.name} />
             ) : documentPreview.type === "application/pdf" ? (
-              <PdfDocumentViewer url={documentPreview.url} name={documentPreview.name} />
+              <PdfDocumentViewer url={documentPreview.url} bytes={documentPreview.bytes} name={documentPreview.name} />
             ) : (
               <div className="documentPreviewFallback">
                 <p>Questo formato non può essere mostrato direttamente dal telefono.</p>

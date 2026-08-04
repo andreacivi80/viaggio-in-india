@@ -40,7 +40,7 @@ test("bozza, riselezione file e commento con foto restano utilizzabili", async (
     .toBeTruthy();
   const sessionToken = await page.evaluate(() => localStorage.getItem("india-session-token"));
   try {
-    await page.getByRole("button", { name: "Pubblica" }).click();
+    await page.getByRole("button", { name: "Pubblica" }).tap();
     let sheet = page.locator(".uploadSheet");
     const longText = `${"Un ricordo molto lungo. ".repeat(120)} 🧡 नमस्ते`;
     await sheet.getByPlaceholder("Racconta questo momento…").fill(longText);
@@ -50,12 +50,12 @@ test("bozza, riselezione file e commento con foto restano utilizzabili", async (
       { name: "seconda-foto.jpg", mimeType: "image/jpeg", buffer: await (await import("node:fs/promises")).readFile(photoPath) },
     ]);
     await expect(sheet.getByText("2 allegati pronti")).toBeVisible();
-    await sheet.getByRole("button", { name: "Chiudi" }).click();
-    await page.getByRole("button", { name: "Pubblica" }).click();
+    await sheet.getByRole("button", { name: "Chiudi" }).tap();
+    await page.getByRole("button", { name: "Pubblica" }).tap();
     sheet = page.locator(".uploadSheet");
     await expect(sheet.getByPlaceholder("Racconta questo momento…")).toHaveValue(longText);
     await expect(sheet.getByText("2 allegati pronti")).toBeVisible();
-    await sheet.getByRole("button", { name: "Rimuovi prima-foto.jpg" }).click();
+    await sheet.getByRole("button", { name: "Rimuovi prima-foto.jpg" }).tap();
     await expect(sheet.getByText("1 allegati pronti")).toBeVisible();
     await gallery.setInputFiles({ name: "prima-foto.jpg", mimeType: "image/jpeg", buffer: await (await import("node:fs/promises")).readFile(photoPath) });
     await expect(sheet.getByText("2 allegati pronti")).toBeVisible();
@@ -67,7 +67,7 @@ test("bozza, riselezione file e commento con foto restano utilizzabili", async (
     const createResponsePromise = page.waitForResponse(
       (response) => response.url().endsWith("/api/posts") && response.request().method() === "POST",
     );
-    await sheet.locator(".composerActions > button").click();
+    await sheet.locator(".composerActions > button").tap();
     const createResponse = await createResponsePromise;
     expect(createResponse.status()).toBe(201);
     createdPostId = (await createResponse.json()).id;
@@ -75,7 +75,7 @@ test("bozza, riselezione file e commento con foto restano utilizzabili", async (
     const post = page.locator(".post").filter({ hasText: "Un ricordo molto lungo." });
     await expect(post).toBeVisible();
     const reply = post.getByPlaceholder("Scrivi un commento…");
-    await post.getByRole("button", { name: "Invia commento" }).click();
+    await post.getByRole("button", { name: "Invia commento" }).tap();
     await expect(post.getByText("Scrivi un commento oppure aggiungi un allegato.")).toBeVisible();
 
     const sendComment = async ({ text, name, mimeType, buffer }) => {
@@ -86,7 +86,7 @@ test("bozza, riselezione file e commento con foto restano utilizzabili", async (
         (response) => response.url().includes("/api/comments") && response.request().method() === "POST",
         { timeout: 60_000 },
       );
-      await post.getByRole("button", { name: "Invia commento" }).click();
+      await post.getByRole("button", { name: "Invia commento" }).tap();
       const response = await responsePromise;
       expect(response.status()).toBe(201);
       await expect(post.getByText(text, { exact: false })).toBeVisible();
@@ -95,7 +95,7 @@ test("bozza, riselezione file e commento con foto restano utilizzabili", async (
     await reply.fill("Ciao @");
     const mention = page.locator(".mentionSuggestions button").first();
     await expect(mention).toBeVisible();
-    await mention.click();
+    await mention.tap();
     const mentionText = `${await reply.inputValue()}foto 🧡 नमस्ते`;
     await sendComment({ text: mentionText, name: "risposta.jpg", mimeType: "image/jpeg", buffer: await (await import("node:fs/promises")).readFile(photoPath) });
   } finally {
