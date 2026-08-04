@@ -38,7 +38,7 @@ import {
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
 
-const VERSION = "1.37.3",
+const VERSION = "1.37.4",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
