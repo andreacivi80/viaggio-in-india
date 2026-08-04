@@ -7,6 +7,28 @@ const results = [];
 
 async function scenario(name, run) {
   const context = await browser.newContext({ serviceWorkers: "block" });
+  if (process.env.MOCK_API === "1") {
+    await context.route("**/api/**", async (route) => {
+      const url = new URL(route.request().url());
+      if (url.pathname === "/api/auth/group") {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
+        return;
+      }
+      if (url.pathname === "/api/private") {
+        await route.fulfill({ status: 401, contentType: "application/json", body: JSON.stringify({ error: "unauthorized" }) });
+        return;
+      }
+      if (url.pathname === "/api/state") {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ posts: [], profiles: [], sync_version: 0 }) });
+        return;
+      }
+      if (url.pathname === "/api/sync/version" || url.pathname === "/api/health") {
+        await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ version: 0, ok: true }) });
+        return;
+      }
+      await route.fulfill({ status: 404, contentType: "application/json", body: JSON.stringify({ error: "not mocked" }) });
+    });
+  }
   try {
     await run(context);
     results.push({ name, status: "PASS" });
