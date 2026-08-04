@@ -13,8 +13,8 @@ permissions:
   contents: read
 
 jobs:
-  access-boundary:
-    name: Public password session boundary
+  deployed-qa:
+    name: Deployed QA access boundary
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -30,5 +30,38 @@ jobs:
         run: npm install --no-save --ignore-scripts playwright@1.55.0
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
-      - name: Run level-zero access gate
+      - name: Run deployed QA gate
+        run: node remote-tests/access-gate.mjs
+
+  corrected-candidate:
+    name: Corrected candidate access boundary
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      TEST_BASE_URL: http://127.0.0.1:4173
+      MOCK_API: "1"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install application
+        run: npm ci
+      - name: Install remote browser
+        run: npm install --no-save --ignore-scripts playwright@1.55.0
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Start candidate
+        run: |
+          npm run dev -- --host 127.0.0.1 > /tmp/india-vite.log 2>&1 &
+          for attempt in {1..30}; do
+            curl --fail --silent http://127.0.0.1:4173 >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/india-vite.log
+          exit 1
+      - name: Run corrected candidate gate
         run: node remote-tests/access-gate.mjs
