@@ -1,9 +1,6 @@
 name: Remote access gate
 
 on:
-  pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 permissions:
