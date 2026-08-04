@@ -48,7 +48,8 @@ jobs:
         run: npx -y wrangler@4.33.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --file db/schema.sql
       - name: Start isolated Pages runtime
         run: |
-          npx -y wrangler@4.33.0 pages dev dist --config wrangler.qa.jsonc --port 8788 --binding GROUP_CODE=india26 > /tmp/india-pages.log 2>&1 &
+          cp wrangler.qa.jsonc wrangler.jsonc
+          npx -y wrangler@4.33.0 pages dev dist --port 8788 --binding GROUP_CODE=india26 > /tmp/india-pages.log 2>&1 &
           for attempt in {1..45}; do
             curl --fail --silent http://127.0.0.1:8788/api/health >/dev/null && exit 0
             sleep 1
