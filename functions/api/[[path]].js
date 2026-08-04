@@ -1157,6 +1157,7 @@ export async function onRequest(context) {
         origin_city: String(form.get("origin_city") || ""),
         bio: String(form.get("bio") || ""),
         role: form.get("role") === "coordinator" ? "coordinator" : "traveler",
+        gender: ["female", "male"].includes(String(form.get("gender"))) ? String(form.get("gender")) : "",
         avatar_key: avatar?.key || null,
         created_at: now(),
       };
