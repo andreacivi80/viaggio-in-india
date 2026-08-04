@@ -56,9 +56,11 @@ async function mockApi(page, authenticated = false, profileCreation = []) {
 async function swipeUpLikeARealFinger(page, locator) {
   const box = await locator.boundingBox();
   if (!box) throw new Error("Elenco non visibile");
+  const viewport = page.viewportSize();
   const x = Math.round(box.x + box.width / 2);
-  const startY = Math.round(box.y + Math.min(box.height * 0.68, 390));
-  const endY = Math.round(box.y + 70);
+  const visibleBottom = Math.min(box.y + box.height, (viewport?.height || 800) - 105);
+  const startY = Math.round(Math.max(box.y + 110, visibleBottom - 24));
+  const endY = Math.round(Math.max(box.y + 48, startY - 280));
   try {
     const client = await page.context().newCDPSession(page);
     await client.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y: startY }] });
@@ -96,7 +98,7 @@ async function expectRenderedPdfPixels(canvas) {
   expect(visiblePng.byteLength).toBeGreaterThan(12_000);
 }
 
-test("18 viaggiatori scorrono fino ad Andrea, mantengono ordine e colori, la X resta attiva", async ({ page }) => {
+test("18 viaggiatori scorrono fino ad Andrea, mantengono ordine e colori, la X resta attiva", async ({ page }, testInfo) => {
   await mockApi(page);
   await page.goto("/", { waitUntil: "networkidle" });
   await page.locator(".heroTravelers").tap();
@@ -110,8 +112,9 @@ test("18 viaggiatori scorrono fino ad Andrea, mantengono ordine e colori, la X r
   await expect(rows.nth(13)).toContainText("Andrea");
   await expect(rows.nth(14)).toContainText("NonIndicato1");
   await expect(rows.first().locator(".coordinatorRole")).toHaveText("Coordinatrice");
+  await page.screenshot({ path: testInfo.outputPath("viaggiatori-inizio.png") });
   const tallestRow = await rows.evaluateAll((nodes) => Math.max(...nodes.map((node) => node.getBoundingClientRect().height)));
-  expect(tallestRow).toBeLessThanOrEqual(48);
+  expect(tallestRow).toBeLessThanOrEqual(34);
 
   const femaleColor = await rows.nth(1).evaluate((node) => getComputedStyle(node).backgroundColor);
   const maleColor = await rows.nth(7).evaluate((node) => getComputedStyle(node).backgroundColor);
@@ -119,20 +122,48 @@ test("18 viaggiatori scorrono fino ad Andrea, mantengono ordine e colori, la X r
   expect(new Set([femaleColor, maleColor, unspecifiedColor]).size).toBe(3);
 
   const bodyScrollBefore = await page.evaluate(() => scrollY);
-  const metrics = await list.evaluate((node) => ({ clientHeight: node.clientHeight, scrollHeight: node.scrollHeight }));
+  const metrics = await dialog.evaluate((node) => ({ clientHeight: node.clientHeight, scrollHeight: node.scrollHeight }));
   expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
-  const beforeTouch = await list.evaluate((node) => node.scrollTop);
-  await swipeUpLikeARealFinger(page, list);
-  await swipeUpLikeARealFinger(page, list);
-  const afterTouch = await list.evaluate((node) => node.scrollTop);
+  const beforeTouch = await dialog.evaluate((node) => node.scrollTop);
+  await swipeUpLikeARealFinger(page, dialog);
+  await swipeUpLikeARealFinger(page, dialog);
+  const afterTouch = await dialog.evaluate((node) => node.scrollTop);
   expect(afterTouch).toBeGreaterThan(beforeTouch + 20);
-  await list.evaluate((node) => { node.scrollTop = node.scrollHeight; });
-  await expect(rows.last()).toBeVisible();
-  await expect(rows.nth(13).locator("code")).toHaveText("@Andrea_Test");
+  await dialog.evaluate((node) => { node.scrollTop = node.scrollHeight; });
+  await expect(rows.last()).toBeInViewport({ ratio: 1 });
+  const andreaMention = rows.nth(13).locator(".directoryNameLine code");
+  await expect(andreaMention).toHaveText("@Andrea_Test");
+  await expect(andreaMention).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("viaggiatori-fondo.png") });
   expect(await page.evaluate(() => scrollY)).toBe(bodyScrollBefore);
 
   await dialog.getByRole("button", { name: "Chiudi elenco viaggiatori" }).tap();
   await expect(dialog).toHaveCount(0);
+});
+
+test("Il nostro gruppo usa uno scorrimento touch stabile senza muovere lo sfondo", async ({ page }, testInfo) => {
+  await mockApi(page, true);
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
+  const groupMain = page.locator("main.groupMain");
+  const grid = page.locator(".peopleGrid");
+  const cards = grid.locator(".profileCard");
+  await expect(cards).toHaveCount(18);
+  await page.screenshot({ path: testInfo.outputPath("gruppo-inizio.png") });
+  const metrics = await groupMain.evaluate((node) => ({ clientHeight: node.clientHeight, scrollHeight: node.scrollHeight }));
+  expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
+  const bodyBefore = await page.evaluate(() => scrollY);
+  for (let attempt = 0; attempt < 4; attempt += 1) {
+    await groupMain.evaluate((node) => { node.scrollTop = 0; });
+    const before = await groupMain.evaluate((node) => node.scrollTop);
+    await swipeUpLikeARealFinger(page, groupMain);
+    const after = await groupMain.evaluate((node) => node.scrollTop);
+    expect(after).toBeGreaterThan(before + 20);
+  }
+  await groupMain.evaluate((node) => { node.scrollTop = node.scrollHeight; });
+  await expect(cards.last()).toBeVisible();
+  await page.screenshot({ path: testInfo.outputPath("gruppo-fondo.png") });
+  expect(await page.evaluate(() => scrollY)).toBe(bodyBefore);
 });
 
 test("nuove iscrizioni donna, uomo e genere non indicato mantengono etichetta, colore e posizione", async ({ page }) => {

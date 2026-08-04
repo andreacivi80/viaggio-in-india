@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.11",
+const VERSION = "1.37.12",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -1927,7 +1927,7 @@ function App() {
           </button>
         ))}
       </nav>
-      <main>
+      <main className={tab === "people" ? "groupMain" : undefined}>
         {tab === "roadmap" && (
           <section>
             <div className="sectionHead">
@@ -2956,8 +2956,11 @@ function Diary({
                   ) : (
                     <span className="avatar">{person.name?.[0] || "?"}</span>
                   )}
-                  <div>
-                    <b>{person.name} {person.surname || ""}</b>
+                  <div className="directoryIdentity">
+                    <span className="directoryNameLine">
+                      <b>{person.name} {person.surname || ""}</b>
+                      <code>@{mentionHandle(person)}</code>
+                    </span>
                     <small>
                       <strong className={person.role === "coordinator" ? "coordinatorRole" : undefined}>
                         {travelerRoleLabel(person)}
@@ -2965,7 +2968,6 @@ function Diary({
                       {person.origin_city ? ` · ${person.origin_city}` : ""}
                     </small>
                   </div>
-                  <code>@{mentionHandle(person)}</code>
                 </div>
               ))}
             </div>

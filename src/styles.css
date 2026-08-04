@@ -1221,6 +1221,15 @@ h3 {
   gap: 10px;
   min-width: 0;
 }
+.groupMain {
+  height: calc(100dvh - 62px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  scrollbar-gutter: stable;
+}
 .peopleGrid article {
   text-align: center;
   margin: 0;
@@ -2846,22 +2855,28 @@ h2 {
   width: min(100%, 680px);
   height: min(78vh, 78dvh);
   max-height: min(78vh, 78dvh);
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
   overscroll-behavior: contain;
-  padding: 16px 16px calc(22px + env(safe-area-inset-bottom));
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding: 16px 16px calc(88px + env(safe-area-inset-bottom));
   border-radius: 24px 24px 0 0;
   background: #fffaf2;
   box-shadow: 0 -20px 60px #0005;
 }
 .directoryHead {
   position: sticky;
-  top: 0;
+  top: -16px;
   z-index: 2;
   flex: 0 0 auto;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
+  margin: -2px -2px 0;
+  padding: 18px 2px 7px;
+  background: #fffaf2;
 }
 .directoryHead small {
   color: var(--orange);
@@ -2900,42 +2915,50 @@ h2 {
 .directoryPerson {
   min-width: 0;
   display: grid;
-  grid-template-columns: 32px minmax(0, 1fr) auto;
+  grid-template-columns: 22px minmax(0, 1fr);
   align-items: center;
-  gap: 6px;
-  padding: 4px 7px;
+  gap: 3px;
+  padding: 1px 4px;
   border: 1px solid #eadfce;
   border-radius: 12px;
   background: #fff;
 }
 .directoryPerson img,
 .directoryPerson > .avatar {
-  width: 32px;
-  height: 32px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   object-fit: cover;
 }
-.directoryPerson > div {
+.directoryPerson > .directoryIdentity {
   min-width: 0;
   display: flex;
   flex-direction: column;
 }
-.directoryPerson > div b {
+.directoryNameLine {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+.directoryPerson .directoryNameLine b {
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 13px;
+  font-size: 12px;
   line-height: 1.1;
 }
-.directoryPerson > div small {
+.directoryPerson > .directoryIdentity small {
   color: #746b60;
   font-size: 10px;
   line-height: 1.1;
 }
 .directoryPerson code {
-  max-width: 110px;
+  flex: 0 1 auto;
+  max-width: 48%;
   overflow: hidden;
-  padding: 3px 5px;
+  padding: 1px 3px;
   border-radius: 8px;
   background: #eaf1ed;
   color: var(--green);
@@ -3082,12 +3105,12 @@ mark.mention {
 }
 @media (max-width: 390px) {
   .directoryPerson {
-    grid-template-columns: 30px minmax(0, 1fr) minmax(54px, 72px);
+    grid-template-columns: 22px minmax(0, 1fr);
   }
-  .directoryPerson code {
-    grid-column: 3;
-    justify-self: end;
-    max-width: 100%;
+  .directoryPerson img,
+  .directoryPerson > .avatar {
+    width: 22px;
+    height: 22px;
   }
 }
 .identityBar {
@@ -4648,19 +4671,13 @@ mark.mention {
 .peopleGrid article.gender-unspecified,
 .directoryPerson.gender-unspecified { background: #fff; }
 .travelerDirectory {
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-}
-.directoryList {
-  flex: 1 1 auto;
-  height: 0;
-  min-height: 0;
-  overflow-y: scroll;
+  overflow-y: auto;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
+}
+.directoryList {
+  overflow: visible;
   scrollbar-gutter: stable;
   padding: 1px 2px calc(12px + env(safe-area-inset-bottom));
 }
@@ -4690,7 +4707,7 @@ mark.mention {
   border-radius: 999px;
   background: #0b2e28d9;
   color: #fff;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 800;
   line-height: 1.15;
   text-overflow: clip;
