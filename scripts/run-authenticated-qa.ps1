@@ -88,9 +88,9 @@ try {
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
   if ($AbuseOnly) {
-    & node --test --test-name-pattern "limiti antispam|rate limiting" tests\production-smoke.test.mjs
+    & node --test --test-concurrency=1 --test-name-pattern "limiti antispam|rate limiting" tests\production-smoke.test.mjs
   } else {
-    & node --test tests\production-smoke.test.mjs
+    & node --test --test-concurrency=1 tests\production-smoke.test.mjs
   }
   $testExit = $LASTEXITCODE
 }
