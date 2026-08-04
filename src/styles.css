@@ -2821,7 +2821,7 @@ h2 {
   backdrop-filter: blur(4px);
   overflow: hidden;
   overscroll-behavior: none;
-  touch-action: none;
+  touch-action: pan-y;
 }
 .travelerDirectory {
   width: min(100%, 680px);
@@ -2835,6 +2835,9 @@ h2 {
   box-shadow: 0 -20px 60px #0005;
 }
 .directoryHead {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -2851,6 +2854,10 @@ h2 {
   font-size: 26px;
 }
 .directoryHead > button {
+  position: relative;
+  z-index: 3;
+  flex: 0 0 42px;
+  pointer-events: auto;
   width: 42px;
   height: 42px;
   border: 1px solid #dfd2c1;
@@ -2860,6 +2867,7 @@ h2 {
   font-size: 25px;
 }
 .travelerDirectory > p {
+  flex: 0 0 auto;
   margin: 10px 0 13px;
   color: #665f56;
   font-size: 13px;
@@ -2867,6 +2875,7 @@ h2 {
 .directoryList {
   display: grid;
   gap: 8px;
+  pointer-events: auto;
 }
 .directoryPerson {
   min-width: 0;
@@ -3522,6 +3531,35 @@ mark.mention {
   gap: 12px;
   padding: 24px;
   text-align: center;
+}
+
+.pdfDocumentViewer {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  background: #4b4b4b;
+}
+.pdfDocumentViewer > p {
+  margin: 0;
+  padding: 14px;
+  background: #fff4e4;
+  color: #553820;
+  text-align: center;
+  font-weight: 800;
+}
+.pdfPages {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 10px;
+}
+.pdfPageCanvas {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  background: #fff;
+  box-shadow: 0 4px 18px #0007;
 }
 
 @media (max-width: 560px) {

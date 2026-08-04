@@ -51,12 +51,13 @@ test("viaggiatore gestisce il proprio PDF e il coordinatore vede la griglia aggi
     await expect(passport).toContainText("✓ Presente");
     await expect(passport).toContainText("documento-prova.pdf");
 
-    const popupPromise = travelerPage.waitForEvent("popup");
     await passport.getByRole("button", { name: "Apri" }).click();
-    const popup = await popupPromise;
     await expect(travelerPage.getByText("Documento aperto.")).toBeVisible();
-    await expect(popup.locator("iframe")).toHaveAttribute("src", /^blob:/);
-    await popup.close();
+    const viewer = travelerPage.locator(".documentPreviewOverlay");
+    await expect(viewer).toBeVisible();
+    await expect(viewer.locator(".pdfPageCanvas").first()).toBeVisible({ timeout: 20_000 });
+    await viewer.getByRole("button", { name: "Chiudi documento" }).click();
+    await expect(viewer).toHaveCount(0);
 
     const downloadPromise = travelerPage.waitForEvent("download");
     await passport.getByRole("button", { name: "Scarica" }).click();

@@ -37,8 +37,9 @@ import {
   sanitizeProfilesForPublicCache,
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
+import pdfWorkerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.5",
+const VERSION = "1.37.6",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -1033,12 +1034,9 @@ function App() {
   useEffect(() => {
     if (!travelersOpen) return undefined;
     const previousOverflow = document.body.style.overflow;
-    const previousTouchAction = document.body.style.touchAction;
     document.body.style.overflow = "hidden";
-    document.body.style.touchAction = "none";
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.body.style.touchAction = previousTouchAction;
     };
   }, [travelersOpen]);
   const simulatedDate = initialParams.get("simulateDate");
@@ -2940,6 +2938,54 @@ function AttachmentPreview({ file, onRemove }) {
   );
 }
 
+function PdfDocumentViewer({ url, name }) {
+  const pagesRef = useRef(null);
+  const [status, setStatus] = useState("Caricamento PDF…");
+  useEffect(() => {
+    let cancelled = false;
+    let loadingTask;
+    (async () => {
+      try {
+        const pdfjs = await import("pdfjs-dist");
+        pdfjs.GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
+        loadingTask = pdfjs.getDocument(url);
+        const pdf = await loadingTask.promise;
+        const host = pagesRef.current;
+        if (!host || cancelled) return;
+        host.replaceChildren();
+        for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+          if (cancelled) return;
+          const page = await pdf.getPage(pageNumber);
+          const baseViewport = page.getViewport({ scale: 1 });
+          const availableWidth = Math.max(260, host.clientWidth - 16);
+          const scale = Math.min(2.2, availableWidth / baseViewport.width);
+          const viewport = page.getViewport({ scale });
+          const canvas = document.createElement("canvas");
+          canvas.className = "pdfPageCanvas";
+          canvas.width = Math.ceil(viewport.width);
+          canvas.height = Math.ceil(viewport.height);
+          canvas.setAttribute("aria-label", `${name}, pagina ${pageNumber}`);
+          host.appendChild(canvas);
+          await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+        }
+        if (!cancelled) setStatus("");
+      } catch {
+        if (!cancelled) setStatus("Impossibile visualizzare il PDF. Puoi comunque scaricarlo.");
+      }
+    })();
+    return () => {
+      cancelled = true;
+      loadingTask?.destroy?.();
+    };
+  }, [url, name]);
+  return (
+    <div className="pdfDocumentViewer">
+      {status && <p role="status">{status}</p>}
+      <div ref={pagesRef} className="pdfPages" />
+    </div>
+  );
+}
+
 function AudioRecorder({ onRecorded }) {
   const recorderRef = useRef(null);
   const streamRef = useRef(null);
@@ -3751,6 +3797,7 @@ function People({
         job: "",
         origin_city: "",
         bio: "",
+        gender: "",
         role: "traveler",
       });
       setAvatar(null);
@@ -4595,7 +4642,7 @@ function VaultOnline({
             {documentPreview.type.startsWith("image/") ? (
               <img src={documentPreview.url} alt={documentPreview.name} />
             ) : documentPreview.type === "application/pdf" ? (
-              <iframe src={documentPreview.url} title={documentPreview.name} />
+              <PdfDocumentViewer url={documentPreview.url} name={documentPreview.name} />
             ) : (
               <div className="documentPreviewFallback">
                 <p>Questo formato non può essere mostrato direttamente dal telefono.</p>
