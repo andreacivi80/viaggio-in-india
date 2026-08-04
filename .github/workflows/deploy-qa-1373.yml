@@ -49,3 +49,4 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
 # Collaudo remoto completo prima della pubblicazione QA.
+# Rilancio esplicito 1.37.3.
