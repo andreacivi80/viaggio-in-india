@@ -9,10 +9,10 @@ on:
 
 concurrency:
   group: deploy-qa-1373
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
-  test-and-deploy:
+  test-deploy-verify:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -25,28 +25,25 @@ jobs:
           cache: npm
       - name: Installazione pulita
         run: npm ci
-      - name: Test e compilazione
+      - name: Test statici e compilazione
         run: npm test
-      - name: Browser Chromium
-        run: npx playwright install --with-deps chromium
-      - name: Avvia anteprima per il collaudo
-        run: |
-          npm run dev -- --host 127.0.0.1 --port 4173 > /tmp/india-vite.log 2>&1 &
-          for attempt in {1..30}; do
-            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then
-              exit 0
-            fi
-            sleep 1
-          done
-          cat /tmp/india-vite.log
-          exit 1
-      - name: Test UI di primo livello
-        run: npm run test:ui-critical
       - name: Pubblicazione Cloudflare Pages QA
         run: npx wrangler pages deploy dist --project-name viaggio-in-india-2026-qa --branch main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
-# Collaudo remoto completo prima della pubblicazione QA.
-# Rilancio esplicito 1.37.3.
+      - name: Attendi la revisione QA
+        run: |
+          for attempt in {1..30}; do
+            if curl --fail --silent https://viaggio-in-india-2026-qa.pages.dev/ | grep --quiet "root"; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
+      - name: Browser Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Verifica UI di primo livello sul QA reale
+        run: npm run test:ui-critical
+        env:
+          TEST_BASE_URL: https://viaggio-in-india-2026-qa.pages.dev
