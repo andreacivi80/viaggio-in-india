@@ -5,9 +5,9 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 - Sezioni sorgente: 100
 - Caselle sorgente complessive: 2.537
 - Controlli distinti: 1812
-- Controlli superati con evidenza: 60
+- Controlli superati con evidenza: 93
 - Controlli falliti aperti: 0
-- Controlli non ancora eseguiti: 1752
+- Controlli non ancora eseguiti: 1719
 - Sezioni completamente chiuse: 0/100
 - Stati ammessi: SUPERATO, FALLITO, NON ESEGUITO, BLOCCATO FISICO
 
@@ -45,12 +45,12 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0030 | 3 | Aggiungere elenco dei dispositivi autorizzati. | SUPERATO | production-smoke: elenco dispositivi include corrente e secondario |
 | T-0031 | 3 | Aggiungere revoca del singolo dispositivo. | SUPERATO | production-smoke: revoca del dispositivo secondario e lista aggiornata |
 | T-0032 | 3 | Aggiungere rinnovo sicuro della sessione. | NON ESEGUITO | — |
-| T-0033 | 3 | Aggiungere scadenza per inattività. | NON ESEGUITO | — |
+| T-0033 | 3 | Aggiungere scadenza per inattività. | SUPERATO | QA 1.31.0: sessione inattiva da 30 giorni respinta con HTTP 401 |
 | T-0034 | 3 | Eliminare l’endpoint che trasforma il codice comune in una sessione per un profilo scelto. | NON ESEGUITO | — |
-| T-0035 | 3 | Impedire definitivamente di selezionare l’identità di un altro Viaggiatore. | NON ESEGUITO | — |
+| T-0035 | 3 | Impedire definitivamente di selezionare l’identità di un altro Viaggiatore. | SUPERATO | QA 1.31.0: nomi e identita inviati dal browser vengono ignorati dal server |
 | T-0036 | 3 | Impedire il riutilizzo di una sessione rubata. | NON ESEGUITO | — |
 | T-0037 | 3 | Registrare data, ora e ultimo utilizzo della sessione. | NON ESEGUITO | — |
-| T-0038 | 3 | Richiedere l’invito personale per collegare un dispositivo a un profilo. | NON ESEGUITO | — |
+| T-0038 | 3 | Richiedere l’invito personale per collegare un dispositivo a un profilo. | SUPERATO | QA 1.31.0: nuovo dispositivo collegato tramite invito personale monouso |
 | T-0039 | 3 | Ridurre la durata della sessione, attualmente prevista fino a 90 giorni. | NON ESEGUITO | — |
 | T-0040 | 3 | Ruotare il token dopo operazioni sensibili. | NON ESEGUITO | — |
 | T-0041 | 3 | Utilizzare il codice comune soltanto come invito iniziale al gruppo. | NON ESEGUITO | — |
@@ -73,21 +73,21 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0058 | 5 | Aggiungere reazioni ai commenti. | NON ESEGUITO | — |
 | T-0059 | 5 | Aggiungere risposte ai commenti. | NON ESEGUITO | — |
 | T-0060 | 5 | Aggiungere segnalazione dei contenuti. | NON ESEGUITO | — |
-| T-0061 | 5 | Associare i commenti dei Viaggiatori alla sessione personale. | NON ESEGUITO | — |
+| T-0061 | 5 | Associare i commenti dei Viaggiatori alla sessione personale. | SUPERATO | QA 1.31.0: commento del viaggiatore attribuito alla sessione e non ai campi del browser |
 | T-0062 | 5 | Creare un’identità ospite controllata per i familiari. | SUPERATO | production-smoke: identita ospite creata e validata dal server |
-| T-0063 | 5 | Impedire che un utente modifichi visitor_id dal browser. | NON ESEGUITO | — |
-| T-0064 | 5 | Impedire di modificare o eliminare commenti altrui. | NON ESEGUITO | — |
+| T-0063 | 5 | Impedire che un utente modifichi visitor_id dal browser. | SUPERATO | QA 1.31.0: visitor_id falsificato non modifica l'identita server |
+| T-0064 | 5 | Impedire di modificare o eliminare commenti altrui. | SUPERATO | QA 1.31.0: modifica ed eliminazione del commento altrui restituite 403 |
 | T-0065 | 5 | Rendere reali le menzioni: attualmente “@nome” viene evidenziato, ma non genera una notifica specifica. | NON ESEGUITO | — |
-| T-0066 | 6 | Controllo della visibilità lato server. | NON ESEGUITO | — |
-| T-0067 | 6 | Divieto di leggere un post privato modificando direttamente l’URL. | NON ESEGUITO | — |
-| T-0068 | 6 | Feed differente in base al ruolo. | NON ESEGUITO | — |
+| T-0066 | 6 | Controllo della visibilità lato server. | SUPERATO | QA 1.31.0: quattro livelli di visibilita filtrati lato server |
+| T-0067 | 6 | Divieto di leggere un post privato modificando direttamente l’URL. | SUPERATO | QA 1.31.0: ospite e altro viaggiatore non leggono ne interagiscono col post privato |
+| T-0068 | 6 | Feed differente in base al ruolo. | SUPERATO | QA 1.31.0: feed pubblico, ospite e viaggiatore restituiscono contenuti differenti |
 | T-0069 | 6 | Impedire che il testo di un post privato compaia nella notifica di utenti non autorizzati. | NON ESEGUITO | — |
 | T-0070 | 6 | Notifiche inviate soltanto agli utenti autorizzati a vedere il post. | NON ESEGUITO | — |
 | T-0071 | 6 | Possibilità di modificare la visibilità dopo la pubblicazione. | NON ESEGUITO | — |
-| T-0072 | 6 | Selettore Familiari. | NON ESEGUITO | — |
-| T-0073 | 6 | Selettore Gruppo. | NON ESEGUITO | — |
-| T-0074 | 6 | Selettore Pubblico. | NON ESEGUITO | — |
-| T-0075 | 6 | Selettore Solo io. | NON ESEGUITO | — |
+| T-0072 | 6 | Selettore Familiari. | SUPERATO | QA 1.31.0: contenuto Familiari visibile all'ospite autenticato e al gruppo |
+| T-0073 | 6 | Selettore Gruppo. | SUPERATO | QA 1.31.0: contenuto Gruppo visibile ai viaggiatori e nascosto agli ospiti |
+| T-0074 | 6 | Selettore Pubblico. | SUPERATO | QA 1.31.0: contenuto Pubblico visibile senza identita |
+| T-0075 | 6 | Selettore Solo io. | SUPERATO | QA 1.31.0: contenuto Solo io visibile esclusivamente al proprietario |
 | T-0076 | 7 | Badge sincronizzato dei contenuti non letti. | NON ESEGUITO | — |
 | T-0077 | 7 | Disattivazione completa delle notifiche. | NON ESEGUITO | — |
 | T-0078 | 7 | Eliminazione della subscription dal database quando l’utente le disattiva. | NON ESEGUITO | — |
@@ -235,8 +235,8 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0220 | 15 | Monitoraggio errori. | NON ESEGUITO | — |
 | T-0221 | 15 | Protezione antispam. | NON ESEGUITO | — |
 | T-0222 | 15 | Protezione contro accesso a documenti altrui. | NON ESEGUITO | — |
-| T-0223 | 15 | Protezione contro eliminazione di post altrui. | NON ESEGUITO | — |
-| T-0224 | 15 | Protezione contro modifica di commenti altrui. | NON ESEGUITO | — |
+| T-0223 | 15 | Protezione contro eliminazione di post altrui. | SUPERATO | QA 1.31.0: secondo viaggiatore non puo eliminare il post altrui |
+| T-0224 | 15 | Protezione contro modifica di commenti altrui. | SUPERATO | QA 1.31.0: secondo viaggiatore non puo modificare il commento altrui |
 | T-0225 | 15 | Protezione contro modifica manuale del profile_id. | NON ESEGUITO | — |
 | T-0226 | 15 | Protezione contro modifica manuale del ruolo. | NON ESEGUITO | — |
 | T-0227 | 15 | Protezione contro richieste automatiche. | NON ESEGUITO | — |
@@ -337,7 +337,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0322 | 20 | Aprire invito sul telefono A. | NON ESEGUITO | — |
 | T-0323 | 20 | Aprire l’app come pubblico. | NON ESEGUITO | — |
 | T-0324 | 20 | Creare invito per Viaggiatore A. | NON ESEGUITO | — |
-| T-0325 | 20,99 | Eseguire logout. | NON ESEGUITO | — |
+| T-0325 | 20,99 | Eseguire logout. | SUPERATO | QA 1.31.0: logout eseguito e token successivamente respinto |
 | T-0326 | 20 | Modificare manualmente profile_id. | NON ESEGUITO | — |
 | T-0327 | 20 | Modificare manualmente role. | NON ESEGUITO | — |
 | T-0328 | 20,88 | Revocare il dispositivo. | SUPERATO | production-smoke: dispositivo secondario revocato |
@@ -480,11 +480,11 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0465 | 27 | Eliminazione commento. | NON ESEGUITO | — |
 | T-0466 | 27 | Inserimento di HTML/script. | NON ESEGUITO | — |
 | T-0467 | 27 | Invio ripetuto rapido. | NON ESEGUITO | — |
-| T-0468 | 27 | Modifica commento. | NON ESEGUITO | — |
+| T-0468 | 27 | Modifica commento. | SUPERATO | QA 1.31.0: proprietario modifica correttamente il proprio commento |
 | T-0469 | 27 | Reazione Mi piace. | NON ESEGUITO | — |
 | T-0470 | 27 | Rimozione reazione. | NON ESEGUITO | — |
-| T-0471 | 27 | Tentativo di eliminare commento altrui. | NON ESEGUITO | — |
-| T-0472 | 27 | Tentativo di modificare commento altrui. | NON ESEGUITO | — |
+| T-0471 | 27 | Tentativo di eliminare commento altrui. | SUPERATO | QA 1.31.0: eliminazione commento altrui negata |
+| T-0472 | 27 | Tentativo di modificare commento altrui. | SUPERATO | QA 1.31.0: modifica commento altrui negata |
 | T-0473 | 27 | Verifica aggiornamento sul secondo telefono. | NON ESEGUITO | — |
 | T-0474 | 27 | Verifica antispam. | NON ESEGUITO | — |
 | T-0475 | 28 | Aprire documento. | NON ESEGUITO | — |
@@ -637,8 +637,8 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0622 | 35 | Modificare role. | NON ESEGUITO | — |
 | T-0623 | 35 | Modificare token. | NON ESEGUITO | — |
 | T-0624 | 35 | Tentare accesso a documento altrui. | NON ESEGUITO | — |
-| T-0625 | 35 | Tentare eliminazione post altrui. | NON ESEGUITO | — |
-| T-0626 | 35 | Tentare modifica commento altrui. | NON ESEGUITO | — |
+| T-0625 | 35 | Tentare eliminazione post altrui. | SUPERATO | QA 1.31.0: eliminazione post altrui negata con HTTP 403 |
+| T-0626 | 35 | Tentare modifica commento altrui. | SUPERATO | QA 1.31.0: modifica commento altrui negata con HTTP 403 |
 | T-0627 | 35 | Utilizzare token revocato. | NON ESEGUITO | — |
 | T-0628 | 35 | Utilizzare token scaduto. | NON ESEGUITO | — |
 | T-0629 | 35 | Verificare audit log. | NON ESEGUITO | — |
@@ -708,7 +708,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0693 | 39 | Avviare Naviga. | NON ESEGUITO | — |
 | T-0694 | 39 | Cancellare la posizione dal telefono A. | NON ESEGUITO | — |
 | T-0695 | 39 | Caricare quattro documenti dal telefono B. | NON ESEGUITO | — |
-| T-0696 | 39 | Collegare il telefono A tramite invito personale. | NON ESEGUITO | — |
+| T-0696 | 39 | Collegare il telefono A tramite invito personale. | SUPERATO | QA 1.31.0: telefono tecnico collegato tramite invito personale |
 | T-0697 | 39 | Condividere la posizione dal telefono A. | NON ESEGUITO | — |
 | T-0698 | 39 | Creare il profilo del Viaggiatore A. | NON ESEGUITO | — |
 | T-0699 | 39 | Creare il profilo del Viaggiatore B. | NON ESEGUITO | — |
@@ -748,12 +748,12 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0733 | 40 | creazione profilo; | NON ESEGUITO | — |
 | T-0734 | 40 | eliminazione documento altrui; | NON ESEGUITO | — |
 | T-0735 | 40 | eliminazione documento proprio; | NON ESEGUITO | — |
-| T-0736 | 40 | eliminazione post altrui; | NON ESEGUITO | — |
+| T-0736 | 40 | eliminazione post altrui; | SUPERATO | QA 1.31.0: attacco eliminazione post altrui respinto |
 | T-0737 | 40 | eliminazione post proprio; | NON ESEGUITO | — |
 | T-0738 | 40 | lettura profilo; | NON ESEGUITO | — |
 | T-0739 | 40 | messaggio comprensibile nell’interfaccia; | NON ESEGUITO | — |
-| T-0740 | 40 | modifica commento altrui; | NON ESEGUITO | — |
-| T-0741 | 40 | modifica commento proprio; | NON ESEGUITO | — |
+| T-0740 | 40 | modifica commento altrui; | SUPERATO | QA 1.31.0: attacco modifica commento altrui respinto |
+| T-0741 | 40 | modifica commento proprio; | SUPERATO | QA 1.31.0: modifica commento proprio completata |
 | T-0742 | 40 | modifica posizione altrui; | NON ESEGUITO | — |
 | T-0743 | 40 | modifica profilo altrui; | NON ESEGUITO | — |
 | T-0744 | 40 | modifica profilo proprio; | NON ESEGUITO | — |
@@ -765,7 +765,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0750 | 40 | pubblicazione post; | NON ESEGUITO | — |
 | T-0751 | 40 | reazione; | NON ESEGUITO | — |
 | T-0752 | 40 | risposta HTTP 401 o 403; | NON ESEGUITO | — |
-| T-0753 | 41 | Accedere tramite invito personale. | NON ESEGUITO | — |
+| T-0753 | 41 | Accedere tramite invito personale. | SUPERATO | QA 1.31.0: accesso tramite invito personale completato |
 | T-0754 | 41 | Cambiare data e ora del telefono. | NON ESEGUITO | — |
 | T-0755 | 41 | Cambiare il ruolo da Coordinatore a Viaggiatore. | NON ESEGUITO | — |
 | T-0756 | 41 | Chiudere il browser. | NON ESEGUITO | — |
@@ -773,7 +773,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0758 | 41 | Eliminare il profilo associato a una sessione attiva. | NON ESEGUITO | — |
 | T-0759 | 41 | Eseguire logout durante un caricamento. | NON ESEGUITO | — |
 | T-0760 | 41 | Eseguire logout senza rete. | NON ESEGUITO | — |
-| T-0761 | 41 | Lasciare la sessione inattiva fino alla scadenza prevista. | NON ESEGUITO | — |
+| T-0761 | 41 | Lasciare la sessione inattiva fino alla scadenza prevista. | SUPERATO | QA 1.31.0: scadenza per inattivita simulata e verificata |
 | T-0762 | 41 | Modificare un solo carattere del token. | NON ESEGUITO | — |
 | T-0763 | 41 | Revocare il dispositivo dal Coordinatore. | NON ESEGUITO | — |
 | T-0764 | 41 | Riaprire il browser. | NON ESEGUITO | — |
@@ -1364,7 +1364,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1349 | 71 | Eliminare subscription inattive. | NON ESEGUITO | — |
 | T-1350 | 71 | Produrre un resoconto dei dati eliminati. | NON ESEGUITO | — |
 | T-1351 | 71 | Verificare che la pulizia automatica non elimini dati ancora validi. | NON ESEGUITO | — |
-| T-1352 | 72 | Non mostrare contenuti “Solo io”. | NON ESEGUITO | — |
+| T-1352 | 72 | Non mostrare contenuti “Solo io”. | SUPERATO | QA 1.31.0: contenuto Solo io assente dai feed non proprietari |
 | T-1353 | 72 | Non mostrare dati dei documenti nella notifica. | NON ESEGUITO | — |
 | T-1354 | 72 | Non mostrare numeri di passaporto. | NON ESEGUITO | — |
 | T-1355 | 72 | Non mostrare posizione precisa sul blocco schermo. | NON ESEGUITO | — |
@@ -1374,7 +1374,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1359 | 72 | Verificare anteprima nascosta dalle impostazioni del telefono. | NON ESEGUITO | — |
 | T-1360 | 72 | Verificare che il contenuto venga ricontrollato dal server quando la notifica viene aperta. | NON ESEGUITO | — |
 | T-1361 | 72 | Verificare comportamento dopo cambio profilo. | NON ESEGUITO | — |
-| T-1362 | 72,89 | Verificare comportamento dopo logout. | NON ESEGUITO | — |
+| T-1362 | 72,89 | Verificare comportamento dopo logout. | SUPERATO | QA 1.31.0: dopo logout sessione e area privata restituiscono 401 |
 | T-1363 | 72 | Verificare comportamento dopo revoca del dispositivo. | NON ESEGUITO | — |
 | T-1364 | 72 | Verificare una notifica con telefono bloccato. | NON ESEGUITO | — |
 | T-1365 | 72 | Verificare una notifica con telefono sbloccato. | NON ESEGUITO | — |
@@ -1579,8 +1579,8 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1564 | 85 | documento sostituito; | NON ESEGUITO | — |
 | T-1565 | 85 | errore di sicurezza. | NON ESEGUITO | — |
 | T-1566 | 85 | invito creato; | NON ESEGUITO | — |
-| T-1567 | 85 | invito utilizzato; | NON ESEGUITO | — |
-| T-1568 | 85 | logout; | NON ESEGUITO | — |
+| T-1567 | 85 | invito utilizzato; | SUPERATO | QA 1.31.0: invito gia utilizzato non puo essere riutilizzato |
+| T-1568 | 85 | logout; | SUPERATO | QA 1.31.0: logout verificato end-to-end |
 | T-1569 | 85 | nessun contenuto completo del documento; | NON ESEGUITO | — |
 | T-1570 | 85 | nessun token; | NON ESEGUITO | — |
 | T-1571 | 85 | nessuna password. | NON ESEGUITO | — |
@@ -1595,7 +1595,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1580 | 85 | risultato; | NON ESEGUITO | — |
 | T-1581 | 85 | ruolo modificato; | NON ESEGUITO | — |
 | T-1582 | 85 | ruolo; | NON ESEGUITO | — |
-| T-1583 | 85 | sessione scaduta; | NON ESEGUITO | — |
+| T-1583 | 85 | sessione scaduta; | SUPERATO | QA 1.31.0: sessione inattiva respinta |
 | T-1584 | 85 | tentativo non autorizzato; | NON ESEGUITO | — |
 | T-1585 | 85 | tipo di operazione; | NON ESEGUITO | — |
 | T-1586 | 86 | Accedere nella prima scheda. | NON ESEGUITO | — |
@@ -1703,7 +1703,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1688 | 94 | Verificare nessun duplicato tra pagine. | NON ESEGUITO | — |
 | T-1689 | 94 | Verificare nessun post mancante. | NON ESEGUITO | — |
 | T-1690 | 94 | Verificare posizione di scorrimento. | NON ESEGUITO | — |
-| T-1691 | 95 | Nessun contenuto “Solo io” mostrato ad altri utenti. | NON ESEGUITO | — |
+| T-1691 | 95 | Nessun contenuto “Solo io” mostrato ad altri utenti. | SUPERATO | QA 1.31.0: nessun contenuto Solo io mostrato agli altri utenti |
 | T-1692 | 95 | Nessun documento privato nei risultati pubblici. | NON ESEGUITO | — |
 | T-1693 | 95 | Ricerca con accenti. | NON ESEGUITO | — |
 | T-1694 | 95 | Ricerca con errore di battitura. | NON ESEGUITO | — |

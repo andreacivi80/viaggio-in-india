@@ -1,0 +1,110 @@
+id,area,controllo,esecuzione_reale,stato,evidenza
+L1-001,Disponibilita,Il link pubblico apre da rete esterna,HTTP e browser mobile,PASS,Gate 1.33.0 consolidato 109/109
+L1-002,Disponibilita,L'app risponde senza server locale acceso,Cloudflare Pages API health,PASS,Gate 1.33.0 consolidato 109/109
+L1-003,Disponibilita,Il dominio non mostra Andrea o email,Ispezione URL e interfaccia,PASS,Gate 1.33.0 consolidato 109/109
+L1-004,Disponibilita,HTTPS valido senza avvisi,Browser mobile reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-005,Disponibilita,La pagina iniziale carica senza schermata vuota,Nuovo contesto browser,PASS,Gate 1.33.0 consolidato 109/109
+L1-006,Disponibilita,Refresh completo mantiene l'app raggiungibile,Reload browser,PASS,Gate 1.33.0 consolidato 109/109
+L1-007,Disponibilita,Riapertura dopo chiusura browser torna online,Nuovo avvio contesto persistente,PASS,Gate 1.33.0 consolidato 109/109
+L1-008,Disponibilita,Errore rete temporaneo non cancella dati locali,Offline-online browser,PASS,Gate 1.33.0 consolidato 109/109
+L1-009,Disponibilita,Ritorno online riallinea lo stato,Due browser e API reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-010,Disponibilita,La revisione visibile coincide con il rilascio,UI e asset pubblicati,PASS,Gate 1.33.0 consolidato 109/109
+L1-011,Primo accesso,Un visitatore apre senza password,Contesto pulito,PASS,Gate 1.33.0 consolidato 109/109
+L1-012,Primo accesso,Il visitatore capisce come accedere al gruppo,Ispezione e click reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-013,Primo accesso,Il pulsante Accedi al gruppo e sempre raggiungibile,Viewport Samsung e iPhone,PASS,Gate 1.33.0 consolidato 109/109
+L1-014,Primo accesso,La password corretta viene accettata,API reale e UI,PASS,Gate 1.33.0 consolidato 109/109
+L1-015,Primo accesso,La password errata mostra Codice non corretto,UI reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-016,Primo accesso,Il messaggio di errore resta su una riga quando possibile,Viewport mobile,PASS,Gate 1.33.0 consolidato 109/109
+L1-017,Primo accesso,Database vuoto propone il primo coordinatore,Database reale vuoto,PASS,Gate 1.33.0 consolidato 109/109
+L1-018,Primo accesso,Il primo coordinatore inserisce nome e cognome,Form e API reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-019,Primo accesso,Il primo coordinatore inserisce la citta,Form e API reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-020,Primo accesso,La creazione collega subito quel telefono,Sessione server reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-021,Identita,Il nome collegato appare nell'intestazione,UI autenticata,PASS,Gate 1.33.0 consolidato 109/109
+L1-022,Identita,Il ruolo coordinatore appare correttamente,UI e sessione server,PASS,Gate 1.33.0 consolidato 109/109
+L1-023,Identita,Il coordinatore crea un viaggiatore,API e UI reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-024,Identita,Il viaggiatore riceve un link personale,Invito server reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-025,Identita,Il link personale collega un secondo telefono,Secondo contesto pulito,PASS,Gate 1.33.0 consolidato 109/109
+L1-026,Identita,Un invito gia usato viene rifiutato,Secondo tentativo reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-027,Identita,Il viaggiatore vede il proprio nome dopo il collegamento,UI secondo dispositivo,PASS,Gate 1.33.0 consolidato 109/109
+L1-028,Identita,Il viaggiatore non puo scegliere arbitrariamente un altro nome,Tentativo UI e API,PASS,Gate 1.33.0 consolidato 109/109
+L1-029,Identita,Il coordinatore vede l'elenco dei viaggiatori,UI coordinatore,PASS,Gate 1.33.0 consolidato 109/109
+L1-030,Identita,Il conteggio viaggiatori coincide col database,UI e query D1,PASS,Gate 1.33.0 consolidato 109/109
+L1-031,Memoria dispositivo,Refresh non richiede di nuovo la password,Reload autenticato,PASS,Gate 1.33.0 consolidato 109/109
+L1-032,Memoria dispositivo,Chiusura e riapertura browser conserva l'accesso,Contesto persistente Playwright,PASS,Gate 1.33.0 consolidato 109/109
+L1-033,Memoria dispositivo,Riavvio simulato del cellulare conserva la sessione,Nuovo browser con stesso profilo,PASS,Gate 1.33.0 consolidato 109/109
+L1-034,Memoria dispositivo,Il nome non viene richiesto di nuovo,Pubblicazione dopo riapertura,PASS,Gate 1.33.0 consolidato 109/109
+L1-035,Memoria dispositivo,La sessione valida viene verificata dal server,Endpoint auth session,PASS,Gate 1.33.0 consolidato 109/109
+L1-036,Memoria dispositivo,Un errore rete non effettua logout,Offline temporaneo,PASS,Gate 1.33.0 consolidato 109/109
+L1-037,Memoria dispositivo,Una sessione revocata effettua logout,Revoca server e riapertura,PASS,Gate 1.33.0 consolidato 109/109
+L1-038,Memoria dispositivo,Logout cancella le credenziali del dispositivo,Storage e UI,PASS,Gate 1.33.0 consolidato 109/109
+L1-039,Memoria dispositivo,Dopo logout il privato torna bloccato,UI e API,PASS,Gate 1.33.0 consolidato 109/109
+L1-040,Memoria dispositivo,Un altro cellulare resta indipendente,Due contesti separati,PASS,Gate 1.33.0 consolidato 109/109
+L1-041,Ruoli,Il pubblico vede solo contenuti pubblici,UI pubblica e API,PASS,Gate 1.33.0 consolidato 109/109
+L1-042,Ruoli,Il pubblico non vede documenti,Richiesta UI e API forzata,PASS,Gate 1.33.0 consolidato 109/109
+L1-043,Ruoli,Il pubblico non vede posizioni private,Richiesta UI e API forzata,PASS,Gate 1.33.0 consolidato 109/109
+L1-044,Ruoli,Il pubblico non puo pubblicare post,Tentativo UI e API,PASS,Gate 1.33.0 consolidato 109/109
+L1-045,Ruoli,Il pubblico non puo eliminare post,Tentativo UI e API,PASS,Gate 1.33.0 consolidato 109/109
+L1-046,Ruoli,Il visitatore identificato puo commentare,Sessione ospite reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-047,Ruoli,Il visitatore identificato puo reagire,Sessione ospite reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-048,Ruoli,Il viaggiatore puo pubblicare,Sessione viaggiatore reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-049,Ruoli,Il viaggiatore gestisce solo i propri contenuti,Tentativi su due autori,PASS,Gate 1.33.0 consolidato 109/109
+L1-050,Ruoli,Il coordinatore gestisce contenuti e gruppo,Sessione coordinatore reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-051,Navigazione,Il tasto Bacheca apre la bacheca,Click mobile reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-052,Navigazione,Il tasto Diario apre il diario,Click mobile reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-053,Navigazione,Il tasto Mappa apre la mappa,Click mobile reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-054,Navigazione,Il tasto Gruppo apre il gruppo,Click mobile reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-055,Navigazione,Il tasto Documenti apre i documenti se autorizzato,Click mobile reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-056,Navigazione,Il tasto Pubblica apre il compositore,Click mobile reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-057,Navigazione,Nessun tasto principale e coperto da altri elementi,Hit test mobile,PASS,Gate 1.33.0 consolidato 109/109
+L1-058,Navigazione,Lo scroll non viene catturato subito dalla mappa,Gesto touch simulato,PASS,Gate 1.33.0 consolidato 109/109
+L1-059,Navigazione,Il cambio giorno centra la tratta corretta,Mappa e giornata reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-060,Navigazione,Indietro e chiudi non perdono lo stato,Sequenza browser reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-061,Pubblicazione,Un coordinatore pubblica testo,UI e API reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-062,Pubblicazione,Un viaggiatore pubblica testo,UI e API reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-063,Pubblicazione,Si sceglie una foto dalla galleria,Input mobile image,PASS,Gate 1.33.0 consolidato 109/109
+L1-064,Pubblicazione,Si pubblica una foto JPG,Upload reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-065,Pubblicazione,Si pubblica una foto HEIC o equivalente mobile,Upload reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-066,Pubblicazione,Si pubblica un video MP4 con audio,Upload e playback reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-067,Pubblicazione,Si pubblica un audio MP3 o M4A,Upload e playback reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-068,Pubblicazione,Si pubblicano piu media nello stesso post,Upload reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-069,Pubblicazione,Il post puo avere una posizione scritta,Form e stato server,PASS,Gate 1.33.0 consolidato 109/109
+L1-070,Pubblicazione,Pubblica non richiede una seconda password,Sessione gia collegata,PASS,Gate 1.33.0 consolidato 109/109
+L1-071,Pubblicazione,Il pulsante non invia un post vuoto,UI reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-072,Pubblicazione,Un doppio tocco non duplica il post,Idempotenza UI API,PASS,Gate 1.33.0 consolidato 109/109
+L1-073,Pubblicazione,Un formato camuffato viene rifiutato,Upload reale ostile,PASS,Gate 1.33.0 consolidato 109/109
+L1-074,Pubblicazione,Un file troppo grande mostra errore comprensibile,File fixture reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-075,Pubblicazione,Dopo errore si puo riselezionare lo stesso file,Input reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-076,Social,Il secondo telefono vede subito il nuovo post,Due browser reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-077,Social,Il nome dell'autore e corretto,Due identita reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-078,Social,Il visitatore inserisce il nome una sola volta,Sessione ospite persistente,PASS,Gate 1.33.0 consolidato 109/109
+L1-079,Social,Il visitatore pubblica un commento testuale,UI e API reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-080,Social,Il commento mostra il nome corretto,Secondo browser,PASS,Gate 1.33.0 consolidato 109/109
+L1-081,Social,Il commento lungo resta leggibile,Textarea e rendering,PASS,Gate 1.33.0 consolidato 109/109
+L1-082,Social,Il visitatore allega una foto al commento,Upload reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-083,Social,Il visitatore allega un audio al commento,Registrazione o fixture reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-084,Social,Una reazione appare su tutti i dispositivi,Due browser reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-085,Social,Si vede chi ha reagito,UI e stato server,PASS,Gate 1.33.0 consolidato 109/109
+L1-086,Social,L'autore elimina il proprio commento,UI e API reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-087,Social,Un estraneo non elimina il commento altrui,Tentativo forzato,PASS,Gate 1.33.0 consolidato 109/109
+L1-088,Social,L'autore elimina il proprio post,UI e API reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-089,Social,L'eliminazione sparisce sul secondo telefono,Due browser reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-090,Social,Swipe foto e video funziona senza bloccare lo scroll,Gesto touch mobile,PASS,Gate 1.33.0 consolidato 109/109
+L1-091,Privato,Il coordinatore carica un documento simulato,Upload PDF reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-092,Privato,Il viaggiatore carica il proprio documento,Upload PDF reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-093,Privato,Il viaggiatore vede solo i propri documenti,Due profili reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-094,Privato,Il coordinatore vede la griglia completa,UI coordinatore,PASS,Gate 1.33.0 consolidato 109/109
+L1-095,Privato,La griglia indica visto e passaporto presenti o mancanti,Upload e stato reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-096,Privato,Il proprietario elimina il proprio documento,UI e API reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-097,Posizione,Il viaggiatore condivide una posizione,Geolocalizzazione simulata browser,PASS,Gate 1.33.0 consolidato 109/109
+L1-098,Posizione,La posizione appare al coordinatore e agli autorizzati,Due browser reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-099,Compatibilita,Il percorso completo passa su viewport Samsung,Chromium mobile reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-100,Compatibilita,Il percorso completo passa su viewport iPhone,Emulazione WebKit compatibile o iPhone reale,PASS,Gate 1.33.0 consolidato 109/109
+L1-101,Bacheca,La foto del Taj Mahal resta visibile al centro su iPhone,Ispezione geometrica e screenshot,PASS,Gate 1.33.0 consolidato 109/109
+L1-102,Bacheca,La foto del Taj Mahal resta visibile al centro su Samsung,Ispezione geometrica e screenshot,PASS,Gate 1.33.0 consolidato 109/109
+L1-103,Bacheca,I comandi superiori non si sovrappongono e occupano meno del 22 percento,Bounding box responsive,PASS,Gate 1.33.0 consolidato 109/109
+L1-104,Bacheca,Raccontiamocele insieme resta su una riga senza tagli,Layout responsive,PASS,Gate 1.33.0 consolidato 109/109
+L1-105,Carosello,Foto e video scorrono col dito senza frecce sovrapposte,TouchEvent e media reali,PASS,Gate 1.33.0 consolidato 109/109
+L1-106,Carosello,Lo swipe orizzontale non impedisce lo scroll verticale,Touch action e gesto mobile,PASS,Gate 1.33.0 consolidato 109/109
+L1-107,Accesso,Il tasto Gruppo apre subito la password su dispositivo nuovo,Browser pulito,PASS,Gate 1.33.0 consolidato 109/109
+L1-108,Accesso,Dopo il collegamento Gruppo e Pubblica non richiedono ancora la password,Riapertura con sessione server,PASS,Gate 1.33.0 consolidato 109/109
+L1-109,Identita,La barra Stai partecipando come non appare a un utente collegato,Primo accesso e riapertura,PASS,Gate 1.33.0 consolidato 109/109

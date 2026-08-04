@@ -1,4 +1,5 @@
 import { buildPushPayload } from "@block65/webcrypto-web-push";
+import { validateFileBytes } from "../_lib/fileValidation.js";
 
 const responseSecurityHeaders = {
   "x-content-type-options": "nosniff",
@@ -24,7 +25,11 @@ const groupOk = (request, env) =>
   Boolean(env.GROUP_CODE) && request.headers.get("x-group-code") === env.GROUP_CODE;
 const ext = (name) =>
   (name?.split(".").pop() || "bin").replace(/[^a-z0-9]/gi, "").toLowerCase();
-const mediaUrl = (key) => (key ? `/api/media/${key}` : null);
+const mediaUrl = (key) => {
+  if (!key) return null;
+  if (String(key).startsWith("static:")) return String(key).slice(7);
+  return `/api/media/${key}`;
+};
 const futureIso = (hours) =>
   new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
 const secureToken = () =>
@@ -107,14 +112,19 @@ async function rateLimit(env, request, scope, limit, windowSeconds, actor = "") 
   const ip = String(request.headers.get("cf-connecting-ip") || "unknown");
   const actorHash = await tokenHash(`${scope}:${actor || ip}`);
   const bucket = Math.floor(Date.now() / (windowSeconds * 1000));
-  const key = `${actorHash}:${bucket}`;
-  const expiresAt = new Date((bucket + 1) * windowSeconds * 1000).toISOString();
+  const key = actorHash;
+  const checkedAt = now();
+  const expiresAt = new Date(Date.now() + windowSeconds * 1000).toISOString();
   await env.DB.prepare(
     `INSERT INTO rate_limits(rate_key,scope,bucket,count,expires_at)
      VALUES(?,?,?,?,?)
-     ON CONFLICT(rate_key) DO UPDATE SET count=count+1`,
+     ON CONFLICT(rate_key) DO UPDATE SET
+       scope=excluded.scope,
+       bucket=CASE WHEN rate_limits.expires_at<=? THEN excluded.bucket ELSE rate_limits.bucket END,
+       count=CASE WHEN rate_limits.expires_at<=? THEN 1 ELSE rate_limits.count+1 END,
+       expires_at=CASE WHEN rate_limits.expires_at<=? THEN excluded.expires_at ELSE rate_limits.expires_at END`,
   )
-    .bind(key, scope, bucket, 1, expiresAt)
+    .bind(key, scope, bucket, 1, expiresAt, checkedAt, checkedAt, checkedAt)
     .run();
   const row = await env.DB.prepare(
     "SELECT count FROM rate_limits WHERE rate_key=?",
@@ -307,8 +317,10 @@ async function saveMedia(env, file, prefix = "public") {
     error.status = 400;
     throw error;
   }
+  const bytes = await file.arrayBuffer();
+  validateFileBytes(bytes, contentType, file.name, prefix.startsWith("private") ? "document" : "post");
   const key = `${prefix}/${Date.now()}-${id()}.${ext(file.name)}`;
-  await env.MEDIA.put(key, await file.arrayBuffer(), {
+  await env.MEDIA.put(key, bytes, {
     metadata: {
       contentType,
       name: file.name || "file",
@@ -446,25 +458,36 @@ async function readState(env, session = null, guest = null) {
   return {
     sync_version: Number(syncState?.version || 0),
     sync_updated_at: syncState?.updated_at || null,
-    profiles: profiles.results.map((p) =>
-      session
-        ? { ...p, avatar_url: mediaUrl(p.avatar_key) }
+    profiles: profiles.results.map((p) => {
+      const { avatar_key: avatarKey, ...profileFields } = p;
+      return session
+        ? { ...profileFields, avatar_url: mediaUrl(avatarKey) }
         : {
             id: p.id,
             name: p.name,
             surname: String(p.surname || "").trim().slice(0, 1),
             origin_city: p.origin_city || "",
             role: p.role,
-            avatar_url: mediaUrl(p.avatar_key),
+            avatar_url: mediaUrl(avatarKey),
             created_at: p.created_at,
-          },
-    ),
-    posts: posts.results.filter((p) => canViewPost(p, session, guest)).map((p) => ({
-      ...p,
-      author_name: publicName(p.profile_id, p.author_name),
-      media_url: mediaUrl(p.media_key),
+          };
+    }),
+    posts: posts.results.filter((p) => canViewPost(p, session, guest)).map((p) => {
+      const {
+        profile_id: postProfileId,
+        media_key: legacyMediaKey,
+        ...postFields
+      } = p;
+      return {
+      ...postFields,
+      can_manage: Boolean(
+        session &&
+          (session.role === "coordinator" || postProfileId === session.profile_id),
+      ),
+      author_name: publicName(postProfileId, p.author_name),
+      media_url: mediaUrl(legacyMediaKey),
       media: [
-        ...(p.media_key
+        ...(legacyMediaKey
           ? [
               {
                 id: `legacy-${p.id}`,
@@ -478,17 +501,38 @@ async function readState(env, session = null, guest = null) {
           : []),
         ...postMedia.results
           .filter((m) => m.post_id === p.id)
-          .map((m) => ({ ...m, media_url: mediaUrl(m.media_key) })),
+          .map((m) => ({
+            id: m.id,
+            media_url: mediaUrl(m.media_key),
+            media_type: m.media_type,
+            media_name: m.media_name,
+            media_size: m.media_size,
+            position: m.position,
+          })),
       ],
       comments: comments.results
         .filter((c) => c.post_id === p.id)
-        .map((c) => ({
-          ...c,
-          author_name: publicName(c.profile_id, c.author_name),
-          media_url: mediaUrl(c.media_key),
-        })),
+        .map((c) => {
+          const {
+            profile_id: commentProfileId,
+            visitor_id: commentVisitorId,
+            media_key: commentMediaKey,
+            ...commentFields
+          } = c;
+          return {
+            ...commentFields,
+            can_manage: Boolean(
+              session
+                ? session.role === "coordinator" || commentProfileId === session.profile_id
+                : guest && commentVisitorId === guest.visitor_id,
+            ),
+            author_name: publicName(commentProfileId, c.author_name),
+            media_url: mediaUrl(commentMediaKey),
+          };
+        }),
       reactions: reactions.results.filter((r) => r.post_id === p.id),
-    })),
+    };
+    }),
   };
 }
 
@@ -501,6 +545,39 @@ export async function onRequest(context) {
   ).replace(/^\/+|\/+$/g, "");
   context.waitUntil?.(silentMaintenance(env).catch(() => {}));
   try {
+    if (request.method === "POST" && path === "auth/bootstrap") {
+      const limited = await rateLimit(env, request, "auth-bootstrap", 5, 300);
+      if (limited) return limited;
+      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
+      const body = await request.json().catch(() => ({}));
+      const name = String(body.name || "").trim();
+      const surname = String(body.surname || "").trim();
+      const originCity = String(body.origin_city || "").trim();
+      if (!name) return json({ error: "Inserisci il nome del coordinatore" }, 400);
+      if (name.length > 80 || surname.length > 80 || originCity.length > 100)
+        return json({ error: "I dati inseriti sono troppo lunghi" }, 400);
+      const profileId = id();
+      const createdAt = now();
+      const inserted = await env.DB.prepare(
+        `INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,created_at)
+         SELECT ?,?,?, '', '', ?, '', 'coordinator', NULL, ?
+         WHERE NOT EXISTS (SELECT 1 FROM profiles)`,
+      )
+        .bind(profileId, name, surname, originCity, createdAt)
+        .run();
+      if (!inserted.meta?.changes)
+        return json({ error: "Il gruppo è già stato inizializzato" }, 409);
+      try {
+        const issued = await createSession(env, profileId, deviceNameFromRequest(request));
+        return json({
+          ...issued,
+          profile: { id: profileId, name, surname, origin_city: originCity, role: "coordinator" },
+        }, 201);
+      } catch (error) {
+        await env.DB.prepare("DELETE FROM profiles WHERE id=?").bind(profileId).run();
+        throw error;
+      }
+    }
     if (request.method === "POST" && path === "auth/group") {
       const limited = await rateLimit(env, request, "auth-group", 10, 60);
       if (limited) return limited;
@@ -511,36 +588,42 @@ export async function onRequest(context) {
       const limited = await rateLimit(env, request, "auth-unlock", 10, 60);
       if (limited) return limited;
       if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
-      const body = await request.json();
-      const profile = await env.DB.prepare(
-        "SELECT id,name,surname,role FROM profiles WHERE id=?",
-      )
-        .bind(String(body.profile_id || ""))
-        .first();
-      if (!profile) return json({ error: "Profilo non trovato" }, 404);
-      let issued;
+      return json(
+        {
+          error:
+            "Per collegare un profilo apri il link personale ricevuto dalla coordinatrice.",
+        },
+        403,
+      );
+    }
+    if (request.method === "POST" && path === "auth/register") {
+      const limited = await rateLimit(env, request, "auth-register", 8, 300);
+      if (limited) return limited;
+      if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
+      const body = await request.json().catch(() => ({}));
+      const name = String(body.name || "").trim();
+      const surname = String(body.surname || "").trim();
+      const originCity = String(body.origin_city || "").trim();
+      const role = body.role === "coordinator" ? "coordinator" : "traveler";
+      if (!name) return json({ error: "Inserisci il tuo nome" }, 400);
+      if (name.length > 80 || surname.length > 80 || originCity.length > 100)
+        return json({ error: "I dati inseriti sono troppo lunghi" }, 400);
+      const profileId = id();
+      const createdAt = now();
+      await env.DB.prepare(
+        `INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,created_at)
+         VALUES(?,?,?, '', '', ?, '', ?, NULL, ?)`,
+      ).bind(profileId, name, surname, originCity, role, createdAt).run();
       try {
-        issued = await claimInitialProfile(env, profile.id, deviceNameFromRequest(request));
+        const issued = await createSession(env, profileId, deviceNameFromRequest(request));
+        return json({
+          ...issued,
+          profile: { id: profileId, name, surname, origin_city: originCity, role },
+        }, 201);
       } catch (error) {
-        if (/UNIQUE|constraint/i.test(String(error?.message || error)))
-          return json(
-            {
-              error:
-                "Profilo già collegato. Per un secondo telefono serve un invito del coordinatore.",
-            },
-            409,
-          );
+        await env.DB.prepare("DELETE FROM profiles WHERE id=?").bind(profileId).run();
         throw error;
       }
-      return json({
-        ...issued,
-        profile: {
-          id: profile.id,
-          name: profile.name,
-          surname: profile.surname,
-          role: profile.role,
-        },
-      });
     }
     if (request.method === "POST" && path === "auth/claim") {
       const limited = await rateLimit(env, request, "auth-claim", 20, 60);
@@ -907,6 +990,8 @@ export async function onRequest(context) {
         ? Number(upload.file_size) - UPLOAD_PART_SIZE * (expectedParts - 1)
         : UPLOAD_PART_SIZE;
       if (bytes.byteLength !== expectedSize) return json({ error: "Dimensione parte non valida" }, 400);
+      if (partNumber === 1)
+        validateFileBytes(bytes, upload.content_type, upload.file_name, upload.scope);
       const etag = await digestHex(bytes);
       await env.MEDIA.put(chunkKey(upload.id, partNumber), bytes, {
         metadata: { uploadId: upload.id, partNumber: String(partNumber), etag },

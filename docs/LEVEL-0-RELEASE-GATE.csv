@@ -1,0 +1,25 @@
+id,area,controllo,stato
+L0-001,Telefono nuovo,Gruppo mostra obbligatoriamente la password,PENDING
+L0-002,Telefono nuovo,Vista gruppo è disabilitata,PENDING
+L0-003,Telefono nuovo,Lo stato visibile è Pubblico,PENDING
+L0-004,Memoria precedente,Il vecchio codice comune viene cancellato,PENDING
+L0-005,Memoria precedente,Il vecchio identificativo profilo non concede identità,PENDING
+L0-006,Memoria precedente,Un token falso viene rifiutato e cancellato,PENDING
+L0-007,Password errata,Non modifica lo stato del dispositivo,PENDING
+L0-008,Password corretta,Non viene salvata nel dispositivo,PENDING
+L0-009,Password corretta,Non crea automaticamente una sessione personale,PENDING
+L0-010,Password corretta,Non consente di pubblicare,PENDING
+L0-011,Password corretta,Non consente di creare o modificare viaggiatori,PENDING
+L0-012,Password corretta,Non consente documenti o posizioni private,PENDING
+L0-013,Riapertura,Senza sessione personale richiede nuovamente la password,PENDING
+L0-014,Primo coordinatore,Richiede password appena verificata e database senza profili,PENDING
+L0-015,Primo coordinatore,La creazione produce una sessione personale verificabile,PENDING
+L0-016,Invito personale,È monouso e collega soltanto il profilo previsto,PENDING
+L0-017,Sessione viaggiatore,Riapre senza richiedere nuovamente la password,PENDING
+L0-018,Sessione viaggiatore,Può pubblicare e gestire soltanto i propri contenuti,PENDING
+L0-019,Sessione viaggiatore,Non può aprire i documenti altrui,PENDING
+L0-020,Sessione coordinatore,Può gestire il gruppo e vedere la griglia documentale,PENDING
+L0-021,Visitatore,Può vedere commentare e reagire ai contenuti consentiti,PENDING
+L0-022,Visitatore,Non può pubblicare eliminare o aprire dati privati,PENDING
+L0-023,Revoca,Blocca immediatamente il dispositivo già aperto,PENDING
+L0-024,Aggiornamento,Non ripristina password ruoli o sessioni revocate,PENDING

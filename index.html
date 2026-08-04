@@ -19,33 +19,6 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
-    <script>
-      if ("serviceWorker" in navigator) {
-        addEventListener("load", () =>
-          navigator.serviceWorker.register("./sw.js"),
-        );
-        let updating = false;
-        const safeToRefresh = () =>
-          !localStorage.getItem("india-draft") &&
-          !sessionStorage.getItem("india-auth-claiming") &&
-          !new URLSearchParams(location.search).has("invite") &&
-          !document.querySelector(".selected") &&
-          !document.activeElement?.matches("input,textarea,select");
-        navigator.serviceWorker.addEventListener("controllerchange", () => {
-          if (updating) return;
-          updating = true;
-          if (safeToRefresh()) location.reload();
-          else {
-            const timer = setInterval(() => {
-              if (safeToRefresh()) {
-                clearInterval(timer);
-                location.reload();
-              }
-            }, 5000);
-            setTimeout(() => clearInterval(timer), 120000);
-          }
-        });
-      }
-    </script>
+    <script type="module" src="/sw-register.js"></script>
   </body>
 </html>

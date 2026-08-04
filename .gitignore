@@ -6,3 +6,5 @@ dist/
 .dev-error.log
 backups/
 .wrangler/
+test-results/
+tmp/

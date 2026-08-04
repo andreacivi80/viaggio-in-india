@@ -1,0 +1,1946 @@
+CHECKLIST COMPLETA DI USABILITÀ, CONTROLLO TASTI E INCROCI
+APPLICAZIONE “INDIA INSIEME”
+VERSIONE DI RIFERIMENTO: 1.21.5
+
+DESTINATARIO: PROGRAMMATORE
+
+SCOPO
+
+Questa checklist deve verificare a 360° il funzionamento reale dell’applicazione come utilizzatore finale.
+
+Devono essere controllati:
+
+* tutti i pulsanti;
+* tutti i collegamenti;
+* tutti i ruoli;
+* tutte le combinazioni con e senza password;
+* tutte le autorizzazioni;
+* tutti gli incroci tra profilo, post, commenti, documenti, posizione, notifiche e mappe;
+* tutti gli errori;
+* tutti i salvataggi;
+* tutta la sincronizzazione tra dispositivi;
+* il funzionamento su iPhone e Android;
+* il funzionamento con rete lenta, assente o instabile.
+
+Non è sufficiente verificare che un pulsante sia visibile.
+
+Ogni pulsante deve:
+
+* eseguire realmente l’operazione;
+* comunicare che l’operazione è in corso;
+* comunicare il risultato;
+* gestire correttamente l’errore;
+* salvare il risultato;
+* aggiornare gli altri dispositivi;
+* non modificare dati non autorizzati;
+* non creare duplicazioni;
+* non perdere dati dopo la riapertura.
+
+==================================================
+
+1. ERRORE BLOCCANTE GIÀ RISCONTRATO
+   ==================================================
+
+PROBLEMA:
+
+L’utilizzatore inserisce correttamente la password del gruppo e l’interfaccia lo considera collegato, ma quando prova a pubblicare riceve un errore.
+
+CAUSA TECNICA DA CONTROLLARE:
+
+Nel frontend la pubblicazione viene resa disponibile quando esiste:
+
+* una sessione personale; oppure
+* la password del gruppo.
+
+L’API server di creazione dei post, invece, accetta soltanto una sessione personale valida.
+
+La password del gruppo inviata senza sessione personale viene ignorata dall’endpoint di pubblicazione.
+
+Questo crea la seguente contraddizione:
+
+* l’interfaccia mostra che l’utente può pubblicare;
+* il server rifiuta la pubblicazione;
+* l’utilizzatore riceve un errore anche se ha inserito la password corretta.
+
+CORREZIONE OBBLIGATORIA:
+
+[ ] Stabilire in modo definitivo chi può pubblicare.
+
+[ ] Se la password del gruppo deve permettere la pubblicazione, creare una sessione Ospite/Familiare valida e controllata.
+
+[ ] Se la pubblicazione richiede obbligatoriamente un profilo personale, non mostrare il compositore finché il dispositivo non è associato a un profilo.
+
+[ ] Non mostrare mai il pulsante “Pubblica” come utilizzabile se il server rifiuterà l’operazione.
+
+[ ] Non consentire alla password comune di impersonare un Viaggiatore esistente.
+
+[ ] Associare ogni pubblicazione a un’identità certa.
+
+[ ] Mostrare un messaggio preciso: “Per pubblicare devi prima collegare questo dispositivo al tuo profilo”.
+
+[ ] Non mostrare un generico “Errore”.
+
+TEST OBBLIGATORIO DELLA CORREZIONE:
+
+[ ] Inserire la password corretta.
+
+[ ] Aprire Pubblica.
+
+[ ] Pubblicare solo testo.
+
+[ ] Pubblicare una fotografia.
+
+[ ] Pubblicare un video.
+
+[ ] Pubblicare un audio.
+
+[ ] Pubblicare dieci allegati.
+
+[ ] Verificare risposta HTTP 201.
+
+[ ] Verificare inserimento nel database.
+
+[ ] Verificare autore corretto.
+
+[ ] Verificare profile_id o guest_id corretto.
+
+[ ] Verificare comparsa immediata nel feed.
+
+[ ] Verificare comparsa sul secondo telefono.
+
+[ ] Verificare ricezione della notifica.
+
+[ ] Verificare assenza di duplicazioni.
+
+==================================================
+2. RUOLI DA COLLAUDARE SEPARATAMENTE
+====================================
+
+Devono essere preparati almeno i seguenti utenti:
+
+UTENTE A – PUBBLICO SENZA PASSWORD
+
+Può:
+
+* vedere i contenuti pubblici;
+* vedere l’itinerario pubblico;
+* vedere le mappe pubbliche;
+* eventualmente commentare e reagire come Familiare, se previsto.
+
+Non può:
+
+* pubblicare contenuti riservati;
+* vedere documenti;
+* vedere posizioni;
+* modificare profili;
+* creare inviti;
+* diventare Coordinatore;
+* eliminare contenuti altrui.
+
+UTENTE B – FAMILIARE/OSPITE CON PASSWORD DI GRUPPO
+
+Deve essere stabilito chiaramente se può:
+
+* commentare;
+* reagire;
+* pubblicare post;
+* pubblicare fotografie;
+* pubblicare video;
+* pubblicare audio.
+
+Se può pubblicare:
+
+[ ] deve ricevere una sessione Ospite sicura;
+
+[ ] deve avere un nome verificabile;
+
+[ ] non deve poter scegliere il profilo di un Viaggiatore;
+
+[ ] non deve vedere documenti;
+
+[ ] non deve vedere posizioni, salvo autorizzazione esplicita;
+
+[ ] non deve accedere alle funzioni del Coordinatore.
+
+UTENTE C – VIAGGIATORE CON SESSIONE PERSONALE
+
+Può:
+
+* pubblicare;
+* commentare;
+* reagire;
+* modificare il proprio profilo;
+* vedere e gestire i propri documenti;
+* condividere e cancellare la propria posizione.
+
+Non può:
+
+* modificare profili altrui;
+* vedere documenti altrui;
+* modificare ruoli;
+* creare inviti, salvo diversa decisione;
+* eliminare post altrui;
+* modificare posizioni altrui.
+
+UTENTE D – COORDINATORE
+
+Può:
+
+* gestire i profili;
+* creare inviti personali;
+* visualizzare la situazione documentale del gruppo;
+* aprire i documenti autorizzati;
+* moderare i contenuti;
+* revocare dispositivi;
+* controllare le posizioni autorizzate.
+
+UTENTE E – PASSWORD ERRATA
+
+Non deve:
+
+* ottenere accesso;
+* vedere funzioni riservate;
+* ricevere una sessione;
+* vedere documenti;
+* pubblicare;
+* modificare dati.
+
+UTENTE F – SESSIONE SCADUTA O REVOCATA
+
+Non deve:
+
+* continuare a pubblicare;
+* aprire documenti;
+* condividere posizioni;
+* modificare profili;
+* utilizzare privilegi precedenti.
+
+==================================================
+3. MODALITÀ DI ESECUZIONE DI OGNI TEST
+======================================
+
+Per ogni pulsante compilare:
+
+NOME DEL PULSANTE:
+
+SEZIONE:
+
+RUOLO UTILIZZATO:
+
+DISPOSITIVO:
+
+OPERAZIONE:
+
+RISULTATO ATTESO:
+
+RISULTATO EFFETTIVO:
+
+RISPOSTA HTTP:
+
+MODIFICA NEL DATABASE:
+
+AGGIORNAMENTO SUL SECONDO TELEFONO:
+
+MESSAGGIO MOSTRATO ALL’UTENTE:
+
+ESITO:
+
+[ ] SUPERATO
+
+[ ] NON SUPERATO
+
+[ ] PARZIALE
+
+[ ] BLOCCATO
+
+EVIDENZA:
+
+[ ] Screenshot
+
+[ ] Video
+
+[ ] Log browser
+
+[ ] Log Cloudflare
+
+[ ] Controllo database
+
+==================================================
+4. CONTROLLO DELLA BARRA SUPERIORE
+==================================
+
+PULSANTE ACCESSO/PASSWORD
+
+[ ] Toccare il pulsante Accesso.
+
+[ ] Verificare apertura del pannello.
+
+[ ] Inserire password corretta.
+
+[ ] Verificare messaggio di accesso riuscito.
+
+[ ] Inserire password errata.
+
+[ ] Verificare messaggio preciso.
+
+[ ] Premere Invio dalla tastiera.
+
+[ ] Verificare esecuzione dell’accesso.
+
+[ ] Inserire spazi prima e dopo la password.
+
+[ ] Verificare comportamento previsto.
+
+[ ] Chiudere e riaprire il pannello.
+
+[ ] Verificare mantenimento dello stato.
+
+[ ] Chiudere e riaprire l’app.
+
+[ ] Verificare mantenimento dell’accesso, se previsto.
+
+[ ] Eseguire logout.
+
+[ ] Verificare rimozione dell’accesso.
+
+[ ] Verificare che il vecchio token non funzioni più.
+
+PULSANTE CAMPANELLA
+
+[ ] Aprire il pannello notifiche.
+
+[ ] Verificare contenuti recenti.
+
+[ ] Verificare numero di non letti.
+
+[ ] Chiudere il pannello.
+
+[ ] Riaprire il pannello.
+
+[ ] Verificare stato letto/non letto.
+
+[ ] Attivare notifiche.
+
+[ ] Negare notifiche.
+
+[ ] Riprovare dopo autorizzazione dalle impostazioni.
+
+[ ] Aprire una notifica.
+
+[ ] Verificare apertura del contenuto preciso.
+
+PULSANTE PROFILO RAPIDO
+
+[ ] Aprire il pannello personale.
+
+[ ] Verificare identità mostrata.
+
+[ ] Verificare ruolo mostrato.
+
+[ ] Aprire il proprio profilo.
+
+[ ] Aprire documenti.
+
+[ ] Aprire la griglia del Coordinatore, se autorizzato.
+
+[ ] Condividere la posizione.
+
+[ ] Cancellare la posizione.
+
+[ ] Eseguire logout.
+
+[ ] Verificare che ogni comando appartenga al profilo corretto.
+
+==================================================
+5. CONTROLLO DELLA BARRA INFERIORE
+==================================
+
+Devono essere controllati tutti i pulsanti:
+
+[ ] Bacheca.
+
+[ ] Viaggio.
+
+[ ] Pubblica.
+
+[ ] Mappa.
+
+[ ] Gruppo.
+
+Per ogni pulsante:
+
+[ ] toccare una volta;
+
+[ ] toccare rapidamente due volte;
+
+[ ] toccare durante un caricamento;
+
+[ ] toccare con rete lenta;
+
+[ ] toccare senza rete;
+
+[ ] verificare schermata corretta;
+
+[ ] verificare evidenziazione del pulsante attivo;
+
+[ ] verificare assenza di schermata bianca;
+
+[ ] verificare assenza di sovrapposizioni;
+
+[ ] verificare mantenimento dello stato tornando indietro;
+
+[ ] verificare che il tasto Indietro del telefono non chiuda l’app inaspettatamente.
+
+==================================================
+6. TEST DEL PULSANTE BACHECA
+============================
+
+[ ] Aprire la Bacheca senza password.
+
+[ ] Verificare soltanto contenuti pubblici.
+
+[ ] Aprire la Bacheca con password.
+
+[ ] Verificare contenuti autorizzati.
+
+[ ] Aprire la Bacheca come Viaggiatore.
+
+[ ] Aprire la Bacheca come Coordinatore.
+
+[ ] Verificare ordinamento cronologico.
+
+[ ] Verificare autore.
+
+[ ] Verificare data e ora.
+
+[ ] Verificare giornata associata.
+
+[ ] Verificare luogo.
+
+[ ] Verificare fotografie.
+
+[ ] Verificare video.
+
+[ ] Verificare audio.
+
+[ ] Verificare carosello.
+
+[ ] Verificare testo lungo.
+
+[ ] Verificare aggiornamento automatico.
+
+[ ] Verificare che l’aggiornamento non sposti la lettura.
+
+[ ] Verificare che l’aggiornamento non chiuda i commenti.
+
+[ ] Verificare che l’aggiornamento non chiuda la tastiera.
+
+==================================================
+7. FILTRI DELLA BACHECA
+=======================
+
+Controllare singolarmente:
+
+[ ] Tutti.
+
+[ ] Prima del viaggio.
+
+[ ] Oggi.
+
+[ ] Testo.
+
+[ ] Fotografie.
+
+[ ] Video.
+
+[ ] Audio.
+
+[ ] Contenuti misti.
+
+Per ogni filtro:
+
+[ ] verificare contenuti corretti;
+
+[ ] verificare nessun contenuto errato;
+
+[ ] pubblicare un nuovo contenuto durante il filtro;
+
+[ ] verificare se deve comparire;
+
+[ ] uscire dalla Bacheca;
+
+[ ] tornare alla Bacheca;
+
+[ ] verificare mantenimento del filtro;
+
+[ ] ricaricare la pagina;
+
+[ ] verificare comportamento previsto;
+
+[ ] verificare messaggio quando non esistono risultati.
+
+==================================================
+8. TEST DEL PULSANTE PUBBLICA
+=============================
+
+Eseguire per:
+
+* Pubblico;
+* Familiare con password;
+* Viaggiatore;
+* Coordinatore;
+* sessione scaduta;
+* password errata;
+* dispositivo revocato.
+
+TEST DI APERTURA
+
+[ ] Toccare Pubblica.
+
+[ ] Verificare apertura del compositore.
+
+[ ] Verificare autore corretto.
+
+[ ] Verificare giornata corretta.
+
+[ ] Verificare pulsante Chiudi/Annulla.
+
+[ ] Chiudere senza contenuti.
+
+[ ] Scrivere testo e chiudere.
+
+[ ] Verificare conservazione della bozza.
+
+[ ] Selezionare allegati e chiudere.
+
+[ ] Verificare conservazione degli allegati.
+
+TEST DI PUBBLICAZIONE
+
+[ ] Solo testo.
+
+[ ] Solo fotografia.
+
+[ ] Solo video.
+
+[ ] Solo audio.
+
+[ ] Testo e fotografia.
+
+[ ] Testo e video.
+
+[ ] Testo e audio.
+
+[ ] Fotografie e video.
+
+[ ] Fotografie, video e audio.
+
+[ ] Dieci allegati.
+
+[ ] Undici allegati.
+
+[ ] File oltre il limite.
+
+[ ] Testo molto lungo.
+
+[ ] Emoji.
+
+[ ] Testo in hindi.
+
+[ ] Nessun contenuto.
+
+RISULTATO ATTESO
+
+[ ] Pulsante Pubblica disabilitato se non esiste alcun contenuto.
+
+[ ] Pulsante Pubblica disabilitato durante l’invio.
+
+[ ] Un doppio tocco non crea due post.
+
+[ ] Messaggio “Pubblicazione in corso”.
+
+[ ] Messaggio “Pubblicazione riuscita”.
+
+[ ] Chiusura del compositore soltanto dopo conferma del server.
+
+[ ] Comparsa del post nel feed.
+
+[ ] Aggiornamento sul secondo telefono.
+
+[ ] Invio della notifica agli utenti autorizzati.
+
+[ ] Cancellazione della bozza soltanto dopo pubblicazione riuscita.
+
+==================================================
+9. CONTROLLO DEL CAMPO AUTORE
+=============================
+
+[ ] L’autore deve derivare dalla sessione personale.
+
+[ ] Il Viaggiatore non deve poter scrivere il nome di un’altra persona.
+
+[ ] Il Familiare deve avere un’identità Ospite controllata.
+
+[ ] Il Coordinatore non deve pubblicare accidentalmente come altro profilo.
+
+[ ] Modificare localStorage con il nome di un altro Viaggiatore.
+
+[ ] Verificare che il server utilizzi l’identità della sessione.
+
+[ ] Modificare profile_id nella richiesta.
+
+[ ] Verificare che il server lo ignori o lo rifiuti.
+
+[ ] Controllare author_name e profile_id nel database.
+
+==================================================
+10. CONTROLLO DELLA GIORNATA DEL POST
+=====================================
+
+[ ] Selezionare ogni giornata dal 10 al 23 agosto.
+
+[ ] Pubblicare un post per ogni giornata.
+
+[ ] Verificare day_index nel database.
+
+[ ] Verificare filtro della giornata.
+
+[ ] Verificare che il post non compaia nel giorno sbagliato.
+
+[ ] Aprire “Aggiungi ricordo” direttamente dall’itinerario.
+
+[ ] Verificare giornata già selezionata.
+
+[ ] Tornare indietro.
+
+[ ] Verificare mantenimento della giornata.
+
+[ ] Provare una data precedente al viaggio.
+
+[ ] Provare una data successiva al viaggio.
+
+==================================================
+11. PULSANTI FOTOCAMERA E GALLERIA
+==================================
+
+PULSANTE FOTOCAMERA
+
+[ ] Aprire la fotocamera.
+
+[ ] Autorizzare il permesso.
+
+[ ] Negare il permesso.
+
+[ ] Scattare una fotografia.
+
+[ ] Annullare lo scatto.
+
+[ ] Ripetere lo scatto.
+
+[ ] Verificare anteprima.
+
+PULSANTE GALLERIA
+
+[ ] Aprire la galleria.
+
+[ ] Selezionare una fotografia.
+
+[ ] Selezionare più fotografie.
+
+[ ] Selezionare HEIC.
+
+[ ] Selezionare HEIF.
+
+[ ] Selezionare PNG.
+
+[ ] Selezionare un video MOV.
+
+[ ] Selezionare un video MP4.
+
+[ ] Selezionare un file non supportato.
+
+[ ] Verificare messaggio preciso.
+
+ANTEPRIMA ALLEGATI
+
+[ ] Verificare nome file.
+
+[ ] Verificare dimensione.
+
+[ ] Verificare tipo.
+
+[ ] Riprodurre video.
+
+[ ] Aprire fotografia.
+
+[ ] Rimuovere un allegato.
+
+[ ] Rimuovere il primo.
+
+[ ] Rimuovere l’ultimo.
+
+[ ] Aggiungere nuovamente un file rimosso.
+
+[ ] Verificare conteggio corretto.
+
+==================================================
+12. PULSANTE REGISTRA AUDIO
+===========================
+
+[ ] Aprire il registratore.
+
+[ ] Autorizzare il microfono.
+
+[ ] Negare il microfono.
+
+[ ] Avviare la registrazione.
+
+[ ] Mettere in pausa.
+
+[ ] Riprendere.
+
+[ ] Interrompere.
+
+[ ] Riascoltare.
+
+[ ] Eliminare.
+
+[ ] Registrare nuovamente.
+
+[ ] Aggiungere l’audio al post.
+
+[ ] Pubblicare.
+
+[ ] Verificare riproduzione nel feed.
+
+[ ] Verificare riproduzione sul secondo telefono.
+
+[ ] Verificare formato iPhone.
+
+[ ] Verificare formato Android.
+
+[ ] Ricevere una telefonata durante la registrazione.
+
+[ ] Bloccare lo schermo.
+
+[ ] Cambiare applicazione.
+
+[ ] Verificare recupero corretto.
+
+==================================================
+13. PULSANTI DELLA POSIZIONE NEL POST
+=====================================
+
+[ ] Toccare “Usa posizione attuale”.
+
+[ ] Autorizzare GPS.
+
+[ ] Negare GPS.
+
+[ ] Verificare coordinate.
+
+[ ] Verificare nome del luogo.
+
+[ ] Verificare ricerca inversa.
+
+[ ] Verificare fallback con coordinate numeriche.
+
+[ ] Rimuovere la posizione.
+
+[ ] Verificare cancellazione di nome e coordinate.
+
+[ ] Cercare un luogo manualmente.
+
+[ ] Selezionare un risultato.
+
+[ ] Modificare il nome dopo la selezione.
+
+[ ] Verificare coerenza tra nome e coordinate.
+
+[ ] Pubblicare il post.
+
+[ ] Aprire il luogo dal feed.
+
+[ ] Verificare che il pubblico veda soltanto la posizione consentita.
+
+==================================================
+14. PULSANTI DEI SINGOLI POST
+=============================
+
+PULSANTE MI PIACE/REAZIONE
+
+[ ] Aggiungere reazione.
+
+[ ] Cambiare reazione.
+
+[ ] Rimuovere reazione.
+
+[ ] Verificare nome della persona.
+
+[ ] Verificare aggiornamento sul secondo telefono.
+
+[ ] Doppio tocco rapido.
+
+[ ] Verificare una sola reazione.
+
+PULSANTE COMMENTA
+
+[ ] Aprire il campo.
+
+[ ] Verificare focus e tastiera.
+
+[ ] Scrivere commento.
+
+[ ] Inviare commento.
+
+[ ] Verificare comparsa immediata.
+
+[ ] Verificare sincronizzazione.
+
+PULSANTE CONDIVIDI
+
+[ ] Aprire condivisione nativa.
+
+[ ] Condividere su WhatsApp.
+
+[ ] Condividere tramite messaggio.
+
+[ ] Verificare link del post preciso.
+
+[ ] Verificare fallback “Copia link”.
+
+[ ] Aprire il link senza password.
+
+[ ] Verificare rispetto della visibilità.
+
+PULSANTE SALVA/PREFERITI
+
+[ ] Salvare il post.
+
+[ ] Verificare evidenziazione.
+
+[ ] Chiudere e riaprire l’app.
+
+[ ] Verificare persistenza.
+
+[ ] Aprire da un secondo dispositivo.
+
+[ ] Verificare sincronizzazione, se prevista.
+
+PULSANTE ALTRE OPZIONI
+
+[ ] Aprire menu.
+
+[ ] Chiudere menu.
+
+[ ] Toccare fuori dal menu.
+
+[ ] Verificare “Elimina” soltanto per proprietario o Coordinatore.
+
+[ ] Verificare assenza di “Elimina” per utenti non autorizzati.
+
+==================================================
+15. ELIMINAZIONE DEI POST
+=========================
+
+[ ] Eliminare un proprio post.
+
+[ ] Annullare dalla finestra di conferma.
+
+[ ] Confermare eliminazione.
+
+[ ] Verificare scomparsa dal feed.
+
+[ ] Verificare scomparsa sul secondo telefono.
+
+[ ] Verificare eliminazione delle fotografie.
+
+[ ] Verificare eliminazione dei video.
+
+[ ] Verificare eliminazione degli audio.
+
+[ ] Verificare eliminazione dei commenti.
+
+[ ] Verificare eliminazione delle reazioni.
+
+[ ] Verificare nessun file orfano.
+
+[ ] Tentare eliminazione di un post altrui.
+
+[ ] Risultato atteso: 403.
+
+[ ] Verificare che il Coordinatore possa moderare, se previsto.
+
+==================================================
+16. COMMENTI
+============
+
+[ ] Commento senza password.
+
+[ ] Commento con password.
+
+[ ] Commento come Viaggiatore.
+
+[ ] Commento come Coordinatore.
+
+[ ] Commento testuale.
+
+[ ] Commento con fotografia.
+
+[ ] Commento con video.
+
+[ ] Commento con audio.
+
+[ ] Commento vuoto.
+
+[ ] Commento molto lungo.
+
+[ ] Commento con emoji.
+
+[ ] Commento con menzione.
+
+[ ] Modifica commento proprio.
+
+[ ] Eliminazione commento proprio.
+
+[ ] Tentativo di modifica di commento altrui.
+
+[ ] Tentativo di eliminazione di commento altrui.
+
+[ ] Visualizza ultimi commenti.
+
+[ ] Visualizza tutti i commenti.
+
+[ ] Chiudi tutti i commenti.
+
+[ ] Sincronizzazione sul secondo telefono.
+
+==================================================
+17. PULSANTE VIAGGIO
+====================
+
+[ ] Aprire Viaggio.
+
+[ ] Verificare tutte le 14 giornate.
+
+[ ] Aprire ogni giornata.
+
+[ ] Chiudere ogni giornata.
+
+[ ] Verificare fotografia della città.
+
+[ ] Verificare titolo.
+
+[ ] Verificare descrizione.
+
+[ ] Verificare mezzo.
+
+[ ] Verificare distanza.
+
+[ ] Verificare durata.
+
+[ ] Verificare obiettivo.
+
+[ ] Verificare attività.
+
+[ ] Verificare percorso.
+
+[ ] Verificare checklist.
+
+[ ] Selezionare un’attività.
+
+[ ] Deselezionare un’attività.
+
+[ ] Chiudere e riaprire.
+
+[ ] Verificare persistenza.
+
+[ ] Premere Giorno precedente.
+
+[ ] Premere Giorno successivo.
+
+[ ] Verificare limiti del primo e ultimo giorno.
+
+[ ] Premere “Aggiungi ricordo”.
+
+[ ] Verificare apertura del compositore sul giorno corretto.
+
+==================================================
+18. PULSANTI DELLE MAPPE
+========================
+
+[ ] Aprire la mini-mappa della giornata.
+
+[ ] Aprire la mappa completa.
+
+[ ] Premere “Vedi tutto”.
+
+[ ] Selezionare ogni giorno dai pulsanti della mappa.
+
+[ ] Verificare marker.
+
+[ ] Verificare percorso.
+
+[ ] Verificare zoom.
+
+[ ] Verificare Delhi iniziale e finale.
+
+[ ] Verificare Ranakpur.
+
+[ ] Verificare linee aeree.
+
+[ ] Verificare linee ferroviarie.
+
+[ ] Verificare percorsi stradali.
+
+[ ] Premere controlli zoom più e meno.
+
+[ ] Trascinare la mappa.
+
+[ ] Utilizzare due dita.
+
+[ ] Ruotare il telefono.
+
+[ ] Premere “Torna alla Bacheca”.
+
+[ ] Verificare ritorno allo stesso punto.
+
+[ ] Aprire Google Maps.
+
+[ ] Verificare destinazione.
+
+[ ] Premere Naviga.
+
+[ ] Verificare percorso corretto.
+
+[ ] Provare senza rete.
+
+[ ] Mostrare alternativa con coordinate e indirizzo.
+
+==================================================
+19. PULSANTE GRUPPO
+===================
+
+COME PUBBLICO
+
+[ ] Visualizzare soltanto informazioni pubbliche consentite.
+
+[ ] Non visualizzare documenti.
+
+[ ] Non visualizzare posizione.
+
+[ ] Non visualizzare comandi di modifica.
+
+COME FAMILIARE CON PASSWORD
+
+[ ] Verificare informazioni autorizzate.
+
+[ ] Non visualizzare documenti.
+
+[ ] Non modificare profili.
+
+[ ] Non creare inviti.
+
+COME VIAGGIATORE
+
+[ ] Aprire il proprio profilo.
+
+[ ] Modificare il proprio profilo.
+
+[ ] Sostituire la propria fotografia.
+
+[ ] Non modificare profili altrui.
+
+COME COORDINATORE
+
+[ ] Creare profilo.
+
+[ ] Modificare profilo.
+
+[ ] Assegnare ruolo.
+
+[ ] Creare invito.
+
+[ ] Copiare invito.
+
+[ ] Verificare durata di 48 ore.
+
+[ ] Verificare utilizzo singolo.
+
+[ ] Revocare invito, se previsto.
+
+==================================================
+20. CAMPI DEL PROFILO
+=====================
+
+Controllare:
+
+[ ] Nome.
+
+[ ] Cognome.
+
+[ ] Età.
+
+[ ] Lavoro.
+
+[ ] Città di provenienza.
+
+[ ] Biografia.
+
+[ ] Ruolo.
+
+[ ] Fotografia.
+
+Per ogni campo:
+
+[ ] valore vuoto;
+
+[ ] valore molto lungo;
+
+[ ] accenti;
+
+[ ] apostrofi;
+
+[ ] emoji;
+
+[ ] HTML;
+
+[ ] JavaScript;
+
+[ ] salvataggio;
+
+[ ] modifica;
+
+[ ] chiusura e riapertura;
+
+[ ] aggiornamento sul secondo dispositivo;
+
+[ ] privacy nella vista pubblica.
+
+==================================================
+21. INVITI PERSONALI
+====================
+
+[ ] Creare invito.
+
+[ ] Copiare invito.
+
+[ ] Aprire invito sul telefono corretto.
+
+[ ] Verificare profilo corretto.
+
+[ ] Verificare creazione della sessione.
+
+[ ] Verificare rimozione del token dall’URL.
+
+[ ] Riutilizzare lo stesso invito.
+
+[ ] Risultato atteso: accesso negato.
+
+[ ] Aprire contemporaneamente lo stesso invito su due telefoni.
+
+[ ] Deve riuscire soltanto una richiesta.
+
+[ ] Utilizzare invito scaduto.
+
+[ ] Modificare un carattere del link.
+
+[ ] Verificare accesso negato.
+
+[ ] Verificare procedura di revoca.
+
+==================================================
+22. DOCUMENTI
+=============
+
+PULSANTE CARICA
+
+[ ] Caricare Passaporto.
+
+[ ] Caricare Visto.
+
+[ ] Caricare Biglietti.
+
+[ ] Caricare Assicurazione.
+
+[ ] Verificare indicatore Presente.
+
+PULSANTE APRI
+
+[ ] Aprire PDF.
+
+[ ] Aprire fotografia.
+
+[ ] Verificare file corretto.
+
+[ ] Verificare autorizzazione server.
+
+PULSANTE SCARICA
+
+[ ] Scaricare documento.
+
+[ ] Verificare nome file.
+
+[ ] Verificare contenuto.
+
+PULSANTE SOSTITUISCI
+
+[ ] Sostituire documento.
+
+[ ] Verificare nuovo documento.
+
+[ ] Verificare eliminazione del precedente.
+
+PULSANTE ELIMINA
+
+[ ] Aprire conferma.
+
+[ ] Annullare.
+
+[ ] Confermare.
+
+[ ] Verificare rimozione.
+
+[ ] Verificare conteggio aggiornato.
+
+TEST DEI RUOLI
+
+[ ] Pubblico: 403.
+
+[ ] Familiare: 403.
+
+[ ] Viaggiatore A apre documento A.
+
+[ ] Viaggiatore A tenta documento B: 403.
+
+[ ] Coordinatore apre documenti autorizzati.
+
+[ ] Token scaduto: 401.
+
+[ ] Token revocato: 401.
+
+==================================================
+23. DASHBOARD DEL COORDINATORE
+==============================
+
+[ ] Aprire vista Coordinatore.
+
+[ ] Verificare numero dei Viaggiatori.
+
+[ ] Verificare quattro documenti per persona.
+
+[ ] Verificare conteggio generale.
+
+[ ] Caricare documento dal telefono del Viaggiatore.
+
+[ ] Verificare aggiornamento del conteggio.
+
+[ ] Eliminare documento.
+
+[ ] Verificare aggiornamento.
+
+[ ] Aprire ogni documento.
+
+[ ] Verificare associazione alla persona corretta.
+
+[ ] Passare a vista Viaggiatore.
+
+[ ] Tornare a vista Coordinatore.
+
+[ ] Verificare che il cambio di anteprima non modifichi il ruolo reale.
+
+==================================================
+24. POSIZIONE DEL GRUPPO
+========================
+
+PULSANTE AGGIORNA ORA
+
+[ ] Consentire posizione.
+
+[ ] Negare posizione.
+
+[ ] Verificare messaggio.
+
+[ ] Verificare coordinate nel database.
+
+[ ] Verificare nome corretto.
+
+PULSANTE APRI MAPPA POSIZIONI
+
+[ ] Aprire mappa.
+
+[ ] Chiudere mappa.
+
+[ ] Verificare numero posizioni.
+
+[ ] Verificare marker.
+
+[ ] Verificare data e ora.
+
+PULSANTE GOOGLE MAPS
+
+[ ] Aprire coordinate corrette.
+
+PULSANTE NAVIGA
+
+[ ] Impostare destinazione corretta.
+
+PULSANTE CANCELLA POSIZIONE
+
+[ ] Cancellare la propria posizione.
+
+[ ] Verificare scomparsa.
+
+[ ] Verificare sincronizzazione.
+
+[ ] Tentare cancellazione di posizione altrui.
+
+[ ] Risultato atteso: 403.
+
+==================================================
+25. INCROCI TRA PASSWORD E PUBBLICAZIONE
+========================================
+
+CASO 1 – NESSUNA PASSWORD E NESSUNA SESSIONE
+
+[ ] Aprire Pubblica.
+
+[ ] Il sistema deve bloccare la pubblicazione oppure richiedere l’accesso.
+
+[ ] Il messaggio deve spiegare esattamente cosa serve.
+
+CASO 2 – PASSWORD ERRATA
+
+[ ] Nessun accesso.
+
+[ ] Nessuna pubblicazione.
+
+[ ] Nessuna sessione.
+
+CASO 3 – PASSWORD CORRETTA, NESSUN PROFILO
+
+[ ] Definire se l’utente è Ospite.
+
+[ ] Se può pubblicare, creare sessione Ospite.
+
+[ ] Se non può pubblicare, non mostrare il compositore come attivo.
+
+CASO 4 – PASSWORD CORRETTA, PROFILO ESISTENTE MA NON COLLEGATO
+
+[ ] Non associare automaticamente un profilo scelto dal client.
+
+[ ] Richiedere invito personale.
+
+CASO 5 – SESSIONE PERSONALE VALIDA
+
+[ ] Pubblicazione riuscita.
+
+[ ] Autore determinato dal server.
+
+CASO 6 – SESSIONE SCADUTA
+
+[ ] Pubblicazione bloccata.
+
+[ ] Bozza conservata.
+
+[ ] Richiesta di nuovo accesso.
+
+CASO 7 – SESSIONE REVOCATA DURANTE LA PUBBLICAZIONE
+
+[ ] Nessun post parziale.
+
+[ ] Nessun file orfano.
+
+[ ] Bozza recuperabile.
+
+==================================================
+26. TEST DI TUTTI I MESSAGGI DI ERRORE
+======================================
+
+Verificare messaggi specifici per:
+
+[ ] password errata;
+
+[ ] sessione mancante;
+
+[ ] sessione scaduta;
+
+[ ] dispositivo revocato;
+
+[ ] profilo non collegato;
+
+[ ] pubblicazione non autorizzata;
+
+[ ] documento non autorizzato;
+
+[ ] file troppo grande;
+
+[ ] formato non supportato;
+
+[ ] più di dieci allegati;
+
+[ ] posizione negata;
+
+[ ] microfono negato;
+
+[ ] fotocamera negata;
+
+[ ] notifiche negate;
+
+[ ] rete assente;
+
+[ ] server non disponibile;
+
+[ ] database non disponibile;
+
+[ ] upload interrotto;
+
+[ ] sincronizzazione fallita;
+
+[ ] contenuto eliminato;
+
+[ ] invito scaduto;
+
+[ ] invito già utilizzato.
+
+Ogni messaggio deve:
+
+[ ] spiegare il problema;
+
+[ ] indicare come risolverlo;
+
+[ ] evitare codici tecnici incomprensibili;
+
+[ ] non cancellare i dati inseriti;
+
+[ ] offrire Riprova, quando possibile.
+
+==================================================
+27. TEST DI RETE
+================
+
+Ripetere pubblicazione, commento, documenti e posizione con:
+
+[ ] Wi-Fi stabile.
+
+[ ] Dati mobili.
+
+[ ] Rete 3G.
+
+[ ] Rete lenta.
+
+[ ] Alta latenza.
+
+[ ] Perdita del 10% dei pacchetti.
+
+[ ] Modalità aereo.
+
+[ ] Cambio Wi-Fi/dati mobili.
+
+[ ] Rete interrotta al 25% dell’upload.
+
+[ ] Rete interrotta al 50%.
+
+[ ] Rete interrotta al 90%.
+
+Verificare:
+
+[ ] bozza conservata;
+
+[ ] allegati conservati;
+
+[ ] ripresa dell’invio;
+
+[ ] nessuna duplicazione;
+
+[ ] messaggio di stato;
+
+[ ] possibilità di annullare;
+
+[ ] possibilità di riprovare.
+
+==================================================
+28. TEST DI CHIUSURA E RIAPERTURA
+=================================
+
+Durante ogni operazione:
+
+[ ] chiudere la finestra;
+
+[ ] chiudere forzatamente la PWA;
+
+[ ] bloccare lo schermo;
+
+[ ] cambiare applicazione;
+
+[ ] riavviare il telefono.
+
+Ripetere durante:
+
+[ ] scrittura post;
+
+[ ] selezione allegati;
+
+[ ] registrazione audio;
+
+[ ] caricamento post;
+
+[ ] commento;
+
+[ ] caricamento documento;
+
+[ ] sostituzione documento;
+
+[ ] condivisione posizione;
+
+[ ] aggiornamento dell’app.
+
+Verificare:
+
+[ ] nessuna perdita non comunicata;
+
+[ ] nessuna duplicazione;
+
+[ ] nessun pulsante bloccato;
+
+[ ] recupero dello stato corretto.
+
+==================================================
+29. TEST DI SINCRONIZZAZIONE TRA DUE TELEFONI
+=============================================
+
+TELEFONO A E TELEFONO B
+
+[ ] A pubblica, B riceve.
+
+[ ] B commenta, A riceve.
+
+[ ] A reagisce, B riceve.
+
+[ ] A elimina il post, B lo vede scomparire.
+
+[ ] B carica documento, Coordinatore vede aggiornamento.
+
+[ ] A condivide posizione, B vede marker.
+
+[ ] A cancella posizione, B vede scomparsa.
+
+[ ] A modifica profilo, B vede modifica.
+
+[ ] Coordinatore cambia ruolo, permessi aggiornati immediatamente.
+
+[ ] Coordinatore revoca A, A perde accesso immediatamente.
+
+Verificare sempre:
+
+[ ] nessun aggiornamento completo inutile;
+
+[ ] nessun salto della pagina;
+
+[ ] nessun dato duplicato;
+
+[ ] nessun dato precedente ripristinato erroneamente.
+
+==================================================
+30. TEST DI SICUREZZA DELLE RICHIESTE
+=====================================
+
+[ ] Modificare profile_id.
+
+[ ] Modificare role.
+
+[ ] Modificare author_name.
+
+[ ] Modificare day_index.
+
+[ ] Modificare visibility.
+
+[ ] Modificare document profile_id.
+
+[ ] Modificare location profile_id.
+
+[ ] Utilizzare token di un altro utente.
+
+[ ] Utilizzare token scaduto.
+
+[ ] Utilizzare token revocato.
+
+[ ] Utilizzare soltanto password di gruppo contro endpoint personali.
+
+[ ] Tentare accesso diretto ai documenti.
+
+[ ] Tentare eliminazione diretta di post altrui.
+
+[ ] Tentare modifica diretta di commenti altrui.
+
+Risultato atteso:
+
+[ ] 401 o 403;
+
+[ ] nessuna modifica al database;
+
+[ ] nessun file creato;
+
+[ ] nessuna notifica inviata;
+
+[ ] evento registrato nel log.
+
+==================================================
+31. CONTROLLO DATABASE DOPO OGNI OPERAZIONE
+===========================================
+
+Per ogni post:
+
+[ ] un solo record;
+
+[ ] autore corretto;
+
+[ ] profilo corretto;
+
+[ ] giornata corretta;
+
+[ ] visibilità corretta;
+
+[ ] coordinate corrette;
+
+[ ] allegati corretti.
+
+Per ogni commento:
+
+[ ] post corretto;
+
+[ ] autore corretto;
+
+[ ] profilo o ospite corretto;
+
+[ ] allegato corretto.
+
+Per ogni documento:
+
+[ ] profilo corretto;
+
+[ ] tipo corretto;
+
+[ ] file corretto;
+
+[ ] stato corretto;
+
+[ ] data corretta.
+
+Per ogni posizione:
+
+[ ] profilo corretto;
+
+[ ] coordinate corrette;
+
+[ ] data server corretta;
+
+[ ] una sola posizione attiva per persona.
+
+Verificare:
+
+[ ] nessun record orfano;
+
+[ ] nessun file orfano;
+
+[ ] nessun duplicato;
+
+[ ] nessun riferimento a file inesistente.
+
+==================================================
+32. TEST COMPLETO DEL VISITATORE SENZA PASSWORD
+===============================================
+
+[ ] Aprire il dominio.
+
+[ ] Visualizzare la Bacheca pubblica.
+
+[ ] Visualizzare l’itinerario.
+
+[ ] Visualizzare le mappe pubbliche.
+
+[ ] Aprire fotografie e video pubblici.
+
+[ ] Commentare, se consentito.
+
+[ ] Reagire, se consentito.
+
+[ ] Tentare di pubblicare.
+
+[ ] Tentare di aprire documenti.
+
+[ ] Tentare di vedere posizioni.
+
+[ ] Tentare di modificare un profilo.
+
+[ ] Tentare di creare un invito.
+
+[ ] Verificare che tutte le funzioni riservate siano bloccate.
+
+==================================================
+33. TEST COMPLETO DEL FAMILIARE CON PASSWORD
+============================================
+
+[ ] Inserire password corretta.
+
+[ ] Verificare ruolo effettivo.
+
+[ ] Commentare.
+
+[ ] Reagire.
+
+[ ] Pubblicare testo, se consentito.
+
+[ ] Pubblicare fotografia, se consentito.
+
+[ ] Pubblicare video, se consentito.
+
+[ ] Pubblicare audio, se consentito.
+
+[ ] Verificare autore.
+
+[ ] Tentare di scegliere un profilo esistente.
+
+[ ] Tentare di aprire documenti.
+
+[ ] Tentare di vedere posizioni.
+
+[ ] Tentare di modificare ruoli.
+
+[ ] Verificare limiti corretti.
+
+==================================================
+34. TEST COMPLETO DEL VIAGGIATORE
+=================================
+
+[ ] Accesso tramite invito.
+
+[ ] Profilo corretto.
+
+[ ] Pubblicazione.
+
+[ ] Commento.
+
+[ ] Reazione.
+
+[ ] Modifica profilo proprio.
+
+[ ] Documenti propri.
+
+[ ] Posizione propria.
+
+[ ] Notifiche.
+
+[ ] Logout.
+
+[ ] Impossibilità di gestire altri utenti.
+
+[ ] Impossibilità di vedere documenti altrui.
+
+[ ] Impossibilità di diventare Coordinatore.
+
+==================================================
+35. TEST COMPLETO DEL COORDINATORE
+==================================
+
+[ ] Accesso personale.
+
+[ ] Creazione profilo.
+
+[ ] Modifica profilo.
+
+[ ] Gestione ruoli.
+
+[ ] Creazione invito.
+
+[ ] Copia invito.
+
+[ ] Dashboard documenti.
+
+[ ] Apertura documenti autorizzati.
+
+[ ] Controllo posizioni.
+
+[ ] Moderazione post.
+
+[ ] Moderazione commenti.
+
+[ ] Revoca dispositivi.
+
+[ ] Controllo log.
+
+[ ] Logout.
+
+[ ] Verifica perdita dei privilegi dopo logout.
+
+==================================================
+36. CRITERIO DI SUPERAMENTO PER OGNI PULSANTE
+=============================================
+
+Un pulsante è approvato soltanto se:
+
+[ ] è visibile al ruolo corretto;
+
+[ ] è nascosto o disabilitato per il ruolo non autorizzato;
+
+[ ] ha un’etichetta comprensibile;
+
+[ ] è facilmente premibile da telefono;
+
+[ ] reagisce al primo tocco;
+
+[ ] non reagisce due volte a un doppio tocco;
+
+[ ] mostra stato di caricamento;
+
+[ ] impedisce operazioni sovrapposte;
+
+[ ] esegue realmente l’operazione server;
+
+[ ] aggiorna il database;
+
+[ ] aggiorna l’interfaccia;
+
+[ ] aggiorna gli altri dispositivi;
+
+[ ] mostra conferma;
+
+[ ] gestisce l’errore;
+
+[ ] permette di riprovare;
+
+[ ] non perde dati;
+
+[ ] non crea duplicati;
+
+[ ] rispetta le autorizzazioni;
+
+[ ] funziona dopo chiusura e riapertura;
+
+[ ] funziona su iPhone e Android.
+
+==================================================
+37. DIFETTI BLOCCANTI CHE IMPEDISCONO L’APPROVAZIONE
+====================================================
+
+La versione non può essere approvata se:
+
+[ ] la password risulta corretta ma Pubblica restituisce errore;
+
+[ ] il pulsante Pubblica viene mostrato a chi non può utilizzarlo;
+
+[ ] un utente può pubblicare come un’altra persona;
+
+[ ] un Viaggiatore può vedere documenti altrui;
+
+[ ] un utente può diventare Coordinatore modificando la richiesta;
+
+[ ] un post può essere duplicato;
+
+[ ] una bozza viene persa;
+
+[ ] gli allegati vengono persi offline;
+
+[ ] un upload interrotto non può riprendere;
+
+[ ] una posizione rimane visibile dopo la cancellazione;
+
+[ ] una notifica mostra dati riservati;
+
+[ ] un link privato è accessibile senza sessione;
+
+[ ] un pulsante non esegue realmente l’operazione;
+
+[ ] frontend e server applicano regole differenti;
+
+[ ] i dati non si aggiornano sugli altri telefoni;
+
+[ ] esistono file o record orfani;
+
+[ ] l’applicazione non funziona con il computer del programmatore spento.
+
+==================================================
+38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE
+===========================================
+
+Il programmatore deve consegnare:
+
+[ ] versione esatta collaudata;
+
+[ ] commit esatto;
+
+[ ] URL Cloudflare;
+
+[ ] elenco dei file modificati;
+
+[ ] elenco degli errori corretti;
+
+[ ] conferma specifica della correzione del pulsante Pubblica;
+
+[ ] matrice dei ruoli;
+
+[ ] elenco di tutti i pulsanti testati;
+
+[ ] screenshot dei test;
+
+[ ] video dei percorsi completi;
+
+[ ] risposte HTTP;
+
+[ ] controlli database;
+
+[ ] test iPhone;
+
+[ ] test Android;
+
+[ ] test con password;
+
+[ ] test senza password;
+
+[ ] test come Familiare;
+
+[ ] test come Viaggiatore;
+
+[ ] test come Coordinatore;
+
+[ ] test con sessione scaduta;
+
+[ ] test con dispositivo revocato;
+
+[ ] test rete lenta;
+
+[ ] test offline;
+
+[ ] test multidispositivo;
+
+[ ] test anti-duplicazione;
+
+[ ] test backup e ripristino;
+
+[ ] elenco dei difetti ancora aperti.
+
+CRITERIO FINALE
+
+L’applicazione deve essere utilizzata realmente, pulsante per pulsante, da almeno:
+
+* una persona senza password;
+* un Familiare con password;
+* due Viaggiatori differenti;
+* un Coordinatore;
+* un utilizzatore non esperto;
+* due telefoni contemporaneamente.
+
+La funzione Pubblica deve essere provata realmente in tutte le condizioni previste.
+
+Non deve essere dichiarata funzionante soltanto perché il compositore si apre.
+
+La prova è superata esclusivamente quando il contenuto:
+
+* viene accettato dal server;
+* viene registrato nel database;
+* appare nel feed;
+* appare sul secondo dispositivo;
+* genera la notifica corretta;
+* rimane disponibile dopo chiusura e riapertura;
+* non viene duplicato;
+* è associato all’autore corretto.
