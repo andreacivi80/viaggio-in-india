@@ -4837,6 +4837,7 @@ mark.mention {
 .lodgingCard small { color: var(--orange); font-size: 9px; font-weight: 900; letter-spacing: .7px; }
 .lodgingCard b { color: var(--ink); font-size: 13px; }
 .lodgingCard div > span { color: var(--color-text-secondary); font-size: 10px; line-height: 1.3; }
+.lodgingCard .hotelContact { color: var(--green); font-weight: 850; }
 .lodgingCard a {
   padding: 7px 9px;
   border-radius: 9px;

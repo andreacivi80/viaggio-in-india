@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.13",
+const VERSION = "1.37.14",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -170,11 +170,16 @@ const places = {
   Delhi: [28.6139, 77.209],
   "Aeroporto DEL": [28.5562, 77.1],
   "Rockland Hotel C R Park": [28.5429119, 77.2428399],
+  "Akshay Niwas Boutique Hotel": [24.5793118, 73.6692829],
   Udaipur: [24.5854, 73.7125],
   Ranakpur: [25.1164, 73.4737],
+  "Hotel Rajwara Palace": [26.277971, 73.033025],
   Jodhpur: [26.2389, 73.0243],
+  "The Wall Street Beacon Hotel": [26.917646, 75.8116579],
   Jaipur: [26.9124, 75.7873],
+  "Hotel Taj Vilas": [27.1580309, 78.0592253],
   Agra: [27.1767, 78.0081],
+  "Costa River Varanasi": [25.3385012, 82.9795559],
   Varanasi: [25.3176, 82.9739],
 };
 const roadPaths = {
@@ -193,39 +198,39 @@ const roadPaths = {
     [28.6315, 77.2167],
   ],
   "Udaipur-local": [
-    [24.5854, 73.7125],
+    [24.5793118, 73.6692829],
     [24.5764, 73.6835],
     [24.572, 73.675],
     [24.5938, 73.6398],
     [24.6031, 73.6853],
-    [24.5854, 73.7125],
+    [24.5793118, 73.6692829],
   ],
   "Jodhpur-local": [
-    [26.2389, 73.0243],
+    [26.277971, 73.033025],
     [26.298, 73.018],
     [26.289, 73.024],
     [26.281, 73.018],
-    [26.2389, 73.0243],
+    [26.277971, 73.033025],
   ],
   "Jaipur-local": [
-    [26.9124, 75.7873],
+    [26.917646, 75.8116579],
     [26.916, 75.859],
     [26.9855, 75.8513],
     [26.926, 75.8235],
-    [26.9124, 75.7873],
+    [26.917646, 75.8116579],
   ],
   "Varanasi-ghats": [
-    [25.3176, 82.9739],
+    [25.3385012, 82.9795559],
     [25.3109, 83.0107],
     [25.306, 83.011],
     [25.282, 83.006],
-    [25.3176, 82.9739],
+    [25.3385012, 82.9795559],
   ],
   "Varanasi-river": [
     [25.3109, 83.0107],
     [25.323, 83.021],
     [25.337, 83.026],
-    [25.3176, 82.9739],
+    [25.3385012, 82.9795559],
   ],
   "Delhi-finale": [
     [28.6139, 77.209],
@@ -234,7 +239,7 @@ const roadPaths = {
     [28.5562, 77.1],
   ],
   "Udaipur-Jodhpur": [
-    [24.585, 73.712],
+    [24.5793118, 73.6692829],
     [24.667, 73.639],
     [24.814, 73.428],
     [25.116, 73.473],
@@ -242,10 +247,10 @@ const roadPaths = {
     [25.581, 73.39],
     [25.872, 73.223],
     [26.032, 73.079],
-    [26.239, 73.024],
+    [26.277971, 73.033025],
   ],
   "Jodhpur-Jaipur": [
-    [26.239, 73.024],
+    [26.277971, 73.033025],
     [26.272, 73.256],
     [26.265, 73.5],
     [26.217, 73.648],
@@ -259,10 +264,10 @@ const roadPaths = {
     [26.65, 75.133],
     [26.749, 75.324],
     [26.855, 75.652],
-    [26.912, 75.787],
+    [26.917646, 75.8116579],
   ],
   "Jaipur-Agra": [
-    [26.912, 75.787],
+    [26.917646, 75.8116579],
     [26.89, 75.87],
     [26.855, 76.011],
     [26.858, 76.168],
@@ -275,7 +280,19 @@ const roadPaths = {
     [27.173, 77.397],
     [27.206, 77.512],
     [27.103, 77.679],
-    [27.177, 78.008],
+    [27.1580309, 78.0592253],
+  ],
+  "Delhi-Udaipur-hotel": [
+    [28.5429119, 77.2428399],
+    [24.5793118, 73.6692829],
+  ],
+  "Agra-Varanasi-hotel": [
+    [27.1580309, 78.0592253],
+    [25.3385012, 82.9795559],
+  ],
+  "Varanasi-Delhi": [
+    [25.3385012, 82.9795559],
+    [28.6139, 77.209],
   ],
 };
 const days = [
@@ -294,7 +311,9 @@ const days = [
     path: "Delhi-arrival",
     hotel: {
       name: "Rockland Hotel C.R. Park",
+      place: "Rockland Hotel C R Park",
       address: "B-207, C.R. Park, Outer Ring Road, New Delhi 110019",
+      contact: "Shekhar · +91 88264 93202",
     },
     checks: ["Arrivo aeroporto DEL", "Transfer verso l’hotel", "Check-in", "Prima notte a Nuova Delhi"],
   },
@@ -325,6 +344,13 @@ const days = [
     transport: "Aereo",
     from: "Delhi",
     to: "Udaipur",
+    path: "Delhi-Udaipur-hotel",
+    hotel: {
+      name: "Akshay Niwas Boutique Hotel by Amantra",
+      place: "Akshay Niwas Boutique Hotel",
+      address: "7, Haridas Ji Ki Magri, vicino al Trident Hotel e al Lago Pichola, Udaipur, Rajasthan 313002",
+      contact: "Ashok · +91 94628 42799",
+    },
     checks: [
       "Volo Delhi–Udaipur",
       "Check-in",
@@ -345,6 +371,12 @@ const days = [
     from: "Udaipur",
     to: "Udaipur",
     path: "Udaipur-local",
+    hotel: {
+      name: "Akshay Niwas Boutique Hotel by Amantra",
+      place: "Akshay Niwas Boutique Hotel",
+      address: "7, Haridas Ji Ki Magri, vicino al Trident Hotel e al Lago Pichola, Udaipur, Rajasthan 313002",
+      contact: "Ashok · +91 94628 42799",
+    },
     checks: ["Tour guidato", "Barca al tramonto", "City Palace", "Shopping"],
   },
   {
@@ -361,6 +393,12 @@ const days = [
     via: "Ranakpur",
     to: "Jodhpur",
     path: "Udaipur-Jodhpur",
+    hotel: {
+      name: "Hotel Rajwara Palace",
+      place: "Hotel Rajwara Palace",
+      address: "Di fronte al Government Veterinary Hospital, Ratanada Road, Jodhpur, Rajasthan 342001",
+      contact: "Gajendra Singh · +91 76655 81115",
+    },
     checks: [
       "Partenza in van",
       "Tempio Ranakpur",
@@ -381,6 +419,12 @@ const days = [
     from: "Jodhpur",
     to: "Jodhpur",
     path: "Jodhpur-local",
+    hotel: {
+      name: "Hotel Rajwara Palace",
+      place: "Hotel Rajwara Palace",
+      address: "Di fronte al Government Veterinary Hospital, Ratanada Road, Jodhpur, Rajasthan 342001",
+      contact: "Gajendra Singh · +91 76655 81115",
+    },
     checks: [
       "Walking tour",
       "Colazione tipica",
@@ -401,6 +445,12 @@ const days = [
     from: "Jodhpur",
     to: "Jaipur",
     path: "Jodhpur-Jaipur",
+    hotel: {
+      name: "The Wall Street Beacon Hotel",
+      place: "The Wall Street Beacon Hotel",
+      address: "C-7, Mirza Ismail Road, vicino a Panch Batti, Jayanti Market, New Colony, Jaipur, Rajasthan 302001",
+      contact: "Amit · +91 99291 55591",
+    },
     checks: ["Van per Jaipur", "Walking tour", "Cooking class", "Cena insieme"],
   },
   {
@@ -416,6 +466,12 @@ const days = [
     from: "Jaipur",
     to: "Jaipur",
     path: "Jaipur-local",
+    hotel: {
+      name: "The Wall Street Beacon Hotel",
+      place: "The Wall Street Beacon Hotel",
+      address: "C-7, Mirza Ismail Road, vicino a Panch Batti, Jayanti Market, New Colony, Jaipur, Rajasthan 302001",
+      contact: "Amit · +91 99291 55591",
+    },
     checks: ["Galta Ji", "Amber Fort", "Foto di gruppo", "Cena Tattoo Café"],
   },
   {
@@ -431,6 +487,12 @@ const days = [
     from: "Jaipur",
     to: "Agra",
     path: "Jaipur-Agra",
+    hotel: {
+      name: "Hotel Taj Vilas",
+      place: "Hotel Taj Vilas",
+      address: "Fatehabad Road, vicino al TDI Mall, di fronte all’Hotel Trident, Tajganj, Basai, Agra 282006",
+      contact: "Sachin · +91 78950 02674",
+    },
     checks: [
       "Shopping Jaipur",
       "Van per Agra",
@@ -450,6 +512,7 @@ const days = [
     transport: "Treno notturno",
     from: "Agra",
     to: "Varanasi",
+    path: "Agra-Varanasi-hotel",
     checks: [
       "Taj Mahal all’alba",
       "Mercatini",
@@ -470,6 +533,11 @@ const days = [
     from: "Varanasi",
     to: "Varanasi",
     path: "Varanasi-ghats",
+    hotel: {
+      name: "Costa River Varanasi",
+      place: "Costa River Varanasi",
+      address: "Nepali Kothi, S 51-A-4-A1, The Mall Road, Nadesar, Varanasi Cantonment, Uttar Pradesh 221002",
+    },
     checks: [
       "Arrivo e check-in",
       "Walking tour ghat",
@@ -490,6 +558,11 @@ const days = [
     from: "Varanasi",
     to: "Varanasi",
     path: "Varanasi-river",
+    hotel: {
+      name: "Costa River Varanasi",
+      place: "Costa River Varanasi",
+      address: "Nepali Kothi, S 51-A-4-A1, The Mall Road, Nadesar, Varanasi Cantonment, Uttar Pradesh 221002",
+    },
     checks: [
       "Barca all’alba",
       "Tempo libero",
@@ -509,6 +582,7 @@ const days = [
     transport: "Treno",
     from: "Varanasi",
     to: "Delhi",
+    path: "Varanasi-Delhi",
     checks: [
       "Mattina libera",
       "Ultimi regali",
@@ -714,23 +788,35 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         .addTo(map.current);
       markers.current.push(marker);
     });
-    if (selectedDay === 0) {
-      [
-        ["✈", "Aeroporto DEL", places["Aeroporto DEL"]],
-        ["🏨", "Rockland Hotel C.R. Park", places["Rockland Hotel C R Park"]],
-      ].forEach(([symbol, label, coordinates]) => {
+    const uniqueHotels = [...new Map(
+      days
+        .filter((tripDay) => tripDay.hotel?.place)
+        .map((tripDay) => [tripDay.hotel.place, tripDay.hotel]),
+    ).values()];
+    const specialStops = selectedDay == null
+      ? uniqueHotels.map((hotel) => ["🏨", hotel.name, places[hotel.place]])
+      : [
+          ...(selectedDay === 0 ? [["✈", "Aeroporto DEL", places["Aeroporto DEL"]]] : []),
+          ...(day?.hotel?.place ? [["🏨", day.hotel.name, places[day.hotel.place]]] : []),
+        ];
+    specialStops
+      .filter(([, , coordinates]) => coordinates)
+      .forEach(([symbol, label, coordinates]) => {
         const node = document.createElement("span");
         node.className = "specialTripMarker";
         node.textContent = symbol;
         node.setAttribute("aria-label", label);
         const [lat, lng] = coordinates;
-        const marker = new maplibregl.Marker({ element: node, anchor: "center" })
+        const marker = new maplibregl.Marker({
+          element: node,
+          anchor: "center",
+          offset: selectedDay == null ? [0, 17] : [0, 12],
+        })
           .setLngLat([lng, lat])
           .setPopup(new maplibregl.Popup({ offset: 18 }).setHTML(`<strong>${label}</strong>`))
           .addTo(map.current);
         markers.current.push(marker);
       });
-    }
     const line = (coords, mode = "road") => ({
       type: "Feature",
       properties: { mode },
@@ -755,12 +841,12 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       fitPoints = coords;
     } else {
       features = [
-        line([places.Delhi, places.Udaipur], "transit"),
+        line([places["Rockland Hotel C R Park"], places["Akshay Niwas Boutique Hotel"]], "transit"),
         line(roadPaths["Udaipur-Jodhpur"]),
         line(roadPaths["Jodhpur-Jaipur"]),
         line(roadPaths["Jaipur-Agra"]),
-        line([places.Agra, places.Varanasi], "transit"),
-        line([places.Varanasi, places.Delhi], "transit"),
+        line(roadPaths["Agra-Varanasi-hotel"], "transit"),
+        line(roadPaths["Varanasi-Delhi"], "transit"),
       ];
       fitPoints = Object.values(places);
     }
@@ -2043,9 +2129,10 @@ function App() {
                         <div className="lodgingCard">
                           <span aria-hidden="true">🏨</span>
                           <div>
-                            <small>ALLOGGIO DELLA PRIMA NOTTE</small>
+                            <small>ALLOGGIO A {d.city.toUpperCase()}</small>
                             <b>{d.hotel.name}</b>
                             <span>{d.hotel.address}</span>
+                            {d.hotel.contact && <span className="hotelContact">☎ {d.hotel.contact}</span>}
                           </div>
                           <a
                             href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.hotel.address)}`}
