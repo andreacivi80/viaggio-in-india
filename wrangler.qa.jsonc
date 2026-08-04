@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "viaggio-in-india-2026-qa",
+  "pages_build_output_dir": "./dist",
+  "compatibility_date": "2026-08-03",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "viaggio-in-india-qa-db",
+      "database_id": "26221574-b9b8-4b16-a117-05d024613f73",
+      "migrations_dir": "db/migrations"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "MEDIA",
+      "id": "6e21cccc5a914b7ab7beda2b2a33c75b"
+    }
+  ]
+}
