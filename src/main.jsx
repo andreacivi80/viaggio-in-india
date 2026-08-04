@@ -38,7 +38,7 @@ import {
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
 
-const VERSION = "1.34.0",
+const VERSION = "1.34.1",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -2502,16 +2502,7 @@ function Diary({
           <Check /> {publishNotice}
         </div>
       )}
-      {!deviceProfileName && (author && !editingName ? (
-        <div className="identityBar">
-          <div className="avatar">{author[0].toUpperCase()}</div>
-          <div>
-            <small>STAI PARTECIPANDO COME</small>
-            <b>{author}</b>
-          </div>
-          <button onClick={() => setEditingName(true)}>Modifica</button>
-        </div>
-      ) : (
+      {!deviceProfileName && (!author || editingName) && (
         <div className="visitorBar">
           <div className="avatar">{author?.[0]?.toUpperCase() || "?"}</div>
           <input
@@ -2527,7 +2518,7 @@ function Diary({
           </button>
           <small>Rimarrà memorizzato soltanto su questo dispositivo</small>
         </div>
-      ))}
+      )}
       <div className="feedFilters" aria-label="Filtri della bacheca">
         {[
           ["all", "Recenti"],
