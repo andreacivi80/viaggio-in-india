@@ -29,10 +29,16 @@ import {
   Link,
 } from "./icons.jsx";
 import "./styles.css";
+import { publicationAccessStep, publicationEntryState } from "./accessFlow.js";
 import { flushOfflineQueue, queueFormRequest } from "./offlineQueue.js";
 import { shouldUseResumableUpload, uploadFileResumable } from "./resumableUpload.js";
+import {
+  sanitizePostsForPublicCache,
+  sanitizeProfilesForPublicCache,
+} from "./publicCache.js";
+import { validateMediaSelection } from "./mediaValidation.js";
 
-const VERSION = "1.30.0",
+const VERSION = "1.33.1",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -945,8 +951,8 @@ function App() {
   const syncVersionRef = useRef(0);
   const [tab, setTab] = useState(startsOnMap ? "map" : "diary"),
     [done, setDone] = useState(() => load("india-done", {})),
-    [posts, setPosts] = useState(() => load("india-posts", [])),
-    [people, setPeople] = useState(() => load("india-people", [])),
+    [posts, setPosts] = useState(() => sanitizePostsForPublicCache(load("india-posts", []))),
+    [people, setPeople] = useState(() => sanitizeProfilesForPublicCache(load("india-people", []))),
     [open, setOpen] = useState(initialDay),
     [selectedDay, setSelectedDay] = useState(0),
     [mapDay, setMapDay] = useState(startsOnMap ? initialDay : null),
@@ -967,13 +973,21 @@ function App() {
       () => localStorage.getItem("india-activity-read") || "",
     ),
     [indiaToday, setIndiaToday] = useState(() => indiaDateKey());
+  const [bootstrapForm, setBootstrapForm] = useState({
+    name: "",
+    surname: "",
+    origin_city: "",
+  });
+  const [bootstrapBusy, setBootstrapBusy] = useState(false);
   const simulatedDate = initialParams.get("simulateDate");
   const activeDateKey = /^2026-08-(1\d|2[0-3])$/.test(simulatedDate || "")
     ? simulatedDate
     : indiaToday;
   const todayTripIndex = tripDateKeys.indexOf(activeDateKey);
   const effectiveGroupCode = publicPreview ? "" : groupCode;
-  const effectiveSessionToken = publicPreview ? "" : sessionToken;
+  const verifiedSessionToken = sessionProfile ? sessionToken : "";
+  const sessionCheckPending = Boolean(sessionToken && !sessionProfile);
+  const effectiveSessionToken = publicPreview ? "" : verifiedSessionToken;
   const sessionTokenRef = useRef(effectiveSessionToken);
   useEffect(() => {
     sessionTokenRef.current = effectiveSessionToken;
@@ -1004,8 +1018,14 @@ function App() {
       setPosts(d.posts || []);
       setPeople(d.profiles || []);
       syncVersionRef.current = Number(d.sync_version || 0);
-      localStorage.setItem("india-posts", JSON.stringify(d.posts || []));
-      localStorage.setItem("india-people", JSON.stringify(d.profiles || []));
+      localStorage.setItem(
+        "india-posts",
+        JSON.stringify(sanitizePostsForPublicCache(d.posts || [])),
+      );
+      localStorage.setItem(
+        "india-people",
+        JSON.stringify(sanitizeProfilesForPublicCache(d.profiles || [])),
+      );
       if (anchorState) {
         requestAnimationFrame(() =>
           requestAnimationFrame(() => {
@@ -1157,11 +1177,12 @@ function App() {
     [done],
   );
   useEffect(() => {
+    document.documentElement.dataset.appTab = tab;
+  }, [tab]);
+  useEffect(() => {
+    // Il vecchio codice comune non deve sopravvivere nel dispositivo.
+    // Dopo il collegamento resta soltanto la sessione personale revocabile.
     localStorage.removeItem("india-group-code");
-    if (!localStorage.getItem("india-session-token")) {
-      localStorage.removeItem("india-profile-id");
-      localStorage.removeItem("india-role");
-    }
   }, []);
   useEffect(() => {
     const inviteToken =
@@ -1179,7 +1200,11 @@ function App() {
         const result = await response.json();
         if (!response.ok) throw Error(result.error || "Invito non valido");
         localStorage.setItem("india-session-token", result.token);
+        localStorage.removeItem("india-guest-token");
+        localStorage.removeItem("india-guest-name");
+        localStorage.removeItem("india-visitor-id");
         localStorage.setItem("india-profile-id", result.profile.id);
+        localStorage.setItem("india-role", result.profile.role || "traveler");
         localStorage.setItem(
           "india-visitor-name",
           `${result.profile.name} ${result.profile.surname || ""}`.trim(),
@@ -1197,24 +1222,59 @@ function App() {
       .finally(() => sessionStorage.removeItem("india-auth-claiming"));
   }, []);
   useEffect(() => {
-    if (!sessionToken) return;
-    fetch(`${API}/auth/session`, { headers: sessionHeaders(sessionToken) }).then(
-      async (response) => {
+    if (!sessionToken) return undefined;
+    let active = true;
+    let checking = false;
+    const verifySession = async () => {
+      if (checking || document.hidden || !navigator.onLine) return;
+      checking = true;
+      try {
+        const response = await fetch(`${API}/auth/session`, {
+          cache: "no-store",
+          headers: sessionHeaders(sessionToken),
+        });
+        if (!active) return;
         if (response.ok) {
           const result = await response.json();
+          if (!active) return;
           setSessionProfile(result.profile);
           localStorage.setItem("india-profile-id", result.profile.id);
+          localStorage.setItem("india-role", result.profile.role || "traveler");
           localStorage.setItem(
             "india-visitor-name",
             `${result.profile.name} ${result.profile.surname || ""}`.trim(),
           );
           return;
         }
+        if (![401, 403].includes(response.status)) return;
         localStorage.removeItem("india-session-token");
+        localStorage.removeItem("india-profile-id");
+        localStorage.removeItem("india-visitor-name");
+        localStorage.removeItem("india-role");
+        localStorage.removeItem("india-guest-token");
+        localStorage.removeItem("india-guest-name");
+        localStorage.removeItem("india-visitor-id");
         setSessionToken("");
         setSessionProfile(null);
-      },
-    );
+      } catch {
+        // Un errore di rete non deve scollegare il viaggiatore: il controllo riprova.
+      } finally {
+        checking = false;
+      }
+    };
+    const onReturn = () => {
+      if (!document.hidden) verifySession();
+    };
+    verifySession();
+    const timer = setInterval(verifySession, 2500);
+    addEventListener("online", verifySession);
+    document.addEventListener("visibilitychange", onReturn);
+    return () => {
+      active = false;
+      clearInterval(timer);
+      removeEventListener("online", verifySession);
+      document.removeEventListener("visibilitychange", onReturn);
+    };
   }, [sessionToken]);
   useEffect(() => {
     if (!sessionToken) setSessionProfile(null);
@@ -1223,13 +1283,15 @@ function App() {
     () => Object.values(done).filter(Boolean).length,
     [done],
   );
-  const activeProfileId =
-    sessionProfile?.id || (sessionToken ? vaultProfileId : "");
-  const currentProfile =
-    sessionProfile ||
-    (sessionToken
-      ? people.find((person) => person.id === activeProfileId) || null
-      : null);
+  const activeProfileId = sessionProfile?.id || "";
+  const currentProfile = sessionProfile
+    ? people.find((person) => person.id === sessionProfile.id) || sessionProfile
+    : null;
+  useEffect(() => {
+    if (sessionToken) return;
+    localStorage.removeItem("india-profile-id");
+    localStorage.removeItem("india-role");
+  }, [sessionToken]);
   useEffect(() => {
     if (!currentProfile) return;
     localStorage.setItem("india-profile-id", currentProfile.id);
@@ -1238,41 +1300,57 @@ function App() {
       `${currentProfile.name} ${currentProfile.surname || ""}`.trim(),
     );
   }, [currentProfile?.id]);
-  const unlockProfile = async (person) => {
-    if (!person || !groupCode || sessionToken) return false;
-    setQuickStatus(`Attivo l’accesso di ${person.name}…`);
-    const response = await fetch(`${API}/auth/unlock`, {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        "x-group-code": groupCode,
-        "x-device-name": deviceName(),
-      },
-      body: JSON.stringify({ profile_id: person.id }),
+  const openComposer = (dayIndex) => {
+    // Pubblicare e' un'azione del gruppo: non lasciare il pannello bloccato
+    // dalla sola anteprima pubblica quando questo dispositivo e' gia' sbloccato.
+    const entry = publicationEntryState({
+      sessionToken: verifiedSessionToken,
+      groupCode,
+      selectedDay: dayIndex,
     });
-    const result = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      setQuickStatus(result.error || "Accesso personale non attivato.");
-      if (response.status === 403) {
-        localStorage.removeItem("india-group-code");
-        setGroupCode("");
-      }
-      return false;
+    setPublicPreview(entry.publicPreview);
+    setTab("diary");
+    setSelectedDay(entry.selectedDay);
+    setComposeOpen(entry.composeOpen);
+  };
+  const bootstrapCoordinator = async () => {
+    if (!bootstrapForm.name.trim() || bootstrapBusy) {
+      setQuickStatus("Inserisci almeno il tuo nome.");
+      return;
     }
-    localStorage.setItem("india-session-token", result.token);
-    localStorage.setItem("india-profile-id", result.profile.id);
-    localStorage.setItem(
-      "india-visitor-name",
-      `${result.profile.name} ${result.profile.surname || ""}`.trim(),
-    );
-    setSessionToken(result.token);
-    setSessionProfile(result.profile);
-    setVaultProfileId(result.profile.id);
-    setQuickStatus(`Accesso personale attivo per ${result.profile.name}.`);
-    return true;
+    setBootstrapBusy(true);
+    setQuickStatus("Creo il primo coordinatore e collego questo telefono…");
+    try {
+      const response = await fetch(`${API}/auth/bootstrap`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          "x-group-code": groupCode,
+          "x-device-name": deviceName(),
+        },
+        body: JSON.stringify(bootstrapForm),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw Error(result.error || "Creazione non riuscita.");
+      const displayName = `${result.profile.name} ${result.profile.surname || ""}`.trim();
+      localStorage.setItem("india-session-token", result.token);
+      localStorage.setItem("india-profile-id", result.profile.id);
+      localStorage.setItem("india-role", "coordinator");
+      localStorage.setItem("india-visitor-name", displayName);
+      setSessionToken(result.token);
+      setSessionProfile(result.profile);
+      setGroupCode("");
+      setVaultProfileId(result.profile.id);
+      setQuickStatus(`Accesso coordinatore attivato per ${displayName}.`);
+      await refresh();
+    } catch (error) {
+      setQuickStatus(error.message || "Creazione del coordinatore non riuscita.");
+    } finally {
+      setBootstrapBusy(false);
+    }
   };
   const quickShareLocation = () => {
-    if (!currentProfile || !sessionToken) return;
+    if (!currentProfile || !verifiedSessionToken) return;
     setQuickStatus("Cerco la posizione…");
     navigator.geolocation?.getCurrentPosition(
       async (position) => {
@@ -1280,7 +1358,7 @@ function App() {
           method: "POST",
           headers: {
             "content-type": "application/json",
-            ...sessionHeaders(sessionToken),
+            ...sessionHeaders(verifiedSessionToken),
           },
           body: JSON.stringify({
             profile_id: currentProfile.id,
@@ -1300,10 +1378,10 @@ function App() {
     );
   };
   const quickRemoveLocation = async () => {
-    if (!currentProfile || !sessionToken) return;
+    if (!currentProfile || !verifiedSessionToken) return;
     const response = await fetch(`${API}/locations/${currentProfile.id}`, {
       method: "DELETE",
-      headers: sessionHeaders(sessionToken),
+      headers: sessionHeaders(verifiedSessionToken),
     });
     setQuickStatus(
       response.ok ? "Posizione cancellata." : "Cancellazione non riuscita.",
@@ -1438,15 +1516,17 @@ function App() {
           <span className="flag">🇮🇳</span>
           <span className="versionBadge">REV {VERSION}</span>
           <button
-            className={`accessPill ${effectiveSessionToken && currentProfile ? "unlocked" : ""}`}
+            className={`accessPill ${effectiveSessionToken ? "unlocked" : ""}`}
             onClick={() => {
               setQuickProfileOpen(!quickProfileOpen);
               setNotificationOpen(false);
             }}
           >
             <CircleUserRound size={15} />
-            {effectiveSessionToken && currentProfile
-              ? currentProfile.name
+            {effectiveSessionToken
+              ? currentProfile?.name || "Profilo"
+              : sessionCheckPending && !publicPreview
+                ? "Verifica…"
               : "Pubblico"}
           </button>
           <button
@@ -1525,9 +1605,13 @@ function App() {
                     : "Scegli il tuo profilo"}
                 </b>
                 <small>
-                  {sessionToken && currentProfile
+                  {verifiedSessionToken
                     ? "Accesso personale attivo"
-                    : "Accesso pubblico"}
+                    : sessionCheckPending
+                      ? "Verifica accesso personale…"
+                    : effectiveGroupCode
+                      ? "Password verificata · profilo non collegato"
+                      : "Accesso pubblico"}
                 </small>
               </div>
               <button
@@ -1539,14 +1623,14 @@ function App() {
             </div>
             <div className="accessModeSwitch">
               <button
-                className={publicPreview ? "active" : ""}
+                className={publicPreview || !verifiedSessionToken ? "active" : ""}
                 onClick={() => setPublicPreview(true)}
               >
                 Vista pubblica
               </button>
               <button
-                className={!publicPreview && sessionToken && currentProfile ? "active" : ""}
-                disabled={!sessionToken || !currentProfile}
+                className={!publicPreview && verifiedSessionToken ? "active" : ""}
+                disabled={!verifiedSessionToken}
                 onClick={() => setPublicPreview(false)}
               >
                 Vista gruppo
@@ -1557,18 +1641,57 @@ function App() {
                 <b>Senza password</b>
                 <span>Puoi vedere la bacheca, commentare, reagire e condividere.</span>
                 <small>Documenti, posizioni e modifiche restano bloccati.</small>
+                <button
+                  className="groupAccessButton"
+                  onClick={() => setPublicPreview(false)}
+                >
+                  <LockKeyhole /> Accedi al gruppo
+                </button>
                 <button onClick={enableNotifications}>
                   <Bell /> Attiva notifiche
                 </button>
               </div>
-            ) : !effectiveGroupCode && !sessionToken ? (
+            ) : sessionCheckPending ? (
+              <div className="personalAccessRequired" role="status">
+                <CircleUserRound />
+                <div>
+                  <b>Verifico l’accesso personale…</b>
+                  <small>I comandi privati restano bloccati fino alla conferma del server.</small>
+                </div>
+              </div>
+            ) : !effectiveGroupCode && !verifiedSessionToken ? (
               <UnlockCard
                 code={accessCode}
                 setCode={setAccessCode}
                 onUnlock={() => verifyGroupCode(accessCode, setGroupCode)}
                 text="La password è comune a tutti i viaggiatori."
               />
-            ) : currentProfile && sessionToken ? (
+            ) : effectiveGroupCode && people.length === 0 ? (
+              <div className="bootstrapCoordinator">
+                <b>Crea il primo coordinatore</b>
+                <small>
+                  Il gruppo è vuoto. Inserisci i tuoi dati e questo telefono verrà collegato subito.
+                </small>
+                <input
+                  placeholder="Nome *"
+                  value={bootstrapForm.name}
+                  onChange={(event) => setBootstrapForm({ ...bootstrapForm, name: event.target.value })}
+                />
+                <input
+                  placeholder="Cognome"
+                  value={bootstrapForm.surname}
+                  onChange={(event) => setBootstrapForm({ ...bootstrapForm, surname: event.target.value })}
+                />
+                <input
+                  placeholder="Da dove vieni"
+                  value={bootstrapForm.origin_city}
+                  onChange={(event) => setBootstrapForm({ ...bootstrapForm, origin_city: event.target.value })}
+                />
+                <button onClick={bootstrapCoordinator} disabled={bootstrapBusy}>
+                  <CircleUserRound /> {bootstrapBusy ? "Collegamento…" : "Crea e collega questo telefono"}
+                </button>
+              </div>
+            ) : currentProfile && verifiedSessionToken ? (
               <div className="quickProfileActions">
                 <button onClick={quickShareLocation}>
                   <MapPin /> Condividi posizione
@@ -1594,22 +1717,12 @@ function App() {
                 </button>
               </div>
             ) : (
-              <div className="profileChooser">
-                <b>Collega questo telefono al tuo profilo</b>
-                <small>Usa la password comune e scegli il tuo nome una sola volta.</small>
-                {people.map((person) => (
-                  <button
-                    key={person.id}
-                    onClick={async () => {
-                      await unlockProfile(person);
-                    }}
-                  >
-                    <span className="avatar">
-                      {person.name?.[0]?.toUpperCase() || "?"}
-                    </span>
-                    {person.name} {person.surname || ""}
-                  </button>
-                ))}
+              <div className="profileChooser personalLinkRequired">
+                <b>Telefono non collegato a un profilo</b>
+                <small>
+                  Apri su questo telefono il link personale ricevuto dalla
+                  coordinatrice. Il collegamento si fa una sola volta.
+                </small>
                 <button
                   className="chooseProfileButton"
                   onClick={() => {
@@ -1617,7 +1730,7 @@ function App() {
                     setQuickProfileOpen(false);
                   }}
                 >
-                  Gestisci viaggiatori
+                  Vedi il gruppo
                 </button>
               </div>
             )}
@@ -1654,15 +1767,15 @@ function App() {
             className={`${tab === id ? "active" : ""} ${id === "publish" ? "publishNav" : ""}`}
             onClick={() => {
               if (id === "publish") {
-                setTab("diary");
-                setSelectedDay(todayTripIndex >= 0 ? todayTripIndex : -1);
-                setComposeOpen(true);
-              } else if (id === "people" && (!sessionToken || !currentProfile)) {
-                setPublicPreview(false);
-                setNotificationOpen(false);
-                setQuickProfileOpen(true);
+                openComposer(todayTripIndex >= 0 ? todayTripIndex : -1);
               } else {
                 if (id === "map") showMap(null);
+                else if (id === "people" && !verifiedSessionToken) {
+                  setPublicPreview(false);
+                  setQuickProfileOpen(true);
+                  setNotificationOpen(false);
+                  setTab("people");
+                }
                 else setTab(id);
               }
             }}
@@ -1839,9 +1952,7 @@ function App() {
                         </button>
                         <button
                           onClick={() => {
-                            setSelectedDay(i);
-                            setTab("diary");
-                            setComposeOpen(true);
+                            openComposer(i);
                           }}
                         >
                           <Camera /> Aggiungi ricordo
@@ -1894,6 +2005,24 @@ function App() {
                 : ""
             }
             deviceProfileId={currentProfile?.id || ""}
+            onManageProfiles={() => {
+              setTab("people");
+              setComposeOpen(false);
+            }}
+            onGroupUnlocked={() => {
+              setPublicPreview(false);
+            }}
+            onSessionInvalid={() => {
+              localStorage.removeItem("india-session-token");
+              localStorage.removeItem("india-profile-id");
+              localStorage.removeItem("india-visitor-name");
+              localStorage.removeItem("india-role");
+              localStorage.removeItem("india-guest-token");
+              localStorage.removeItem("india-guest-name");
+              localStorage.removeItem("india-visitor-id");
+              setSessionToken("");
+              setSessionProfile(null);
+            }}
             directoryOpen={travelersOpen}
             setDirectoryOpen={setTravelersOpen}
           />
@@ -2029,6 +2158,9 @@ function Diary({
   setComposeOpen,
   deviceProfileName,
   deviceProfileId,
+  onManageProfiles,
+  onGroupUnlocked,
+  onSessionInvalid,
   directoryOpen,
   setDirectoryOpen,
 }) {
@@ -2063,6 +2195,7 @@ function Diary({
     [code, setCode] = useState(""),
     [busy, setBusy] = useState(false),
     [fileStatus, setFileStatus] = useState(""),
+    [publishNotice, setPublishNotice] = useState(""),
     [feedFilter, setFeedFilter] = useState("all"),
     [placeName, setPlaceName] = useState(""),
     [postCoordinates, setPostCoordinates] = useState(null),
@@ -2070,6 +2203,7 @@ function Diary({
     [placeResults, setPlaceResults] = useState([]),
     [placeSearching, setPlaceSearching] = useState(false);
   const [postVisibility, setPostVisibility] = useState("public");
+  const publicationStep = publicationAccessStep({ sessionToken, groupCode });
   const [editingName, setEditingName] = useState(
     () => !localStorage.getItem("india-visitor-name"),
   );
@@ -2083,6 +2217,11 @@ function Diary({
     localStorage.setItem("india-visitor-name", deviceProfileName);
   }, [deviceProfileName]);
   useEffect(() => localStorage.setItem("india-draft", text), [text]);
+  useEffect(() => {
+    if (!publishNotice) return undefined;
+    const timer = setTimeout(() => setPublishNotice(""), 5000);
+    return () => clearTimeout(timer);
+  }, [publishNotice]);
   useEffect(() => {
     const query = placeName.trim();
     if (postCoordinates || query.length < 3) {
@@ -2114,6 +2253,13 @@ function Diary({
   const addFiles = async (incoming) => {
     const sourceFiles = Array.from(incoming || []);
     if (!sourceFiles.length) return;
+    const invalidFile = sourceFiles
+      .map((file) => validateMediaSelection(file))
+      .find(Boolean);
+    if (invalidFile) {
+      setFileStatus(invalidFile);
+      return;
+    }
     if (sourceFiles.some((file) => /\.(heic|heif)$/i.test(file.name || "")))
       setFileStatus("Converto la foto iPhone per renderla visibile a tutti…");
     let selected;
@@ -2152,6 +2298,7 @@ function Diary({
   const add = async () => {
     if (!sessionToken || (!text.trim() && !files.length)) return;
     setBusy(true);
+    setFileStatus("Pubblicazione in corso…");
     let pendingForm;
     try {
       const f = new FormData();
@@ -2195,7 +2342,15 @@ function Diary({
         body: f,
       });
       const j = await r.json();
-      if (!r.ok) throw Error(j.error);
+      if (!r.ok) {
+        if (r.status === 401) {
+          onSessionInvalid?.();
+          throw Error(
+            "La sessione è scaduta. Bozza e allegati sono conservati: riapri il tuo invito personale.",
+          );
+        }
+        throw Error(j.error || "Pubblicazione non riuscita. Riprova.");
+      }
       setText("");
       localStorage.removeItem("india-draft");
       setFiles([]);
@@ -2207,6 +2362,7 @@ function Diary({
       setFileStatus("");
       await refresh();
       setComposeOpen(false);
+      setPublishNotice("Pubblicazione riuscita.");
     } catch (e) {
       if (pendingForm && (!navigator.onLine || e instanceof TypeError)) {
         try {
@@ -2221,7 +2377,9 @@ function Diary({
           setFiles([]);
           setPlaceName("");
           setPostCoordinates(null);
-          setFileStatus("Salvato nel telefono. Sarà pubblicato automaticamente quando torna la rete.");
+          const offlineMessage = "Salvato nel telefono. Sarà pubblicato automaticamente quando torna la rete.";
+          setFileStatus(offlineMessage);
+          setPublishNotice(offlineMessage);
           postOperationRef.current = "";
           setComposeOpen(false);
         } catch {
@@ -2311,6 +2469,11 @@ function Diary({
         </div>
         <MapPinned />
       </button>
+      {publishNotice && (
+        <div className="publishNotice" role="status">
+          <Check /> {publishNotice}
+        </div>
+      )}
       {!deviceProfileName && (author && !editingName ? (
         <div className="identityBar">
           <div className="avatar">{author[0].toUpperCase()}</div>
@@ -2389,10 +2552,10 @@ function Diary({
                 ×
               </button>
             </div>
-            {sessionToken ? (
+            {publicationStep === "composer" ? (
               <div className="composer">
                 <div className="groupBadge">
-                  <LockKeyhole /> Pubblicazione viaggiatore
+                  <LockKeyhole /> Pubblicazione del gruppo
                 </div>
                 <select
                   value={selectedDay}
@@ -2417,7 +2580,7 @@ function Diary({
                     onChange={(event) => setPostVisibility(event.target.value)}
                   >
                     <option value="public">Pubblico · anche chi riceve il link</option>
-                    <option value="family">Familiari · ospiti con un nome</option>
+                      <option value="family">Visitatori identificati · con un nome</option>
                     <option value="group">Solo gruppo · viaggiatori collegati</option>
                     <option value="private">Solo io</option>
                   </select>
@@ -2477,7 +2640,10 @@ function Diary({
                       type="file"
                       accept="image/*,.heic,.heif"
                       multiple
-                      onChange={(e) => addFiles(e.target.files)}
+                      onChange={async (e) => {
+                        await addFiles(e.target.files);
+                        e.target.value = "";
+                      }}
                     />
                   </label>
                   <label>
@@ -2486,7 +2652,10 @@ function Diary({
                       type="file"
                       accept="image/*,.heic,.heif"
                       capture="environment"
-                      onChange={(e) => addFiles(e.target.files)}
+                      onChange={async (e) => {
+                        await addFiles(e.target.files);
+                        e.target.value = "";
+                      }}
                     />
                   </label>
                   <label>
@@ -2495,7 +2664,10 @@ function Diary({
                       type="file"
                       accept="video/*,.mov,.mp4"
                       multiple
-                      onChange={(e) => addFiles(e.target.files)}
+                      onChange={async (e) => {
+                        await addFiles(e.target.files);
+                        e.target.value = "";
+                      }}
                     />
                   </label>
                   <label>
@@ -2504,10 +2676,16 @@ function Diary({
                       type="file"
                       accept="audio/*,.m4a,.aac"
                       multiple
-                      onChange={(e) => addFiles(e.target.files)}
+                      onChange={async (e) => {
+                        await addFiles(e.target.files);
+                        e.target.value = "";
+                      }}
                     />
                   </label>
-                  <button disabled={busy} onClick={add}>
+                  <button
+                    disabled={busy || (!text.trim() && !files.length)}
+                    onClick={add}
+                  >
                     <Plus /> {busy ? "Invio…" : "Pubblica"}
                   </button>
                 </div>
@@ -2535,12 +2713,29 @@ function Diary({
                   </div>
                 )}
               </div>
+            ) : publicationStep === "personal-link" ? (
+              <div className="profileChooser composerProfileChooser personalLinkRequired">
+                <b>Per pubblicare collega il tuo profilo</b>
+                <small>
+                  La password del gruppo è corretta. Ora apri su questo telefono
+                  il link personale ricevuto dalla coordinatrice. Non dovrai più
+                  ripetere l’accesso.
+                </small>
+                <button className="chooseProfileButton" onClick={onManageProfiles}>
+                  Vedi il gruppo
+                </button>
+              </div>
             ) : (
               <UnlockCard
                 code={code}
                 setCode={setCode}
-                onUnlock={() => verifyGroupCode(code, setGroupCode)}
-                text="Inserisci la password comune, poi scegli il tuo nome dal profilo in alto."
+                onUnlock={async () => {
+                  const unlocked = await verifyGroupCode(code, setGroupCode);
+                  if (unlocked) await onGroupUnlocked?.();
+                  return unlocked;
+                }}
+                text="Inserisci la password comune: il nome si sceglie qui subito dopo."
+                successText="Password corretta. Per pubblicare usa il tuo link personale."
               />
             )}
           </div>
@@ -2708,29 +2903,37 @@ function AudioRecorder({ onRecorded }) {
 
 function PostMedia({ items }) {
   const [active, setActive] = useState(0);
-  useEffect(() => setActive(0), [items.length]);
-  if (!items.length) return null;
+  const touchStartX = useRef(null);
   const visualItems = items.filter(
     (item) => !item.media_type?.startsWith("audio"),
   );
   const audioItems = items.filter((item) =>
     item.media_type?.startsWith("audio"),
   );
+  useEffect(() => {
+    setActive((index) => Math.min(index, Math.max(0, visualItems.length - 1)));
+  }, [visualItems.length]);
+  if (!items.length) return null;
   const current = visualItems[Math.min(active, visualItems.length - 1)];
+  const finishSwipe = (clientX) => {
+    if (touchStartX.current == null) return;
+    const distance = clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(distance) < 42) return;
+    if (distance < 0)
+      setActive((index) => Math.min(visualItems.length - 1, index + 1));
+    else setActive((index) => Math.max(0, index - 1));
+  };
   return (
     <div className="postMediaCollection">
-      {audioItems.map((audioItem, index) => (
-        <div className="audioCard" key={audioItem.id || audioItem.media_url}>
-          <Mic />
-          <div>
-            <b>Messaggio vocale {index + 1}</b>
-            <small>Premi Play qui per ascoltare l’audio</small>
-          </div>
-          <audio controls preload="metadata" src={audioItem.media_url} />
-        </div>
-      ))}
       {current && (
-        <div className="postMediaCarousel">
+        <div
+          className="postMediaCarousel"
+          onTouchStart={(event) => {
+            touchStartX.current = event.touches[0]?.clientX ?? null;
+          }}
+          onTouchEnd={(event) => finishSwipe(event.changedTouches[0]?.clientX)}
+        >
           {current.media_type?.startsWith("image") && (
             <img src={current.media_url} alt="Ricordo del viaggio" loading="lazy" />
           )}
@@ -2745,26 +2948,6 @@ function PostMedia({ items }) {
               <span className="mediaCounter">
                 {active + 1}/{visualItems.length}
               </span>
-              <button
-                className="mediaPrev"
-                disabled={active === 0}
-                onClick={() => setActive((index) => Math.max(0, index - 1))}
-                aria-label="Contenuto precedente"
-              >
-                ‹
-              </button>
-              <button
-                className="mediaNext"
-                disabled={active === visualItems.length - 1}
-                onClick={() =>
-                  setActive((index) =>
-                    Math.min(visualItems.length - 1, index + 1),
-                  )
-                }
-                aria-label="Contenuto successivo"
-              >
-                ›
-              </button>
               <div className="mediaDots">
                 {visualItems.map((_, index) => (
                   <button
@@ -2779,6 +2962,16 @@ function PostMedia({ items }) {
           )}
         </div>
       )}
+      {audioItems.map((audioItem, index) => (
+        <div className="audioCard" key={audioItem.id || audioItem.media_url}>
+          <Mic />
+          <div>
+            <b>{audioItem.media_name || `Messaggio vocale ${index + 1}`}</b>
+            <small>Premi Play per ascoltare l’audio di questo ricordo</small>
+          </div>
+          <audio controls preload="metadata" src={audioItem.media_url} />
+        </div>
+      ))}
     </div>
   );
 }
@@ -3035,7 +3228,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
             )
           )}
         </div>
-        {sessionToken && (
+        {p.can_manage && (
           <div className="postMenu">
             <button
               onClick={() => setMenuOpen(!menuOpen)}
@@ -3141,7 +3334,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
               ) : (
                 <>
                   {x.text && <span>{renderCommentText(x.text)}</span>}
-                  {(sessionToken || x.visitor_id === visitor()) && x.text && (
+                  {x.can_manage && x.text && (
                     <div className="commentCommands">
                       <button
                         onClick={() => {
@@ -3211,10 +3404,18 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
               onChange={async (e) => {
                 const selectedFile = e.target.files?.[0] || null;
                 if (!selectedFile) return setReplyFile(null);
+                const invalidFile = validateMediaSelection(selectedFile);
+                if (invalidFile) {
+                  setCommentStatus(invalidFile);
+                  e.target.value = "";
+                  return;
+                }
                 try {
                   setReplyFile(await normalizeMobileUpload(selectedFile));
                 } catch {
                   setCommentStatus("Foto HEIC non convertita. Riprova in formato JPG.");
+                } finally {
+                  e.target.value = "";
                 }
               }}
             />
@@ -3553,7 +3754,7 @@ function People({
                     });
                     setAvatar(null);
                     document.querySelector(".profileForm")?.scrollIntoView({
-                      behavior: "smooth",
+                      behavior: "auto",
                       block: "start",
                     });
                   }}
@@ -3609,6 +3810,7 @@ function VaultOnline({
   preferredProfileId,
 }) {
   const documentOperationRef = useRef({});
+  const vaultSyncVersionRef = useRef(0);
   const [code, setCode] = useState(""),
     [privateData, setPrivateData] = useState({ documents: [], locations: [] }),
     [profileId, setProfileId] = useState(""),
@@ -3620,7 +3822,7 @@ function VaultOnline({
     [devices, setDevices] = useState([]);
   const refresh = async () => {
     if (!sessionToken) return;
-    const [privateResponse, devicesResponse] = await Promise.all([
+    const [privateResponse, devicesResponse, syncResponse] = await Promise.all([
       fetch(`${API}/private`, {
         headers: sessionHeaders(sessionToken),
         cache: "no-store",
@@ -3629,13 +3831,36 @@ function VaultOnline({
         headers: sessionHeaders(sessionToken),
         cache: "no-store",
       }),
+      fetch(`${API}/sync/version`, { cache: "no-store" }),
     ]);
     if (privateResponse.ok) setPrivateData(await privateResponse.json());
     if (devicesResponse.ok)
       setDevices((await devicesResponse.json()).devices || []);
+    if (syncResponse.ok)
+      vaultSyncVersionRef.current = Number((await syncResponse.json()).version || 0);
   };
   useEffect(() => {
     if (sessionToken) refresh();
+  }, [sessionToken]);
+  useEffect(() => {
+    if (!sessionToken) return undefined;
+    let checking = false;
+    const checkPrivateUpdates = async () => {
+      if (checking || document.hidden || !navigator.onLine) return;
+      checking = true;
+      try {
+        const response = await fetch(`${API}/sync/version`, { cache: "no-store" });
+        if (!response.ok) return;
+        const result = await response.json();
+        if (Number(result.version || 0) > vaultSyncVersionRef.current) await refresh();
+      } catch {
+        // Sincronizzazione privata silenziosa: il ciclo successivo ritenta.
+      } finally {
+        checking = false;
+      }
+    };
+    const timer = setInterval(checkPrivateUpdates, 2500);
+    return () => clearInterval(timer);
   }, [sessionToken]);
   useEffect(() => {
     const viewer = privateData.viewer;
@@ -3748,11 +3973,14 @@ function VaultOnline({
   };
   const openDocument = async (doc, download = false) => {
     setDocumentStatus("Apertura del documento…");
+    const previewWindow = download ? null : window.open("about:blank", "_blank");
+    if (previewWindow) previewWindow.opener = null;
     const response = await fetch(
       `${API}/media/${encodeURIComponent(doc.file_key)}`,
       { headers: sessionHeaders(sessionToken) },
     );
     if (!response.ok) {
+      previewWindow?.close();
       setDocumentStatus("Documento non disponibile. Tocca Riprova.");
       return;
     }
@@ -3764,8 +3992,21 @@ function VaultOnline({
       link.click();
       setDocumentStatus("Download avviato.");
     } else {
-      window.open(blobUrl, "_blank", "noopener,noreferrer");
-      setDocumentStatus("Documento aperto.");
+      if (previewWindow) {
+        previewWindow.document.title = doc.file_name || "Documento";
+        previewWindow.document.body.style.margin = "0";
+        previewWindow.document.body.style.background = "#f4efe6";
+        const frame = previewWindow.document.createElement("iframe");
+        frame.title = doc.file_name || "Documento";
+        frame.src = blobUrl;
+        frame.style.width = "100vw";
+        frame.style.height = "100vh";
+        frame.style.border = "0";
+        previewWindow.document.body.appendChild(frame);
+        setDocumentStatus("Documento aperto.");
+      } else {
+        setDocumentStatus("Il telefono ha bloccato l’apertura. Consenti i popup e riprova.");
+      }
     }
     setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
   };
@@ -3808,6 +4049,12 @@ function VaultOnline({
       }).catch(() => {});
     localStorage.removeItem("india-session-token");
     localStorage.removeItem("india-group-code");
+    localStorage.removeItem("india-profile-id");
+    localStorage.removeItem("india-visitor-name");
+    localStorage.removeItem("india-role");
+    localStorage.removeItem("india-guest-token");
+    localStorage.removeItem("india-guest-name");
+    localStorage.removeItem("india-visitor-id");
     setSessionToken("");
     setGroupCode("");
   };
@@ -4163,14 +4410,20 @@ function VaultOnline({
   );
 }
 
-function UnlockCard({ code, setCode, onUnlock, text = "" }) {
+function UnlockCard({
+  code,
+  setCode,
+  onUnlock,
+  text = "",
+  successText = "Password corretta. Ora scegli il tuo nome.",
+}) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const unlock = async () => {
     setError("");
     setSuccess("");
     if (!(await onUnlock())) setError("Codice non corretto");
-    else setSuccess("Password corretta. Ora scegli il tuo nome.");
+    else setSuccess(successText);
   };
   return (
     <div className="lockedComposer">
