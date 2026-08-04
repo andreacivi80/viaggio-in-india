@@ -25,7 +25,9 @@ let travelerToken = "";
 let travelerInvite = "";
 let travelerDocumentKey = "";
 let postId = "";
+let commentId = "";
 let guestToken = "";
+let secondGuestToken = "";
 
 await check("health remoto", async () => {
   const { response, body } = await request("health");
@@ -244,6 +246,136 @@ await check("visitatore commenta contenuto pubblico", async () => {
   });
   assert.equal(response.status, 201);
   assert.equal(body.author_name, "Familiare QA");
+  commentId = body.id;
+});
+
+await check("reazione senza identità bloccata", async () => {
+  const { response } = await request("reactions", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ post_id: postId, kind: "heart" }),
+  });
+  assert.equal(response.status, 401);
+});
+
+await check("visitatore aggiunge un cuore", async () => {
+  const { response, body } = await request("reactions", {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-guest-token": guestToken, "x-idempotency-key": "qa-reaction-operation-0001" },
+    body: JSON.stringify({ post_id: postId, kind: "heart" }),
+  });
+  assert.equal(response.status, 200);
+  assert.equal(body.reaction, "heart");
+});
+
+await check("ripetizione idempotente non duplica il cuore", async () => {
+  const { response, body } = await request("reactions", {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-guest-token": guestToken, "x-idempotency-key": "qa-reaction-operation-0001" },
+    body: JSON.stringify({ post_id: postId, kind: "heart" }),
+  });
+  assert.equal(response.status, 200);
+  assert.equal(body.reaction, "heart");
+});
+
+await check("seconda operazione rimuove il cuore", async () => {
+  const { response, body } = await request("reactions", {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-guest-token": guestToken, "x-idempotency-key": "qa-reaction-operation-0002" },
+    body: JSON.stringify({ post_id: postId, kind: "heart" }),
+  });
+  assert.equal(response.status, 200);
+  assert.equal(body.reaction, null);
+});
+
+await check("secondo visitatore ottiene identità distinta", async () => {
+  const { response, body } = await request("auth/guest", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ display_name: "Altro familiare QA" }),
+  });
+  assert.equal(response.status, 201);
+  secondGuestToken = body.token;
+});
+
+await check("altro visitatore non modifica il commento", async () => {
+  const { response } = await request(`comments/${commentId}`, {
+    method: "PUT",
+    headers: { "content-type": "application/json", "x-guest-token": secondGuestToken },
+    body: JSON.stringify({ text: "Tentativo" }),
+  });
+  assert.equal(response.status, 403);
+});
+
+await check("proprietario modifica il proprio commento", async () => {
+  const { response, body } = await request(`comments/${commentId}`, {
+    method: "PUT",
+    headers: { "content-type": "application/json", "x-guest-token": guestToken },
+    body: JSON.stringify({ text: "Commento aggiornato QA" }),
+  });
+  assert.equal(response.status, 200);
+  assert.equal(body.ok, true);
+});
+
+await check("altro visitatore non elimina il commento", async () => {
+  const { response } = await request(`comments/${commentId}`, {
+    method: "DELETE",
+    headers: { "content-type": "application/json", "x-guest-token": secondGuestToken },
+    body: "{}",
+  });
+  assert.equal(response.status, 403);
+});
+
+await check("bacheca pubblica mostra autore e commento aggiornato", async () => {
+  const { response, body } = await request("state");
+  assert.equal(response.status, 200);
+  const post = body.posts.find((item) => item.id === postId);
+  assert.ok(post);
+  const comment = post.comments.find((item) => item.id === commentId);
+  assert.equal(comment.author_name, "Familiare QA");
+  assert.equal(comment.text, "Commento aggiornato QA");
+});
+
+await check("proprietario elimina il proprio commento", async () => {
+  const { response, body } = await request(`comments/${commentId}`, {
+    method: "DELETE",
+    headers: { "content-type": "application/json", "x-guest-token": guestToken },
+    body: "{}",
+  });
+  assert.equal(response.status, 200);
+  assert.equal(body.ok, true);
+});
+
+await check("contenuto multimediale sicuro viene pubblicato", async () => {
+  const form = new FormData();
+  form.set("text", "Foto QA");
+  form.set("visibility", "public");
+  form.set("file", new Blob([new Uint8Array([0xff, 0xd8, 0xff, 0xd9])], { type: "image/jpeg" }), "foto-qa.jpg");
+  const { response, body } = await request("posts", {
+    method: "POST",
+    headers: { authorization: `Bearer ${coordinatorToken}`, "x-idempotency-key": "qa-media-post-operation-0001", "x-qa-silent": "true" },
+    body: form,
+  });
+  assert.equal(response.status, 201);
+  assert.equal(body.media.length, 1);
+  const mediaResponse = await fetch(`${base}${body.media[0].media_url}`);
+  assert.equal(mediaResponse.status, 200);
+  assert.equal(mediaResponse.headers.get("content-type"), "image/jpeg");
+  const deletion = await request(`posts/${body.id}`, { method: "DELETE", headers: { authorization: `Bearer ${coordinatorToken}` } });
+  assert.equal(deletion.response.status, 200);
+});
+
+await check("file camuffato viene respinto", async () => {
+  const form = new FormData();
+  form.set("text", "File non sicuro");
+  form.set("visibility", "public");
+  form.set("file", new Blob(["<html><script>alert(1)</script></html>"], { type: "image/jpeg" }), "foto.jpg");
+  const { response } = await request("posts", {
+    method: "POST",
+    headers: { authorization: `Bearer ${coordinatorToken}`, "x-idempotency-key": "qa-unsafe-operation-0001", "x-qa-silent": "true" },
+    body: form,
+  });
+  assert.equal(response.status, 400);
 });
 
 await check("visitatore non elimina il post", async () => {
