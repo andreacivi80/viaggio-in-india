@@ -19,6 +19,11 @@ async function request(path, options = {}) {
 }
 
 let coordinatorToken = "";
+let coordinatorId = "";
+let travelerId = "";
+let travelerToken = "";
+let travelerInvite = "";
+let travelerDocumentKey = "";
 let postId = "";
 let guestToken = "";
 
@@ -56,6 +61,7 @@ await check("creazione primo coordinatore", async () => {
   assert.ok(body.token);
   assert.equal(body.profile.role, "coordinator");
   coordinatorToken = body.token;
+  coordinatorId = body.profile.id;
 });
 
 await check("secondo bootstrap impedito", async () => {
@@ -85,6 +91,113 @@ await check("coordinatore crea viaggiatore", async () => {
   });
   assert.equal(response.status, 201);
   assert.equal(body.role, "traveler");
+  travelerId = body.id;
+});
+
+await check("coordinatore crea invito personale", async () => {
+  const { response, body } = await request("auth/invites", {
+    method: "POST",
+    headers: { "content-type": "application/json", authorization: `Bearer ${coordinatorToken}` },
+    body: JSON.stringify({ profile_id: travelerId }),
+  });
+  assert.equal(response.status, 201);
+  assert.ok(body.invite_token);
+  travelerInvite = body.invite_token;
+});
+
+await check("viaggiatore attiva invito personale", async () => {
+  const { response, body } = await request("auth/claim", {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-device-name": "Telefono viaggiatore QA" },
+    body: JSON.stringify({ invite_token: travelerInvite }),
+  });
+  assert.equal(response.status, 200);
+  assert.equal(body.profile.id, travelerId);
+  travelerToken = body.token;
+});
+
+await check("invito personale non è riutilizzabile", async () => {
+  const { response } = await request("auth/claim", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ invite_token: travelerInvite }),
+  });
+  assert.equal(response.status, 403);
+});
+
+await check("area privata senza sessione bloccata", async () => {
+  const { response } = await request("private");
+  assert.equal(response.status, 401);
+});
+
+await check("viaggiatore carica il proprio passaporto", async () => {
+  const form = new FormData();
+  form.set("profile_id", travelerId);
+  form.set("doc_type", "passport");
+  form.set("file", new Blob(["%PDF-1.4\nQA\n%%EOF"], { type: "application/pdf" }), "passaporto-qa.pdf");
+  const { response } = await request("documents", {
+    method: "POST",
+    headers: { authorization: `Bearer ${travelerToken}`, "x-idempotency-key": "qa-document-operation-0001" },
+    body: form,
+  });
+  assert.equal(response.status, 200);
+});
+
+await check("viaggiatore non modifica documenti altrui", async () => {
+  const form = new FormData();
+  form.set("profile_id", coordinatorId);
+  form.set("doc_type", "visa");
+  form.set("status", "uploaded");
+  const { response } = await request("documents", {
+    method: "POST",
+    headers: { authorization: `Bearer ${travelerToken}` },
+    body: form,
+  });
+  assert.equal(response.status, 403);
+});
+
+await check("viaggiatore vede solo i propri documenti", async () => {
+  const { response, body } = await request("private", { headers: { authorization: `Bearer ${travelerToken}` } });
+  assert.equal(response.status, 200);
+  assert.equal(body.viewer.profile_id, travelerId);
+  assert.equal(body.documents.length, 1);
+  assert.equal(body.documents[0].profile_id, travelerId);
+  travelerDocumentKey = body.documents[0].file_key;
+});
+
+await check("pubblico non apre il passaporto", async () => {
+  const { response } = await request(`media/${encodeURIComponent(travelerDocumentKey)}`);
+  assert.equal(response.status, 403);
+});
+
+await check("viaggiatore apre il proprio passaporto", async () => {
+  const { response } = await request(`media/${encodeURIComponent(travelerDocumentKey)}`, {
+    headers: { authorization: `Bearer ${travelerToken}` },
+  });
+  assert.equal(response.status, 200);
+  assert.equal(response.headers.get("content-type"), "application/pdf");
+});
+
+await check("coordinatore vede la griglia documenti completa", async () => {
+  const { response, body } = await request("private", { headers: { authorization: `Bearer ${coordinatorToken}` } });
+  assert.equal(response.status, 200);
+  assert.equal(body.viewer.role, "coordinator");
+  assert.ok(body.documents.some((item) => item.profile_id === travelerId && item.doc_type === "passport"));
+});
+
+await check("viaggiatore aggiorna soltanto la propria posizione", async () => {
+  const own = await request("locations", {
+    method: "POST",
+    headers: { "content-type": "application/json", authorization: `Bearer ${travelerToken}` },
+    body: JSON.stringify({ profile_id: travelerId, display_name: "Viaggiatore QA", latitude: 28.6139, longitude: 77.209 }),
+  });
+  assert.equal(own.response.status, 200);
+  const other = await request("locations", {
+    method: "POST",
+    headers: { "content-type": "application/json", authorization: `Bearer ${travelerToken}` },
+    body: JSON.stringify({ profile_id: coordinatorId, display_name: "Intrusione", latitude: 28.6, longitude: 77.2 }),
+  });
+  assert.equal(other.response.status, 403);
 });
 
 await check("pubblicazione senza sessione bloccata", async () => {
