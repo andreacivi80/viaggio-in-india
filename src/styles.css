@@ -4655,3 +4655,56 @@ mark.mention {
   .otherDocumentRow > div { flex-basis: 100%; }
   .otherDocumentRow button { flex: 1; }
 }
+
+/* Revisione 1.37.1: prima notte e trasferimento aeroporto-hotel */
+.specialTripMarker {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #153b31;
+  color: #fff;
+  box-shadow: 0 4px 13px #0005;
+  font-size: 17px;
+}
+.lodgingCard {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  margin: 12px 0;
+  padding: 10px;
+  border: 1px solid #e4c9a8;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #fff8ec, #fff);
+  box-shadow: 0 5px 16px #5f36120d;
+}
+.lodgingCard > span {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #f7e1c6;
+  font-size: 20px;
+}
+.lodgingCard > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.lodgingCard small { color: var(--orange); font-size: 9px; font-weight: 900; letter-spacing: .7px; }
+.lodgingCard b { color: var(--ink); font-size: 13px; }
+.lodgingCard div > span { color: var(--color-text-secondary); font-size: 10px; line-height: 1.3; }
+.lodgingCard a {
+  padding: 7px 9px;
+  border-radius: 9px;
+  background: var(--green);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 850;
+  text-decoration: none;
+}

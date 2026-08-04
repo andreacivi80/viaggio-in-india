@@ -38,7 +38,7 @@ import {
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
 
-const VERSION = "1.37.0",
+const VERSION = "1.37.1",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -154,6 +154,8 @@ const cityImages = {
 };
 const places = {
   Delhi: [28.6139, 77.209],
+  "Aeroporto DEL": [28.5562, 77.1],
+  "Rockland Hotel C R Park": [28.5429119, 77.2428399],
   Udaipur: [24.5854, 73.7125],
   Ranakpur: [25.1164, 73.4737],
   Jodhpur: [26.2389, 73.0243],
@@ -164,9 +166,10 @@ const places = {
 const roadPaths = {
   "Delhi-arrival": [
     [28.5562, 77.1],
-    [28.5535, 77.2588],
-    [28.6127, 77.2295],
-    [28.6315, 77.2167],
+    [28.5578, 77.121],
+    [28.5498, 77.164],
+    [28.5455, 77.207],
+    [28.5429119, 77.2428399],
   ],
   "Delhi-old-city": [
     [28.5355, 77.278],
@@ -265,22 +268,21 @@ const days = [
   {
     date: "Lun 10 ago",
     city: "Delhi",
-    title: "Primo respiro d’India",
+    title: "Partenza: prima notte a Nuova Delhi",
     story:
-      "Atterriamo nella capitale, ci sistemiamo e cominciamo senza fretta: Lotus Temple, Connaught Place e la prima cena tutti insieme.",
-    goal: "Prendere il ritmo e conoscere il gruppo",
-    km: 18,
-    time: "45 min complessivi",
-    transport: "Taxi + metro",
-    from: "Delhi",
-    to: "Delhi",
+      "Atterriamo all’aeroporto internazionale di Delhi e raggiungiamo il Rockland Hotel C.R. Park. Sistemazione, incontro con il gruppo e prima notte nella capitale.",
+    goal: "Arrivare, riunire il gruppo e sistemarci in hotel",
+    km: 15,
+    time: "30–45 min",
+    transport: "Transfer privato + taxi",
+    from: "Aeroporto DEL",
+    to: "Rockland Hotel C R Park",
     path: "Delhi-arrival",
-    checks: [
-      "Lotus Temple",
-      "Pranzo locale",
-      "Connaught Place",
-      "Cena e compleanni",
-    ],
+    hotel: {
+      name: "Rockland Hotel C.R. Park",
+      address: "B-207, C.R. Park, Outer Ring Road, New Delhi 110019",
+    },
+    checks: ["Arrivo aeroporto DEL", "Transfer verso l’hotel", "Check-in", "Prima notte a Nuova Delhi"],
   },
   {
     date: "Mar 11 ago",
@@ -698,6 +700,23 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         .addTo(map.current);
       markers.current.push(marker);
     });
+    if (selectedDay === 0) {
+      [
+        ["✈", "Aeroporto DEL", places["Aeroporto DEL"]],
+        ["🏨", "Rockland Hotel C.R. Park", places["Rockland Hotel C R Park"]],
+      ].forEach(([symbol, label, coordinates]) => {
+        const node = document.createElement("span");
+        node.className = "specialTripMarker";
+        node.textContent = symbol;
+        node.setAttribute("aria-label", label);
+        const [lat, lng] = coordinates;
+        const marker = new maplibregl.Marker({ element: node, anchor: "center" })
+          .setLngLat([lng, lat])
+          .setPopup(new maplibregl.Popup({ offset: 18 }).setHTML(`<strong>${label}</strong>`))
+          .addTo(map.current);
+        markers.current.push(marker);
+      });
+    }
     const line = (coords, mode = "road") => ({
       type: "Feature",
       properties: { mode },
@@ -754,7 +773,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       );
       map.current.fitBounds(bounds, {
         padding: { top: 55, right: 45, bottom: 100, left: 45 },
-        maxZoom: day ? (day.from === day.to ? 11 : 7.2) : 5.2,
+        maxZoom: day ? (day.km <= 25 ? 11.5 : day.km <= 120 ? 8.5 : 7.2) : 5.2,
         duration: 950,
         bearing: 0,
         pitch: 0,
@@ -1947,6 +1966,23 @@ function App() {
                     <div className="dayBody">
                       <div className="storyLabel">DIARIO DI BORDO</div>
                       <p>{d.story}</p>
+                      {d.hotel && (
+                        <div className="lodgingCard">
+                          <span aria-hidden="true">🏨</span>
+                          <div>
+                            <small>ALLOGGIO DELLA PRIMA NOTTE</small>
+                            <b>{d.hotel.name}</b>
+                            <span>{d.hotel.address}</span>
+                          </div>
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.hotel.address)}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            Apri
+                          </a>
+                        </div>
+                      )}
                       <div className="journeyCard">
                         <span className="transportIcon">
                           {d.transport.includes("Aereo")
