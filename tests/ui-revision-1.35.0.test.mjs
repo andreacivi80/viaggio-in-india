@@ -42,3 +42,16 @@ test("Apri documento usa un visualizzatore interno e mantiene il download", () =
   assert.match(source, /download=\{documentPreview\.name\}/);
   assert.doesNotMatch(source, /window\.open\("about:blank"/);
 });
+
+test("i PDF caricati vengono riconosciuti anche con MIME generico", () => {
+  assert.match(source, /file_name \|\| ""\)\.toLowerCase\(\)\.endsWith\("\.pdf"\)/);
+  assert.match(source, /new Blob\(\[documentBlob\], \{ type: "application\/pdf" \}\)/);
+  assert.match(source, /type: isPdf \? "application\/pdf" : responseType/);
+});
+
+test("l'elenco viaggiatori scorre senza muovere lo sfondo", () => {
+  assert.match(source, /document\.body\.style\.overflow = "hidden"/);
+  assert.match(styles, /\.travelerDirectory \{[\s\S]*?height: min\(78vh, 78dvh\)/);
+  assert.match(styles, /\.directoryList \{[\s\S]*?flex: 1 1 auto;[\s\S]*?overflow-y: auto/);
+  assert.match(styles, /\.directoryPerson \.coordinatorRole \{[\s\S]*?font-weight: 950/);
+});

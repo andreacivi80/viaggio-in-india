@@ -2819,9 +2819,13 @@ h2 {
   justify-content: center;
   background: #10241ccc;
   backdrop-filter: blur(4px);
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
 }
 .travelerDirectory {
   width: min(100%, 680px);
+  height: min(78vh, 78dvh);
   max-height: min(78vh, 78dvh);
   overflow: auto;
   overscroll-behavior: contain;
@@ -4578,12 +4582,17 @@ mark.mention {
   min-height: 0;
 }
 .directoryList {
+  flex: 1 1 auto;
   min-height: 0;
   overflow-y: auto;
   overscroll-behavior-y: contain;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
   padding: 1px 2px calc(12px + env(safe-area-inset-bottom));
+}
+.directoryPerson .coordinatorRole {
+  color: var(--green);
+  font-weight: 950;
 }
 .myDocumentsButton {
   min-height: 44px;

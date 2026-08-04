@@ -38,7 +38,7 @@ import {
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
 
-const VERSION = "1.37.4",
+const VERSION = "1.37.5",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -1029,6 +1029,18 @@ function App() {
   });
   const [bootstrapBusy, setBootstrapBusy] = useState(false);
   const [travelerRegisterBusy, setTravelerRegisterBusy] = useState(false);
+
+  useEffect(() => {
+    if (!travelersOpen) return undefined;
+    const previousOverflow = document.body.style.overflow;
+    const previousTouchAction = document.body.style.touchAction;
+    document.body.style.overflow = "hidden";
+    document.body.style.touchAction = "none";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.body.style.touchAction = previousTouchAction;
+    };
+  }, [travelersOpen]);
   const simulatedDate = initialParams.get("simulateDate");
   const activeDateKey = /^2026-08-(1\d|2[0-3])$/.test(simulatedDate || "")
     ? simulatedDate
@@ -2884,10 +2896,10 @@ function Diary({
                   <div>
                     <b>{person.name} {person.surname || ""}</b>
                     <small>
-                      {[
-                        travelerRoleLabel(person),
-                        person.origin_city,
-                      ].filter(Boolean).join(" · ")}
+                      <strong className={person.role === "coordinator" ? "coordinatorRole" : undefined}>
+                        {travelerRoleLabel(person)}
+                      </strong>
+                      {person.origin_city ? ` · ${person.origin_city}` : ""}
                     </small>
                   </div>
                   <code>@{mentionHandle(person)}</code>
@@ -4162,7 +4174,13 @@ function VaultOnline({
       return;
     }
     const documentBlob = await response.blob();
-    const blobUrl = URL.createObjectURL(documentBlob);
+    const responseType = documentBlob.type || response.headers.get("content-type") || "";
+    const isPdf = responseType.toLowerCase().includes("application/pdf") ||
+      String(doc.file_name || "").toLowerCase().endsWith(".pdf");
+    const previewBlob = isPdf && documentBlob.type !== "application/pdf"
+      ? new Blob([documentBlob], { type: "application/pdf" })
+      : documentBlob;
+    const blobUrl = URL.createObjectURL(previewBlob);
     if (download) {
       const link = document.createElement("a");
       link.href = blobUrl;
@@ -4177,7 +4195,7 @@ function VaultOnline({
       setDocumentPreview({
         url: blobUrl,
         name: doc.file_name || "Documento",
-        type: documentBlob.type || response.headers.get("content-type") || "",
+        type: isPdf ? "application/pdf" : responseType,
       });
       setDocumentStatus("Documento aperto.");
     }
