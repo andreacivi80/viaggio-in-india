@@ -4708,3 +4708,28 @@ mark.mention {
   font-weight: 850;
   text-decoration: none;
 }
+
+/* Revisione 1.37.2: campo commento allineato ai comandi */
+.reply {
+  padding-bottom: 7px;
+}
+.reply textarea {
+  margin: 0;
+}
+@media (max-width: 680px) {
+  .reply {
+    align-items: end;
+    padding-bottom: 9px;
+  }
+  .reply textarea {
+    min-height: 36px;
+    padding: 7px 9px;
+  }
+  .reply label,
+  .reply button {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 0;
+    align-self: end;
+  }
+}
