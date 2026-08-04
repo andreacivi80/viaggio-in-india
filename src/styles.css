@@ -900,6 +900,9 @@ h3 {
 }
 .dayHero > div {
   z-index: 1;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
   padding: 20px 14px;
 }
 .dayHero h3 {
@@ -4648,6 +4651,31 @@ mark.mention {
 .directoryPerson .coordinatorRole {
   color: var(--green);
   font-weight: 950;
+}
+.dayPickerWeather {
+  max-width: 100%;
+  overflow: hidden;
+  color: #315c4a;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 900;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.dayWeatherLine {
+  display: block;
+  width: 100%;
+  max-width: calc(100% - 38px);
+  margin-top: 4px;
+  overflow: hidden;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 1px 4px #000;
 }
 .myDocumentsButton {
   min-height: 44px;

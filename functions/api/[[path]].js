@@ -21,6 +21,54 @@ const json = (data, status = 200, additionalHeaders = {}) =>
   });
 const id = () => crypto.randomUUID();
 const now = () => new Date().toISOString();
+const imdStations = {
+  Delhi: "42182",
+  Udaipur: "42542",
+  Jodhpur: "42339",
+  Jaipur: "42348",
+  Agra: "42259",
+  Varanasi: "42479",
+};
+const monthNumber = {
+  Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06",
+  Jul: "07", Aug: "08", Sep: "09", Oct: "10", Nov: "11", Dec: "12",
+};
+const htmlText = (value) => String(value || "")
+  .replace(/<script[\s\S]*?<\/script>/gi, " ")
+  .replace(/<style[\s\S]*?<\/style>/gi, " ")
+  .replace(/<[^>]+>/g, " ")
+  .replace(/&nbsp;|&#160;/gi, " ")
+  .replace(/&amp;/gi, "&")
+  .replace(/\s+/g, " ")
+  .trim();
+async function readImdForecast(city, stationId) {
+  const upstream = await fetch(`https://city.imd.gov.in/citywx/citywxnew.php?id=${stationId}`, {
+    headers: { accept: "text/html", "user-agent": "India-Insieme/1.0 weather display" },
+    cf: { cacheTtl: 1800, cacheEverything: true },
+  });
+  if (!upstream.ok) return [];
+  const html = await upstream.text();
+  const year = Number((html.match(/Dated\s*:\s*[A-Za-z]{3}\s+\d{1,2},\s*(\d{4})/i) || [])[1]) ||
+    new Date().getUTCFullYear();
+  const forecast = html.slice(Math.max(0, html.search(/7 Day(?:'s)? Forecast/i)));
+  const entries = [];
+  for (const row of forecast.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)) {
+    const cells = [...row[1].matchAll(/<td[^>]*>([\s\S]*?)<\/td>/gi)].map((match) => htmlText(match[1]));
+    const dateMatch = cells[0]?.match(/^(\d{2})-([A-Za-z]{3})$/);
+    if (!dateMatch || !monthNumber[dateMatch[2]]) continue;
+    const min = Number(cells[1]);
+    const max = Number(cells[2]);
+    if (!Number.isFinite(min) || !Number.isFinite(max)) continue;
+    entries.push({
+      date: `${year}-${monthNumber[dateMatch[2]]}-${dateMatch[1]}`,
+      city,
+      min,
+      max,
+      description: cells[cells.length - 1] || "",
+    });
+  }
+  return entries;
+}
 const groupOk = (request, env) =>
   Boolean(env.GROUP_CODE) && request.headers.get("x-group-code") === env.GROUP_CODE;
 const ext = (name) =>
@@ -849,6 +897,17 @@ export async function onRequest(context) {
         version: Number(state?.version || 0),
         updated_at: state?.updated_at || null,
       });
+    }
+    if (request.method === "GET" && path === "weather") {
+      const settled = await Promise.allSettled(
+        Object.entries(imdStations).map(([city, station]) => readImdForecast(city, station)),
+      );
+      const forecasts = settled.flatMap((result) => result.status === "fulfilled" ? result.value : []);
+      return json(
+        { source: "India Meteorological Department", timezone: "Asia/Kolkata", forecasts },
+        200,
+        { "cache-control": "public, max-age=900, s-maxage=1800" },
+      );
     }
     if (request.method === "GET" && path === "places/search") {
       const limited = await rateLimit(env, request, "places-search", 60, 60);

@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.8",
+const VERSION = "1.37.9",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -63,6 +63,18 @@ const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
   (_, index) => `2026-08-${String(10 + index).padStart(2, "0")}`,
 );
+const conciseWeather = (description = "") => {
+  const value = String(description).toLowerCase();
+  if (value.includes("heavy rain")) return "🌧️ Pioggia forte";
+  if (value.includes("moderate rain")) return "🌧️ Pioggia moderata";
+  if (value.includes("continuous rain")) return "🌧️ Pioggia continua";
+  if (value.includes("light rain") || value.includes("drizzle")) return "🌦️ Pioggia leggera";
+  if (value.includes("thunder")) return "⛈️ Temporali";
+  if (value.includes("partly cloudy")) return "⛅ Parzialmente nuvoloso";
+  if (value.includes("cloud")) return "☁️ Nuvoloso";
+  if (value.includes("clear")) return "☀️ Sereno";
+  return "🌤️ Meteo IMD";
+};
 const indiaDateKey = (date = new Date()) =>
   new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Kolkata",
@@ -1009,6 +1021,8 @@ function App() {
     [notificationOpen, setNotificationOpen] = useState(false),
     [quickProfileOpen, setQuickProfileOpen] = useState(false),
     [travelersOpen, setTravelersOpen] = useState(false),
+    [weatherByDate, setWeatherByDate] = useState({}),
+    [indiaClock, setIndiaClock] = useState(() => Date.now()),
     [quickStatus, setQuickStatus] = useState(""),
     [accessCode, setAccessCode] = useState(""),
     [groupCode, setGroupCode] = useState(""),
@@ -1030,6 +1044,30 @@ function App() {
   });
   const [bootstrapBusy, setBootstrapBusy] = useState(false);
   const [travelerRegisterBusy, setTravelerRegisterBusy] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    fetch(`${API}/weather`)
+      .then((response) => response.ok ? response.json() : Promise.reject())
+      .then((result) => {
+        if (!active) return;
+        setWeatherByDate(Object.fromEntries(
+          (result.forecasts || []).map((forecast) => [`${forecast.date}:${forecast.city}`, forecast]),
+        ));
+      })
+      .catch(() => {});
+    const timer = setInterval(() => setIndiaClock(Date.now()), 30_000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, []);
+
+  const indiaTime = new Intl.DateTimeFormat("it-IT", {
+    timeZone: "Asia/Kolkata",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(indiaClock);
 
   useEffect(() => {
     if (!travelersOpen) return undefined;
@@ -1929,6 +1967,9 @@ function App() {
             </div>
             <div className="diaryDayPicker" aria-label="Seleziona la giornata">
               {days.map((day, index) => (
+                (() => {
+                  const forecast = weatherByDate[`${tripDateKeys[index]}:${day.city}`];
+                  return (
                 <button
                   key={index}
                   className={`${open === index ? "active" : ""} ${todayTripIndex === index ? "today" : ""}`.trim()}
@@ -1946,14 +1987,24 @@ function App() {
                   <b>Giorno {index + 1}</b>
                   <span>{day.date.replace(" AGOSTO", " AGO")}</span>
                   <small>{day.city}</small>
+                  {forecast && (
+                    <em className="dayPickerWeather" title={forecast.description}>
+                      {forecast.max}°/{forecast.min}°
+                    </em>
+                  )}
                   {todayTripIndex === index && (
                     <i className="todayDot" title="Oggi" aria-hidden="true" />
                   )}
                 </button>
+                  );
+                })()
               ))}
             </div>
             <div className="dayList">
               {days.map((d, i) => (
+                (() => {
+                  const forecast = weatherByDate[`${tripDateKeys[i]}:${d.city}`];
+                  return (
                 <article
                   id={`day-${i + 1}`}
                   className={`day ${open === i ? "open" : ""}`}
@@ -1982,6 +2033,10 @@ function App() {
                       <h3>{d.title}</h3>
                       <span className="travelMini">
                         {d.transport} · {d.km} km
+                      </span>
+                      <span className="dayWeatherLine" title={forecast?.description || "Ora locale India"}>
+                        {forecast ? `${forecast.max}° / ${forecast.min}° · ${conciseWeather(forecast.description)} · ` : ""}
+                        Ora India {indiaTime}
                       </span>
                     </div>
                     <ChevronDown className={open === i ? "rot" : ""} />
@@ -2099,6 +2154,8 @@ function App() {
                     </div>
                   )}
                 </article>
+                  );
+                })()
               ))}
             </div>
           </section>
