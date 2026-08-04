@@ -1,4 +1,4 @@
-const CACHE = "india-insieme-v1.35.1";
+const CACHE = "india-insieme-v1.36.0";
 self.addEventListener("install", (event) => {
   self.skipWaiting();
   event.waitUntil(

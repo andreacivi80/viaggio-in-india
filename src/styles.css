@@ -764,7 +764,19 @@ body {
   color: #f97316;
 }
 .heroCopy > p {
-  color: #fed7aa;
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
+  margin: 0;
+  padding: 5px 9px;
+  border: 1px solid #ffffff4d;
+  border-radius: 999px;
+  background: #102d25d9;
+  color: #fff4df;
+  text-shadow: 0 1px 2px #000b;
+  box-shadow: 0 3px 12px #071b1452;
+  backdrop-filter: blur(5px);
 }
 .hero h1 {
   font:
@@ -2590,6 +2602,29 @@ h2 {
   box-shadow: 0 0 0 5px #ff6f2d33;
   animation: pulse 1.8s infinite;
 }
+.vectorMarker.currentToday {
+  width: 38px;
+  height: 38px;
+  border-color: #effff8;
+  background: #13a564;
+  font-size: 14px;
+  box-shadow:
+    0 0 0 7px #13a56442,
+    0 0 19px 7px #5cffaa9c,
+    0 6px 18px #102d2570;
+  animation: currentMapStopPulse 1.8s ease-in-out infinite;
+}
+@keyframes currentMapStopPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 5px #13a56435, 0 0 13px 4px #5cffaa72, 0 6px 18px #102d2570;
+  }
+  50% {
+    box-shadow: 0 0 0 10px #13a56424, 0 0 24px 10px #5cffaaa6, 0 6px 18px #102d2570;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vectorMarker.currentToday { animation: none; }
+}
 .publishNotice {
   display: flex;
   align-items: center;
@@ -3259,7 +3294,7 @@ mark.mention {
 }
 .reply {
   display: grid !important;
-  grid-template-columns: minmax(0, 1fr) 32px 32px;
+  grid-template-columns: minmax(0, 1fr) 30px 30px;
   align-items: center;
   gap: 5px !important;
   margin-top: 8px;
@@ -3278,28 +3313,30 @@ mark.mention {
   line-height: 1.35;
 }
 .reply label {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   display: grid;
   place-items: center;
   background: #ece3d6;
-  border-radius: 10px;
+  border: 1px solid #d7c9b8;
+  border-radius: 8px;
   align-self: center;
 }
 .reply label input {
   display: none;
 }
 .reply button {
-  width: 32px;
-  height: 32px;
-  padding: 7px;
-  border-radius: 10px;
+  width: 30px;
+  height: 30px;
+  padding: 6px;
+  border: 1px solid #1d2925;
+  border-radius: 8px;
   align-self: center;
 }
 .reply label svg,
 .reply button svg {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
 }
 
 .roleChoice {
@@ -4367,7 +4404,7 @@ mark.mention {
   }
 
   .reply {
-    grid-template-columns: minmax(0, 1fr) 44px 44px;
+    grid-template-columns: minmax(0, 1fr) 36px 36px;
     align-items: center;
     gap: 4px !important;
   }
@@ -4379,15 +4416,16 @@ mark.mention {
 
   .reply label,
   .reply button {
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
     align-self: center;
+    margin-bottom: 4px;
   }
 
   .reply label svg,
   .reply button svg {
-    width: 15px;
-    height: 15px;
+    width: 13px;
+    height: 13px;
   }
 
   .uploadSheet .composerActions label,

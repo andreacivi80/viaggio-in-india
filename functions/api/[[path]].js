@@ -1630,17 +1630,15 @@ export async function onRequest(context) {
         !Number.isFinite(longitude) || longitude < -180 || longitude > 180
       )
         return json({ error: "Posizione non valida" }, 400);
-      if (
-        session.role !== "coordinator" &&
-        String(b.profile_id || "") !== session.profile_id
-      )
+      if (String(b.profile_id || "") !== session.profile_id)
         return json({ error: "Puoi aggiornare soltanto la tua posizione" }, 403);
+      const safeDisplayName = `${session.name || ""} ${session.surname || ""}`.trim() || "Viaggiatore";
       await env.DB.prepare(
         "INSERT INTO locations(profile_id,display_name,latitude,longitude,updated_at) VALUES(?,?,?,?,?) ON CONFLICT(profile_id) DO UPDATE SET display_name=excluded.display_name,latitude=excluded.latitude,longitude=excluded.longitude,updated_at=excluded.updated_at",
       )
         .bind(
           b.profile_id,
-          b.display_name,
+          safeDisplayName,
           latitude,
           longitude,
           now(),
@@ -1651,10 +1649,7 @@ export async function onRequest(context) {
     if (path.startsWith("locations/") && request.method === "DELETE") {
       const profileId = path.slice(10);
       const session = await sessionFromRequest(request, env);
-      if (
-        !session ||
-        (session.role !== "coordinator" && session.profile_id !== profileId)
-      )
+      if (!session || session.profile_id !== profileId)
         return json({ error: "Non puoi cancellare questa posizione" }, 403);
       await env.DB.prepare("DELETE FROM locations WHERE profile_id=?")
         .bind(profileId)
@@ -1665,9 +1660,16 @@ export async function onRequest(context) {
       const form = await request.formData();
       const profileId = String(form.get("profile_id"));
       const session = await sessionFromRequest(request, env);
+      const submittedFile = form.get("file");
+      const requestsFileChange =
+        (submittedFile instanceof File && submittedFile.size > 0) ||
+        Boolean(String(form.get("upload_id") || ""));
+      const ownsDocument = session?.profile_id === profileId;
+      const coordinatorVerificationOnly =
+        session?.role === "coordinator" && !requestsFileChange;
       if (
         !session ||
-        (session.role !== "coordinator" && session.profile_id !== profileId)
+        (!ownsDocument && !coordinatorVerificationOnly)
       )
         return json({ error: "Documento non autorizzato" }, 403);
       const type = String(form.get("doc_type"));
@@ -1734,10 +1736,7 @@ export async function onRequest(context) {
     if (path.startsWith("documents/") && request.method === "DELETE") {
       const [, profileId, type] = path.split("/");
       const session = await sessionFromRequest(request, env);
-      if (
-        !session ||
-        (session.role !== "coordinator" && session.profile_id !== profileId)
-      )
+      if (!session || session.profile_id !== profileId)
         return json({ error: "Documento non autorizzato" }, 403);
       const doc = await env.DB.prepare(
         "SELECT file_key FROM document_status WHERE profile_id=? AND doc_type=?",

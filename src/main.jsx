@@ -38,7 +38,7 @@ import {
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
 
-const VERSION = "1.35.1",
+const VERSION = "1.36.0",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -526,7 +526,7 @@ const pushKeyBytes = (value) => {
   return Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
 };
 
-function TripMap({ selectedDay, onSelect, onReady }) {
+function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
   const el = useRef(null),
     map = useRef(null),
     maplibre = useRef(null),
@@ -570,9 +570,9 @@ function TripMap({ selectedDay, onSelect, onReady }) {
           source: "trip-route",
           paint: {
             "line-color": "#102d25",
-            "line-width": 9,
-            "line-opacity": 0.28,
-            "line-blur": 2,
+            "line-width": 11,
+            "line-opacity": 0.34,
+            "line-blur": 2.4,
           },
         });
         map.current.addLayer({
@@ -582,7 +582,7 @@ function TripMap({ selectedDay, onSelect, onReady }) {
           filter: ["==", ["get", "mode"], "road"],
           paint: {
             "line-color": "#ed6a24",
-            "line-width": 5,
+            "line-width": 6,
             "line-opacity": 1,
           },
         });
@@ -592,9 +592,10 @@ function TripMap({ selectedDay, onSelect, onReady }) {
           source: "trip-route",
           filter: ["==", ["get", "mode"], "transit"],
           paint: {
-            "line-color": "#ed6a24",
-            "line-width": 4,
-            "line-dasharray": [2, 2],
+            "line-color": "#123b72",
+            "line-width": 5.5,
+            "line-opacity": 1,
+            "line-dasharray": [1.6, 1.4],
           },
         });
         setReady(true);
@@ -642,6 +643,9 @@ function TripMap({ selectedDay, onSelect, onReady }) {
       [6, 7],
       [7],
     ];
+    const currentMarkerIndexes = [0, 0, 1, 1, 3, 3, 4, 4, 5, 6, 6, 6, 7, 7];
+    const currentMarkerIndex =
+      currentDayIndex >= 0 ? currentMarkerIndexes[currentDayIndex] : -1;
     const visibleMarkerIndexes =
       selectedDay == null
         ? sequence.map((_, i) => i)
@@ -649,19 +653,31 @@ function TripMap({ selectedDay, onSelect, onReady }) {
     sequence.forEach((name, i) => {
       if (!visibleMarkerIndexes.includes(i)) return;
       const active = Boolean(day);
+      const isCurrent =
+        i === currentMarkerIndex &&
+        (selectedDay == null || selectedDay === currentDayIndex);
       const node = document.createElement("button");
-      node.className = `vectorMarker ${active ? "active" : ""}`;
+      node.className = `vectorMarker ${active ? "active" : ""} ${isCurrent ? "currentToday" : ""}`.trim();
       node.textContent = String(i + 1);
-      node.setAttribute("aria-label", `Tappa ${i + 1}: ${name}`);
+      node.setAttribute(
+        "aria-label",
+        `${isCurrent ? "Siamo qui oggi. " : ""}Tappa ${i + 1}: ${name}`,
+      );
       node.onclick = () => onSelect?.(days.findIndex((d) => d.city === name));
       const [lat, lng] = places[name];
+      const overviewOffset =
+        selectedDay == null && i === 1
+          ? [-15, 7]
+          : selectedDay == null && i === 2
+            ? [15, -7]
+            : [0, 0];
       const marker = new maplibregl.Marker({
         element: node,
         anchor: "center",
         offset:
           selectedDay == null && name === "Delhi"
             ? [i === 0 ? -16 : 16, 0]
-            : [0, 0],
+            : overviewOffset,
       })
         .setLngLat([lng, lat])
         .setPopup(
@@ -739,7 +755,7 @@ function TripMap({ selectedDay, onSelect, onReady }) {
       setVisualReady(true);
       onReady?.();
     });
-  }, [selectedDay, ready]);
+  }, [selectedDay, ready, currentDayIndex]);
   return (
     <div className="realMapWrap">
       <div
@@ -937,8 +953,10 @@ function App() {
     0,
     Math.min(days.length - 1, Number(initialParams.get("day") || 1) - 1),
   );
-  // Ogni nuova apertura parte dalla bacheca. La mappa si apre solo su richiesta.
-  const startsOnMap = false;
+  // L’apertura normale resta sulla bacheca; i soli link espliciti di anteprima
+  // possono aprire direttamente la cartina completa o una giornata precisa.
+  const startsOnMap = initialParams.get("view") === "map";
+  const initialMapDay = startsOnMap && initialParams.has("day") ? initialDay : null;
   const navigationOriginRef = useRef(
     (() => {
       try {
@@ -955,7 +973,7 @@ function App() {
     [people, setPeople] = useState(() => sanitizeProfilesForPublicCache(load("india-people", []))),
     [open, setOpen] = useState(initialDay),
     [selectedDay, setSelectedDay] = useState(0),
-    [mapDay, setMapDay] = useState(startsOnMap ? initialDay : null),
+    [mapDay, setMapDay] = useState(initialMapDay),
     [vaultProfileId, setVaultProfileId] = useState(""),
     [composeOpen, setComposeOpen] = useState(false),
     [notificationOpen, setNotificationOpen] = useState(false),
@@ -2012,6 +2030,7 @@ function App() {
           <MapSection
             selectedDay={mapDay}
             setSelectedDay={setMapDay}
+            currentDayIndex={todayTripIndex}
             onBack={returnFromMap}
           />
         )}{" "}
@@ -2105,7 +2124,7 @@ function App() {
   );
 }
 
-function MapSection({ selectedDay, setSelectedDay, onBack }) {
+function MapSection({ selectedDay, setSelectedDay, currentDayIndex, onBack }) {
   const d = selectedDay == null ? null : days[selectedDay];
   const mapShellRef = useRef(null);
   const positionedDayRef = useRef(Symbol("not-positioned"));
@@ -2170,6 +2189,7 @@ function MapSection({ selectedDay, setSelectedDay, onBack }) {
       <div className="mapShell" ref={mapShellRef}>
         <TripMap
           selectedDay={selectedDay}
+          currentDayIndex={currentDayIndex}
           onSelect={focusMap}
           onReady={positionMapOnce}
         />
@@ -3904,6 +3924,7 @@ function VaultOnline({
     [profileId, setProfileId] = useState(""),
     [busy, setBusy] = useState(""),
     [documentStatus, setDocumentStatus] = useState(""),
+    [locationStatus, setLocationStatus] = useState(""),
     [documentPreview, setDocumentPreview] = useState(null),
     [pendingDocumentDelete, setPendingDocumentDelete] = useState(""),
     [locationMapOpen, setLocationMapOpen] = useState(false),
@@ -4095,36 +4116,61 @@ function VaultOnline({
     if (documentPreview?.url) URL.revokeObjectURL(documentPreview.url);
     setDocumentPreview(null);
   };
-  const locate = () =>
-    navigator.geolocation?.getCurrentPosition(
+  const locate = () => {
+    const viewerProfileId = privateData.viewer?.profile_id || "";
+    if (!viewerProfileId) {
+      setLocationStatus("Collega prima il tuo profilo a questo dispositivo.");
+      return;
+    }
+    if (!navigator.geolocation) {
+      setLocationStatus("La posizione non è disponibile su questo dispositivo.");
+      return;
+    }
+    setLocationStatus("Ricerca della posizione in corso…");
+    navigator.geolocation.getCurrentPosition(
       async (p) => {
-        const person = people.find((x) => x.id === profileId);
-        await fetch(`${API}/locations`, {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            ...sessionHeaders(sessionToken),
-          },
-          body: JSON.stringify({
-            profile_id: profileId,
-            display_name: person
-              ? `${person.name} ${person.surname}`
-              : "Viaggiatore",
-            latitude: p.coords.latitude,
-            longitude: p.coords.longitude,
-          }),
-        });
-        refresh();
+        try {
+          const response = await fetch(`${API}/locations`, {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              ...sessionHeaders(sessionToken),
+            },
+            body: JSON.stringify({
+              profile_id: viewerProfileId,
+              latitude: p.coords.latitude,
+              longitude: p.coords.longitude,
+            }),
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok) throw new Error(result.error || "Posizione non aggiornata");
+          setLocationStatus("Posizione aggiornata e visibile al gruppo.");
+          await refresh();
+        } catch (error) {
+          setLocationStatus(error.message || "Posizione non aggiornata. Riprova.");
+        }
       },
-      () =>
-        alert("Posizione non disponibile: controlla i permessi del telefono."),
+      (error) =>
+        setLocationStatus(
+          error.code === 1
+            ? "Permesso posizione non concesso. Abilitalo nelle impostazioni del browser."
+            : "Posizione non disponibile. Controlla GPS e connessione e riprova.",
+        ),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 },
     );
+  };
   const removeLocation = async (targetProfileId) => {
     const response = await fetch(`${API}/locations/${targetProfileId}`, {
       method: "DELETE",
       headers: sessionHeaders(sessionToken),
     });
-    if (response.ok) refresh();
+    if (response.ok) {
+      setLocationStatus("Posizione rimossa. Non è più visibile al gruppo.");
+      refresh();
+    } else {
+      const result = await response.json().catch(() => ({}));
+      setLocationStatus(result.error || "Posizione non rimossa. Riprova.");
+    }
   };
   const lockDevice = async () => {
     if (sessionToken)
@@ -4367,20 +4413,24 @@ function VaultOnline({
                     <div className="documentActions">
                       <button onClick={() => openDocument(doc)}>Apri</button>
                       <button onClick={() => openDocument(doc, true)}>Scarica</button>
-                      <label>
-                        {busy === type ? "Invio…" : "Sostituisci"}
-                        <input
-                          type="file"
-                          accept="application/pdf,image/*"
-                          onChange={(e) => upload(type, e.target.files?.[0])}
-                        />
-                      </label>
-                      <button onClick={() => setPendingDocumentDelete(type)}>
-                        Elimina
-                      </button>
+                      {privateData.viewer?.profile_id === profileId && (
+                        <>
+                          <label>
+                            {busy === type ? "Invio…" : "Sostituisci"}
+                            <input
+                              type="file"
+                              accept="application/pdf,image/*"
+                              onChange={(e) => upload(type, e.target.files?.[0])}
+                            />
+                          </label>
+                          <button onClick={() => setPendingDocumentDelete(type)}>
+                            Elimina
+                          </button>
+                        </>
+                      )}
                     </div>
                   </>
-                ) : (
+                ) : privateData.viewer?.profile_id === profileId ? (
                   <label>
                     {busy === type ? "Invio…" : "Carica"}
                     <input
@@ -4389,6 +4439,8 @@ function VaultOnline({
                       onChange={(e) => upload(type, e.target.files?.[0])}
                     />
                   </label>
+                ) : (
+                  <small>Da caricare</small>
                 )}
               </div>
             );
@@ -4462,10 +4514,11 @@ function VaultOnline({
               : "Seleziona prima il tuo profilo qui sopra."}
           </small>
         </div>
-        <button onClick={locate} disabled={!profileId}>
+        <button onClick={locate} disabled={!privateData.viewer?.profile_id}>
           Aggiorna ora
         </button>
       </div>
+      {locationStatus && <small className="locationStatus" role="status">{locationStatus}</small>}
       <button
         className="locationMapToggle"
         onClick={() => setLocationMapOpen((value) => !value)}
@@ -4505,7 +4558,7 @@ function VaultOnline({
                   >
                     Naviga
                   </a>
-                  {x.profile_id === profileId && (
+                  {x.profile_id === privateData.viewer?.profile_id && (
                     <button onClick={() => removeLocation(x.profile_id)}>
                       Cancella posizione
                     </button>
