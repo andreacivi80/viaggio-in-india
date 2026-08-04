@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      TEST_BASE_URL: http://127.0.0.1:4173
+      TEST_BASE_URL: http://127.0.0.1:5173/viaggio-in-india/
       MOCK_API: "1"
     steps:
       - name: Checkout
@@ -58,7 +58,7 @@ jobs:
         run: |
           npm run dev -- --host 127.0.0.1 > /tmp/india-vite.log 2>&1 &
           for attempt in {1..30}; do
-            curl --fail --silent http://127.0.0.1:4173 >/dev/null && exit 0
+            curl --fail --silent http://127.0.0.1:5173/viaggio-in-india/ >/dev/null && exit 0
             sleep 1
           done
           cat /tmp/india-vite.log
