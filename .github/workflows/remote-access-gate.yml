@@ -14,6 +14,18 @@ permissions:
   contents: read
 
 jobs:
+  deployment-capability:
+    name: Remote QA deployment capability
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check remote credentials without exposing values
+        env:
+          CF_TOKEN_AVAILABLE: ${{ secrets.CLOUDFLARE_API_TOKEN != '' || secrets.CF_API_TOKEN != '' }}
+          CF_ACCOUNT_AVAILABLE: ${{ secrets.CLOUDFLARE_ACCOUNT_ID != '' || secrets.CF_ACCOUNT_ID != '' }}
+        run: |
+          echo "cloudflare_token_available=${CF_TOKEN_AVAILABLE}"
+          echo "cloudflare_account_available=${CF_ACCOUNT_AVAILABLE}"
+
   deployed-qa:
     name: Deployed QA access boundary
     runs-on: ubuntu-latest
