@@ -1198,10 +1198,19 @@ h3 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
+  min-width: 0;
 }
 .peopleGrid article {
   text-align: center;
   margin: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+.peopleGrid article h3,
+.peopleGrid article small,
+.peopleGrid article p {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 .peopleGrid .avatar {
   margin: auto;
@@ -1326,7 +1335,10 @@ footer small {
   grid-template-columns: 1fr;
   gap: 7px;
   margin-top: 10px;
+  position: relative;
+  z-index: 1;
 }
+
 .profileActions button {
   min-height: 44px;
   display: flex;
@@ -1338,6 +1350,9 @@ footer small {
   background: var(--color-surface);
   color: var(--color-secondary);
   font-weight: 800;
+  width: 100%;
+  position: relative;
+  z-index: 1;
 }
 .profileActions button:last-child {
   border-color: var(--color-secondary);
@@ -2520,12 +2535,32 @@ h2 {
   box-shadow: 0 0 0 5px #ff6f2d33;
   animation: pulse 1.8s infinite;
 }
+.publishNotice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -2px 0 11px;
+  padding: 10px 12px;
+  border: 1px solid #9bc6ad;
+  border-radius: 12px;
+  background: #eaf7ee;
+  color: #174834;
+  font-size: 13px;
+  font-weight: 800;
+}
+.publishNotice svg {
+  width: 17px;
+  height: 17px;
+}
 @keyframes pulse {
   50% {
     box-shadow: 0 0 0 8px #ff6f2d10;
   }
 }
 .visitorBar {
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
   display: grid;
   grid-template-columns: 38px 1fr auto;
   gap: 4px 9px;
@@ -2535,6 +2570,8 @@ h2 {
   border-radius: 13px;
 }
 .visitorBar input {
+  width: 100%;
+  min-width: 0;
   border: 0;
   background: transparent;
   font: inherit;
@@ -2547,6 +2584,8 @@ h2 {
   font-size: 10px;
 }
 .visitorBar > button {
+  min-width: 58px;
+  white-space: nowrap;
   border: 0;
   border-radius: 9px;
   background: var(--ink);
@@ -3733,14 +3772,23 @@ mark.mention {
   position: fixed;
   top: auto;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  transform: none;
   width: min(100%, 680px);
-  z-index: 900;
+  z-index: 5000;
+  isolation: isolate;
+  pointer-events: auto;
   border-top: 1px solid #e8dfd3;
   border-bottom: 0;
   box-shadow: 0 -8px 28px #173b3018;
   padding-bottom: env(safe-area-inset-bottom);
+}
+.tabs button {
+  position: relative;
+  z-index: 1;
+  pointer-events: auto;
 }
 .tabs button.active:after {
   bottom: 5px;
@@ -3790,13 +3838,15 @@ mark.mention {
 }
 .app main {
   padding-bottom: 105px;
+  position: relative;
+  z-index: auto;
 }
 .app footer {
   padding-bottom: 115px;
 }
 .sheetBackdrop {
   position: fixed;
-  z-index: 1200;
+  z-index: 6000;
   inset: 0;
   background: #10241ccc;
   display: flex;
@@ -4016,4 +4066,183 @@ mark.mention {
   .dayNo {
     font-size: 25px;
   }
+}
+
+/* Revisione usabilità mobile: bersagli touch e campi senza zoom su iPhone. */
+@media (max-width: 680px) {
+  .top {
+    gap: 4px;
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+
+  .accessPill,
+  .headerIcon,
+  .heroTravelers {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .accessPill {
+    justify-content: center;
+    padding: 8px 10px;
+  }
+
+  .headerIcon {
+    width: 44px;
+    height: 44px;
+    margin-left: 2px;
+  }
+
+  .heroTravelers {
+    height: 44px;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px;
+  }
+
+  .reply {
+    grid-template-columns: minmax(0, 1fr) 44px 44px;
+    align-items: center;
+    gap: 4px !important;
+  }
+
+  .reply textarea {
+    min-height: 44px;
+    padding: 10px;
+  }
+
+  .reply label,
+  .reply button {
+    width: 44px;
+    height: 44px;
+    align-self: center;
+  }
+
+  .reply label svg,
+  .reply button svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .uploadSheet .composerActions label,
+  .uploadSheet .composerActions button,
+  .sheetTitle > button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Intestazione compatta: proporzioni visive originali, senza elementi invadenti. */
+@media (max-width: 680px) {
+  .accessPill {
+    min-width: 0;
+    min-height: 44px;
+    height: 44px;
+    padding: 6px 8px;
+    font-size: 9px;
+    --visual-inset-x: 2px;
+    --visual-inset-y: 6px;
+    position: relative;
+    isolation: isolate;
+    border-color: transparent;
+    background: transparent;
+    backdrop-filter: none;
+  }
+
+  .accessPill::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: var(--visual-inset-y) var(--visual-inset-x);
+    border: 1px solid #ffffff55;
+    border-radius: 99px;
+    background: #102d2577;
+    backdrop-filter: blur(8px);
+  }
+
+  .accessPill.unlocked {
+    border-color: transparent;
+    background: transparent;
+  }
+
+  .accessPill.unlocked::before {
+    border-color: #ffc59f;
+    background: #e96824dd;
+  }
+
+  .headerIcon {
+    min-width: 44px;
+    min-height: 44px;
+    width: 44px;
+    height: 44px;
+    --visual-inset-x: 6px;
+    --visual-inset-y: 6px;
+    isolation: isolate;
+    border-color: transparent;
+    background: transparent;
+  }
+
+  .headerIcon::before {
+    content: "";
+    position: absolute;
+    z-index: -1;
+    inset: var(--visual-inset-y) var(--visual-inset-x);
+    border: 1px solid #ffffff55;
+    border-radius: 50%;
+    background: #102d2577;
+    backdrop-filter: blur(8px);
+  }
+
+  .heroTravelers {
+    min-height: 39px;
+    height: 39px;
+    transform: scale(0.92);
+    transform-origin: left top;
+  }
+}
+
+.publicAccessSummary .groupAccessButton {
+  border-color: var(--orange);
+  background: var(--orange);
+  color: #fff;
+}
+
+.bootstrapCoordinator {
+  display: grid;
+  gap: 8px;
+}
+
+.bootstrapCoordinator small {
+  color: var(--color-text-secondary);
+}
+
+.bootstrapCoordinator input {
+  width: 100%;
+  min-height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: #fff;
+  padding: 9px 11px;
+}
+
+.bootstrapCoordinator button {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 0;
+  border-radius: var(--radius-small);
+  background: var(--orange);
+  color: #fff;
+  font-weight: 850;
+}
+
+.postMediaCarousel {
+  touch-action: pan-y;
+  user-select: none;
 }
