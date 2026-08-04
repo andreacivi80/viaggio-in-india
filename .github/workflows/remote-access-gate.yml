@@ -26,6 +26,38 @@ jobs:
           echo "cloudflare_token_available=${CF_TOKEN_AVAILABLE}"
           echo "cloudflare_account_available=${CF_ACCOUNT_AVAILABLE}"
 
+  isolated-pages-api:
+    name: Isolated Pages D1 API boundary
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      API_BASE_URL: http://127.0.0.1:8788
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install application
+        run: npm ci
+      - name: Build candidate
+        run: npm run build
+      - name: Initialize isolated D1
+        run: npx -y wrangler@4.33.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --file db/schema.sql
+      - name: Start isolated Pages runtime
+        run: |
+          npx -y wrangler@4.33.0 pages dev dist --config wrangler.qa.jsonc --port 8788 --binding GROUP_CODE=india26 > /tmp/india-pages.log 2>&1 &
+          for attempt in {1..45}; do
+            curl --fail --silent http://127.0.0.1:8788/api/health >/dev/null && exit 0
+            sleep 1
+          done
+          cat /tmp/india-pages.log
+          exit 1
+      - name: Run real API authorization gate
+        run: node remote-tests/api-gate.mjs
+
   deployed-qa:
     name: Deployed QA access boundary
     runs-on: ubuntu-latest
