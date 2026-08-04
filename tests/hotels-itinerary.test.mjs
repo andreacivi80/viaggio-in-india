@@ -19,8 +19,16 @@ test("i cinque nuovi hotel sono collegati a indirizzi, coordinate e giornate", (
   assert.equal((source.match(/name: "Akshay Niwas Boutique Hotel by Amantra"/g) || []).length, 2);
   assert.equal((source.match(/name: "Hotel Rajwara Palace"/g) || []).length, 2);
   assert.equal((source.match(/name: "The Wall Street Beacon Hotel"/g) || []).length, 2);
-  assert.equal((source.match(/name: "Hotel Taj Vilas"/g) || []).length, 1);
-  assert.equal((source.match(/name: "Costa River Varanasi"/g) || []).length, 2);
+  assert.equal((source.match(/name: "Hotel Taj Vilas"/g) || []).length, 2);
+  assert.equal((source.match(/name: "Costa River Varanasi"/g) || []).length, 3);
+  assert.equal((source.match(/name: "Rockland Hotel C\.R\. Park"/g) || []).length, 2);
+  assert.match(source, /overnight: "Notte in treno · Agra → Varanasi"/);
+  assert.match(source, /overnight: "Notte in treno · Varanasi → Delhi"/);
+});
+
+test("lo zoom giornaliero privilegia gli spostamenti brevi", () => {
+  assert.match(source, /day\.km <= 15[\s\S]*?13\.2[\s\S]*?day\.km <= 40[\s\S]*?12\.4/);
+  assert.match(source, /top: 72, right: 30, bottom: 72, left: 30/);
 });
 
 test("le linee di trasferimento usano gli hotel come estremi", () => {
@@ -30,4 +38,3 @@ test("le linee di trasferimento usano gli hotel come estremi", () => {
   assert.match(source, /"Jaipur-Agra"[\s\S]*?26\.917646, 75\.8116579[\s\S]*?27\.1580309, 78\.0592253/);
   assert.match(source, /"Agra-Varanasi-hotel"[\s\S]*?27\.1580309, 78\.0592253[\s\S]*?25\.3385012, 82\.9795559/);
 });
-

@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.14",
+const VERSION = "1.37.15",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -330,6 +330,12 @@ const days = [
     from: "Delhi",
     to: "Delhi",
     path: "Delhi-old-city",
+    hotel: {
+      name: "Rockland Hotel C.R. Park",
+      place: "Rockland Hotel C R Park",
+      address: "B-207, C.R. Park, Outer Ring Road, New Delhi 110019",
+      contact: "Shekhar · +91 88264 93202",
+    },
     checks: ["Tour Sanjay Colony", "Red Fort", "Chandni Chowk", "Jama Masjid"],
   },
   {
@@ -513,6 +519,14 @@ const days = [
     from: "Agra",
     to: "Varanasi",
     path: "Agra-Varanasi-hotel",
+    hotel: {
+      label: "APPOGGIO AD AGRA PRIMA DEL TRENO",
+      name: "Hotel Taj Vilas",
+      place: "Hotel Taj Vilas",
+      address: "Fatehabad Road, vicino al TDI Mall, di fronte all’Hotel Trident, Tajganj, Basai, Agra 282006",
+      contact: "Sachin · +91 78950 02674",
+    },
+    overnight: "Notte in treno · Agra → Varanasi",
     checks: [
       "Taj Mahal all’alba",
       "Mercatini",
@@ -583,6 +597,13 @@ const days = [
     from: "Varanasi",
     to: "Delhi",
     path: "Varanasi-Delhi",
+    hotel: {
+      label: "APPOGGIO A VARANASI PRIMA DEL TRENO",
+      name: "Costa River Varanasi",
+      place: "Costa River Varanasi",
+      address: "Nepali Kothi, S 51-A-4-A1, The Mall Road, Nadesar, Varanasi Cantonment, Uttar Pradesh 221002",
+    },
+    overnight: "Notte in treno · Varanasi → Delhi",
     checks: [
       "Mattina libera",
       "Ultimi regali",
@@ -872,8 +893,18 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         new maplibregl.LngLatBounds(),
       );
       map.current.fitBounds(bounds, {
-        padding: { top: 112, right: 56, bottom: 108, left: 56 },
-        maxZoom: day ? (day.km <= 25 ? 11.5 : day.km <= 120 ? 8.5 : 7.2) : 5.2,
+        padding: day
+          ? { top: 72, right: 30, bottom: 72, left: 30 }
+          : { top: 112, right: 56, bottom: 108, left: 56 },
+        maxZoom: day
+          ? day.km <= 15
+            ? 13.2
+            : day.km <= 40
+              ? 12.4
+              : day.km <= 120
+                ? 10.2
+                : 7.5
+          : 5.2,
         duration: 950,
         bearing: 0,
         pitch: 0,
@@ -2129,7 +2160,7 @@ function App() {
                         <div className="lodgingCard">
                           <span aria-hidden="true">🏨</span>
                           <div>
-                            <small>ALLOGGIO A {d.city.toUpperCase()}</small>
+                            <small>{d.hotel.label || `ALLOGGIO A ${d.city.toUpperCase()}`}</small>
                             <b>{d.hotel.name}</b>
                             <span>{d.hotel.address}</span>
                             {d.hotel.contact && <span className="hotelContact">☎ {d.hotel.contact}</span>}
@@ -2141,6 +2172,15 @@ function App() {
                           >
                             Apri
                           </a>
+                        </div>
+                      )}
+                      {d.overnight && (
+                        <div className="overnightCard">
+                          <span aria-hidden="true">🚆</span>
+                          <div>
+                            <small>PERNOTTAMENTO</small>
+                            <b>{d.overnight}</b>
+                          </div>
                         </div>
                       )}
                       <div className="journeyCard">

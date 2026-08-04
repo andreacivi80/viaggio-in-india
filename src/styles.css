@@ -4847,6 +4847,20 @@ mark.mention {
   font-weight: 850;
   text-decoration: none;
 }
+.overnightCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: -3px 0 12px;
+  padding: 10px 12px;
+  border-radius: 13px;
+  background: #153b31;
+  color: #fff;
+}
+.overnightCard > span { font-size: 21px; }
+.overnightCard > div { display: flex; flex-direction: column; min-width: 0; }
+.overnightCard small { color: #f6b58c; font-size: 9px; font-weight: 900; letter-spacing: .7px; }
+.overnightCard b { font-size: 12px; line-height: 1.35; }
 
 /* Revisione 1.37.2: campo commento allineato ai comandi */
 .reply {

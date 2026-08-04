@@ -23,3 +23,13 @@ Questa regola vale per **ogni revisione**, senza eccezioni.
 - La pagina sottostante non scorre durante il gesto nel pannello.
 - Chiusura del pannello sempre funzionante.
 - Controllo visivo su viewport Samsung S20 FE.
+
+## Livello 2 della revisione 1.37.15
+
+- Conteggio di appoggi e pernottamenti verificato per tutte le 14 giornate.
+- Rockland ripetuto nella seconda giornata di Delhi.
+- Taj Vilas e Costa River indicati anche come appoggio prima dei treni notturni.
+- Notti Agra–Varanasi e Varanasi–Delhi identificate separatamente come pernottamento in treno.
+- Zoom touch più stretto e leggibile per tratte locali fino a 40 km.
+- Hotel, città e percorso restano tutti dentro l'inquadratura sui due profili Samsung.
+- Regressione completa Livello 1 obbligatoria prima della pubblicazione.
