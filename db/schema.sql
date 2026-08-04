@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   origin_city TEXT DEFAULT '',
   bio TEXT DEFAULT '',
   role TEXT DEFAULT 'traveler',
+  gender TEXT DEFAULT '',
   avatar_key TEXT,
   created_at TEXT NOT NULL
 );

@@ -379,6 +379,18 @@ async function deleteStoredMedia(env, key) {
   await env.DB.prepare("DELETE FROM upload_parts WHERE upload_session_id=?").bind(upload.id).run();
   await env.DB.prepare("DELETE FROM upload_sessions WHERE id=?").bind(upload.id).run();
 }
+let profileGenderSchemaReady = false;
+async function ensureProfileGenderSchema(env) {
+  if (profileGenderSchemaReady) return;
+  try { await env.DB.prepare("ALTER TABLE profiles ADD COLUMN gender TEXT DEFAULT ''").run(); }
+  catch (error) { if (!/duplicate column|already exists/i.test(String(error?.message || error))) throw error; }
+  await env.DB.batch([
+    env.DB.prepare("UPDATE profiles SET gender='male' WHERE lower(trim(name))='andrea' AND (gender IS NULL OR gender='')"),
+    env.DB.prepare("UPDATE profiles SET gender='female' WHERE lower(trim(name))='sara' AND (gender IS NULL OR gender='')"),
+    env.DB.prepare("UPDATE profiles SET gender='female' WHERE lower(trim(name))='valentina' AND (gender IS NULL OR gender='')"),
+  ]);
+  profileGenderSchemaReady = true;
+}
 async function silentMaintenance(env) {
   const markerKey = "system/last-silent-maintenance";
   const lastRun = Number(await env.MEDIA.get(markerKey, { type: "text" })) || 0;
@@ -480,6 +492,7 @@ async function readState(env, session = null, guest = null) {
             role: p.role,
             avatar_url: mediaUrl(avatarKey),
             created_at: p.created_at,
+            gender: p.gender || "",
           };
     }),
     posts: posts.results.filter((p) => canViewPost(p, session, guest)).map((p) => {
@@ -553,6 +566,7 @@ export async function onRequest(context) {
       ? params.path.join("/")
       : String(params.path || "")
   ).replace(/^\/+|\/+$/g, "");
+  await ensureProfileGenderSchema(env);
   context.waitUntil?.(silentMaintenance(env).catch(() => {}));
   try {
     if (request.method === "POST" && path === "auth/bootstrap") {
@@ -615,20 +629,22 @@ export async function onRequest(context) {
       const surname = String(body.surname || "").trim();
       const originCity = String(body.origin_city || "").trim();
       const role = body.role === "coordinator" ? "coordinator" : "traveler";
+      const knownGender = { andrea: "male", sara: "female", valentina: "female" }[name.toLowerCase()] || "";
+      const gender = ["female", "male"].includes(body.gender) ? body.gender : knownGender;
       if (!name) return json({ error: "Inserisci il tuo nome" }, 400);
       if (name.length > 80 || surname.length > 80 || originCity.length > 100)
         return json({ error: "I dati inseriti sono troppo lunghi" }, 400);
       const profileId = id();
       const createdAt = now();
       await env.DB.prepare(
-        `INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,created_at)
-         VALUES(?,?,?, '', '', ?, '', ?, NULL, ?)`,
-      ).bind(profileId, name, surname, originCity, role, createdAt).run();
+        `INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,created_at,gender)
+         VALUES(?,?,?, '', '', ?, '', ?, NULL, ?, ?)`,
+      ).bind(profileId, name, surname, originCity, role, createdAt, gender).run();
       try {
         const issued = await createSession(env, profileId, deviceNameFromRequest(request));
         return json({
           ...issued,
-          profile: { id: profileId, name, surname, origin_city: originCity, role },
+          profile: { id: profileId, name, surname, origin_city: originCity, role, gender },
         }, 201);
       } catch (error) {
         await env.DB.prepare("DELETE FROM profiles WHERE id=?").bind(profileId).run();
@@ -1145,7 +1161,7 @@ export async function onRequest(context) {
         created_at: now(),
       };
       await env.DB.prepare(
-        "INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,created_at,gender) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
       )
         .bind(
           row.id,
@@ -1158,6 +1174,7 @@ export async function onRequest(context) {
           row.role,
           row.avatar_key,
           row.created_at,
+          row.gender,
         )
         .run();
       return json({ ...row, avatar_url: mediaUrl(row.avatar_key) }, 201);
@@ -1189,7 +1206,7 @@ export async function onRequest(context) {
           : current.role;
       try {
         await env.DB.prepare(
-          "UPDATE profiles SET name=?,surname=?,age=?,job=?,origin_city=?,bio=?,role=?,avatar_key=? WHERE id=?",
+          "UPDATE profiles SET name=?,surname=?,age=?,job=?,origin_city=?,bio=?,role=?,avatar_key=?,gender=? WHERE id=?",
         )
           .bind(
             name,
@@ -1200,6 +1217,7 @@ export async function onRequest(context) {
             String(form.get("bio") || ""),
             updatedRole,
             avatarKey,
+            ["female", "male"].includes(String(form.get("gender"))) ? String(form.get("gender")) : "",
             profileId,
           )
           .run();
@@ -1683,7 +1701,7 @@ export async function onRequest(context) {
       )
         return json({ error: "Documento non autorizzato" }, 403);
       const type = String(form.get("doc_type"));
-      if (!["passport", "visa", "tickets", "insurance"].includes(type))
+      if (!["passport", "visa", "tickets", "insurance"].includes(type) && !/^other-[a-f0-9-]{36}$/.test(type))
         return json({ error: "Tipo documento non valido" }, 400);
       const operation = await beginIdempotentOperation(
         env,

@@ -38,7 +38,7 @@ import {
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
 
-const VERSION = "1.36.1",
+const VERSION = "1.37.0",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -48,6 +48,16 @@ const deviceName = () => {
   if (/Macintosh|Mac OS/i.test(userAgent)) return "Computer Mac";
   return "Dispositivo";
 };
+const travelerOrderGroup = (person) =>
+  person.role === "coordinator" ? 0 : person.gender === "female" ? 1 : person.gender === "male" ? 2 : 3;
+const sortTravelers = (travelers = []) =>
+  [...travelers].sort((a, b) => travelerOrderGroup(a) - travelerOrderGroup(b) ||
+    String(a.created_at || "").localeCompare(String(b.created_at || "")));
+const travelerRoleLabel = (person) =>
+  person.role === "coordinator"
+    ? person.gender === "female" ? "Coordinatrice" : "Coordinatore"
+    : person.gender === "female" ? "Viaggiatrice"
+      : person.gender === "male" ? "Viaggiatore" : "Partecipante";
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
   (_, index) => `2026-08-${String(10 + index).padStart(2, "0")}`,
@@ -995,6 +1005,7 @@ function App() {
     name: "",
     surname: "",
     origin_city: "",
+    gender: "",
     role: "traveler",
   });
   const [bootstrapBusy, setBootstrapBusy] = useState(false);
@@ -1740,6 +1751,12 @@ function App() {
                   value={bootstrapForm.origin_city}
                   onChange={(event) => setBootstrapForm({ ...bootstrapForm, origin_city: event.target.value })}
                 />
+                <label className="genderSelect">
+                  Genere (facoltativo)
+                  <select value={bootstrapForm.gender} onChange={(event) => setBootstrapForm({ ...bootstrapForm, gender: event.target.value })}>
+                    <option value="">Preferisco non indicarlo</option><option value="female">Donna</option><option value="male">Uomo</option>
+                  </select>
+                </label>
                 <button onClick={registerTraveler} disabled={travelerRegisterBusy}>
                   <CircleUserRound /> {travelerRegisterBusy ? "Collegamento…" : "Crea profilo e accedi"}
                 </button>
@@ -2821,8 +2838,8 @@ function Diary({
             </div>
             <p>Nei commenti scrivi <b>@</b> e scegli la persona da menzionare.</p>
             <div className="directoryList">
-              {people.map((person) => (
-                <div key={person.id} className="directoryPerson">
+              {sortTravelers(people).map((person) => (
+                <div key={person.id} className={`directoryPerson gender-${person.gender || "unspecified"}`}>
                   {person.avatar_url ? (
                     <img src={person.avatar_url} alt="" />
                   ) : (
@@ -2832,7 +2849,7 @@ function Diary({
                     <b>{person.name} {person.surname || ""}</b>
                     <small>
                       {[
-                        person.role === "coordinator" ? "Coordinatore" : "Viaggiatore",
+                        travelerRoleLabel(person),
                         person.origin_city,
                       ].filter(Boolean).join(" · ")}
                     </small>
@@ -3615,6 +3632,7 @@ function People({
       job: "",
       origin_city: "",
       bio: "",
+      gender: "",
       role: "traveler",
     }),
     [avatar, setAvatar] = useState(null),
@@ -3725,6 +3743,7 @@ function People({
                     job: "",
                     origin_city: "",
                     bio: "",
+                    gender: "",
                     role: "traveler",
                   });
                   setAvatar(null);
@@ -3790,6 +3809,12 @@ function People({
             value={form.bio}
             onChange={(e) => setForm({ ...form, bio: e.target.value })}
           />
+          <label className="genderSelect">
+            Genere (facoltativo)
+            <select value={form.gender || ""} onChange={(e) => setForm({ ...form, gender: e.target.value })}>
+              <option value="">Preferisco non indicarlo</option><option value="female">Donna</option><option value="male">Uomo</option>
+            </select>
+          </label>
           <label className="roleSelect">
             Ruolo nel viaggio
             <select
@@ -3833,8 +3858,8 @@ function People({
       )}
       {inviteStatus && <div className="formStatus success" role="status">{inviteStatus}</div>}
       <div className="peopleGrid">
-        {people.map((x) => (
-          <article key={x.id}>
+        {sortTravelers(people).map((x) => (
+          <article key={x.id} className={`profileCard gender-${x.gender || "unspecified"}`}>
             {x.avatar_url ? (
               <img className="profilePhoto" src={x.avatar_url} alt={x.name} />
             ) : (
@@ -3845,7 +3870,7 @@ function People({
             </h3>
             <small>
               {[
-                x.role === "coordinator" ? "Coordinatore" : "Viaggiatore",
+                travelerRoleLabel(x),
                 x.origin_city,
                 x.age && `${x.age} anni`,
                 x.job,
@@ -3866,6 +3891,7 @@ function People({
                       job: x.job || "",
                       origin_city: x.origin_city || "",
                       bio: x.bio || "",
+                      gender: x.gender || "",
                       role: x.role || "traveler",
                     });
                     setAvatar(null);
@@ -4233,6 +4259,9 @@ function VaultOnline({
     ["tickets", "Biglietti"],
     ["insurance", "Assicurazione"],
   ];
+  const otherDocuments = privateData.documents.filter(
+    (document) => document.profile_id === profileId && document.doc_type?.startsWith("other-"),
+  );
   const selectedProfile = people.find((person) => person.id === profileId);
   const viewerIsCoordinator = privateData.viewer?.role === "coordinator";
   const isCoordinator = viewerIsCoordinator && viewMode === "coordinator";
@@ -4289,6 +4318,11 @@ function VaultOnline({
           </button>
         )}
       </div>
+      {viewerIsCoordinator && (
+        <button type="button" className="myDocumentsButton" onClick={() => {
+          setProfileId(privateData.viewer.profile_id); setViewMode("traveler");
+        }}><ShieldCheck /> I miei documenti</button>
+      )}
       {people.length > 0 && viewMode === "traveler" && viewerIsCoordinator && (
         <label className="personSelect">
           Chi sei?
@@ -4308,7 +4342,7 @@ function VaultOnline({
             }}
           >
             <option value="">Seleziona il tuo profilo</option>
-            {people.map((p) => (
+            {sortTravelers(people).map((p) => (
               <option key={p.id} value={p.id}>
                 {p.name} {p.surname}
               </option>
@@ -4341,7 +4375,7 @@ function VaultOnline({
             />
           </div>
           <div className="documentCards" aria-label="Stato documenti del gruppo">
-            {people.map((person) => {
+            {sortTravelers(people).map((person) => {
               const personDocuments = types.map(([type, label]) => ({
                 type,
                 label,
@@ -4362,9 +4396,7 @@ function VaultOnline({
                     <div>
                       <b>{person.name} {person.surname || ""}</b>
                       <small>
-                        {person.role === "coordinator"
-                          ? "Coordinatore"
-                          : "Viaggiatore"}
+                        {travelerRoleLabel(person)}
                       </small>
                     </div>
                     <strong className={presentCount === types.length ? "complete" : ""}>
@@ -4453,6 +4485,26 @@ function VaultOnline({
               </div>
             );
           })}
+          <div className="otherDocuments">
+            <div className="otherDocumentsHeading">
+              <div><b>Altri documenti</b><small>Allegati facoltativi, singoli o multipli</small></div>
+              {privateData.viewer?.profile_id === profileId && (
+                <label>Aggiungi<input type="file" accept="application/pdf,image/*,.heic,.heif" multiple
+                  onChange={async (event) => {
+                    const files = Array.from(event.target.files || []); event.target.value = "";
+                    for (const file of files) await upload(`other-${crypto.randomUUID()}`, file);
+                  }} /></label>
+              )}
+            </div>
+            {otherDocuments.length ? otherDocuments.map((doc) => (
+              <div className="otherDocumentRow" key={doc.doc_type}>
+                <div><b>{doc.file_name || "Documento"}</b><small>Documento aggiuntivo</small></div>
+                <button onClick={() => openDocument(doc)}>Apri</button>
+                <button onClick={() => openDocument(doc, true)}>Scarica</button>
+                {privateData.viewer?.profile_id === profileId && <button onClick={() => setPendingDocumentDelete(doc.doc_type)}>Elimina</button>}
+              </div>
+            )) : <small className="otherDocumentsEmpty">Nessun altro documento caricato.</small>}
+          </div>
         </div>
       ) : !people.length ? (
         <div className="missingProfile">

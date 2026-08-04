@@ -4547,3 +4547,111 @@ mark.mention {
   touch-action: pan-x pan-y;
   user-select: none;
 }
+
+/* Revisione 1.37.0: gruppo ordinato, documenti aggiuntivi e scorrimento mobile */
+.genderSelect {
+  display: grid;
+  gap: 5px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 800;
+}
+.genderSelect select {
+  min-height: 44px;
+  padding: 9px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: #fff;
+  color: var(--color-text-primary);
+  font: inherit;
+}
+.peopleGrid article.gender-female,
+.directoryPerson.gender-female { background: #fff1f5; border-color: #f3cad7; }
+.peopleGrid article.gender-male,
+.directoryPerson.gender-male { background: #eef7ff; border-color: #c9e0f3; }
+.peopleGrid article.gender-unspecified,
+.directoryPerson.gender-unspecified { background: #fff; }
+.travelerDirectory {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.directoryList {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  padding: 1px 2px calc(12px + env(safe-area-inset-bottom));
+}
+.myDocumentsButton {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 8px 0 12px;
+  padding: 9px 13px;
+  border: 1px solid #bfd8ce;
+  border-radius: 12px;
+  background: #e9f5f0;
+  color: var(--green);
+  font-weight: 850;
+}
+.myDocumentsButton svg { width: 18px; height: 18px; }
+.otherDocuments {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--color-border);
+}
+.otherDocumentsHeading,
+.otherDocumentRow {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.otherDocumentsHeading { justify-content: space-between; }
+.otherDocumentsHeading > div,
+.otherDocumentRow > div {
+  min-width: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+.otherDocumentsHeading small,
+.otherDocumentRow small,
+.otherDocumentsEmpty { color: var(--color-text-secondary); font-size: 11px; }
+.otherDocumentsHeading label,
+.otherDocumentRow button {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px 9px;
+  border: 1px solid #d8d1c5;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--green);
+  font-size: 11px;
+  font-weight: 850;
+}
+.otherDocumentsHeading input { display: none; }
+.otherDocumentRow {
+  flex-wrap: wrap;
+  padding: 9px;
+  border: 1px solid #e6ded1;
+  border-radius: 12px;
+  background: #fff;
+}
+.otherDocumentRow b {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 420px) {
+  .otherDocumentRow > div { flex-basis: 100%; }
+  .otherDocumentRow button { flex: 1; }
+}
