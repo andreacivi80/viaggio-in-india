@@ -51,8 +51,10 @@ jobs:
           cache: npm
       - name: Install application
         run: npm ci
-      - name: Run unit and build gate
-        run: npm test
+      - name: Run isolated unit gate
+        run: node --test tests/access-flow.test.mjs tests/access-storage.test.mjs tests/file-validation.test.mjs tests/media-validation.test.mjs tests/migration-safety.test.mjs tests/offline-queue.test.mjs tests/public-cache.test.mjs tests/resumable-upload.test.mjs
+      - name: Build candidate
+        run: npm run build
       - name: Install remote browser
         run: npm install --no-save --ignore-scripts playwright@1.55.0
       - name: Install Chromium
