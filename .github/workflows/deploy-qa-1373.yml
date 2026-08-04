@@ -29,6 +29,17 @@ jobs:
         run: npm test
       - name: Browser Chromium
         run: npx playwright install --with-deps chromium
+      - name: Avvia anteprima per il collaudo
+        run: |
+          npm run dev -- --host 127.0.0.1 --port 4173 > /tmp/india-vite.log 2>&1 &
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/india-vite.log
+          exit 1
       - name: Test UI di primo livello
         run: npm run test:ui-critical
       - name: Pubblicazione Cloudflare Pages QA
@@ -37,4 +48,4 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
 
-# Rilancio controllato dopo l'allineamento dei test alla revisione 1.37.3.
+# Collaudo remoto completo prima della pubblicazione QA.
