@@ -163,4 +163,11 @@
   ,{ "control": "notifiche autorizzate correttamente;", "evidence": "push-audience 5/5: autorizzazione calcolata lato Worker prima di costruire ogni push" }
   ,{ "control": "Verificare privacy del testo mostrato sul blocco schermo.", "evidence": "push-audience 5/5: testo group/private escluso dalle sottoscrizioni pubbliche o familiari non autorizzate" }
   ,{ "control": "Verificare dati dopo revoca della sessione.", "evidence": "auth-lifecycle 32/32: token revocato restituisce 401 e tutte le sottoscrizioni push del profilo vengono eliminate" }
+  ,{ "control": "Eliminando un profilo, gestire documenti, posizioni, sessioni e inviti.", "evidence": "profile-deletion locale 40/40 + QA live 17/17: cascata reale verificata su documenti, posizione, sessione, invito e stato condiviso" }
+  ,{ "control": "Eliminare il profilo associato a una sessione attiva.", "evidence": "profile-deletion locale 40/40 + QA live 17/17: eliminazione dal dispositivo proprietario e sessione immediatamente respinta con 401" }
+  ,{ "control": "Verificare revoca automatica di tutte le sessioni del profilo.", "evidence": "profile-deletion 40/40: tutte le auth_sessions del profilo eliminate nella stessa transazione D1" }
+  ,{ "control": "Verificare eliminazione dell’avatar.", "evidence": "profile-deletion locale 40/40: avatar reale caricato, profilo eliminato e URL pubblico restituisce 404" }
+  ,{ "control": "Verificare eliminazione della subscription Push.", "evidence": "profile-deletion locale 40/40 + QA live 17/17: sottoscrizione reale inserita e cancellata insieme al profilo" }
+  ,{ "control": "Verificare eliminazione della subscription.", "evidence": "profile-deletion 40/40: record push_subscriptions rimosso dalla cascata atomica" }
+  ,{ "control": "un profilo è stato eliminato;", "evidence": "profile-deletion 40/40: profilo assente dallo stato pubblico e da ogni risorsa privata dopo il DELETE" }
 ]

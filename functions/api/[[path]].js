@@ -527,6 +527,65 @@ async function deleteStoredMedia(env, key) {
   await env.DB.prepare("DELETE FROM upload_parts WHERE upload_session_id=?").bind(upload.id).run();
   await env.DB.prepare("DELETE FROM upload_sessions WHERE id=?").bind(upload.id).run();
 }
+async function deleteProfileData(env, profileId) {
+  const [profile, postMedia, commentMedia, documents, uploads, uploadParts] = await Promise.all([
+    env.DB.prepare("SELECT id,role,avatar_key FROM profiles WHERE id=?").bind(profileId).first(),
+    env.DB.prepare(
+      `SELECT media_key FROM posts WHERE profile_id=? AND media_key IS NOT NULL
+       UNION SELECT m.media_key FROM post_media m JOIN posts p ON p.id=m.post_id WHERE p.profile_id=?
+       UNION SELECT c.media_key FROM comments c WHERE c.media_key IS NOT NULL AND (c.profile_id=? OR c.post_id IN (SELECT id FROM posts WHERE profile_id=?))`,
+    ).bind(profileId, profileId, profileId, profileId).all(),
+    env.DB.prepare(
+      "SELECT media_key FROM comments WHERE profile_id=? AND media_key IS NOT NULL",
+    ).bind(profileId).all(),
+    env.DB.prepare(
+      "SELECT file_key AS media_key FROM document_status WHERE profile_id=? AND file_key IS NOT NULL",
+    ).bind(profileId).all(),
+    env.DB.prepare(
+      "SELECT id,object_key AS media_key FROM upload_sessions WHERE profile_id=?",
+    ).bind(profileId).all(),
+    env.DB.prepare(
+      `SELECT p.upload_session_id,p.part_number
+       FROM upload_parts p JOIN upload_sessions u ON u.id=p.upload_session_id
+       WHERE u.profile_id=?`,
+    ).bind(profileId).all(),
+  ]);
+  if (!profile) return null;
+  const mediaKeys = new Set([
+    profile.avatar_key,
+    ...postMedia.results.map((row) => row.media_key),
+    ...commentMedia.results.map((row) => row.media_key),
+    ...documents.results.map((row) => row.media_key),
+    ...uploads.results.map((row) => row.media_key),
+  ].filter(Boolean));
+  const statements = [
+    env.DB.prepare("DELETE FROM post_media WHERE post_id IN (SELECT id FROM posts WHERE profile_id=?)").bind(profileId),
+    env.DB.prepare("DELETE FROM comments WHERE post_id IN (SELECT id FROM posts WHERE profile_id=?) OR profile_id=?").bind(profileId, profileId),
+    env.DB.prepare("DELETE FROM reactions WHERE post_id IN (SELECT id FROM posts WHERE profile_id=?) OR visitor_id=?").bind(profileId, profileId),
+    env.DB.prepare("DELETE FROM posts WHERE profile_id=?").bind(profileId),
+    env.DB.prepare("DELETE FROM document_status WHERE profile_id=?").bind(profileId),
+    env.DB.prepare("DELETE FROM locations WHERE profile_id=?").bind(profileId),
+    env.DB.prepare("DELETE FROM push_subscriptions WHERE profile_id=?").bind(profileId),
+    env.DB.prepare("DELETE FROM profile_invites WHERE profile_id=? OR created_by=?").bind(profileId, profileId),
+    env.DB.prepare("DELETE FROM auth_sessions WHERE profile_id=?").bind(profileId),
+    env.DB.prepare("DELETE FROM profile_device_claims WHERE profile_id=?").bind(profileId),
+    env.DB.prepare("DELETE FROM idempotency_operations WHERE actor_id=?").bind(profileId),
+    env.DB.prepare("DELETE FROM upload_parts WHERE upload_session_id IN (SELECT id FROM upload_sessions WHERE profile_id=?)").bind(profileId),
+    env.DB.prepare("DELETE FROM upload_sessions WHERE profile_id=?").bind(profileId),
+    env.DB.prepare("DELETE FROM profiles WHERE id=?").bind(profileId),
+  ];
+  await env.DB.batch(statements);
+  const objectKeys = [
+    ...[...mediaKeys].filter((key) => !String(key).startsWith("chunked/")),
+    ...uploadParts.results.map((part) => chunkKey(part.upload_session_id, part.part_number)),
+  ];
+  const cleanup = await Promise.allSettled([...new Set(objectKeys)].map((key) => env.MEDIA.delete(key)));
+  return {
+    profile,
+    media_removed: cleanup.filter((result) => result.status === "fulfilled").length,
+    media_cleanup_failed: cleanup.filter((result) => result.status === "rejected").length,
+  };
+}
 let profileGenderSchemaReady = false;
 async function ensureProfileGenderSchema(env) {
   if (profileGenderSchemaReady) return;
@@ -1251,6 +1310,16 @@ export async function onRequest(context) {
     }
     if (["GET", "HEAD"].includes(request.method) && path.startsWith("media/")) {
       const key = decodeURIComponent(path.slice(6));
+      if (key.startsWith("public/") || key.startsWith("chunked/public/")) {
+        const referenced = await env.DB.prepare(
+          `SELECT 1 AS found FROM profiles WHERE avatar_key=?
+           UNION SELECT 1 FROM posts WHERE media_key=?
+           UNION SELECT 1 FROM post_media WHERE media_key=?
+           UNION SELECT 1 FROM comments WHERE media_key=?
+           LIMIT 1`,
+        ).bind(key, key, key, key).first();
+        if (!referenced) return new Response("Not found", { status: 404 });
+      }
       if (key.startsWith("private/") || key.startsWith("chunked/private/")) {
         const session = await sessionFromRequest(request, env);
         if (!session) return json({ error: "Accesso negato" }, 403);
@@ -1420,6 +1489,31 @@ export async function onRequest(context) {
       if (avatar?.key && current.avatar_key)
         await deleteStoredMedia(env, current.avatar_key);
       return json({ ok: true, id: profileId, avatar_url: mediaUrl(avatarKey) });
+    }
+    if (request.method === "DELETE" && path.startsWith("profiles/")) {
+      const profileId = path.slice(9);
+      const session = await sessionFromRequest(request, env);
+      if (!session || (session.role !== "coordinator" && session.profile_id !== profileId))
+        return json({ error: "Non puoi eliminare questo profilo" }, 403);
+      const profile = await env.DB.prepare("SELECT id,role FROM profiles WHERE id=?")
+        .bind(profileId).first();
+      if (!profile) return json({ error: "Viaggiatore non trovato" }, 404);
+      if (profile.role === "coordinator") {
+        const remainingCoordinator = await env.DB.prepare(
+          "SELECT id FROM profiles WHERE role='coordinator' AND id<>? LIMIT 1",
+        ).bind(profileId).first();
+        if (!remainingCoordinator)
+          return json({ error: "Prima assegna un altro coordinatore" }, 409);
+      }
+      const deleted = await deleteProfileData(env, profileId);
+      if (!deleted) return json({ error: "Viaggiatore non trovato" }, 404);
+      return json({
+        ok: true,
+        profile_id: profileId,
+        session_revoked: true,
+        media_removed: deleted.media_removed,
+        media_cleanup_failed: deleted.media_cleanup_failed,
+      });
     }
     if (request.method === "POST" && path === "posts") {
       const session = await sessionFromRequest(request, env);

@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("all", "auth-lifecycle", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
+  [ValidateSet("all", "auth-lifecycle", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
   [string]$Suite = "document-concurrency"
 )
 
@@ -26,10 +26,12 @@ $ownerId = "local-owner-$runId"
 $otherId = "local-other-$runId"
 $coordinatorId = "local-coordinator-$runId"
 $unclaimedId = "local-unclaimed-$runId"
+$deleteProfileId = "local-delete-$runId"
 $ownerToken = New-QaToken
 $otherToken = New-QaToken
 $coordinatorToken = New-QaToken
 $coordinatorSecondaryToken = New-QaToken
+$deleteProfileToken = New-QaToken
 $coordinatorSecondaryDeviceId = "local-coordinator-secondary-device"
 $expiredInviteToken = New-QaToken
 $created = [DateTime]::UtcNow.ToString("o")
@@ -48,12 +50,14 @@ INSERT INTO profiles(id,name,surname,role,created_at) VALUES
 ('$ownerId','Proprietario','Locale','traveler','$created'),
 ('$otherId','Secondo','Locale','traveler','$created'),
 ('$coordinatorId','Coordinatore','Locale','coordinator','$created'),
-('$unclaimedId','Invitato','Locale','traveler','$created');
+('$unclaimedId','Invitato','Locale','traveler','$created'),
+('$deleteProfileId','Da eliminare','Locale','traveler','$created');
 INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES
 ('$(Get-TokenHash $ownerToken)','$ownerId','local-owner-device','Telefono proprietario locale','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $otherToken)','$otherId','local-other-device','Secondo telefono locale','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $coordinatorToken)','$coordinatorId','local-coordinator-device','Telefono coordinatore locale','$created','$created','$expires',NULL),
-('$(Get-TokenHash $coordinatorSecondaryToken)','$coordinatorId','$coordinatorSecondaryDeviceId','Secondo telefono coordinatore locale','$created','$created','$expires',NULL);
+('$(Get-TokenHash $coordinatorSecondaryToken)','$coordinatorId','$coordinatorSecondaryDeviceId','Secondo telefono coordinatore locale','$created','$created','$expires',NULL),
+('$(Get-TokenHash $deleteProfileToken)','$deleteProfileId','local-delete-device','Telefono profilo da eliminare','$created','$created','$expires',NULL);
 INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at)
 VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$created','$expired',NULL);
 "@
@@ -96,8 +100,11 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
   $env:QA_COORDINATOR_SECOND_DEVICE_ID = $coordinatorSecondaryDeviceId
   $env:QA_UNCLAIMED_PROFILE_ID = $unclaimedId
   $env:QA_EXPIRED_INVITE_TOKEN = $expiredInviteToken
+  $env:QA_DELETE_PROFILE_ID = $deleteProfileId
+  $env:QA_DELETE_PROFILE_TOKEN = $deleteProfileToken
   $suiteFiles = @{
     "auth-lifecycle" = "tests\extended-p0-auth-lifecycle.mjs"
+    "profile-deletion" = "tests\extended-p0-profile-deletion.mjs"
     "document-concurrency" = "tests\extended-p0-document-concurrency.mjs"
     "documents" = "tests\extended-p0-documents.mjs"
     "roles" = "tests\extended-p0-roles.mjs"
@@ -109,7 +116,7 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
     "chunk-retry" = "tests\extended-p0-chunk-retry.mjs"
   }
   $selectedSuites = if ($Suite -eq "all") {
-    @("document-concurrency", "documents", "location", "media", "social", "sync", "avatar", "chunk-retry", "roles", "auth-lifecycle")
+    @("document-concurrency", "documents", "location", "media", "social", "sync", "avatar", "chunk-retry", "roles", "profile-deletion", "auth-lifecycle")
   } else { @($Suite) }
   foreach ($selectedSuite in $selectedSuites) {
     Write-Host "P0_SUITE_START=$selectedSuite"

@@ -93,8 +93,8 @@ P0,accessi-privacy,pending,documento privato;,addendum:A0125,
 P0,accessi-privacy,pending,è nascosto o disabilitato per il ruolo non autorizzato;,usabilita:U0668,
 P0,accessi-privacy,pending,elenco dei controlli di proprietà;,addendum:A0469,
 P0,accessi-privacy,pending,elenco dei messaggi di autorizzazione negata;,addendum:A0472,
-P0,accessi-privacy,pending,"Eliminando un profilo, gestire documenti, posizioni, sessioni e inviti.",globale:T-1011,
-P0,accessi-privacy,pending,Eliminare il profilo associato a una sessione attiva.,globale:T-0758,
+P0,accessi-privacy,passed,"Eliminando un profilo, gestire documenti, posizioni, sessioni e inviti.",globale:T-1011,"profile-deletion locale 40/40 + QA live 17/17: cascata reale verificata su documenti, posizione, sessione, invito e stato condiviso"
+P0,accessi-privacy,passed,Eliminare il profilo associato a una sessione attiva.,globale:T-0758,profile-deletion locale 40/40 + QA live 17/17: eliminazione dal dispositivo proprietario e sessione immediatamente respinta con 401
 P0,accessi-privacy,pending,Eliminare inviti scaduti.,globale:T-1347,
 P0,accessi-privacy,pending,Eliminare l’endpoint che trasforma il codice comune in una sessione per un profilo scelto.,globale:T-0034,
 P0,accessi-privacy,pending,Eliminare sessioni scadute.,globale:T-1348,
@@ -307,7 +307,7 @@ P0,accessi-privacy,pending,Verificare nessun URL permanente condivisibile senza 
 P0,accessi-privacy,passed,Verificare privacy dei dati sul profilo pubblico.,globale:T-0359,production-smoke: nessun campo privato nei profili pubblici
 P0,accessi-privacy,passed,Verificare privacy del testo mostrato sul blocco schermo.,globale:T-0532,push-audience 5/5: testo group/private escluso dalle sottoscrizioni pubbliche o familiari non autorizzate
 P0,accessi-privacy,pending,Verificare quale invito rimane valido.,globale:T-0789,
-P0,accessi-privacy,pending,Verificare revoca automatica di tutte le sessioni del profilo.,globale:T-0772,
+P0,accessi-privacy,passed,Verificare revoca automatica di tutte le sessioni del profilo.,globale:T-0772,profile-deletion 40/40: tutte le auth_sessions del profilo eliminate nella stessa transazione D1
 P0,accessi-privacy,pending,Verificare richiesta di nuovo accesso.,globale:T-0773,
 P0,accessi-privacy,passed,Verificare rimozione del token dall’URL.,usabilita:U0407,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P0,accessi-privacy,pending,Verificare rimozione dell’accesso.,usabilita:U0054,
@@ -356,9 +356,9 @@ P0,altro,pending,Verificare che la pulizia automatica non elimini dati ancora va
 P0,altro,passed,Verificare eliminazione dei file non più collegati.,globale:T-0803,document-concurrency e media-delete: chiavi sostituite o scollegate non sono più raggiungibili
 P0,altro,passed,Verificare eliminazione del precedente.,usabilita:U0430,document-concurrency 18/18: chiave PDF precedente non raggiungibile dopo la sostituzione
 P0,altro,passed,Verificare eliminazione del vecchio file.,globale:T-0487,extended-p0-avatar-replacement e document-concurrency: vecchia chiave MEDIA rimossa
-P0,altro,pending,Verificare eliminazione dell’avatar.,globale:T-1333,
-P0,altro,pending,Verificare eliminazione della subscription Push.,globale:T-1619,
-P0,altro,pending,Verificare eliminazione della subscription.,globale:T-0878,
+P0,altro,passed,Verificare eliminazione dell’avatar.,globale:T-1333,"profile-deletion locale 40/40: avatar reale caricato, profilo eliminato e URL pubblico restituisce 404"
+P0,altro,passed,Verificare eliminazione della subscription Push.,globale:T-1619,profile-deletion locale 40/40 + QA live 17/17: sottoscrizione reale inserita e cancellata insieme al profilo
+P0,altro,passed,Verificare eliminazione della subscription.,globale:T-0878,profile-deletion 40/40: record push_subscriptions rimosso dalla cascata atomica
 P0,altro,passed,Verificare eliminazione di tutti i file collegati.,globale:T-0418,"extended-p0-media-delete: JPEG, MP3 e MP4 collegati al post tutti rimossi"
 P0,altro,passed,Verificare eliminazione su tutti i dispositivi.,globale:T-0419,extended-p0-sync-delete: eliminazione propagata e verificata su tre viste separate
 P0,altro,pending,Verificare incremento della versione per eliminazione.,globale:T-1033,
@@ -582,7 +582,7 @@ P0,profili-ruoli,passed,telefono A – Coordinatore;,globale:T-0301,P0 locale ru
 P0,profili-ruoli,passed,test come Coordinatore;,usabilita:U0722,P0 locale ruoli 18/18 più documenti/posizione: operazioni coordinatore eseguite con token dedicato
 P0,profili-ruoli,pending,test del percorso completo del Coordinatore;,globale:T-1805,
 P0,profili-ruoli,pending,Tornare a vista Coordinatore.,usabilita:U0454,
-P0,profili-ruoli,pending,un profilo è stato eliminato;,addendum:A0305,
+P0,profili-ruoli,passed,un profilo è stato eliminato;,addendum:A0305,profile-deletion 40/40: profilo assente dallo stato pubblico e da ogni risorsa privata dopo il DELETE
 P0,profili-ruoli,passed,un utente può diventare Coordinatore modificando la richiesta;,usabilita:U0691,extended-p0-roles: tentativo falsificato resta traveler
 P0,profili-ruoli,passed,Verifica profili ripristinati.,globale:T-0648,verify-d1-backup: 5 profili ripristinati
 P0,profili-ruoli,pending,Verificare che il Coordinatore visualizzi 4/4.,globale:T-0710,

@@ -12,7 +12,8 @@ param(
   [switch]$ExtendedSocial,
   [switch]$ExtendedBackupComments,
   [switch]$ExtendedAvatar,
-  [switch]$ExtendedChunkRetry
+  [switch]$ExtendedChunkRetry,
+  [switch]$ExtendedProfileDeletion
 )
 
 $ErrorActionPreference = "Stop"
@@ -52,6 +53,7 @@ $ownerId = "qa-owner-$runId"
 $otherId = "qa-other-$runId"
 $coordinatorId = "qa-coordinator-$runId"
 $unclaimedId = "qa-unclaimed-$runId"
+$deleteProfileId = "qa-delete-$runId"
 $referencePostId = "qa-reference-$runId"
 $ownerToken = New-QaToken
 $otherToken = New-QaToken
@@ -59,12 +61,13 @@ $coordinatorToken = New-QaToken
 $coordinatorSecondaryToken = New-QaToken
 $expiredToken = New-QaToken
 $secondaryDeviceToken = New-QaToken
+$deleteProfileToken = New-QaToken
 $secondaryDeviceId = "device-owner-secondary-$runId"
 $coordinatorSecondaryDeviceId = "device-coordinator-secondary-$runId"
 $created = [DateTime]::UtcNow.ToString("o")
 $expires = [DateTime]::UtcNow.AddHours(3).ToString("o")
 $oldLastUse = [DateTime]::UtcNow.AddDays(-30).ToString("o")
-$ids = @($ownerId, $otherId, $coordinatorId, $unclaimedId)
+$ids = @($ownerId, $otherId, $coordinatorId, $unclaimedId, $deleteProfileId)
 $quotedIds = ($ids | ForEach-Object { "'$_'" }) -join ","
 
 $setupSql = @"
@@ -73,13 +76,15 @@ INSERT OR IGNORE INTO profiles(id,name,surname,role,created_at) VALUES
 ('$ownerId','Proprietario','QA','traveler','$created'),
 ('$otherId','Secondo','QA','traveler','$created'),
 ('$coordinatorId','Coordinatore','QA','coordinator','$created'),
-('$unclaimedId','Invitato','QA','traveler','$created');
+('$unclaimedId','Invitato','QA','traveler','$created'),
+('$deleteProfileId','Da eliminare','QA','traveler','$created');
 INSERT OR IGNORE INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES
 ('$(Get-TokenHash $ownerToken)','$ownerId','device-owner-$runId','Telefono proprietario QA','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $secondaryDeviceToken)','$ownerId','$secondaryDeviceId','Secondo telefono proprietario QA','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $otherToken)','$otherId','device-other-$runId','Secondo telefono QA','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $coordinatorToken)','$coordinatorId','device-coordinator-$runId','Telefono coordinatore QA','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $coordinatorSecondaryToken)','$coordinatorId','$coordinatorSecondaryDeviceId','Secondo telefono coordinatore QA','$created','$created','$expires',NULL),
+('$(Get-TokenHash $deleteProfileToken)','$deleteProfileId','device-delete-$runId','Telefono profilo da eliminare QA','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $expiredToken)','$ownerId','device-expired-$runId','Sessione inattiva QA','$oldLastUse','$oldLastUse','$expires',NULL);
 INSERT OR IGNORE INTO posts(id,author_name,profile_id,day_index,visibility,text,created_at)
 VALUES('$referencePostId','Proprietario QA','$ownerId',-1,'public','Pubblicazione di riferimento QA $runId','$created');
@@ -106,9 +111,14 @@ try {
   $env:QA_EXPIRED_SESSION_TOKEN = $expiredToken
   $env:QA_SECOND_DEVICE_ID = $secondaryDeviceId
   $env:QA_RUN_ID = $runId
+  $env:QA_DELETE_PROFILE_ID = $deleteProfileId
+  $env:QA_DELETE_PROFILE_TOKEN = $deleteProfileToken
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
-  if ($ExtendedDocumentConcurrency) {
+  if ($ExtendedProfileDeletion) {
+    & node tests\extended-p0-profile-deletion.mjs
+  }
+  elseif ($ExtendedDocumentConcurrency) {
     & node tests\extended-p0-document-concurrency.mjs
   }
   elseif ($ExtendedChunkRetry) {

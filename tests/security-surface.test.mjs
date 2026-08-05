@@ -94,6 +94,18 @@ test("la posizione può essere modificata e rimossa soltanto dal proprietario", 
   assert.match(worker, /longitude < -180 \|\| longitude > 180/);
 });
 
+test("la cancellazione del profilo revoca accessi e rimuove tutti i dati collegati", () => {
+  assert.match(worker, /request\.method === "DELETE" && path\.startsWith\("profiles\/"\)/);
+  assert.match(worker, /session\.role !== "coordinator" && session\.profile_id !== profileId/);
+  assert.match(worker, /Prima assegna un altro coordinatore/);
+  for (const table of [
+    "post_media", "comments", "reactions", "posts", "document_status", "locations",
+    "push_subscriptions", "profile_invites", "auth_sessions", "profile_device_claims",
+    "idempotency_operations", "upload_parts", "upload_sessions", "profiles",
+  ]) assert.match(worker, new RegExp(`DELETE FROM ${table}`), `pulizia mancante per ${table}`);
+  assert.match(worker, /key\.startsWith\("public\/"\)[\s\S]*?if \(!referenced\) return new Response\("Not found", \{ status: 404 \}\)/);
+});
+
 test("upload a parti e cancellazione verificano sempre il proprietario", () => {
   const ownerChecks = worker.match(/upload\.profile_id !== session\.profile_id/g) || [];
   assert.ok(ownerChecks.length >= 4, `controlli proprietario upload trovati: ${ownerChecks.length}`);

@@ -61,6 +61,9 @@ test("tutte le suite scriventi rifiutano il dominio ufficiale", async () => {
   const authenticated = await readFile(new URL("../scripts/run-authenticated-qa.ps1", import.meta.url), "utf8");
   assert.match(authenticated, /viaggio-in-india-2026-qa\\\.pages\\\.dev/);
   assert.match(authenticated, /Protezione dati:/);
+  const liveProfileDeletion = await readFile(new URL("../tests/qa-live-profile-deletion.mjs", import.meta.url), "utf8");
+  assert.match(liveProfileDeletion, /viaggio-in-india-2026-qa\.pages\.dev/);
+  assert.match(liveProfileDeletion, /Protezione dati:/);
 });
 
 test("il deploy QA usa obbligatoriamente i binding QA", async () => {
