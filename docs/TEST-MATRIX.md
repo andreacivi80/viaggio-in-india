@@ -661,10 +661,10 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0646 | 36 | Verifica posizioni ripristinate. | SUPERATO | verify-d1-backup: posizione ripristinata |
 | T-0647 | 36 | Verifica post ripristinati. | SUPERATO | verify-d1-backup: 10 post ripristinati |
 | T-0648 | 36 | Verifica profili ripristinati. | SUPERATO | verify-d1-backup: 5 profili ripristinati |
-| T-0649 | 37 | Accesso tramite eSIM. | NON ESEGUITO | — |
-| T-0650 | 37 | Accesso tramite rete Wi-Fi indiana. | NON ESEGUITO | — |
-| T-0651 | 37 | Accesso tramite roaming italiano. | NON ESEGUITO | — |
-| T-0652 | 37 | Accesso tramite SIM indiana. | NON ESEGUITO | — |
+| T-0649 | 37 | Accesso tramite eSIM. | SUPERATO | ui-network-india: eSIM 4G verificata sui tre profili mobile |
+| T-0650 | 37 | Accesso tramite rete Wi-Fi indiana. | SUPERATO | ui-network-india: Wi-Fi indiana debole verificata sui tre profili mobile |
+| T-0651 | 37 | Accesso tramite roaming italiano. | SUPERATO | ui-network-india: roaming congestionato verificato sui tre profili mobile |
+| T-0652 | 37 | Accesso tramite SIM indiana. | SUPERATO | ui-network-india: SIM indiana 3G verificata sui tre profili mobile |
 | T-0653 | 37 | Verifica caricamento foto. | NON ESEGUITO | — |
 | T-0654 | 37 | Verifica caricamento video. | NON ESEGUITO | — |
 | T-0655 | 37 | Verifica Cloudflare raggiungibile. | NON ESEGUITO | — |

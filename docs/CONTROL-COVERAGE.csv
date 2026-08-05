@@ -9,11 +9,11 @@ P0,accessi-privacy,pending,accesso completo;,globale:T-1366,
 P0,accessi-privacy,pending,accesso limitato ad alcune fotografie;,globale:T-1367,
 P0,accessi-privacy,pending,accesso negato;,globale:T-1368,
 P0,accessi-privacy,pending,Accesso personale.,globale:T-1199;usabilita:U0652,
-P0,accessi-privacy,pending,Accesso tramite eSIM.,globale:T-0649,
+P0,accessi-privacy,passed,Accesso tramite eSIM.,globale:T-0649,"ui-network-india: eSIM 4G verificata sui tre profili mobile | ui-network-india 18/18: profilo eSIM indiana 4G su S20 FE, Samsung vecchio e iPhone piccolo"
 P0,accessi-privacy,passed,Accesso tramite invito.,usabilita:U0639,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
-P0,accessi-privacy,pending,Accesso tramite rete Wi-Fi indiana.,globale:T-0650,
-P0,accessi-privacy,pending,Accesso tramite roaming italiano.,globale:T-0651,
-P0,accessi-privacy,pending,Accesso tramite SIM indiana.,globale:T-0652,
+P0,accessi-privacy,passed,Accesso tramite rete Wi-Fi indiana.,globale:T-0650,"ui-network-india: Wi-Fi indiana debole verificata sui tre profili mobile | ui-network-india 18/18: Wi-Fi debole ad alta latenza su S20 FE, Samsung vecchio e iPhone piccolo"
+P0,accessi-privacy,passed,Accesso tramite roaming italiano.,globale:T-0651,"ui-network-india: roaming congestionato verificato sui tre profili mobile | ui-network-india 18/18: roaming congestionato a 256/96 kbps su S20 FE, Samsung vecchio e iPhone piccolo"
+P0,accessi-privacy,passed,Accesso tramite SIM indiana.,globale:T-0652,"ui-network-india: SIM indiana 3G verificata sui tre profili mobile | ui-network-india 18/18: SIM indiana 3G su S20 FE, Samsung vecchio e iPhone piccolo"
 P0,accessi-privacy,pending,accesso;,globale:T-1555,
 P0,accessi-privacy,pending,Aggiungere consenso privacy esplicito.,globale:T-0043,
 P0,accessi-privacy,passed,Aggiungere elenco dei dispositivi autorizzati.,globale:T-0030,production-smoke: elenco dispositivi include corrente e secondario

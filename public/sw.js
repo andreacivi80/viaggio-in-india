@@ -35,20 +35,26 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(fetch(event.request));
     return;
   }
-  const network = fetch(event.request);
-  event.waitUntil(
-    network
-      .then((response) => {
-        if (!response.ok || url.origin !== self.location.origin) return;
-        return caches.open(CACHE).then((cache) => cache.put(event.request, response.clone()));
-      })
-      .catch(() => {}),
-  );
+  // Usa una chiave URL normalizzata: alcune WebView inviano Request con
+  // opzioni di cache che rendono cache.match(Request) non riutilizzabile.
+  const cacheKey = event.request.mode === "navigate"
+    ? new URL("./", self.location.href).href
+    : url.href;
+  const cached = caches.open(CACHE).then((cache) => cache.match(cacheKey));
+  const network = fetch(event.request).then(async (response) => {
+    if (response.ok && url.origin === self.location.origin) {
+      const cache = await caches.open(CACHE);
+      await cache.put(cacheKey, response.clone());
+    }
+    return response;
+  });
+  // L'app shell deve aprirsi anche quando il telefono perde la rete durante
+  // una navigazione. La nuova revisione viene comunque installata in una
+  // cache versionata e sostituisce automaticamente quella precedente.
   event.respondWith(
-    network.catch(() =>
-      caches.match(event.request).then((hit) => hit || caches.match("./")),
-    ),
+    cached.then((hit) => hit || network).catch(() => caches.match("./")),
   );
+  event.waitUntil(network.then(() => {}).catch(() => {}));
 });
 self.addEventListener("push", (event) => {
   let data = {};
