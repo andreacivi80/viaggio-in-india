@@ -1465,6 +1465,13 @@ export async function onRequest(context) {
             ? "coordinator"
             : "traveler"
           : current.role;
+      if (current.role === "coordinator" && updatedRole !== "coordinator") {
+        const remainingCoordinator = await env.DB.prepare(
+          "SELECT id FROM profiles WHERE role='coordinator' AND id<>? LIMIT 1",
+        ).bind(profileId).first();
+        if (!remainingCoordinator)
+          return json({ error: "Prima assegna un altro coordinatore" }, 409);
+      }
       try {
         await env.DB.prepare(
           "UPDATE profiles SET name=?,surname=?,age=?,job=?,origin_city=?,bio=?,role=?,avatar_key=?,gender=? WHERE id=?",

@@ -68,6 +68,13 @@ assert.equal((await request("/api/auth/invites", {
   body: JSON.stringify({ profile_id: inviteTargetId }),
 })).status, 403);
 
+assert.equal((await request(`/api/profiles/${coordinatorId}`, {
+  method: "PUT",
+  headers: coordinator,
+  body: profileForm("Coordinatore", "traveler"),
+})).status, 409);
+assert.equal(await sessionRole(coordinator), "coordinator");
+
 assert.equal((await request(`/api/profiles/${travelerId}`, {
   method: "PUT",
   headers: traveler,
@@ -106,4 +113,4 @@ assert.equal(coordinatorPost.profile_id, coordinatorId);
 assert.notEqual(coordinatorPost.author_name, "Profilo diverso falsificato");
 assert.equal((await request(`/api/posts/${coordinatorPost.id}`, { method: "DELETE", headers: coordinator })).status, 200);
 
-console.log("P0_ROLES=18/18");
+console.log("P0_ROLES=20/20");

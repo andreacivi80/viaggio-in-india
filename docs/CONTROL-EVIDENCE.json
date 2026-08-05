@@ -170,4 +170,6 @@
   ,{ "control": "Verificare eliminazione della subscription Push.", "evidence": "profile-deletion locale 40/40 + QA live 17/17: sottoscrizione reale inserita e cancellata insieme al profilo" }
   ,{ "control": "Verificare eliminazione della subscription.", "evidence": "profile-deletion 40/40: record push_subscriptions rimosso dalla cascata atomica" }
   ,{ "control": "un profilo è stato eliminato;", "evidence": "profile-deletion 40/40: profilo assente dallo stato pubblico e da ogni risorsa privata dopo il DELETE" }
+  ,{ "control": "Cambiare ruolo e rinnovare la sessione.", "evidence": "roles 20/20: promozione e retrocessione sono rilevate dal token già aperto; l’ultimo coordinatore non può essere retrocesso" }
+  ,{ "control": "Verificare che il Coordinatore gestisca i profili autorizzati.", "evidence": "roles 20/20: creazione, modifica, promozione, retrocessione e inviti sono autorizzati lato server" }
 ]

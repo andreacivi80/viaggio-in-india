@@ -106,6 +106,13 @@ test("la cancellazione del profilo revoca accessi e rimuove tutti i dati collega
   assert.match(worker, /key\.startsWith\("public\/"\)[\s\S]*?if \(!referenced\) return new Response\("Not found", \{ status: 404 \}\)/);
 });
 
+test("il gruppo conserva sempre almeno un coordinatore", () => {
+  const guards = worker.match(/Prima assegna un altro coordinatore/g) || [];
+  assert.ok(guards.length >= 2, "retrocessione ed eliminazione devono proteggere l’ultimo coordinatore");
+  assert.match(worker, /current\.role === "coordinator" && updatedRole !== "coordinator"/);
+  assert.match(worker, /SELECT id FROM profiles WHERE role='coordinator' AND id<>\? LIMIT 1/);
+});
+
 test("upload a parti e cancellazione verificano sempre il proprietario", () => {
   const ownerChecks = worker.match(/upload\.profile_id !== session\.profile_id/g) || [];
   assert.ok(ownerChecks.length >= 4, `controlli proprietario upload trovati: ${ownerChecks.length}`);
