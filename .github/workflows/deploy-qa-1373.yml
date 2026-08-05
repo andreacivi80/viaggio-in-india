@@ -24,6 +24,8 @@ jobs:
   test-deploy-verify:
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    env:
+      CLOUDFLARE_CONFIGURED: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,11 +39,13 @@ jobs:
       - name: Test statici e compilazione
         run: npm test
       - name: Pubblicazione Cloudflare Pages QA
+        if: env.CLOUDFLARE_CONFIGURED == 'true'
         run: npx wrangler pages deploy dist --project-name viaggio-in-india-2026-qa --branch main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Attendi QA
+        if: env.CLOUDFLARE_CONFIGURED == 'true'
         run: |
           for attempt in {1..30}; do
             if curl --fail --silent https://viaggio-in-india-2026-qa.pages.dev/ | grep --quiet "root"; then
@@ -51,17 +55,21 @@ jobs:
           done
           exit 1
       - name: Browser Chromium
+        if: env.CLOUDFLARE_CONFIGURED == 'true'
         run: npx playwright install --with-deps chromium
       - name: Verifica UI di primo livello sul QA reale
+        if: env.CLOUDFLARE_CONFIGURED == 'true'
         run: npm run test:ui-critical
         env:
           TEST_BASE_URL: https://viaggio-in-india-2026-qa.pages.dev
       - name: Pubblicazione Cloudflare Pages produzione
+        if: env.CLOUDFLARE_CONFIGURED == 'true'
         run: npx wrangler pages deploy dist --project-name viaggio-in-india-2026 --branch main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Verifica produzione raggiungibile
+        if: env.CLOUDFLARE_CONFIGURED == 'true'
         run: |
           for attempt in {1..30}; do
             if curl --fail --silent https://viaggio-in-india-2026.pages.dev/ | grep --quiet "root"; then
