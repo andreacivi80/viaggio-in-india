@@ -35,8 +35,10 @@ Assert-LastExit "unitari e build"
 
 Write-Host "[L0] Confine pubblico, password e sessione personale"
 $env:TEST_BASE_URL = $BaseUrl
+$env:QA_UI_GROUP_CODE = $env:QA_GROUP_CODE
 & npx playwright test tests/ui-public-access-boundary.spec.mjs
 Assert-LastExit "confine accessi livello zero"
+Remove-Item Env:QA_UI_GROUP_CODE -ErrorAction SilentlyContinue
 
 Write-Host "[L1] Primo accesso su database vuoto"
 & .\scripts\run-ui-bootstrap.ps1 -BaseUrl $BaseUrl

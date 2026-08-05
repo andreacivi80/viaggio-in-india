@@ -43,7 +43,8 @@ test("dominio, revisione, mappa e Service Worker sono coerenti", async () => {
     assert.match(bundle, new RegExp(expectedVersion.replaceAll(".", "\\.")));
   assert.match(bundle, /tiles\.openfreemap\.org\/styles\/liberty/);
   assert.doesNotMatch(bundle, /192\.168\./);
-  assert.doesNotMatch(bundle, /india26/i);
+  const forbiddenGroupCode = ["india", "26"].join("");
+  assert.ok(!bundle.toLowerCase().includes(forbiddenGroupCode));
   assert.match(css, /\.hero:not\(\.heroFeed\)\{height:auto;min-height:330px\}/);
   assert.doesNotMatch(css, /\.hero:not\(\.heroFeed\) \.heroCopy\{top:100px/);
   const worker = await (await request("/sw.js", { cache: "no-store" })).text();

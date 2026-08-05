@@ -99,6 +99,8 @@ const evidence = {
   "T-1165": ["SUPERATO", "verify-d1-backup: tempo di ripristino misurato automaticamente"],
   "T-1169": ["SUPERATO", "verify-d1-backup: export importato in database temporaneo vuoto"],
   "T-1484": ["SUPERATO", "production-smoke: X-Content-Type-Options nosniff presente"],
+  "T-1493": ["SUPERATO", "scan-client-secrets: build bloccata se compare VAPID_PRIVATE_KEY nel client"],
+  "T-1502": ["SUPERATO", "repository-secrets e scan-client-secrets: token Cloudflare assenti da file tracciati e bundle"],
   "T-1567": ["SUPERATO", "QA 1.31.0: invito gia utilizzato non puo essere riutilizzato"],
   "T-1568": ["SUPERATO", "QA 1.31.0: logout verificato end-to-end"],
   "T-1583": ["SUPERATO", "QA 1.31.0: sessione inattiva respinta"],

@@ -47,8 +47,8 @@ P0,accessi-privacy,passed,autorizzazioni dei ruoli;,globale:T-1790,P0 locale ruo
 P0,accessi-privacy,passed,autorizzazioni;,addendum:A0079,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P0,accessi-privacy,passed,Cambiare ruolo e rinnovare la sessione.,addendum:A0342,roles 20/20: promozione e retrocessione sono rilevate dal token già aperto; l’ultimo coordinatore non può essere retrocesso
 P0,accessi-privacy,pending,Caricare un PDF protetto da password.,globale:T-0994,
-P0,accessi-privacy,pending,Cercare chiavi private VAPID nel bundle JavaScript.,globale:T-1493,
-P0,accessi-privacy,pending,Cercare token Cloudflare.,globale:T-1502,
+P0,accessi-privacy,passed,Cercare chiavi private VAPID nel bundle JavaScript.,globale:T-1493,scan-client-secrets: build bloccata se compare VAPID_PRIVATE_KEY nel client | scan-client-secrets eseguito obbligatoriamente dopo ogni build: VAPID_PRIVATE_KEY assente dal bundle
+P0,accessi-privacy,passed,Cercare token Cloudflare.,globale:T-1502,repository-secrets e scan-client-secrets: token Cloudflare assenti da file tracciati e bundle | repository-secrets 2/2 e scan-client-secrets: nessun file token tracciato e identificatori token Cloudflare assenti dal client
 P0,accessi-privacy,pending,chi può creare un invito non possa automaticamente leggere documenti non autorizzati;,addendum:A0383,
 P0,accessi-privacy,passed,Chiudere automaticamente i dati privati già mostrati.,addendum:A0104,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P0,accessi-privacy,passed,collegamento di invito già utilizzato;,addendum:A0126,extended-p0-auth-lifecycle 28/28: riuso negato con 403/409

@@ -1505,7 +1505,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1490 | 80 | Verificare che pagine pubbliche eventualmente incorporabili siano separate da quelle private. | NON ESEGUITO | — |
 | T-1491 | 80 | Verificare protezione mediante CSP frame-ancestors. | NON ESEGUITO | — |
 | T-1492 | 81 | Aggiungere scansione automatica dei segreti nella pipeline. | NON ESEGUITO | — |
-| T-1493 | 81 | Cercare chiavi private VAPID nel bundle JavaScript. | NON ESEGUITO | — |
+| T-1493 | 81 | Cercare chiavi private VAPID nel bundle JavaScript. | SUPERATO | scan-client-secrets: build bloccata se compare VAPID_PRIVATE_KEY nel client |
 | T-1494 | 81 | Cercare file .env nello ZIP. | NON ESEGUITO | — |
 | T-1495 | 81 | Cercare GROUP_CODE nel bundle JavaScript. | NON ESEGUITO | — |
 | T-1496 | 81 | Cercare ID o credenziali non necessarie. | NON ESEGUITO | — |
@@ -1514,7 +1514,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1499 | 81 | Cercare segreti nei messaggi di errore. | NON ESEGUITO | — |
 | T-1500 | 81 | Cercare segreti nel Service Worker. | NON ESEGUITO | — |
 | T-1501 | 81 | Cercare segreti nella cronologia Git. | NON ESEGUITO | — |
-| T-1502 | 81 | Cercare token Cloudflare. | NON ESEGUITO | — |
+| T-1502 | 81 | Cercare token Cloudflare. | SUPERATO | repository-secrets e scan-client-secrets: token Cloudflare assenti da file tracciati e bundle |
 | T-1503 | 81 | Ruotare immediatamente qualsiasi segreto eventualmente esposto. | NON ESEGUITO | — |
 | T-1504 | 81 | Verificare che soltanto la chiave pubblica VAPID sia inviata al browser. | NON ESEGUITO | — |
 | T-1505 | 82 | Verificare accesso amministrativo con autenticazione a più fattori. | NON ESEGUITO | — |

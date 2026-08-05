@@ -3,6 +3,7 @@ import { isSafeMutationTarget } from "./helpers/qa-mutation-target.mjs";
 
 const baseUrl = (process.env.TEST_BASE_URL || "https://viaggio-in-india-2026-qa.pages.dev")
   .replace(/\/$/, "");
+const groupCode = process.env.QA_UI_GROUP_CODE;
 
 test.skip(!isSafeMutationTarget(baseUrl), "I test di accesso con tentativi di scrittura sono ammessi solo su locale/QA");
 
@@ -38,9 +39,10 @@ test("telefono già usato: il vecchio codice salvato viene eliminato e Gruppo re
 });
 
 test("password comune verificata: non resta salvata e non crea una sessione personale", async ({ page }) => {
+  test.skip(!groupCode, "Codice gruppo QA richiesto");
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   await page.getByRole("button", { name: "Gruppo" }).tap();
-  await page.getByPlaceholder("Password").fill("india26");
+  await page.getByPlaceholder("Password").fill(groupCode);
   await page.locator(".quickProfilePanel").getByRole("button", { name: "Accedi", exact: true }).tap();
 
   await expect
@@ -58,13 +60,13 @@ test("password comune verificata: non resta salvata e non crea una sessione pers
   expect([401, 403]).toContain(privateResponse.status());
 
   const profileResponse = await page.request.post(`${baseUrl}/api/profiles`, {
-    headers: { "x-group-code": "india26" },
+    headers: { "x-group-code": groupCode },
     multipart: { name: "Tentativo senza sessione" },
   });
   expect([401, 403]).toContain(profileResponse.status());
 
   const postResponse = await page.request.post(`${baseUrl}/api/posts`, {
-    headers: { "x-group-code": "india26" },
+    headers: { "x-group-code": groupCode },
     multipart: { text: "Tentativo senza sessione", visibility: "public" },
   });
   expect([401, 403]).toContain(postResponse.status());

@@ -6,5 +6,7 @@ dist/
 .dev-error.log
 backups/
 .wrangler/
+.device-token.json
+*.device-token.json
 test-results/
 tmp/

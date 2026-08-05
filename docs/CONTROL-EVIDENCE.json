@@ -1,4 +1,6 @@
 [
+  { "control": "Cercare chiavi private VAPID nel bundle JavaScript.", "evidence": "scan-client-secrets eseguito obbligatoriamente dopo ogni build: VAPID_PRIVATE_KEY assente dal bundle" },
+  { "control": "Cercare token Cloudflare.", "evidence": "repository-secrets 2/2 e scan-client-secrets: nessun file token tracciato e identificatori token Cloudflare assenti dal client" },
   { "control": "Ogni invito deve essere collegato a un profilo esistente.", "evidence": "P0_DB_AUTH_INTEGRITY 3/3: trigger D1 respinge INSERT invito con profile_id inesistente e pulisce gli inviti alla cancellazione del profilo" },
   { "control": "Ogni sessione deve essere collegata a un profilo esistente.", "evidence": "P0_DB_AUTH_INTEGRITY 3/3: trigger D1 respinge INSERT sessione con profile_id inesistente e pulisce le sessioni alla cancellazione del profilo" },
   { "control": "Eliminare inviti scaduti.", "evidence": "extended-p0-auth-lifecycle 44/44: invito scaduto inserito in D1 locale isolato, health rimuove almeno una riga, claim successivo 403" },

@@ -4,13 +4,14 @@ test.use({ serviceWorkers: "block" });
 
 const coordinatorName = process.env.QA_BOOTSTRAP_NAME;
 const postMarker = process.env.QA_BOOTSTRAP_POST;
+const groupCode = process.env.QA_UI_GROUP_CODE;
 const deviceForProject = (projectName) => projectName === "iPhone-piccolo"
   ? devices["iPhone SE"]
   : projectName === "Samsung-vecchio"
     ? { ...devices["Galaxy S9+"], viewport: { width: 360, height: 740 } }
     : { ...devices["Galaxy S9+"], viewport: { width: 412, height: 915 } };
 
-test.skip(!coordinatorName || !postMarker, "Identificativi bootstrap QA richiesti");
+test.skip(!coordinatorName || !postMarker || !groupCode, "Identificativi e codice bootstrap QA richiesti");
 
 test("il tasto Gruppo porta subito alla password su un telefono nuovo", async ({ page }) => {
   await page.goto("/", { waitUntil: "networkidle" });
@@ -34,7 +35,7 @@ test("telefono nuovo: password, primo coordinatore, pubblicazione, riapertura e 
   await expect(firstPage.locator(".accessPill")).toContainText("Pubblico");
   await firstPage.locator(".accessPill").tap();
   await expect(firstPage.getByText("Accesso privato", { exact: true })).toBeVisible();
-  await firstPage.getByPlaceholder("Password").fill("india26");
+  await firstPage.getByPlaceholder("Password").fill(groupCode);
   const groupResponse = firstPage.waitForResponse(
     (response) => response.url().endsWith("/api/auth/group") && response.request().method() === "POST",
   );

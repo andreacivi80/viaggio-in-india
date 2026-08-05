@@ -6,6 +6,10 @@ $ErrorActionPreference = "Stop"
 $runId = [guid]::NewGuid().ToString("N")
 $coordinatorName = "Avvio$($runId.Substring(0, 8))"
 $postMarker = "QA bootstrap $runId"
+$groupCode = $env:QA_GROUP_CODE
+if ([string]::IsNullOrWhiteSpace($groupCode)) {
+  throw "QA_GROUP_CODE deve essere fornito come variabile temporanea; il codice non può essere scritto nel repository."
+}
 
 function Invoke-D1Sql([string]$Sql) {
   for ($attempt = 1; $attempt -le 4; $attempt += 1) {
@@ -31,6 +35,7 @@ try {
   $env:TEST_BASE_URL = $BaseUrl
   $env:QA_BOOTSTRAP_NAME = $coordinatorName
   $env:QA_BOOTSTRAP_POST = $postMarker
+  $env:QA_UI_GROUP_CODE = $groupCode
   & npx playwright test tests/ui-bootstrap.spec.mjs --config playwright.release.config.mjs
   $testExit = $LASTEXITCODE
 }
@@ -64,5 +69,6 @@ DELETE FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordina
   }
   Remove-Item Env:QA_BOOTSTRAP_NAME -ErrorAction SilentlyContinue
   Remove-Item Env:QA_BOOTSTRAP_POST -ErrorAction SilentlyContinue
+  Remove-Item Env:QA_UI_GROUP_CODE -ErrorAction SilentlyContinue
 }
 exit $testExit

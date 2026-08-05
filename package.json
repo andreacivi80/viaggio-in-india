@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build && node scripts/inject-sw-precache.mjs",
+    "build": "vite build && node scripts/inject-sw-precache.mjs && node scripts/scan-client-secrets.mjs",
     "test": "node --test tests/*.test.mjs && npm run build",
     "test:smoke": "node --test tests/production-smoke.test.mjs",
     "deploy:qa": "npm run build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/deploy-qa.ps1",
