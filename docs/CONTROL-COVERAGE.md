@@ -5,8 +5,8 @@ Questa vista non dichiara superato un controllo senza evidenza registrata. Manti
 - Righe sorgente: 3024
 - Controlli unici normalizzati: 2848
 - Doppioni consolidati: 176
-- Superati con evidenza gia registrata: 455
-- Da verificare o collegare a evidenza: 2393
+- Superati con evidenza gia registrata: 461
+- Da verificare o collegare a evidenza: 2387
 
 | Priorita | Categoria | Superati | Pendenti | Totale |
 |---|---|---:|---:|---:|
@@ -17,7 +17,7 @@ Questa vista non dichiara superato un controllo senza evidenza registrata. Manti
 | P0 | media-upload | 7 | 7 | 14 |
 | P0 | persistenza | 26 | 35 | 61 |
 | P0 | profili-ruoli | 15 | 24 | 39 |
-| P0 | social | 8 | 6 | 14 |
+| P0 | social | 14 | 0 | 14 |
 | P0 | sync-rete | 2 | 2 | 4 |
 | P1 | altro | 0 | 52 | 52 |
 | P1 | documenti | 1 | 8 | 9 |

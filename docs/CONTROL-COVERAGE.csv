@@ -591,17 +591,17 @@ P0,profili-ruoli,passed,Verificare che non possa diventare Coordinatore.,globale
 P0,profili-ruoli,pending,Verificare notifica prioritaria al Coordinatore.,globale:T-1193,
 P0,profili-ruoli,pending,Verificare profile_id corretto nel database.,globale:T-0422,
 P0,profili-ruoli,pending,Visualizzare contatto del Coordinatore.,globale:T-1196,
-P0,social,pending,commento eliminato;,globale:T-1556,
+P0,social,passed,commento eliminato;,globale:T-1556,extended-p0-social: commenti di due autori eliminati e stato finale vuoto
 P0,social,passed,Commento mentre il post viene eliminato.,globale:T-0570,extended-p0-sync-delete: corsa commento/eliminazione senza residui
-P0,social,pending,Eliminare un commento mentre viene modificato da un altro dispositivo.,globale:T-0792,
-P0,social,pending,Eliminare un post mentre un altro utente sta inserendo un commento.,globale:T-0793,
+P0,social,passed,Eliminare un commento mentre viene modificato da un altro dispositivo.,globale:T-0792,extended-p0-social: PUT/DELETE concorrenti gestiti senza residui
+P0,social,passed,Eliminare un post mentre un altro utente sta inserendo un commento.,globale:T-0793,extended-p0-sync-delete: corsa DELETE post/POST commento senza residui
 P0,social,passed,Eliminazione commento proprio.,usabilita:U0308,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P0,social,pending,Eliminazione commento.,globale:T-0465,
-P0,social,pending,Eseguire backup mentre vengono aggiunti commenti.,globale:T-1166,
+P0,social,passed,Eliminazione commento.,globale:T-0465,extended-p0-social: proprietà server e DELETE verificate
+P0,social,passed,Eseguire backup mentre vengono aggiunti commenti.,globale:T-1166,"extended-p0-backup-comments: export D1 reale concorrente a 8 commenti, backup leggibile e stato integro"
 P0,social,passed,Impedire di modificare o eliminare commenti altrui.,globale:T-0064,QA 1.31.0: modifica ed eliminazione del commento altrui restituite 403
 P0,social,passed,Tentativo di eliminare commento altrui.,globale:T-0471,QA 1.31.0: eliminazione commento altrui negata
 P0,social,passed,Tentativo di eliminazione di commento altrui.,usabilita:U0310,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P0,social,pending,"test di creazione, modifica ed eliminazione;",globale:T-0022,
+P0,social,passed,"test di creazione, modifica ed eliminazione;",globale:T-0022,extended-p0-social: ciclo completo su due autori
 P0,social,passed,Verifica commenti ripristinati.,globale:T-0642,verify-d1-backup: 8 commenti ripristinati e leggibili
 P0,social,passed,Verificare eliminazione dei commenti.,usabilita:U0289,extended-p0-sync-delete: cascata verificata nello stato finale
 P0,social,passed,Verificare eliminazione delle reazioni.,usabilita:U0290,extended-p0-sync-delete: cascata verificata nello stato finale

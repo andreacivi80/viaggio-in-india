@@ -37,5 +37,11 @@
   { "control": "Impossibilità di diventare Coordinatore.", "evidence": "extended-p0-roles: auto-promozione tramite PUT ignorata dal server" },
   { "control": "non deve accedere alle funzioni del Coordinatore.", "evidence": "extended-p0-roles: creazione profilo, modifica altrui e inviti tutti 403" },
   { "control": "un utente può diventare Coordinatore modificando la richiesta;", "evidence": "extended-p0-roles: tentativo falsificato resta traveler" },
-  { "control": "Verificare che non possa diventare Coordinatore.", "evidence": "extended-p0-roles: sessione riletta dal server resta traveler" }
+  { "control": "Verificare che non possa diventare Coordinatore.", "evidence": "extended-p0-roles: sessione riletta dal server resta traveler" },
+  { "control": "commento eliminato;", "evidence": "extended-p0-social: commenti di due autori eliminati e stato finale vuoto" },
+  { "control": "Eliminare un commento mentre viene modificato da un altro dispositivo.", "evidence": "extended-p0-social: PUT/DELETE concorrenti gestiti senza residui" },
+  { "control": "Eliminare un post mentre un altro utente sta inserendo un commento.", "evidence": "extended-p0-sync-delete: corsa DELETE post/POST commento senza residui" },
+  { "control": "Eliminazione commento.", "evidence": "extended-p0-social: proprietà server e DELETE verificate" },
+  { "control": "test di creazione, modifica ed eliminazione;", "evidence": "extended-p0-social: ciclo completo su due autori" },
+  { "control": "Eseguire backup mentre vengono aggiunti commenti.", "evidence": "extended-p0-backup-comments: export D1 reale concorrente a 8 commenti, backup leggibile e stato integro" }
 ]

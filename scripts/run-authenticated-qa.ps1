@@ -7,7 +7,9 @@ param(
   [switch]$ExtendedSync,
   [switch]$ExtendedMedia,
   [switch]$ExtendedLocation,
-  [switch]$ExtendedRoles
+  [switch]$ExtendedRoles,
+  [switch]$ExtendedSocial,
+  [switch]$ExtendedBackupComments
 )
 
 $ErrorActionPreference = "Stop"
@@ -92,7 +94,13 @@ try {
   $env:QA_RUN_ID = $runId
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
-  if ($ExtendedRoles) {
+  if ($ExtendedBackupComments) {
+    & node tests\extended-p0-backup-comments.mjs
+  }
+  elseif ($ExtendedSocial) {
+    & node tests\extended-p0-social.mjs
+  }
+  elseif ($ExtendedRoles) {
     & node tests\extended-p0-roles.mjs
   }
   elseif ($ExtendedLocation) {
