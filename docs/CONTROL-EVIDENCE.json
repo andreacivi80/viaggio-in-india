@@ -211,4 +211,8 @@
   ,{ "control": "Copiare il token su un altro browser.", "evidence": "session-device-binding 2/2 + auth-lifecycle 57/57: token valido con chiave browser diversa o assente restituisce 401" }
   ,{ "control": "Copiare token su altro dispositivo.", "evidence": "auth-lifecycle 57/57: sessione nuova e sessione precedente dopo il primo binding accettano soltanto la chiave del dispositivo originario" }
   ,{ "control": "Impedire il riutilizzo di una sessione rubata.", "evidence": "auth-lifecycle 57/57: il bearer token copiato non è sufficiente; il server confronta l’hash della chiave dispositivo e nega chiave mancante o differente" }
+  ,{ "control": "Memorizzare un vecchio token prima dell’accesso.", "evidence": "session-token-rotation 2/2 + auth-lifecycle 61/61: il test conserva il token precedente, rinnova la sessione e ne verifica separatamente lo stato" }
+  ,{ "control": "Ruotare il token dopo operazioni sensibili.", "evidence": "session-token-rotation 2/2 + auth-lifecycle 61/61: auth/refresh sostituisce atomicamente l’hash e restituisce una nuova credenziale legata allo stesso dispositivo" }
+  ,{ "control": "Verificare che il vecchio token non funzioni più.", "evidence": "auth-lifecycle 61/61: immediatamente dopo il rinnovo il token precedente restituisce HTTP 401 e quello nuovo HTTP 200" }
+  ,{ "control": "Verificare che il vecchio token non funzioni.", "evidence": "auth-lifecycle 61/61: credenziale precedente respinta dal server dopo la rotazione atomica" }
 ]

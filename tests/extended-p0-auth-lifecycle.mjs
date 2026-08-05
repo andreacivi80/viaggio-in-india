@@ -17,8 +17,8 @@ const bearer = (token, deviceKey = "") => ({
   authorization: `Bearer ${token}`,
   ...(deviceKey ? { "x-device-key": deviceKey } : {}),
 });
-const jsonHeaders = (token, device) => ({
-  ...bearer(token),
+const jsonHeaders = (token, device, deviceKey = "") => ({
+  ...bearer(token, deviceKey),
   "content-type": "application/json",
   ...(device ? { "x-device-name": device } : {}),
 });
@@ -145,23 +145,33 @@ assert.equal((await request("/api/auth/session", { headers: bearer(mutatedSessio
 assert.equal((await request("/api/auth/logout", { method: "POST", headers: bearer(winnerBody.token, winnerDeviceKey) })).status, 200);
 assert.equal((await request("/api/auth/session", { headers: bearer(winnerBody.token, winnerDeviceKey) })).status, 401);
 
-assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 200);
+const coordinatorDeviceKey = "3".repeat(64);
+assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken, coordinatorDeviceKey) })).status, 200);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 200);
-const refreshResponse = await request("/api/auth/refresh", { method: "POST", headers: bearer(coordinatorToken) });
+const refreshResponse = await request("/api/auth/refresh", {
+  method: "POST",
+  headers: bearer(coordinatorToken, coordinatorDeviceKey),
+});
 assert.equal(refreshResponse.status, 200);
-assert.ok(Date.parse((await refreshResponse.json()).expires_at) - Date.now() > 29 * 24 * 60 * 60 * 1000);
+const refreshedSession = await refreshResponse.json();
+assert.ok(Date.parse(refreshedSession.expires_at) - Date.now() > 29 * 24 * 60 * 60 * 1000);
+assert.ok(refreshedSession.token);
+assert.notEqual(refreshedSession.token, coordinatorToken);
+assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken, coordinatorDeviceKey) })).status, 401);
+assert.equal((await request("/api/auth/session", { headers: bearer(refreshedSession.token, coordinatorDeviceKey) })).status, 200);
+const activeCoordinatorToken = refreshedSession.token;
 assert.equal((await request("/api/auth/refresh", { method: "POST", headers: bearer(mutatedSession) })).status, 401);
 
-const subscribe = (token, endpoint) => request("/api/push/subscribe", {
+const subscribe = (token, endpoint, deviceKey = "") => request("/api/push/subscribe", {
   method: "POST",
-  headers: jsonHeaders(token),
+  headers: jsonHeaders(token, "", deviceKey),
   body: JSON.stringify({
     subscription: { endpoint, keys: { p256dh: "qa-p256dh", auth: "qa-auth" } },
   }),
 });
-assert.equal((await subscribe(coordinatorToken, "https://push.example/telefono-coordinatore")).status, 200);
+assert.equal((await subscribe(activeCoordinatorToken, "https://push.example/telefono-coordinatore", coordinatorDeviceKey)).status, 200);
 
-const devicesResponse = await request("/api/auth/devices", { headers: bearer(coordinatorToken) });
+const devicesResponse = await request("/api/auth/devices", { headers: bearer(activeCoordinatorToken, coordinatorDeviceKey) });
 assert.equal(devicesResponse.status, 200);
 const devicesBeforeRevoke = (await devicesResponse.json()).devices;
 assert.equal(devicesBeforeRevoke.length, 2);
@@ -169,20 +179,20 @@ assert.equal(devicesBeforeRevoke.filter((device) => device.current).length, 1);
 assert.ok(devicesBeforeRevoke.some((device) => device.device_id === coordinatorSecondDeviceId));
 const revokeDeviceResponse = await request(`/api/auth/devices/${coordinatorSecondDeviceId}`, {
   method: "DELETE",
-  headers: bearer(coordinatorToken),
+  headers: bearer(activeCoordinatorToken, coordinatorDeviceKey),
 });
 assert.equal(revokeDeviceResponse.status, 200);
 assert.equal((await revokeDeviceResponse.json()).push_subscriptions_revoked, 1);
-assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 200);
+assert.equal((await request("/api/auth/session", { headers: bearer(activeCoordinatorToken, coordinatorDeviceKey) })).status, 200);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 401);
-const devicesAfterRevoke = await (await request("/api/auth/devices", { headers: bearer(coordinatorToken) })).json();
+const devicesAfterRevoke = await (await request("/api/auth/devices", { headers: bearer(activeCoordinatorToken, coordinatorDeviceKey) })).json();
 assert.equal(devicesAfterRevoke.devices.length, 1);
 
-assert.equal((await subscribe(coordinatorToken, "https://push.example/telefono-rimasto")).status, 200);
-const logoutAllResponse = await request("/api/auth/logout-all", { method: "POST", headers: bearer(coordinatorToken) });
+assert.equal((await subscribe(activeCoordinatorToken, "https://push.example/telefono-rimasto", coordinatorDeviceKey)).status, 200);
+const logoutAllResponse = await request("/api/auth/logout-all", { method: "POST", headers: bearer(activeCoordinatorToken, coordinatorDeviceKey) });
 assert.equal(logoutAllResponse.status, 200);
 assert.equal((await logoutAllResponse.json()).push_subscriptions_revoked, 1);
-assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 401);
+assert.equal((await request("/api/auth/session", { headers: bearer(activeCoordinatorToken, coordinatorDeviceKey) })).status, 401);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 401);
 
 const legacyDeviceKey = "1".repeat(64);
@@ -199,5 +209,5 @@ assert.equal((await request("/api/auth/session", {
   headers: bearer(process.env.QA_SESSION_TOKEN, legacyDeviceKey),
 })).status, 200);
 
-console.log("P0_AUTH_LIFECYCLE=57/57");
+console.log("P0_AUTH_LIFECYCLE=61/61");
 process.exit(0);

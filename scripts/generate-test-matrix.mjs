@@ -8,6 +8,7 @@ if (!sources.length) throw new Error("Indicare almeno una checklist sorgente");
 // lo stato dei controlli gia verificati. Ogni voce deve corrispondere a una
 // prova ripetibile presente nella suite, non alla sola esistenza del codice.
 const evidence = {
+  "T-0040": ["SUPERATO", "session-token-rotation 2/2 + auth-lifecycle 61/61: rotazione atomica e token precedente respinto"],
   "T-0013": ["SUPERATO", "production-smoke: revisione e Service Worker verificati sul dominio live"],
   "T-0023": ["SUPERATO", "production-smoke: retry idempotenti di commenti, reazioni, post e documenti"],
   "T-0026": ["SUPERATO", "offline-queue: due prove automatiche su coda e allegati"],
@@ -96,6 +97,7 @@ const evidence = {
   "T-1021": ["SUPERATO", "P0_DB_AUTH_INTEGRITY: D1 respinge sessioni senza profilo e le elimina a cascata"],
   "T-1029": ["SUPERATO", "backup D1 creato e verificato prima della migrazione 0013"],
   "T-1182": ["SUPERATO", "production-smoke: Service Worker live contiene la revisione corrente"],
+  "T-1329": ["SUPERATO", "auth-lifecycle 61/61: vecchio token HTTP 401 e nuovo token HTTP 200"],
   "T-1347": ["SUPERATO", "extended-p0-auth-lifecycle: invito scaduto inserito in D1 locale e rimosso da health"],
   "T-1348": ["SUPERATO", "extended-p0-auth-lifecycle: sessione scaduta inserita in D1 locale e rimozione contata da health"],
   "T-1352": ["SUPERATO", "QA 1.31.0: contenuto Solo io assente dai feed non proprietari"],

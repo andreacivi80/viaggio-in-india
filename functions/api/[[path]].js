@@ -1000,12 +1000,20 @@ export async function onRequest(context) {
         : "";
       const refreshedAt = now();
       const expiresAt = futureIso(24 * 30);
+      const nextToken = secureToken();
       const refreshed = await env.DB.prepare(
-        `UPDATE auth_sessions SET last_used_at=?,expires_at=?
+        `UPDATE auth_sessions SET token_hash=?,last_used_at=?,expires_at=?
          WHERE token_hash=? AND profile_id=? AND revoked_at IS NULL AND expires_at>?`,
-      ).bind(refreshedAt, expiresAt, await tokenHash(token), session.profile_id, refreshedAt).run();
+      ).bind(
+        await tokenHash(nextToken),
+        refreshedAt,
+        expiresAt,
+        await tokenHash(token),
+        session.profile_id,
+        refreshedAt,
+      ).run();
       if (!refreshed.meta?.changes) return json({ error: "Sessione non valida" }, 401);
-      return json({ ok: true, expires_at: expiresAt });
+      return json({ ok: true, token: nextToken, expires_at: expiresAt });
     }
     if (request.method === "POST" && path === "auth/logout") {
       const authorization = request.headers.get("authorization") || "";

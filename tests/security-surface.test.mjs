@@ -63,12 +63,13 @@ test("la manutenzione elimina realmente sessioni e inviti scaduti e ne espone so
   assert.match(worker, /profile_invites_removed: removed\(4\)/);
 });
 
-test("il rinnovo estende soltanto una sessione ancora valida e prossima alla scadenza", () => {
+test("il rinnovo ruota soltanto una sessione ancora valida e prossima alla scadenza", () => {
   assert.match(worker, /request\.method === "POST" && path === "auth\/refresh"[\s\S]*?sessionFromRequest\(request, env\)/);
-  assert.match(worker, /UPDATE auth_sessions SET last_used_at=\?,expires_at=\?[\s\S]*?revoked_at IS NULL AND expires_at>\?/);
+  assert.match(worker, /UPDATE auth_sessions SET token_hash=\?,last_used_at=\?,expires_at=\?[\s\S]*?revoked_at IS NULL AND expires_at>\?/);
   assert.match(worker, /const expiresAt = futureIso\(24 \* 30\)/);
   assert.match(client, /expiresAt - Date\.now\(\) < 7 \* 24 \* 60 \* 60 \* 1000[\s\S]*?\/auth\/refresh/);
-  assert.doesNotMatch(worker, /path === "auth\/refresh"[\s\S]{0,1200}?return json\(\{[^}]*token/);
+  assert.match(worker, /path === "auth\/refresh"[\s\S]{0,1500}?return json\(\{ ok: true, token: nextToken/);
+  assert.match(client, /localStorage\.setItem\("india-session-token", refreshedSession\.token\)/);
 });
 
 test("revocare una sessione disattiva anche le notifiche del profilo", () => {

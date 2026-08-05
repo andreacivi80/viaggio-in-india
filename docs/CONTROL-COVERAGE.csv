@@ -135,7 +135,7 @@ P0,accessi-privacy,passed,la password del gruppo non dia privilegi da Viaggiator
 P0,accessi-privacy,pending,la password risulta corretta ma Pubblica restituisce errore;,usabilita:U0687,
 P0,accessi-privacy,passed,Lasciare la sessione inattiva fino alla scadenza prevista.,globale:T-0761,QA 1.31.0: scadenza per inattivita simulata e verificata
 P0,accessi-privacy,passed,Limitazione dell’accesso alle persone autorizzate.,globale:T-0210,"authorization-matrix 55/55: matrice reale pubblico/ospite/viaggiatore/proprietario/coordinatore verificata su post, profili, documenti, posizioni e notifiche"
-P0,accessi-privacy,pending,Memorizzare un vecchio token prima dell’accesso.,addendum:A0336,
+P0,accessi-privacy,passed,Memorizzare un vecchio token prima dell’accesso.,addendum:A0336,session-token-rotation 2/2 + auth-lifecycle 61/61: token precedente conservato e verificato separatamente
 P0,accessi-privacy,pending,Modalità privata del browser.,globale:T-1094,
 P0,accessi-privacy,pending,Modificare token.,globale:T-0623,
 P0,accessi-privacy,passed,Modificare un carattere dell’invito.,globale:T-0778,extended-p0-auth-lifecycle 28/28: invito alterato negato con HTTP 403
@@ -219,7 +219,7 @@ P0,accessi-privacy,passed,Risultato atteso: nessun contenuto privato visibile.,g
 P0,accessi-privacy,pending,Risultato atteso: sessione non valida.,globale:T-0765,
 P0,accessi-privacy,pending,Riutilizzare lo stesso invito su telefono B.,globale:T-0333,
 P0,accessi-privacy,passed,Riutilizzare lo stesso invito.,usabilita:U0408,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P0,accessi-privacy,pending,Ruotare il token dopo operazioni sensibili.,globale:T-0040,
+P0,accessi-privacy,passed,Ruotare il token dopo operazioni sensibili.,globale:T-0040,session-token-rotation 2/2 + auth-lifecycle 61/61: rotazione atomica e nuova credenziale legata allo stesso dispositivo
 P0,accessi-privacy,pending,"Se la password del gruppo deve permettere la pubblicazione, creare una sessione Ospite/Familiare valida e controllata.",usabilita:U0002,
 P0,accessi-privacy,pending,"Se può pubblicare, creare sessione Ospite.",usabilita:U0480,
 P0,accessi-privacy,passed,Separare profilo pubblico e profilo privato.,globale:T-0052,production-smoke: stato pubblico separato dall'area privata
@@ -283,8 +283,8 @@ P0,accessi-privacy,passed,Verificare che il Coordinatore gestisca i profili auto
 P0,accessi-privacy,passed,Verificare che il server utilizzi l’identità della sessione.,usabilita:U0172,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P0,accessi-privacy,passed,Verificare che il token non funzioni più.,globale:T-0339,extended-p0-auth-lifecycle 28/28: token del dispositivo revocato respinto da auth/session
 P0,accessi-privacy,pending,Verificare che il token non rimanga nella cronologia o nei log applicativi.,globale:T-0786,
-P0,accessi-privacy,pending,Verificare che il vecchio token non funzioni più.,usabilita:U0055,
-P0,accessi-privacy,pending,Verificare che il vecchio token non funzioni.,globale:T-1329,
+P0,accessi-privacy,passed,Verificare che il vecchio token non funzioni più.,usabilita:U0055,auth-lifecycle 61/61: vecchio token HTTP 401 e nuovo token HTTP 200
+P0,accessi-privacy,passed,Verificare che il vecchio token non funzioni.,globale:T-1329,auth-lifecycle 61/61: credenziale precedente respinta dopo la rotazione
 P0,accessi-privacy,pending,Verificare che l’invito funzioni una sola volta.,globale:T-0340,
 P0,accessi-privacy,passed,Verificare che le sessioni rimangano valide o siano revocate in modo controllato.,globale:T-1177,"extended-p0-auth-lifecycle 28/28: revoca selettiva mantiene il dispositivo corrente, logout-all invalida tutte le sessioni"
 P0,accessi-privacy,passed,Verificare che pagine pubbliche eventualmente incorporabili siano separate da quelle private.,globale:T-1490,production-smoke live: HTML limitato alla stessa origine; API private con frame-ancestors none e no-store

@@ -5,9 +5,9 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 - Sezioni sorgente: 100
 - Caselle sorgente complessive: 2.537
 - Controlli distinti: 1812
-- Controlli superati con evidenza: 93
+- Controlli superati con evidenza: 95
 - Controlli falliti aperti: 0
-- Controlli non ancora eseguiti: 1719
+- Controlli non ancora eseguiti: 1717
 - Sezioni completamente chiuse: 0/100
 - Stati ammessi: SUPERATO, FALLITO, NON ESEGUITO, BLOCCATO FISICO
 
@@ -52,7 +52,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0037 | 3 | Registrare data, ora e ultimo utilizzo della sessione. | NON ESEGUITO | — |
 | T-0038 | 3 | Richiedere l’invito personale per collegare un dispositivo a un profilo. | SUPERATO | QA 1.31.0: nuovo dispositivo collegato tramite invito personale monouso |
 | T-0039 | 3 | Ridurre la durata della sessione, attualmente prevista fino a 90 giorni. | NON ESEGUITO | — |
-| T-0040 | 3 | Ruotare il token dopo operazioni sensibili. | NON ESEGUITO | — |
+| T-0040 | 3 | Ruotare il token dopo operazioni sensibili. | SUPERATO | session-token-rotation 2/2 + auth-lifecycle 61/61: rotazione atomica e token precedente respinto |
 | T-0041 | 3 | Utilizzare il codice comune soltanto come invito iniziale al gruppo. | NON ESEGUITO | — |
 | T-0042 | 3 | Valutare cookie sicuro HttpOnly invece del token nel localStorage. | NON ESEGUITO | — |
 | T-0043 | 4 | Aggiungere consenso privacy esplicito. | NON ESEGUITO | — |
@@ -1341,7 +1341,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1326 | 70 | Verificare che i vecchi link ai documenti non funzionino. | NON ESEGUITO | — |
 | T-1327 | 70 | Verificare che il profilo non compaia nel feed. | NON ESEGUITO | — |
 | T-1328 | 70 | Verificare che il profilo non compaia nella dashboard del Coordinatore. | NON ESEGUITO | — |
-| T-1329 | 70 | Verificare che il vecchio token non funzioni. | NON ESEGUITO | — |
+| T-1329 | 70 | Verificare che il vecchio token non funzioni. | SUPERATO | auth-lifecycle 61/61: vecchio token HTTP 401 e nuovo token HTTP 200 |
 | T-1330 | 70 | Verificare che non rimangano file orfani. | NON ESEGUITO | — |
 | T-1331 | 70 | Verificare eliminazione degli inviti. | NON ESEGUITO | — |
 | T-1332 | 70 | Verificare eliminazione dei documenti. | NON ESEGUITO | — |

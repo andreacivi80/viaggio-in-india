@@ -24,6 +24,7 @@ Questa matrice descrive i controlli applicati dal server. La grafica non concede
 - La password comune verifica soltanto l’ingresso al flusso di registrazione: non identifica una persona e non autorizza operazioni private.
 - Un profilo esistente si collega con un invito personale monouso; l’endpoint storico di sblocco non crea sessioni.
 - La sessione personale è legata a una chiave casuale del dispositivo: copiare il solo token in un altro browser o telefono restituisce 401.
+- Il rinnovo ruota atomicamente il token: il telefono conserva solo quello nuovo e quello precedente viene respinto immediatamente.
 - Il server ricava nome, profilo e ruolo dalla sessione: valori dichiarati dal browser non possono impersonare altri viaggiatori.
 - Il consenso privacy è esplicito nelle nuove registrazioni; data e versione del consenso non vengono esposte nello stato condiviso.
 - I test con scritture accettano soltanto localhost o il dominio QA e rifiutano sempre il dominio ufficiale.

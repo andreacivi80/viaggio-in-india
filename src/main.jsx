@@ -1914,8 +1914,16 @@ function App() {
               cache: "no-store",
               headers: sessionHeaders(sessionToken),
             });
-            if (!refreshed.ok && [401, 403].includes(refreshed.status))
+            if (refreshed.ok) {
+              const refreshedSession = await refreshed.json();
+              if (typeof refreshedSession.token !== "string" || !refreshedSession.token) {
+                throw Object.assign(new Error("Rinnovo sessione non valido"), { invalidSession: true });
+              }
+              localStorage.setItem("india-session-token", refreshedSession.token);
+              setSessionToken(refreshedSession.token);
+            } else if ([401, 403].includes(refreshed.status)) {
               throw Object.assign(new Error("Sessione non valida"), { invalidSession: true });
+            }
           }
           return;
         }
