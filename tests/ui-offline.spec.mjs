@@ -1,12 +1,13 @@
 import { test, expect, devices } from "@playwright/test";
 import { fileURLToPath } from "node:url";
+import { isSafeMutationTarget } from "./helpers/qa-mutation-target.mjs";
 
 const inviteToken = process.env.QA_UI_INVITE_TOKEN;
 const profileName = process.env.QA_UI_PROFILE_NAME;
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 const photoPath = fileURLToPath(new URL("../public/cities/agra.jpg", import.meta.url));
 
-test.skip(!inviteToken || !profileName || !baseUrl, "Profilo QA, invito e URL richiesti");
+test.skip(!inviteToken || !profileName || !isSafeMutationTarget(baseUrl), "Profilo QA, invito e URL locale/QA richiesti");
 
 const offlineCount = (page) => page.evaluate(() => new Promise((resolve, reject) => {
   const request = indexedDB.open("india-insieme-offline", 1);

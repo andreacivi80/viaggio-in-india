@@ -1,12 +1,13 @@
 import { test, expect } from "@playwright/test";
 import { fileURLToPath } from "node:url";
+import { isSafeMutationTarget } from "./helpers/qa-mutation-target.mjs";
 
 const inviteToken = process.env.QA_UI_INVITE_TOKEN;
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 const audioPath = fileURLToPath(new URL("../public/audio/india-insieme-demo.wav", import.meta.url));
 const videoPath = fileURLToPath(new URL("../public/video/india-insieme-demo.webm", import.meta.url));
 
-test.skip(!inviteToken || !baseUrl, "Invito QA e URL richiesti");
+test.skip(!inviteToken || !isSafeMutationTarget(baseUrl), "Invito QA e URL locale/QA richiesti");
 
 test("commenti con audio e video reali vengono salvati e riprodotti", async ({ page }) => {
   test.slow();

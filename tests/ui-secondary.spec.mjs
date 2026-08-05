@@ -1,11 +1,12 @@
 import { test, expect } from "@playwright/test";
 import { fileURLToPath } from "node:url";
+import { isSafeMutationTarget } from "./helpers/qa-mutation-target.mjs";
 
 const inviteToken = process.env.QA_UI_INVITE_TOKEN;
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 const photoPath = fileURLToPath(new URL("../public/cities/jaipur.jpg", import.meta.url));
 
-test.skip(!inviteToken || !baseUrl, "Invito QA e URL richiesti");
+test.skip(!inviteToken || !isSafeMutationTarget(baseUrl), "Invito QA e URL locale/QA richiesti");
 
 const makeWave = () => {
   const samples = 8000;

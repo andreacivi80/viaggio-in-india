@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
+import { isSafeMutationTarget } from "./helpers/qa-mutation-target.mjs";
 
 const profileName = process.env.QA_UI_PROFILE_NAME;
 const inviteToken = process.env.QA_UI_INVITE_TOKEN;
@@ -8,7 +9,7 @@ const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 const photoPath = fileURLToPath(new URL("../public/cities/agra.jpg", import.meta.url));
 const videoPath = fileURLToPath(new URL("../public/video/india-insieme-demo.webm", import.meta.url));
 
-test.skip(!profileName || !inviteToken || !baseUrl, "Profilo QA, invito e URL richiesti");
+test.skip(!profileName || !inviteToken || !isSafeMutationTarget(baseUrl), "Profilo QA, invito e URL locale/QA richiesti");
 
 const makeWave = () => {
   const sampleRate = 8000;

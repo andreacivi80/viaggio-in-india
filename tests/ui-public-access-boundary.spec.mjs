@@ -1,7 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { isSafeMutationTarget } from "./helpers/qa-mutation-target.mjs";
 
-const baseUrl = (process.env.TEST_BASE_URL || "https://viaggio-in-india-2026.pages.dev")
+const baseUrl = (process.env.TEST_BASE_URL || "https://viaggio-in-india-2026-qa.pages.dev")
   .replace(/\/$/, "");
+
+test.skip(!isSafeMutationTarget(baseUrl), "I test di accesso con tentativi di scrittura sono ammessi solo su locale/QA");
 
 test.use({ serviceWorkers: "block" });
 
