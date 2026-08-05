@@ -61,7 +61,7 @@ test("tutte le quattordici giornate si aprono con foto e contenuto", async ({ pa
     expect(await article.locator(".checks label").count()).toBeGreaterThan(0);
     await expect(article.getByRole("button", { name: "Percorso", exact: true })).toBeVisible();
     await expect(article.getByRole("button", { name: "Aggiungi ricordo" })).toBeVisible();
-    const cityPhoto = article.locator("img");
+    const cityPhoto = article.locator('img[alt^="Vista di "]');
     await cityPhoto.scrollIntoViewIfNeeded();
     await expect.poll(
       () => cityPhoto.evaluate((image) => image.complete && image.naturalWidth > 100),
@@ -106,6 +106,10 @@ test("la mappa seleziona automaticamente tutte le tappe e torna alla bacheca", a
     await routeButtons.nth(index).tap();
     await expect(routeButtons.nth(index)).toHaveClass(/active/);
     await expect(page.locator(".mapTrip")).toContainText(`Giorno ${index + 1}`);
+    const transportBadge = page.locator(".transportMapBadge");
+    await expect(transportBadge).toBeVisible();
+    await expect(transportBadge).toHaveAttribute("aria-label", /^Mezzi del giorno: .+/);
+    await expect(transportBadge.locator("span")).not.toBeEmpty();
     await expect(page.locator(".vectorMarker").first()).toBeVisible();
     await expect(page.locator(".mapLoading")).toBeHidden({ timeout: 20_000 });
     await expect.poll(async () => {
@@ -127,6 +131,7 @@ test("la mappa seleziona automaticamente tutte le tappe e torna alla bacheca", a
   await page.getByRole("button", { name: "Vedi tutto" }).tap();
   await expect(page.getByRole("heading", { name: "Tutto l’itinerario" })).toBeVisible();
   await expect(page.locator(".vectorMarker")).toHaveCount(8);
+  await expect(page.locator(".transportMapBadge")).toHaveCount(0);
   await page.getByRole("button", { name: /Torna alla Bacheca/ }).tap();
   await expect(page.getByRole("heading", { name: "Raccontiamocele insieme" })).toBeVisible();
 });

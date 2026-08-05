@@ -12,7 +12,8 @@ test.skip(!profileName || !inviteToken || !baseUrl, "Profilo QA, invito e URL ri
 
 const makeWave = () => {
   const sampleRate = 8000;
-  const seconds = 1;
+  // Mantiene lo stato di riproduzione osservabile anche sui telefoni lenti.
+  const seconds = 4;
   const samples = sampleRate * seconds;
   const buffer = Buffer.alloc(44 + samples * 2);
   buffer.write("RIFF", 0);

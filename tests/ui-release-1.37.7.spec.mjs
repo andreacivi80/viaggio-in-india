@@ -224,6 +224,10 @@ test("Il nostro gruppo usa un solo scorrimento touch naturale e stabile", async 
   const grid = page.locator(".peopleGrid");
   const cards = grid.locator(".profileCard");
   await expect(cards).toHaveCount(18);
+  const cardHeights = await cards.evaluateAll((nodes) => nodes.map((node) => Math.round(node.getBoundingClientRect().height)));
+  expect(Math.max(...cardHeights) - Math.min(...cardHeights)).toBeLessThanOrEqual(1);
+  const cardWidths = await cards.evaluateAll((nodes) => nodes.map((node) => Math.round(node.getBoundingClientRect().width)));
+  expect(Math.max(...cardWidths) - Math.min(...cardWidths)).toBeLessThanOrEqual(1);
   await page.screenshot({ path: testInfo.outputPath("gruppo-inizio.png") });
   const metrics = await page.evaluate(() => ({ clientHeight: innerHeight, scrollHeight: document.documentElement.scrollHeight }));
   expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);

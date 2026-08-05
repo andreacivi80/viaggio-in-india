@@ -91,7 +91,8 @@ async function readExtendedForecast(city, coordinates) {
   const target = new URL("https://api.open-meteo.com/v1/forecast");
   target.searchParams.set("latitude", String(coordinates[0]));
   target.searchParams.set("longitude", String(coordinates[1]));
-  target.searchParams.set("daily", "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max");
+  target.searchParams.set("daily", "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset");
+  target.searchParams.set("hourly", "relative_humidity_2m");
   target.searchParams.set("timezone", "Asia/Kolkata");
   target.searchParams.set("forecast_days", "16");
   const upstream = await fetch(target, {
@@ -99,7 +100,18 @@ async function readExtendedForecast(city, coordinates) {
     cf: { cacheTtl: 1800, cacheEverything: true },
   });
   if (!upstream.ok) return [];
-  const daily = (await upstream.json()).daily || {};
+  const payload = await upstream.json();
+  const daily = payload.daily || {};
+  const hourly = payload.hourly || {};
+  const humidityByDate = new Map();
+  (hourly.time || []).forEach((time, index) => {
+    const value = Number(hourly.relative_humidity_2m?.[index]);
+    if (!Number.isFinite(value)) return;
+    const date = String(time).slice(0, 10);
+    const values = humidityByDate.get(date) || [];
+    values.push(value);
+    humidityByDate.set(date, values);
+  });
   return (daily.time || []).map((date, index) => ({
     date,
     city,
@@ -109,6 +121,11 @@ async function readExtendedForecast(city, coordinates) {
     rain_probability: Number.isFinite(Number(daily.precipitation_probability_max?.[index]))
       ? Math.round(Number(daily.precipitation_probability_max[index]))
       : null,
+    relative_humidity: humidityByDate.has(date)
+      ? Math.round(humidityByDate.get(date).reduce((sum, value) => sum + value, 0) / humidityByDate.get(date).length)
+      : null,
+    sunrise: String(daily.sunrise?.[index] || "").slice(11, 16) || null,
+    sunset: String(daily.sunset?.[index] || "").slice(11, 16) || null,
     source: "Open-Meteo",
   })).filter((entry) => Number.isFinite(entry.min) && Number.isFinite(entry.max));
 }
@@ -974,7 +991,10 @@ export async function onRequest(context) {
           for (const forecast of result.value) merged.set(`${forecast.date}:${forecast.city}`, forecast);
       for (const result of imdSettled)
         if (result.status === "fulfilled")
-          for (const forecast of result.value) merged.set(`${forecast.date}:${forecast.city}`, forecast);
+          for (const forecast of result.value) {
+            const key = `${forecast.date}:${forecast.city}`;
+            merged.set(key, { ...(merged.get(key) || {}), ...forecast });
+          }
       const forecasts = [...merged.values()].sort(
         (a, b) => a.date.localeCompare(b.date) || a.city.localeCompare(b.city),
       );

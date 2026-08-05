@@ -1223,14 +1223,49 @@ h3 {
 .peopleGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 1fr;
   gap: 10px;
   min-width: 0;
 }
 .peopleGrid article {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   text-align: center;
   margin: 0;
   min-width: 0;
   overflow: hidden;
+}
+.peopleGrid .profilePhoto,
+.peopleGrid .avatar.big {
+  flex: 0 0 72px;
+  width: 72px;
+  height: 72px;
+}
+.peopleGrid article h3 {
+  min-height: 2.55em;
+  margin-bottom: 4px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.peopleGrid article > small {
+  min-height: 2.4em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.peopleGrid article > p {
+  min-height: 2.8em;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+.peopleGrid .profileActions {
+  margin-top: auto;
 }
 .peopleGrid article h3,
 .peopleGrid article small,
@@ -2388,6 +2423,41 @@ h2 {
 .realMapWrap {
   position: relative;
 }
+.transportMapBadge {
+  position: absolute;
+  z-index: 510;
+  top: 12px;
+  left: 12px;
+  max-width: calc(100% - 72px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 1px solid #ffffffb8;
+  border-radius: 999px;
+  background: #15382fee;
+  color: #fff;
+  box-shadow: 0 5px 16px #0003;
+  pointer-events: none;
+  backdrop-filter: blur(7px);
+}
+.transportMapBadge span {
+  flex: 0 0 auto;
+  font-size: 19px;
+  line-height: 1;
+}
+.transportMapBadge b {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 11px;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.transportMapBadge.transport-air { background: #164e7eee; }
+.transportMapBadge.transport-rail { background: #67223cee; }
+.transportMapBadge.transport-boat { background: #006b70ee; }
+.transportMapBadge.transport-walk { background: #216537ee; }
 .mapLoading {
   position: absolute;
   z-index: 20;
@@ -4726,6 +4796,111 @@ mark.mention {
   white-space: normal;
   text-shadow: 0 1px 4px #000;
 }
+.dayClimateCard {
+  display: grid;
+  grid-template-columns: minmax(0, 1.35fr) repeat(2, minmax(0, .78fr));
+  align-items: stretch;
+  gap: 7px;
+  margin: 10px 0;
+  padding: 8px;
+  border: 1px solid #e7d8bc;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fffaf0 0%, #f8eee0 100%);
+  box-shadow: 0 5px 16px #44301b12;
+}
+.dayClimateCard > div {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 7px;
+  border-radius: 11px;
+  background: #fffaf5cc;
+}
+.dayClimateCard small {
+  display: block;
+  color: #795b3b;
+  font-size: 8px;
+  font-weight: 950;
+  letter-spacing: .08em;
+  line-height: 1.15;
+}
+.dayClimateCard b {
+  display: block;
+  color: #173f35;
+  font-size: 13px;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.dayClimateCard span:not(.climateSymbol) {
+  display: block;
+  margin-top: 2px;
+  color: #5f675f;
+  font-size: 9px;
+  font-weight: 750;
+  line-height: 1.15;
+}
+.climateSymbol { flex: 0 0 auto; font-size: 25px; line-height: 1; }
+.solarTime img {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  object-fit: contain;
+}
+.dayClimateCard .solarTime {
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  text-align: center;
+}
+.cityFacts {
+  margin: 9px 0 12px;
+  overflow: hidden;
+  border: 1px solid #cbded4;
+  border-radius: 14px;
+  background: #f6fbf8;
+}
+.cityFacts summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 12px;
+  color: var(--green);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 900;
+  list-style: none;
+  touch-action: manipulation;
+}
+.cityFacts summary::-webkit-details-marker { display: none; }
+.cityFacts summary span { font-size: 18px; transition: transform .18s ease; }
+.cityFacts[open] summary span { transform: rotate(45deg); }
+.cityFactsBody { padding: 0 12px 12px; }
+.cityFactsBody > p {
+  margin: 0 0 9px;
+  color: #304a43;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.cityFactsBody dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  margin: 0 0 7px;
+}
+.cityFactsBody dl div {
+  padding: 7px 9px;
+  border-radius: 10px;
+  background: #eaf5ef;
+}
+.cityFactsBody dt { color: #5c726a; font-size: 9px; font-weight: 800; }
+.cityFactsBody dd { margin: 2px 0 0; color: #173f35; font-size: 13px; font-weight: 950; }
+.cityFactsBody > small { color: #6e7975; font-size: 8px; line-height: 1.25; }
+@media (max-width: 370px) {
+  .dayClimateCard { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .climateWeather { grid-column: 1 / -1; }
+}
 /* Revisione 1.37.10: spazio e contrasto costanti per meteo e ora locale. */
 .dayHero {
   height: 128px;
@@ -4981,3 +5156,147 @@ mark.mention {
 .compactPhotoAudio > small {
   display: none;
 }
+
+/* Revisione 1.37.22: scheda citta a tutta pagina, attivata dal + sulla giornata. */
+.day { position: relative; }
+.cityInfoButton {
+  position: absolute;
+  z-index: 6;
+  top: 10px;
+  right: 54px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid #ffffffb8;
+  border-radius: 50%;
+  background: #15382fe8;
+  color: #fff;
+  box-shadow: 0 5px 14px #0004;
+  font-size: 25px;
+  font-weight: 500;
+  line-height: 1;
+  touch-action: manipulation;
+}
+.citySheetBackdrop {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  background: #07130ecc;
+  backdrop-filter: blur(8px);
+}
+.citySheet {
+  width: min(100%, 700px);
+  height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #fffaf2;
+  color: var(--ink);
+  box-shadow: 0 0 50px #0008;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+.citySheet header {
+  position: relative;
+  height: 36vh;
+  min-height: 230px;
+  max-height: 360px;
+  overflow: hidden;
+}
+.citySheet header:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, #102d25e8 0%, #102d2520 72%);
+}
+.citySheet header img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.citySheet header > button {
+  position: absolute;
+  z-index: 3;
+  top: calc(12px + env(safe-area-inset-top));
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid #fff9;
+  border-radius: 50%;
+  background: #102d25dc;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+}
+.citySheet header > div {
+  position: absolute;
+  z-index: 2;
+  left: 20px;
+  right: 72px;
+  bottom: 18px;
+  color: #fff;
+}
+.citySheet header small { font-size: 10px; font-weight: 900; letter-spacing: 1.5px; }
+.citySheet header h2 { margin: 3px 0 0; font: 800 38px "Playfair Display", serif; }
+.citySheetBody { display: grid; gap: 14px; padding: 20px 18px calc(30px + env(safe-area-inset-bottom)); }
+.citySheetBody .cityLead { margin: 0; color: #28483f; font-size: 16px; line-height: 1.55; }
+.citySheetBody dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin: 0; }
+.citySheetBody dl div { min-width: 0; padding: 12px; border-radius: 14px; background: #eaf5ef; }
+.citySheetBody dt { color: #61756e; font-size: 9px; font-weight: 900; letter-spacing: .7px; text-transform: uppercase; }
+.citySheetBody dd { margin: 5px 0 0; color: #153b31; font-size: 14px; font-weight: 900; overflow-wrap: anywhere; }
+.citySheetBody article { padding: 15px; border: 1px solid #eadbc5; border-radius: 16px; background: #fff; }
+.citySheetBody article small { color: var(--orange); font-size: 9px; font-weight: 950; letter-spacing: 1px; }
+.citySheetBody article p { margin: 7px 0 0; color: #354b44; line-height: 1.5; }
+.citySheetBody footer { color: #718078; font-size: 9px; line-height: 1.35; text-align: center; }
+@media (max-width: 370px) {
+  .citySheetBody dl { grid-template-columns: 1fr; }
+  .citySheet header h2 { font-size: 32px; }
+}
+
+.flightBaggageCard {
+  margin: 10px 0 12px;
+  overflow: hidden;
+  border: 1px solid #bbd2e7;
+  border-radius: 15px;
+  background: #f2f8fd;
+}
+.flightBaggageCard summary {
+  min-height: 54px;
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) 28px;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 11px;
+  color: #164e7e;
+  cursor: pointer;
+  list-style: none;
+  touch-action: manipulation;
+}
+.flightBaggageCard summary::-webkit-details-marker { display: none; }
+.flightBaggageCard summary > span { font-size: 23px; }
+.flightBaggageCard summary > div { display: flex; flex-direction: column; }
+.flightBaggageCard summary small { font-size: 8px; font-weight: 950; letter-spacing: 1px; }
+.flightBaggageCard summary b { font-size: 13px; }
+.flightBaggageCard summary strong { font-size: 22px; transition: transform .18s ease; }
+.flightBaggageCard[open] summary strong { transform: rotate(45deg); }
+.flightBaggageBody {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  padding: 0 10px 10px;
+}
+.flightBaggageBody section {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px;
+  border-radius: 11px;
+  background: #fff;
+}
+.flightBaggageBody b { color: #35566f; font-size: 9px; text-transform: uppercase; }
+.flightBaggageBody span { color: #123f64; font-size: 14px; font-weight: 950; }
+.flightBaggageBody small { color: #687b89; font-size: 9px; line-height: 1.3; }
+@media (max-width: 370px) { .flightBaggageBody { grid-template-columns: 1fr; } }

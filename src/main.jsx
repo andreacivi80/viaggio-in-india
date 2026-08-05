@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.20",
+const VERSION = "1.37.22",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -185,6 +185,96 @@ const places = {
   Agra: [27.1767, 78.0081],
   "Costa River Varanasi": [25.3385012, 82.9795559],
   Varanasi: [25.3176, 82.9739],
+};
+const cityFacts = {
+  Delhi: {
+    population: "16,31 milioni", area: "1.484 km\u00b2", scope: "Territorio della Capitale \u00b7 Censimento 2011",
+    description: "Capitale immensa e stratificata: quartieri moderni, citt\u00e0 moghul, mercati, moschee e monumenti raccontano molte Indie nello stesso luogo.",
+    knownFor: "Forte Rosso, Jama Masjid, India Gate, Qutub Minar e i bazar di Old Delhi",
+    identity: "Una metropoli formata da citt\u00e0 sovrapposte, dove l'urbanistica imperiale di New Delhi incontra i vicoli della capitale moghul.",
+    languages: "Hindi, inglese, punjabi e urdu", altitude: "circa 216 m",
+  },
+  Udaipur: {
+    population: "451.100", area: "64 km\u00b2", scope: "Comune \u00b7 Censimento 2011",
+    description: "La citt\u00e0 dei laghi del Rajasthan, celebre per il City Palace, le haveli e i riflessi dei palazzi sulle acque del Pichola.",
+    knownFor: "Lago Pichola, City Palace, Jag Mandir e tramonti sulle colline Aravalli",
+    identity: "Fondata nel XVI secolo come capitale del Mewar, conserva un rapporto scenografico unico tra acqua, palazzi e rilievi.",
+    languages: "Hindi, mewari e inglese", altitude: "circa 598 m",
+  },
+  Ranakpur: {
+    population: "piccolo centro rurale", area: "area collinare degli Aravalli", scope: "Distretto di Pali \u00b7 Rajasthan",
+    description: "Un'oasi verde tra Udaipur e Jodhpur, conosciuta per il grande complesso templare giainista in marmo chiaro.",
+    knownFor: "Tempio di Adinath, 1.444 colonne scolpite e paesaggio degli Aravalli",
+    identity: "La luce cambia continuamente la percezione delle colonne: la tradizione afferma che non ce ne siano due identiche.",
+    languages: "Hindi, marwari e mewari", altitude: "circa 486 m",
+  },
+  Jodhpur: {
+    population: "1,03 milioni", area: "112 km\u00b2", scope: "Comune \u00b7 Censimento 2011",
+    description: "La Citt\u00e0 Blu ai margini del Thar: case color indaco, bazar e il Forte Mehrangarh dominano un paesaggio luminoso e compatto.",
+    knownFor: "Mehrangarh, Jaswant Thada, Clock Tower e quartieri dipinti di blu",
+    identity: "Antica capitale del Marwar, lega l'architettura guerriera del forte alla vita dei mercati ai suoi piedi.",
+    languages: "Hindi, marwari e inglese", altitude: "circa 231 m",
+  },
+  Jaipur: {
+    population: "3,05 milioni", area: "485 km\u00b2", scope: "Comune \u00b7 Censimento 2011",
+    description: "La Citt\u00e0 Rosa, capitale del Rajasthan, unisce palazzi, osservatori astronomici, bazar artigiani e fortezze sulle colline.",
+    knownFor: "Hawa Mahal, City Palace, Jantar Mantar, Amber Fort e artigianato",
+    identity: "Progettata nel 1727 secondo una griglia urbana, fu dipinta di rosa nel XIX secolo come colore dell'ospitalit\u00e0.",
+    languages: "Hindi, dhundhari, marwari e inglese", altitude: "circa 431 m",
+  },
+  Agra: {
+    population: "1,75 milioni", area: "circa 121 km\u00b2", scope: "Area urbana \u00b7 Censimento 2011",
+    description: "Citt\u00e0 moghul sulle rive dello Yamuna, conosciuta nel mondo per il Taj Mahal ma ricca anche di fortezze, giardini e artigianato.",
+    knownFor: "Taj Mahal, Forte di Agra, Itmad-ud-Daulah e lavorazione del marmo",
+    identity: "Fu uno dei grandi centri dell'impero moghul: il fiume connetteva palazzi e giardini disposti sulle due rive.",
+    languages: "Hindi, urdu e braj bhasha", altitude: "circa 171 m",
+  },
+  Varanasi: {
+    population: "1,44 milioni", area: "circa 82 km\u00b2", scope: "Area urbana \u00b7 Censimento 2011",
+    description: "Una delle citt\u00e0 sacre pi\u00f9 antiche dell'India: i ghat sul Gange, le barche all'alba e i rituali serali scandiscono la vita quotidiana.",
+    knownFor: "Ghat del Gange, cerimonia Ganga Aarti, Sarnath, seta e musica classica",
+    identity: "La citt\u00e0 storica cresce come un anfiteatro sulla riva occidentale del Gange, con vicoli che convergono verso i ghat.",
+    languages: "Hindi, bhojpuri, urdu e inglese", altitude: "circa 80 m",
+  },
+};
+const normalizedDegrees = (value) => ((value % 360) + 360) % 360;
+const solarEventTime = (dateKey, latitude, longitude, sunrise) => {
+  const date = new Date(`${dateKey}T12:00:00Z`);
+  const start = Date.UTC(date.getUTCFullYear(), 0, 0);
+  const day = Math.floor((date.getTime() - start) / 86400000);
+  const longitudeHour = longitude / 15;
+  const approximate = day + ((sunrise ? 6 : 18) - longitudeHour) / 24;
+  const meanAnomaly = (0.9856 * approximate) - 3.289;
+  const trueLongitude = normalizedDegrees(
+    meanAnomaly + 1.916 * Math.sin(meanAnomaly * Math.PI / 180) +
+    0.02 * Math.sin(2 * meanAnomaly * Math.PI / 180) + 282.634,
+  );
+  let rightAscension = normalizedDegrees(Math.atan(0.91764 * Math.tan(trueLongitude * Math.PI / 180)) * 180 / Math.PI);
+  rightAscension += Math.floor(trueLongitude / 90) * 90 - Math.floor(rightAscension / 90) * 90;
+  rightAscension /= 15;
+  const sinDeclination = 0.39782 * Math.sin(trueLongitude * Math.PI / 180);
+  const cosDeclination = Math.cos(Math.asin(sinDeclination));
+  const latitudeRadians = latitude * Math.PI / 180;
+  const cosHour = (Math.cos(90.833 * Math.PI / 180) - sinDeclination * Math.sin(latitudeRadians)) /
+    (cosDeclination * Math.cos(latitudeRadians));
+  if (cosHour < -1 || cosHour > 1) return "—";
+  let localHour = sunrise
+    ? 360 - Math.acos(cosHour) * 180 / Math.PI
+    : Math.acos(cosHour) * 180 / Math.PI;
+  localHour /= 15;
+  const utcHour = normalizedDegrees((localHour + rightAscension - 0.06571 * approximate - 6.622 - longitudeHour) * 15) / 15;
+  const indiaHour = (utcHour + 5.5) % 24;
+  const hours = Math.floor(indiaHour);
+  const minutes = Math.round((indiaHour - hours) * 60);
+  const adjustedHours = minutes === 60 ? (hours + 1) % 24 : hours;
+  return `${String(adjustedHours).padStart(2, "0")}:${String(minutes === 60 ? 0 : minutes).padStart(2, "0")}`;
+};
+const solarTimesForDay = (dateKey, city, forecast) => {
+  const [latitude, longitude] = places[city] || places.Delhi;
+  return {
+    sunrise: forecast?.sunrise || solarEventTime(dateKey, latitude, longitude, true),
+    sunset: forecast?.sunset || solarEventTime(dateKey, latitude, longitude, false),
+  };
 };
 const roadPaths = {
   "Delhi-arrival": [
@@ -651,6 +741,28 @@ const pushKeyBytes = (value) => {
   return Uint8Array.from(atob(padded), (character) => character.charCodeAt(0));
 };
 
+const transportPresentation = (transport = "") => {
+  const icons = [];
+  if (transport.includes("Aereo")) icons.push("\u2708\uFE0F");
+  if (transport.includes("Treno")) icons.push("\uD83D\uDE86");
+  if (transport.includes("Barca")) icons.push("\u26F5");
+  if (transport.includes("A piedi")) icons.push("\uD83D\uDC63");
+  if (transport.includes("Tuk-tuk")) icons.push("\uD83D\uDED6");
+  if (transport.includes("Metro")) icons.push("\uD83D\uDE87");
+  if (transport.includes("risci\u00f2")) icons.push("\uD83D\uDED6");
+  if (transport.includes("Van") || transport.includes("Transfer") || transport.includes("taxi")) icons.push("\uD83D\uDE90");
+  const mode = transport.includes("Aereo")
+    ? "air"
+    : transport.includes("Treno")
+      ? "rail"
+      : transport.includes("Barca")
+        ? "boat"
+        : transport.includes("A piedi")
+          ? "walk"
+          : "road";
+  return { icons: [...new Set(icons)].join(" ") || "\uD83D\uDE90", mode };
+};
+
 function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
   const el = useRef(null),
     map = useRef(null),
@@ -722,6 +834,25 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
             "line-opacity": 1,
             "line-dasharray": [1.6, 1.4],
           },
+        });
+        [
+          ["air", "#1769aa", [1.1, 1.6]],
+          ["rail", "#7b2845", [2.4, 1.1]],
+          ["boat", "#007f86", [0.8, 1.25]],
+          ["walk", "#287943", [0.35, 1.15]],
+        ].forEach(([mode, color, dash]) => {
+          map.current.addLayer({
+            id: `trip-route-${mode}`,
+            type: "line",
+            source: "trip-route",
+            filter: ["==", ["get", "mode"], mode],
+            paint: {
+              "line-color": color,
+              "line-width": 5.5,
+              "line-opacity": 1,
+              "line-dasharray": dash,
+            },
+          });
         });
         setReady(true);
         map.current.once("idle", () => {
@@ -853,11 +984,9 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         : day.from === day.to
           ? [places[day.from]]
           : [places[day.from], places[day.to]];
-      const transit = ["Aereo", "Treno", "Treno notturno"].includes(
-        day.transport,
-      );
+      const routeMode = transportPresentation(day.transport).mode;
       features =
-        coords.length > 1 ? [line(coords, transit ? "transit" : "road")] : [];
+        coords.length > 1 ? [line(coords, routeMode)] : [];
       fitPoints = [
         ...coords,
         ...visibleMarkerIndexes.map((index) => places[sequence[index]]),
@@ -926,6 +1055,15 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         ref={el}
         aria-label="Mappa interattiva reale dell’itinerario in India"
       />
+      {day && (
+        <div
+          className={`transportMapBadge transport-${transportPresentation(day.transport).mode}`}
+          aria-label={`Mezzi del giorno: ${day.transport}`}
+        >
+          <span>{transportPresentation(day.transport).icons}</span>
+          <b>{day.transport}</b>
+        </div>
+      )}
       {!visualReady && (
         <div className="mapLoading">
           <MapPinned />
@@ -1142,6 +1280,7 @@ function App() {
     [notificationOpen, setNotificationOpen] = useState(false),
     [quickProfileOpen, setQuickProfileOpen] = useState(false),
     [travelersOpen, setTravelersOpen] = useState(false),
+    [cityPanel, setCityPanel] = useState(null),
     [weatherByDate, setWeatherByDate] = useState({}),
     [indiaClock, setIndiaClock] = useState(() => Date.now()),
     [quickStatus, setQuickStatus] = useState(""),
@@ -2131,6 +2270,8 @@ function App() {
               {days.map((d, i) => (
                 (() => {
                   const forecast = weatherByDate[`${tripDateKeys[i]}:${d.city}`];
+                  const solar = solarTimesForDay(tripDateKeys[i], d.city, forecast);
+                  const facts = cityFacts[d.city];
                   return (
                 <article
                   id={`day-${i + 1}`}
@@ -2168,10 +2309,40 @@ function App() {
                     </div>
                     <ChevronDown className={open === i ? "rot" : ""} />
                   </button>
+                  {facts && (
+                    <button
+                      type="button"
+                      className="cityInfoButton"
+                      aria-label={`Scopri ${d.city}`}
+                      onClick={() => setCityPanel(i)}
+                    >
+                      <span aria-hidden="true">+</span>
+                    </button>
+                  )}
                   {open === i && (
                     <div className="dayBody">
                       <div className="storyLabel">DIARIO DI BORDO</div>
                       <p>{d.story}</p>
+                      <section className="dayClimateCard" aria-label={`Meteo, alba e tramonto a ${d.city}`}>
+                        <div className="climateWeather">
+                          <span className="climateSymbol" aria-hidden="true">{weatherIcon(forecast?.description)}</span>
+                          <div>
+                            <small>METEO</small>
+                            <b>{forecast ? `${forecast.max}° / ${forecast.min}°` : "In aggiornamento"}</b>
+                            {Number.isFinite(forecast?.relative_humidity) && (
+                              <span>Umidità media {forecast.relative_humidity}%</span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="solarTime">
+                          <img src="/ui/sunrise.png" alt="" aria-hidden="true" />
+                          <div><small>ALBA</small><b>{solar.sunrise}</b></div>
+                        </div>
+                        <div className="solarTime">
+                          <img src="/ui/sunset.png" alt="" aria-hidden="true" />
+                          <div><small>TRAMONTO</small><b>{solar.sunset}</b></div>
+                        </div>
+                      </section>
                       {d.hotel && (
                         <div className="lodgingCard">
                           <span aria-hidden="true">🏨</span>
@@ -2198,6 +2369,17 @@ function App() {
                             <b>{d.overnight}</b>
                           </div>
                         </div>
+                      )}
+                      {d.transport.includes("Aereo") && (
+                        <details className="flightBaggageCard">
+                          <summary><span aria-hidden="true">\u2708\uFE0F</span><div><small>VOLO INTERNO INDIGO</small><b>Misure e peso dei bagagli</b></div><strong>+</strong></summary>
+                          <div className="flightBaggageBody">
+                            <section><b>Bagaglio a mano</b><span>55 x 35 x 25 cm</span><small>Ruote e maniglie incluse</small></section>
+                            <section><b>Peso in cabina</b><span>7 kg</span><small>Fino a 8 kg soltanto se previsto dalla tariffa</small></section>
+                            <section><b>Oggetto personale</b><span>1 piccolo accessorio</span><small>Borsa, PC o zainetto da riporre sotto il sedile</small></section>
+                            <section><b>Bagaglio da stiva</b><span>158 cm totali - 15 kg</span><small>Somma delle tre dimensioni; verificare sempre la franchigia sul biglietto</small></section>
+                          </div>
+                        </details>
                       )}
                       <div className="journeyCard">
                         <span className="transportIcon">
@@ -2295,6 +2477,33 @@ function App() {
                 })()
               ))}
             </div>
+            {cityPanel !== null && cityFacts[days[cityPanel]?.city] && (() => {
+              const city = days[cityPanel].city;
+              const facts = cityFacts[city];
+              return (
+                <div className="citySheetBackdrop" role="presentation" onClick={() => setCityPanel(null)}>
+                  <section className="citySheet" role="dialog" aria-modal="true" aria-label={`Conosci ${city}`} onClick={(event) => event.stopPropagation()}>
+                    <header>
+                      <img src={cityImages[city]} alt={`Panorama di ${city}`} />
+                      <button type="button" onClick={() => setCityPanel(null)} aria-label="Chiudi informazioni citta">X</button>
+                      <div><small>CONOSCIAMO LA TAPPA</small><h2>{city}</h2></div>
+                    </header>
+                    <div className="citySheetBody">
+                      <p className="cityLead">{facts.description}</p>
+                      <dl>
+                        <div><dt>Abitanti</dt><dd>{facts.population}</dd></div>
+                        <div><dt>Superficie</dt><dd>{facts.area}</dd></div>
+                        <div><dt>Altitudine</dt><dd>{facts.altitude}</dd></div>
+                        <div><dt>Lingue diffuse</dt><dd>{facts.languages}</dd></div>
+                      </dl>
+                      <article><small>UNA CITTA, NON SOLO UNA TAPPA</small><p>{facts.identity}</p></article>
+                      <article><small>COSA LA RENDE SPECIALE</small><p>{facts.knownFor}</p></article>
+                      <footer>{facts.scope} - dati indicativi da fonti pubbliche indiane</footer>
+                    </div>
+                  </section>
+                </div>
+              );
+            })()}
           </section>
         )}
         {tab === "map" && (

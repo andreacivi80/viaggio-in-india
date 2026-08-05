@@ -18,7 +18,7 @@ test("P0: cache vecchia e cache difettosa vengono eliminate mantenendo l'app off
   await page.reload({ waitUntil: "networkidle" });
   await page.evaluate(() => navigator.serviceWorker.ready);
   await expect.poll(() => page.evaluate(() => caches.keys()), { timeout: 20_000 }).toEqual([
-    "india-insieme-v1.37.19",
+    "india-insieme-v1.37.22",
   ]);
   await context.setOffline(true);
   try {

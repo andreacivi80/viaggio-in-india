@@ -1,9 +1,23 @@
 param(
   [Parameter(Mandatory = $true)][string]$BaseUrl,
-  [string]$ExpectedVersion = "1.33.1"
+  [string]$ExpectedVersion = "1.33.1",
+  [switch]$DeployOnly,
+  [switch]$SmokeOnly
 )
 
 $ErrorActionPreference = "Stop"
+
+if ($SmokeOnly) {
+  $env:TEST_BASE_URL = $BaseUrl
+  $env:TEST_EXPECTED_VERSION = $ExpectedVersion
+  & node --test --test-concurrency=1 tests/production-smoke.test.mjs
+  exit $LASTEXITCODE
+}
+
+if ($DeployOnly) {
+  & npx wrangler pages deploy dist --branch main --commit-dirty=true
+  exit $LASTEXITCODE
+}
 
 function Assert-LastExit([string]$Label) {
   if ($LASTEXITCODE -ne 0) { throw "Primo livello fallito: $Label" }

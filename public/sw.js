@@ -1,9 +1,11 @@
-const CACHE = "india-insieme-v1.37.20";
+const CACHE = "india-insieme-v1.37.22";
 const PRECACHE = [
   "./",
   "./manifest.webmanifest",
   "./icon.svg",
   "./sw-register.js",
+  "./ui/sunrise.png",
+  "./ui/sunset.png",
   /* BUILD_PRECACHE */
 ];
 self.addEventListener("install", (event) => {
