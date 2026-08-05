@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.38.2",
+const VERSION = "1.38.3",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -2591,12 +2591,15 @@ function App() {
                       className="dayBirthdayRibbon"
                       aria-label={`Compleanni del ${d.date}: ${d.birthdays.map((birthday) => `${birthday.name}, ${birthday.age} anni`).join("; ")}`}
                     >
-                      <img
-                        className="birthdayPartyScene"
-                        src="/ui/birthday-party-we-road-v1.jpg"
-                        alt="Gruppo di viaggiatori WE ROAD in festa in India"
-                        loading="lazy"
-                      />
+                      <div className="birthdayPartyVisual">
+                        <img
+                          className="birthdayPartyScene"
+                          src="/ui/birthday-party-we-road-v1.jpg"
+                          alt="Gruppo di viaggiatori WEROAD in festa in India"
+                          loading="lazy"
+                        />
+                        <img className="birthdayWeRoadLogo" src="/ui/weroad-logo.png" alt="WEROAD" />
+                      </div>
                       <div className="birthdayRibbonCopy">
                         <span className="birthdayCake" aria-hidden="true">🎉</span>
                         <div>

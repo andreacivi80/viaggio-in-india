@@ -4834,7 +4834,21 @@ mark.mention {
   color: #5f2b2c;
   box-shadow: 0 5px 14px #7b3d2617;
 }
-.birthdayPartyScene { width: 100%; height: auto; display: block; aspect-ratio: 16 / 9; object-fit: contain; background: #e9a34d; }
+.birthdayPartyVisual { position: relative; background: #e9a34d; }
+.birthdayPartyScene { width: 100%; height: auto; display: block; aspect-ratio: 16 / 9; object-fit: contain; }
+.birthdayWeRoadLogo {
+  position: absolute;
+  right: 9px;
+  bottom: 9px;
+  width: clamp(64px, 24%, 96px);
+  height: auto;
+  display: block;
+  padding: 4px 6px;
+  border: 1px solid #ffffff99;
+  border-radius: 8px;
+  background: #050505e8;
+  box-shadow: 0 3px 10px #0007;
+}
 .birthdayRibbonCopy {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;

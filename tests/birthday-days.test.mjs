@@ -17,6 +17,8 @@ test("il compleanno resta visibile anche senza profilo e usa la foto quando disp
   assert.match(source, /profile\?\.avatar_url/);
   assert.match(source, /birthday\.name\[0\]/);
   assert.match(source, /birthday-party-we-road-v1\.jpg/);
-  assert.match(source, /Gruppo di viaggiatori WE ROAD in festa in India/);
+  assert.match(source, /Gruppo di viaggiatori WEROAD in festa in India/);
+  assert.match(source, /birthdayWeRoadLogo/);
+  assert.match(source, /weroad-logo\.png/);
   assert.match(styles, /\.dayBirthdayRibbon\s*\{/);
 });
