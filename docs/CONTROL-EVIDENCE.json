@@ -22,5 +22,10 @@
   { "control": "Verificare compatibilità del database.", "evidence": "schema richiesto e API health verificati dopo il baseline" },
   { "control": "Verificare compatibilità delle migrazioni.", "evidence": "effetti di 14 migrazioni presenti prima del baseline" },
   { "control": "Verificare migrazione già applicata.", "evidence": "migrazioni già presenti registrate senza riesecuzione SQL" },
-  { "control": "Verificare ordine corretto delle migrazioni.", "evidence": "registro d1_migrations ordinato 1-14 e lista Wrangler vuota" }
+  { "control": "Verificare ordine corretto delle migrazioni.", "evidence": "registro d1_migrations ordinato 1-14 e lista Wrangler vuota" },
+  { "control": "Eliminando un post, eliminare media, commenti e reazioni.", "evidence": "extended-p0-media-delete: cascata completa e stato pulito su tre viste" },
+  { "control": "Eliminare un post già caricato.", "evidence": "extended-p0-media-delete: post con tre media eliminato dal proprietario" },
+  { "control": "Verificare eliminazione degli audio.", "evidence": "extended-p0-media-delete: MP3 non più raggiungibile dopo DELETE" },
+  { "control": "Verificare eliminazione dei video.", "evidence": "extended-p0-media-delete: MP4 non più raggiungibile dopo DELETE" },
+  { "control": "Verificare eliminazione delle fotografie.", "evidence": "extended-p0-media-delete: JPEG non più raggiungibile dopo DELETE" }
 ]

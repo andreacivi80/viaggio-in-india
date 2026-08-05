@@ -479,16 +479,16 @@ P0,mappe-posizione,pending,Verificare eliminazione della posizione.,globale:T-13
 P0,mappe-posizione,pending,Verificare la posizione dal telefono del Coordinatore.,globale:T-0720,
 P0,media-upload,pending,Backup archivio MEDIA.,globale:T-0634,
 P0,media-upload,passed,"Coordinatore cambia ruolo, permessi aggiornati immediatamente.",usabilita:U0563,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
-P0,media-upload,pending,"Eliminando un post, eliminare media, commenti e reazioni.",globale:T-1010,
-P0,media-upload,pending,Eliminare un post già caricato.,globale:T-1680,
+P0,media-upload,passed,"Eliminando un post, eliminare media, commenti e reazioni.",globale:T-1010,extended-p0-media-delete: cascata completa e stato pulito su tre viste
+P0,media-upload,passed,Eliminare un post già caricato.,globale:T-1680,extended-p0-media-delete: post con tre media eliminato dal proprietario
 P0,media-upload,pending,Interruzione del database durante un upload.,globale:T-1152,
 P0,media-upload,pending,Interruzione dell’archivio MEDIA dopo salvataggio del database.,globale:T-1153,
 P0,media-upload,pending,Verifica media ripristinati.,globale:T-0645,
 P0,media-upload,pending,Verificare che la dashboard del Coordinatore passi immediatamente a 3/4.,globale:T-0717,
-P0,media-upload,pending,Verificare eliminazione degli audio.,usabilita:U0288,
-P0,media-upload,pending,Verificare eliminazione dei video.,usabilita:U0287,
+P0,media-upload,passed,Verificare eliminazione degli audio.,usabilita:U0288,extended-p0-media-delete: MP3 non più raggiungibile dopo DELETE
+P0,media-upload,passed,Verificare eliminazione dei video.,usabilita:U0287,extended-p0-media-delete: MP4 non più raggiungibile dopo DELETE
 P0,media-upload,pending,Verificare eliminazione della vecchia fotografia.,globale:T-0358,
-P0,media-upload,pending,Verificare eliminazione delle fotografie.,usabilita:U0286,
+P0,media-upload,passed,Verificare eliminazione delle fotografie.,usabilita:U0286,extended-p0-media-delete: JPEG non più raggiungibile dopo DELETE
 P0,media-upload,pending,Verificare perdita immediata dei privilegi da Coordinatore.,globale:T-0771,
 P0,media-upload,passed,Verificare scomparsa immediata dei comandi da Coordinatore.,addendum:A0097,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P0,persistenza,pending,aggiorna il database;,usabilita:U0676,
