@@ -15,6 +15,12 @@ on:
       - "vite.config.js"
       - ".github/workflows/deploy-qa-1373.yml"
   workflow_dispatch:
+    inputs:
+      deploy_production:
+        description: "Pubblica anche nell'ambiente ufficiale dopo tutti i controlli"
+        required: true
+        default: false
+        type: boolean
 
 concurrency:
   group: deploy-india-verified
@@ -62,14 +68,32 @@ jobs:
         run: npm run test:ui-critical
         env:
           TEST_BASE_URL: https://viaggio-in-india-2026-qa.pages.dev
+
+  deploy-production:
+    name: Pubblicazione ufficiale esplicita
+    needs: test-deploy-verify
+    if: github.event_name == 'workflow_dispatch' && inputs.deploy_production == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Installazione pulita
+        run: npm ci
+      - name: Test statici e compilazione
+        run: npm test
       - name: Pubblicazione Cloudflare Pages produzione
-        if: env.CLOUDFLARE_CONFIGURED == 'true'
         run: npx wrangler pages deploy dist --project-name viaggio-in-india-2026 --branch main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Verifica produzione raggiungibile
-        if: env.CLOUDFLARE_CONFIGURED == 'true'
         run: |
           for attempt in {1..30}; do
             if curl --fail --silent https://viaggio-in-india-2026.pages.dev/ | grep --quiet "root"; then

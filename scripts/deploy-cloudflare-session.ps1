@@ -1,13 +1,18 @@
 param(
   [ValidateSet("qa", "production", "both")]
-  [string]$Target = "both",
+  [string]$Target = "qa",
   [Parameter(Mandatory = $true)]
   [string]$TokenFile,
+  [switch]$ConfirmProduction,
   [switch]$SkipBuild
 )
 
 $ErrorActionPreference = "Stop"
 $clientId = "54d11594-84e4-41aa-b438-e81b8fa78ee7"
+
+if ($Target -in @("production", "both") -and -not $ConfirmProduction) {
+  throw "Pubblicazione ufficiale bloccata: specificare esplicitamente -ConfirmProduction."
+}
 
 if (-not (Test-Path -LiteralPath $TokenFile)) {
   throw "Sessione Cloudflare assente: $TokenFile"
