@@ -109,7 +109,7 @@ P0,accessi-privacy,pending,i dati dei profili rispettano la privacy;,globale:T-0
 P0,accessi-privacy,passed,il Coordinatore è autorizzato lato server;,globale:T-0675,P0 locale ruoli 18/18: promozione live abilita inviti e retrocessione li nega immediatamente
 P0,accessi-privacy,passed,il server deve autorizzare la richiesta;,addendum:A0029,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Il sistema deve bloccare la pubblicazione oppure richiedere l’accesso.,usabilita:U0474,"Playwright mobile: loading held, disabled state, duplicate click, HTTP 201, confirmation; preview 9393a1aa"
-P0,accessi-privacy,pending,Impedire che il testo di un post privato compaia nella notifica di utenti non autorizzati.,globale:T-0069,
+P0,accessi-privacy,passed,Impedire che il testo di un post privato compaia nella notifica di utenti non autorizzati.,globale:T-0069,"push-audience 5/5: un post privato non produce notifiche per pubblico, familiari o altri viaggiatori"
 P0,accessi-privacy,pending,Impedire il riutilizzo di una sessione rubata.,globale:T-0036,
 P0,accessi-privacy,passed,impossibilità di aprire documenti prima della verifica della sessione;,addendum:A0318,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,impossibilità di utilizzare il ruolo conservato localmente come autorizzazione;,addendum:A0319,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
@@ -119,7 +119,7 @@ P0,accessi-privacy,pending,Inserire la password corretta.,usabilita:U0009,
 P0,accessi-privacy,pending,Inserire password corretta.,usabilita:U0041;usabilita:U0625,
 P0,accessi-privacy,passed,Inserire password errata.,usabilita:U0043,ui-critical produzione mobile: codice-sbagliato mostra Codice non corretto e resta Pubblico
 P0,accessi-privacy,pending,Inserire spazi prima e dopo la password.,usabilita:U0047,
-P0,accessi-privacy,pending,Invio della notifica agli utenti autorizzati.,usabilita:U0165,
+P0,accessi-privacy,passed,Invio della notifica agli utenti autorizzati.,usabilita:U0165,"push-audience 5/5: family raggiunge ospiti/profili, group soltanto profili, private nessun non proprietario"
 P0,accessi-privacy,pending,invito creato;,globale:T-1566,
 P0,accessi-privacy,passed,invito già utilizzato.,usabilita:U0513,extended-p0-auth-lifecycle 28/28: riuso negato dal server
 P0,accessi-privacy,passed,invito scaduto;,usabilita:U0512,extended-p0-auth-lifecycle 28/28: invito scaduto negato con HTTP 403
@@ -164,7 +164,7 @@ P0,accessi-privacy,pending,"non deve vedere posizioni, salvo autorizzazione espl
 P0,accessi-privacy,passed,Non inserire token in query string.,addendum:A0346,Playwright invite URL cleanup and persisted session without URL token; preview a4b05356; 2026-08-04
 P0,accessi-privacy,passed,Non lasciare documenti privati nella cache.,globale:T-1623,public-cache e security-surface L1: Service Worker esclude dati privati e API private sono no-store
 P0,accessi-privacy,passed,non mostrare temporaneamente documenti prima del controllo della sessione;,addendum:A0294,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
-P0,accessi-privacy,pending,Non mostrare testo di post riservati a utenti non autorizzati.,globale:T-1356,
+P0,accessi-privacy,passed,Non mostrare testo di post riservati a utenti non autorizzati.,globale:T-1356,push-audience 5/5 e production-smoke: feed e notifiche filtrano i contenuti per visibilità
 P0,accessi-privacy,pending,Non registrare token nei log.,addendum:A0347,
 P0,accessi-privacy,passed,non riceve log non autorizzati.,addendum:A0153,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,non riceve posizioni private;,addendum:A0144,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
@@ -174,8 +174,8 @@ P0,accessi-privacy,passed,Non riutilizzare token già revocati.,addendum:A0345,L
 P0,accessi-privacy,pending,non utilizzare la password comune per aggirare il rifiuto.,addendum:A0274,
 P0,accessi-privacy,pending,Notifica per invito personale.,globale:T-0085,
 P0,accessi-privacy,pending,"Notifica per posizione condivisa, soltanto se autorizzata.",globale:T-0087,
-P0,accessi-privacy,pending,notifiche autorizzate correttamente;,globale:T-1793,
-P0,accessi-privacy,pending,Notifiche inviate soltanto agli utenti autorizzati a vedere il post.,globale:T-0070,
+P0,accessi-privacy,passed,notifiche autorizzate correttamente;,globale:T-1793,push-audience 5/5: autorizzazione calcolata lato Worker prima di costruire ogni push
+P0,accessi-privacy,passed,Notifiche inviate soltanto agli utenti autorizzati a vedere il post.,globale:T-0070,"push-audience 5/5: matrice public/family/group/private verificata per pubblico, ospite e profilo"
 P0,accessi-privacy,pending,nuove funzioni basate sulla sessione;,addendum:A0400,
 P0,accessi-privacy,passed,"offrire accesso o collegamento del profilo, se appropriato;",addendum:A0270,"TypeScript JSX inventory: 115 interactive elements, zero missing handlers/empty links; Playwright credential flow"
 P0,accessi-privacy,pending,Ogni invito deve essere collegato a un profilo esistente.,globale:T-1017,
@@ -290,7 +290,7 @@ P0,accessi-privacy,passed,Verificare che le sessioni rimangano valide o siano re
 P0,accessi-privacy,passed,Verificare che pagine pubbliche eventualmente incorporabili siano separate da quelle private.,globale:T-1490,production-smoke live: HTML limitato alla stessa origine; API private con frame-ancestors none e no-store
 P0,accessi-privacy,pending,Verificare contenuti autorizzati.,usabilita:U0096,
 P0,accessi-privacy,passed,Verificare creazione della sessione.,usabilita:U0406,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P0,accessi-privacy,pending,Verificare dati dopo revoca della sessione.,globale:T-1625,
+P0,accessi-privacy,passed,Verificare dati dopo revoca della sessione.,globale:T-1625,auth-lifecycle 32/32: token revocato restituisce 401 e tutte le sottoscrizioni push del profilo vengono eliminate
 P0,accessi-privacy,pending,Verificare eliminazione degli inviti.,globale:T-1331,
 P0,accessi-privacy,passed,Verificare eliminazione delle sessioni.,globale:T-1335,extended-p0-auth-lifecycle 28/28: dispositivo revocato scompare dall’elenco delle sessioni attive
 P0,accessi-privacy,pending,Verificare emissione di un nuovo token.,addendum:A0338,
@@ -305,7 +305,7 @@ P0,accessi-privacy,pending,Verificare mantenimento della sessione.,globale:T-031
 P0,accessi-privacy,pending,Verificare messaggio di accesso riuscito.,usabilita:U0042,
 P0,accessi-privacy,pending,Verificare nessun URL permanente condivisibile senza sessione.,globale:T-1006,
 P0,accessi-privacy,passed,Verificare privacy dei dati sul profilo pubblico.,globale:T-0359,production-smoke: nessun campo privato nei profili pubblici
-P0,accessi-privacy,pending,Verificare privacy del testo mostrato sul blocco schermo.,globale:T-0532,
+P0,accessi-privacy,passed,Verificare privacy del testo mostrato sul blocco schermo.,globale:T-0532,push-audience 5/5: testo group/private escluso dalle sottoscrizioni pubbliche o familiari non autorizzate
 P0,accessi-privacy,pending,Verificare quale invito rimane valido.,globale:T-0789,
 P0,accessi-privacy,pending,Verificare revoca automatica di tutte le sessioni del profilo.,globale:T-0772,
 P0,accessi-privacy,pending,Verificare richiesta di nuovo accesso.,globale:T-0773,

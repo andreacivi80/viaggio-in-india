@@ -53,6 +53,16 @@ test("il collaudo UI usa soltanto la coppia QA isolata", async () => {
   assert.match(uiCritical, /viaggio-in-india-2026-qa\\\.pages\\\.dev/);
 });
 
+test("tutte le suite scriventi rifiutano il dominio ufficiale", async () => {
+  const smoke = await readFile(new URL("../tests/production-smoke.test.mjs", import.meta.url), "utf8");
+  assert.match(smoke, /const canMutate =/);
+  assert.match(smoke, /viaggio-in-india-2026-qa\.pages\.dev/);
+  assert.match(smoke, /skip: !canMutate/);
+  const authenticated = await readFile(new URL("../scripts/run-authenticated-qa.ps1", import.meta.url), "utf8");
+  assert.match(authenticated, /viaggio-in-india-2026-qa\\\.pages\\\.dev/);
+  assert.match(authenticated, /Protezione dati:/);
+});
+
 test("il deploy QA usa obbligatoriamente i binding QA", async () => {
   const packageSource = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
   const command = packageSource.scripts["deploy:qa"];
@@ -70,4 +80,12 @@ test("il deploy QA usa obbligatoriamente i binding QA", async () => {
   const sessionDeploy = await readFile(new URL("../scripts/deploy-cloudflare-session.ps1", import.meta.url), "utf8");
   assert.match(sessionDeploy, /deploy-qa\.ps1/);
   assert.doesNotMatch(sessionDeploy, /--project-name viaggio-in-india-2026-qa/);
+  assert.match(sessionDeploy, /wait-deployment-ready\.ps1/);
+  assert.match(sessionDeploy, /viaggio-in-india-2026-qa\.pages\.dev/);
+  assert.match(sessionDeploy, /viaggio-in-india-2026\.pages\.dev/);
+  const readiness = await readFile(new URL("../scripts/wait-deployment-ready.ps1", import.meta.url), "utf8");
+  assert.match(readiness, /api\/health/);
+  assert.match(readiness, /api\/private/);
+  assert.match(readiness, /consecutivePasses -ge 2/);
+  assert.match(readiness, /Contains\(\$ExpectedVersion\)/);
 });

@@ -16,8 +16,12 @@ try {
     throw "Configurazione QA non valida: deploy interrotto"
   }
 
-  & npx wrangler pages deploy dist --branch main --cwd $deployRoot --commit-dirty=true
+  $deployOutput = & npx wrangler pages deploy dist --branch main --cwd $deployRoot --commit-dirty=true 2>&1
+  $deployOutput | ForEach-Object { Write-Output $_ }
   if ($LASTEXITCODE -ne 0) { throw "Deploy QA non riuscito" }
+  $deploymentUrl = [regex]::Match(($deployOutput | Out-String), 'https://[a-z0-9-]+\.viaggio-in-india-2026-qa\.pages\.dev').Value
+  if (-not $deploymentUrl) { throw "URL del deployment QA non rilevato" }
+  Write-Output "DEPLOYMENT_URL=$deploymentUrl"
 }
 finally {
   $resolvedDeploy = [IO.Path]::GetFullPath($deployRoot)

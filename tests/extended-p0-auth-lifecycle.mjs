@@ -75,24 +75,38 @@ assert.equal((await request("/api/auth/session", { headers: bearer(winnerBody.to
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 200);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 200);
 
+const subscribe = (token, endpoint) => request("/api/push/subscribe", {
+  method: "POST",
+  headers: jsonHeaders(token),
+  body: JSON.stringify({
+    subscription: { endpoint, keys: { p256dh: "qa-p256dh", auth: "qa-auth" } },
+  }),
+});
+assert.equal((await subscribe(coordinatorToken, "https://push.example/telefono-coordinatore")).status, 200);
+
 const devicesResponse = await request("/api/auth/devices", { headers: bearer(coordinatorToken) });
 assert.equal(devicesResponse.status, 200);
 const devicesBeforeRevoke = (await devicesResponse.json()).devices;
 assert.equal(devicesBeforeRevoke.length, 2);
 assert.equal(devicesBeforeRevoke.filter((device) => device.current).length, 1);
 assert.ok(devicesBeforeRevoke.some((device) => device.device_id === coordinatorSecondDeviceId));
-assert.equal((await request(`/api/auth/devices/${coordinatorSecondDeviceId}`, {
+const revokeDeviceResponse = await request(`/api/auth/devices/${coordinatorSecondDeviceId}`, {
   method: "DELETE",
   headers: bearer(coordinatorToken),
-})).status, 200);
+});
+assert.equal(revokeDeviceResponse.status, 200);
+assert.equal((await revokeDeviceResponse.json()).push_subscriptions_revoked, 1);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 200);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 401);
 const devicesAfterRevoke = await (await request("/api/auth/devices", { headers: bearer(coordinatorToken) })).json();
 assert.equal(devicesAfterRevoke.devices.length, 1);
 
-assert.equal((await request("/api/auth/logout-all", { method: "POST", headers: bearer(coordinatorToken) })).status, 200);
+assert.equal((await subscribe(coordinatorToken, "https://push.example/telefono-rimasto")).status, 200);
+const logoutAllResponse = await request("/api/auth/logout-all", { method: "POST", headers: bearer(coordinatorToken) });
+assert.equal(logoutAllResponse.status, 200);
+assert.equal((await logoutAllResponse.json()).push_subscriptions_revoked, 1);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 401);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 401);
 
-console.log("P0_AUTH_LIFECYCLE=28/28");
+console.log("P0_AUTH_LIFECYCLE=32/32");
 process.exit(0);

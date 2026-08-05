@@ -17,6 +17,11 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+$parsedBaseUrl = [Uri]$BaseUrl
+if ($parsedBaseUrl.Scheme -ne "https" -or $parsedBaseUrl.Host -notmatch '(^|\.)viaggio-in-india-2026-qa\.pages\.dev$') {
+  throw "Protezione dati: i collaudi autenticati scriventi possono essere eseguiti soltanto sul progetto QA isolato."
+}
+
 function New-QaToken {
   return ([guid]::NewGuid().ToString("N") + [guid]::NewGuid().ToString("N"))
 }

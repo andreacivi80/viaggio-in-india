@@ -363,6 +363,20 @@ function canViewPost(post, session = null, guest = null) {
     return Boolean(session && session.profile_id === post.profile_id);
   return false;
 }
+export function canNotifySubscriber(subscription, payload) {
+  const hasProfile = Boolean(subscription.profile_id);
+  const hasGuest = Boolean(subscription.guest_visitor_id);
+  if (payload.author_profile_id && subscription.profile_id === payload.author_profile_id)
+    return false;
+  if (payload.author_guest_id && subscription.guest_visitor_id === payload.author_guest_id)
+    return false;
+  if (!payload.visibility || payload.visibility === "public") return true;
+  if (payload.visibility === "family") return hasProfile || hasGuest;
+  if (payload.visibility === "group") return hasProfile;
+  if (payload.visibility === "private")
+    return subscription.profile_id === payload.author_profile_id;
+  return false;
+}
 async function notifySubscribers(env, payload) {
   if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY)
     return { configured: false, sent: 0, failed: 0, errors: ["Chiavi push mancanti"] };
@@ -374,20 +388,8 @@ async function notifySubscribers(env, payload) {
   const subscriptions = await env.DB.prepare(
     "SELECT id,endpoint,p256dh,auth,profile_id,guest_visitor_id FROM push_subscriptions",
   ).all();
-  const authorizedSubscriptions = subscriptions.results.filter((subscription) => {
-    const hasProfile = Boolean(subscription.profile_id);
-    const hasGuest = Boolean(subscription.guest_visitor_id);
-    if (payload.author_profile_id && subscription.profile_id === payload.author_profile_id)
-      return false;
-    if (payload.author_guest_id && subscription.guest_visitor_id === payload.author_guest_id)
-      return false;
-    if (!payload.visibility || payload.visibility === "public") return true;
-    if (payload.visibility === "family") return hasProfile || hasGuest;
-    if (payload.visibility === "group") return hasProfile;
-    if (payload.visibility === "private")
-      return subscription.profile_id === payload.author_profile_id;
-    return false;
-  });
+  const authorizedSubscriptions = subscriptions.results.filter((subscription) =>
+    canNotifySubscriber(subscription, payload));
   const deliveries = await Promise.all(
     authorizedSubscriptions.map(async (subscription) => {
       try {
@@ -879,13 +881,20 @@ export async function onRequest(context) {
       const token = authorization.startsWith("Bearer ")
         ? authorization.slice(7).trim()
         : "";
-      if (token)
-        await env.DB.prepare(
+      const session = token ? await sessionFromRequest(request, env) : null;
+      let disabledPushSubscriptions = 0;
+      if (token) {
+        const statements = [env.DB.prepare(
           "UPDATE auth_sessions SET revoked_at=? WHERE token_hash=?",
-        )
-          .bind(now(), await tokenHash(token))
-          .run();
-      return json({ ok: true });
+        ).bind(now(), await tokenHash(token))];
+        if (session)
+          statements.push(env.DB.prepare(
+            "DELETE FROM push_subscriptions WHERE profile_id=?",
+          ).bind(session.profile_id));
+        const results = await env.DB.batch(statements);
+        disabledPushSubscriptions = Number(results[1]?.meta?.changes || 0);
+      }
+      return json({ ok: true, push_subscriptions_revoked: disabledPushSubscriptions });
     }
     if (request.method === "GET" && path === "auth/devices") {
       const session = await sessionFromRequest(request, env);
@@ -915,17 +924,30 @@ export async function onRequest(context) {
         .bind(now(), deviceId, session.profile_id)
         .run();
       if (!result.meta?.changes) return json({ error: "Dispositivo non trovato" }, 404);
-      return json({ ok: true, current_revoked: deviceId === session.device_id });
+      const pushResult = await env.DB.prepare(
+        "DELETE FROM push_subscriptions WHERE profile_id=?",
+      ).bind(session.profile_id).run();
+      return json({
+        ok: true,
+        current_revoked: deviceId === session.device_id,
+        push_subscriptions_revoked: Number(pushResult.meta?.changes || 0),
+      });
     }
     if (request.method === "POST" && path === "auth/logout-all") {
       const session = await sessionFromRequest(request, env);
       if (!session) return json({ error: "Sessione non valida" }, 401);
-      await env.DB.prepare(
-        "UPDATE auth_sessions SET revoked_at=? WHERE profile_id=? AND revoked_at IS NULL",
-      )
-        .bind(now(), session.profile_id)
-        .run();
-      return json({ ok: true });
+      const results = await env.DB.batch([
+        env.DB.prepare(
+          "UPDATE auth_sessions SET revoked_at=? WHERE profile_id=? AND revoked_at IS NULL",
+        ).bind(now(), session.profile_id),
+        env.DB.prepare(
+          "DELETE FROM push_subscriptions WHERE profile_id=?",
+        ).bind(session.profile_id),
+      ]);
+      return json({
+        ok: true,
+        push_subscriptions_revoked: Number(results[1]?.meta?.changes || 0),
+      });
     }
     if (request.method === "POST" && path === "auth/invites") {
       const session = await sessionFromRequest(request, env);

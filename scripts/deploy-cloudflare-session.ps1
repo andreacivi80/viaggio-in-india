@@ -38,16 +38,29 @@ $env:CLOUDFLARE_API_TOKEN = $fresh.access_token
 if (-not $SkipBuild) {
   npm run build
 }
+$expectedVersion = (Get-Content -LiteralPath (Join-Path $PSScriptRoot "..\package.json") -Raw | ConvertFrom-Json).version
+$readyScript = Join-Path $PSScriptRoot "wait-deployment-ready.ps1"
 
 if ($Target -in @("qa", "both")) {
-  & powershell -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass `
+  $qaOutput = & powershell -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass `
     -File (Join-Path $PSScriptRoot "deploy-qa.ps1")
+  $qaOutput | ForEach-Object { Write-Output $_ }
   if ($LASTEXITCODE -ne 0) { throw "Deploy QA isolato non riuscito" }
+  $qaUrl = [regex]::Match(($qaOutput | Out-String), 'DEPLOYMENT_URL=(https://[^\s]+)').Groups[1].Value
+  if (-not $qaUrl) { throw "URL QA non disponibile per la verifica" }
+  & $readyScript -BaseUrl $qaUrl -ExpectedVersion $expectedVersion
+  & $readyScript -BaseUrl "https://viaggio-in-india-2026-qa.pages.dev" -ExpectedVersion $expectedVersion
 }
 
 if ($Target -in @("production", "both")) {
-  npx --yes wrangler@4.118.0 pages deploy dist `
+  $productionOutput = & npx --yes wrangler@4.118.0 pages deploy dist `
     --project-name viaggio-in-india-2026 `
     --branch main `
-    --commit-dirty=true
+    --commit-dirty=true 2>&1
+  $productionOutput | ForEach-Object { Write-Output $_ }
+  if ($LASTEXITCODE -ne 0) { throw "Deploy produzione non riuscito" }
+  $productionUrl = [regex]::Match(($productionOutput | Out-String), 'https://[a-z0-9-]+\.viaggio-in-india-2026\.pages\.dev').Value
+  if (-not $productionUrl) { throw "URL del deployment produzione non rilevato" }
+  & $readyScript -BaseUrl $productionUrl -ExpectedVersion $expectedVersion
+  & $readyScript -BaseUrl "https://viaggio-in-india-2026.pages.dev" -ExpectedVersion $expectedVersion
 }

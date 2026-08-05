@@ -156,4 +156,11 @@
   ,{ "control": "Utilizzare token revocato.", "evidence": "extended-p0-auth-lifecycle 28/28: token revocato negato con HTTP 401" }
   ,{ "control": "Utilizzare un invito già consumato.", "evidence": "extended-p0-auth-lifecycle 28/28: riuso dell’invito consumato negato" }
   ,{ "control": "Utilizzare un invito scaduto.", "evidence": "extended-p0-auth-lifecycle 28/28: invito oltre expires_at negato" }
+  ,{ "control": "Impedire che il testo di un post privato compaia nella notifica di utenti non autorizzati.", "evidence": "push-audience 5/5: un post privato non produce notifiche per pubblico, familiari o altri viaggiatori" }
+  ,{ "control": "Notifiche inviate soltanto agli utenti autorizzati a vedere il post.", "evidence": "push-audience 5/5: matrice public/family/group/private verificata per pubblico, ospite e profilo" }
+  ,{ "control": "Non mostrare testo di post riservati a utenti non autorizzati.", "evidence": "push-audience 5/5 e production-smoke: feed e notifiche filtrano i contenuti per visibilità" }
+  ,{ "control": "Invio della notifica agli utenti autorizzati.", "evidence": "push-audience 5/5: family raggiunge ospiti/profili, group soltanto profili, private nessun non proprietario" }
+  ,{ "control": "notifiche autorizzate correttamente;", "evidence": "push-audience 5/5: autorizzazione calcolata lato Worker prima di costruire ogni push" }
+  ,{ "control": "Verificare privacy del testo mostrato sul blocco schermo.", "evidence": "push-audience 5/5: testo group/private escluso dalle sottoscrizioni pubbliche o familiari non autorizzate" }
+  ,{ "control": "Verificare dati dopo revoca della sessione.", "evidence": "auth-lifecycle 32/32: token revocato restituisce 401 e tutte le sottoscrizioni push del profilo vengono eliminate" }
 ]

@@ -3,6 +3,11 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const base = (process.env.TEST_BASE_URL || "https://viaggio-in-india-2026.pages.dev").replace(/\/$/, "");
+const targetUrl = new URL(base);
+const qaHost = "viaggio-in-india-2026-qa.pages.dev";
+const canMutate = ["127.0.0.1", "localhost"].includes(targetUrl.hostname)
+  || targetUrl.hostname === qaHost
+  || targetUrl.hostname.endsWith(`.${qaHost}`);
 const packageData = JSON.parse(await readFile(new URL("../package.json", import.meta.url)));
 const expectedVersion = process.env.TEST_EXPECTED_VERSION || "";
 const qaRunId = process.env.QA_RUN_ID || "locale";
@@ -129,7 +134,7 @@ test("commenti e reazioni richiedono un'identità server", async () => {
   );
 });
 
-test("identità ospite valida e richieste vuote sono gestite senza scritture", async () => {
+test("identità ospite valida e richieste vuote sono gestite senza scritture", { skip: !canMutate }, async () => {
   const guestResponse = await request("/api/auth/guest", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -149,7 +154,7 @@ test("identità ospite valida e richieste vuote sono gestite senza scritture", a
   assert.equal(emptyResponse.status, 400);
 });
 
-test("lo stesso invio non crea due commenti né inverte due volte una reazione", async () => {
+test("lo stesso invio non crea due commenti né inverte due volte una reazione", { skip: !canMutate }, async () => {
   const guestResponse = await request("/api/auth/guest", {
     method: "POST",
     headers: { "content-type": "application/json" },
@@ -230,7 +235,7 @@ test("lo stesso invio non crea due commenti né inverte due volte una reazione",
 });
 
 test("retry autenticati non duplicano pubblicazioni e documenti", {
-  skip: !process.env.QA_SESSION_TOKEN || !process.env.QA_PROFILE_ID,
+  skip: !canMutate || !process.env.QA_SESSION_TOKEN || !process.env.QA_PROFILE_ID,
 }, async () => {
   const authorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
   const profileId = process.env.QA_PROFILE_ID;
@@ -293,7 +298,7 @@ test("retry autenticati non duplicano pubblicazioni e documenti", {
 });
 
 test("il proprietario vede e revoca un dispositivo secondario", {
-  skip: !process.env.QA_SESSION_TOKEN || !process.env.QA_SECOND_DEVICE_ID,
+  skip: !canMutate || !process.env.QA_SESSION_TOKEN || !process.env.QA_SECOND_DEVICE_ID,
 }, async () => {
   const authorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
   const listResponse = await request("/api/auth/devices", {
@@ -344,7 +349,7 @@ async function multipartUpload({ authorization, scope, visibility = "private", n
 }
 
 test("caricamenti grandi completi per post e documenti, streaming e pulizia", {
-  skip: !process.env.QA_SESSION_TOKEN || !process.env.QA_PROFILE_ID,
+  skip: !canMutate || !process.env.QA_SESSION_TOKEN || !process.env.QA_PROFILE_ID,
 }, async () => {
   const authorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
   const bytes = new Uint8Array(9 * 1024 * 1024);
@@ -425,7 +430,7 @@ test("caricamenti grandi completi per post e documenti, streaming e pulizia", {
 });
 
 test("visibilità, identità e proprietà resistono alle richieste falsificate", {
-  skip: !process.env.QA_SESSION_TOKEN || !process.env.QA_PROFILE_ID || !process.env.QA_SECOND_SESSION_TOKEN || !process.env.QA_SECOND_PROFILE_ID,
+  skip: !canMutate || !process.env.QA_SESSION_TOKEN || !process.env.QA_PROFILE_ID || !process.env.QA_SECOND_SESSION_TOKEN || !process.env.QA_SECOND_PROFILE_ID,
 }, async () => {
   const ownerAuthorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
   const otherAuthorization = `Bearer ${process.env.QA_SECOND_SESSION_TOKEN}`;
@@ -520,7 +525,7 @@ test("visibilità, identità e proprietà resistono alle richieste falsificate",
 });
 
 test("invito personale monouso collega un dispositivo e il logout revoca la sessione", {
-  skip: !process.env.QA_SESSION_TOKEN || !process.env.QA_COORDINATOR_TOKEN || !process.env.QA_UNCLAIMED_PROFILE_ID,
+  skip: !canMutate || !process.env.QA_SESSION_TOKEN || !process.env.QA_COORDINATOR_TOKEN || !process.env.QA_UNCLAIMED_PROFILE_ID,
 }, async () => {
   const travelerAuthorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
   const coordinatorAuthorization = `Bearer ${process.env.QA_COORDINATOR_TOKEN}`;
@@ -558,7 +563,7 @@ test("invito personale monouso collega un dispositivo e il logout revoca la sess
 });
 
 test("sessioni scadute o inattive non aprono dati privati", {
-  skip: !process.env.QA_EXPIRED_SESSION_TOKEN,
+  skip: !canMutate || !process.env.QA_EXPIRED_SESSION_TOKEN,
 }, async () => {
   const authorization = `Bearer ${process.env.QA_EXPIRED_SESSION_TOKEN}`;
   assert.equal((await request("/api/auth/session", { headers: { authorization } })).status, 401);
@@ -566,7 +571,7 @@ test("sessioni scadute o inattive non aprono dati privati", {
 });
 
 test("limiti antispam bloccano raffiche di commenti e reazioni", {
-  skip: process.env.RUN_ABUSE !== "true" || !process.env.QA_SESSION_TOKEN,
+  skip: !canMutate || process.env.RUN_ABUSE !== "true" || !process.env.QA_SESSION_TOKEN,
 }, async () => {
   const authorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
   const postForm = new FormData();
@@ -616,7 +621,7 @@ test("limiti antispam bloccano raffiche di commenti e reazioni", {
 });
 
 test("due dispositivi vedono subito post, commento, reazione ed eliminazione", {
-  skip: !process.env.QA_SESSION_TOKEN || !process.env.QA_SECOND_SESSION_TOKEN,
+  skip: !canMutate || !process.env.QA_SESSION_TOKEN || !process.env.QA_SECOND_SESSION_TOKEN,
 }, async () => {
   const ownerAuthorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
   const otherAuthorization = `Bearer ${process.env.QA_SECOND_SESSION_TOKEN}`;
@@ -663,7 +668,7 @@ test("due dispositivi vedono subito post, commento, reazione ed eliminazione", {
 });
 
 test("dieci pubblicazioni concorrenti restano uniche e complete", {
-  skip: process.env.RUN_LOAD !== "true" || !process.env.QA_SESSION_TOKEN,
+  skip: !canMutate || process.env.RUN_LOAD !== "true" || !process.env.QA_SESSION_TOKEN,
 }, async () => {
   const authorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
   const operations = Array.from({ length: 10 }, () => crypto.randomUUID());
@@ -688,7 +693,7 @@ test("dieci pubblicazioni concorrenti restano uniche e complete", {
 });
 
 test("file camuffati e firme non coerenti vengono respinti dal server", {
-  skip: !process.env.QA_SESSION_TOKEN || !process.env.QA_PROFILE_ID,
+  skip: !canMutate || !process.env.QA_SESSION_TOKEN || !process.env.QA_PROFILE_ID,
 }, async () => {
   const authorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
   const maliciousPost = new FormData();
@@ -747,7 +752,7 @@ test("tutte le fotografie delle città sono locali e disponibili", async () => {
   }
 });
 
-test("rate limiting blocca una raffica di accessi errati", { skip: process.env.RUN_ABUSE !== "true" }, async () => {
+test("rate limiting blocca una raffica di accessi errati", { skip: !canMutate || process.env.RUN_ABUSE !== "true" }, async () => {
   const statuses = [];
   for (let index = 0; index < 12; index += 1) {
     const response = await request("/api/auth/group", {

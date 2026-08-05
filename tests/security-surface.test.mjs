@@ -55,6 +55,12 @@ test("sessioni revocate, scadute o inattive non vengono accettate", () => {
   assert.match(worker, /UPDATE auth_sessions SET revoked_at=\?/);
 });
 
+test("revocare una sessione disattiva anche le notifiche del profilo", () => {
+  const revocationDeletes = worker.match(/DELETE FROM push_subscriptions WHERE profile_id=\?/g) || [];
+  assert.ok(revocationDeletes.length >= 3, "logout, revoca dispositivo e logout totale devono disattivare le push");
+  assert.match(worker, /push_subscriptions_revoked/);
+});
+
 test("invito personale e registrazione sono limitati contro gli abusi", () => {
   assert.match(worker, /rateLimit\(env, request, "auth-register", 8, 300\)/);
   assert.match(worker, /rateLimit\(env, request, "auth-claim", 20, 60\)/);
