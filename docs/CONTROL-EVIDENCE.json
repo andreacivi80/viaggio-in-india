@@ -172,4 +172,8 @@
   ,{ "control": "un profilo è stato eliminato;", "evidence": "profile-deletion 40/40: profilo assente dallo stato pubblico e da ogni risorsa privata dopo il DELETE" }
   ,{ "control": "Cambiare ruolo e rinnovare la sessione.", "evidence": "roles 20/20: promozione e retrocessione sono rilevate dal token già aperto; l’ultimo coordinatore non può essere retrocesso" }
   ,{ "control": "Verificare che il Coordinatore gestisca i profili autorizzati.", "evidence": "roles 20/20: creazione, modifica, promozione, retrocessione e inviti sono autorizzati lato server" }
+  ,{ "control": "Aggiungere rinnovo sicuro della sessione.", "evidence": "auth-lifecycle 35/35: solo un token ancora valido estende expires_at; token alterato o revocato riceve 401" }
+  ,{ "control": "Ridurre la durata della sessione, attualmente prevista fino a 90 giorni.", "evidence": "security-surface + auth-lifecycle 35/35: durata massima ridotta a 30 giorni e inattività massima a 21 giorni" }
+  ,{ "control": "Registrare data, ora e ultimo utilizzo della sessione.", "evidence": "auth-lifecycle 35/35: created_at, last_used_at ed expires_at sono registrati e mostrati nell’elenco dispositivi" }
+  ,{ "control": "Verificare mantenimento della sessione.", "evidence": "auth-lifecycle 35/35: rinnovo mantiene lo stesso token valido sul dispositivo e aggiorna la scadenza oltre 29 giorni" }
 ]

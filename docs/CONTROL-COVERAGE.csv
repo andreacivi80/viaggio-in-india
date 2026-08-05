@@ -17,7 +17,7 @@ P0,accessi-privacy,pending,Accesso tramite SIM indiana.,globale:T-0652,
 P0,accessi-privacy,pending,accesso;,globale:T-1555,
 P0,accessi-privacy,pending,Aggiungere consenso privacy esplicito.,globale:T-0043,
 P0,accessi-privacy,passed,Aggiungere elenco dei dispositivi autorizzati.,globale:T-0030,production-smoke: elenco dispositivi include corrente e secondario
-P0,accessi-privacy,pending,Aggiungere rinnovo sicuro della sessione.,globale:T-0032,
+P0,accessi-privacy,passed,Aggiungere rinnovo sicuro della sessione.,globale:T-0032,auth-lifecycle 35/35: solo un token ancora valido estende expires_at; token alterato o revocato riceve 401
 P0,accessi-privacy,pending,aggiunta successiva di fotografie autorizzate.,globale:T-1369,
 P0,accessi-privacy,passed,Apertura documenti autorizzati.,usabilita:U0659,P0 locale documenti 12/12 e concorrenza 18/18: media privata aperta soltanto da proprietario/coordinatore
 P0,accessi-privacy,passed,Apertura documento autorizzato.,globale:T-1201,P0 locale documenti: HEAD 200 per proprietario e coordinatore autenticati
@@ -198,7 +198,7 @@ P0,accessi-privacy,passed,Pubblico: nessun accesso.,globale:T-0484,"ui-critical 
 P0,accessi-privacy,pending,quali contenuti privati esistono.,addendum:A0359,
 P0,accessi-privacy,pending,quali inviti esistono;,addendum:A0357,
 P0,accessi-privacy,pending,quali sessioni sono attive;,addendum:A0358,
-P0,accessi-privacy,pending,"Registrare data, ora e ultimo utilizzo della sessione.",globale:T-0037,
+P0,accessi-privacy,passed,"Registrare data, ora e ultimo utilizzo della sessione.",globale:T-0037,"auth-lifecycle 35/35: created_at, last_used_at ed expires_at sono registrati e mostrati nell’elenco dispositivi"
 P0,accessi-privacy,passed,registri nome accessibile;,addendum:A0201,"TypeScript JSX inventory: 115 interactive elements, zero missing handlers/empty links; Playwright credential flow"
 P0,accessi-privacy,pending,"regola di precedenza tra password, sessione e dati locali;",addendum:A0467,
 P0,accessi-privacy,passed,reinviarla con token differente;,addendum:A0326,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
@@ -211,7 +211,7 @@ P0,accessi-privacy,pending,Ricezione invito.,globale:T-1233,
 P0,accessi-privacy,pending,Richiedere invito personale.,usabilita:U0483,
 P0,accessi-privacy,passed,Richiedere l’invito personale per collegare un dispositivo a un profilo.,globale:T-0038,QA 1.31.0: nuovo dispositivo collegato tramite invito personale monouso
 P0,accessi-privacy,pending,Richiesta di nuovo accesso.,usabilita:U0488,
-P0,accessi-privacy,pending,"Ridurre la durata della sessione, attualmente prevista fino a 90 giorni.",globale:T-0039,
+P0,accessi-privacy,passed,"Ridurre la durata della sessione, attualmente prevista fino a 90 giorni.",globale:T-0039,security-surface + auth-lifecycle 35/35: durata massima ridotta a 30 giorni e inattività massima a 21 giorni
 P0,accessi-privacy,pending,Riprovare dopo autorizzazione dalle impostazioni.,usabilita:U0064,
 P0,accessi-privacy,pending,rispetta le autorizzazioni;,usabilita:U0684,
 P0,accessi-privacy,passed,Risultato atteso: accesso negato.,globale:T-0331;usabilita:U0409,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
@@ -301,7 +301,7 @@ P0,accessi-privacy,pending,"Verificare intestazione private, no-store.",globale:
 P0,accessi-privacy,pending,Verificare invalidazione dell’eventuale token temporaneo precedente.,addendum:A0339,
 P0,accessi-privacy,pending,Verificare la regola prevista per il riutilizzo del token.,globale:T-0770,
 P0,accessi-privacy,pending,"Verificare mantenimento dell’accesso, se previsto.",usabilita:U0052,
-P0,accessi-privacy,pending,Verificare mantenimento della sessione.,globale:T-0318,
+P0,accessi-privacy,passed,Verificare mantenimento della sessione.,globale:T-0318,auth-lifecycle 35/35: rinnovo mantiene lo stesso token valido sul dispositivo e aggiorna la scadenza oltre 29 giorni
 P0,accessi-privacy,pending,Verificare messaggio di accesso riuscito.,usabilita:U0042,
 P0,accessi-privacy,pending,Verificare nessun URL permanente condivisibile senza sessione.,globale:T-1006,
 P0,accessi-privacy,passed,Verificare privacy dei dati sul profilo pubblico.,globale:T-0359,production-smoke: nessun campo privato nei profili pubblici

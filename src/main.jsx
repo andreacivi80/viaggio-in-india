@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.40.0",
+const VERSION = "1.41.0",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -1895,6 +1895,16 @@ function App() {
             "india-visitor-name",
             `${result.profile.name} ${result.profile.surname || ""}`.trim(),
           );
+          const expiresAt = Date.parse(result.expires_at || "");
+          if (Number.isFinite(expiresAt) && expiresAt - Date.now() < 7 * 24 * 60 * 60 * 1000) {
+            const refreshed = await fetch(`${API}/auth/refresh`, {
+              method: "POST",
+              cache: "no-store",
+              headers: sessionHeaders(sessionToken),
+            });
+            if (!refreshed.ok && [401, 403].includes(refreshed.status))
+              throw Object.assign(new Error("Sessione non valida"), { invalidSession: true });
+          }
           return;
         }
         if (![401, 403].includes(response.status)) return;
@@ -1907,7 +1917,15 @@ function App() {
         localStorage.removeItem("india-visitor-id");
         setSessionToken("");
         setSessionProfile(null);
-      } catch {
+      } catch (error) {
+        if (error?.invalidSession) {
+          localStorage.removeItem("india-session-token");
+          localStorage.removeItem("india-profile-id");
+          localStorage.removeItem("india-visitor-name");
+          localStorage.removeItem("india-role");
+          setSessionToken("");
+          setSessionProfile(null);
+        }
         // Un errore di rete non deve scollegare il viaggiatore: il controllo riprova.
       } finally {
         checking = false;

@@ -74,6 +74,10 @@ assert.equal((await request("/api/auth/session", { headers: bearer(winnerBody.to
 
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 200);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 200);
+const refreshResponse = await request("/api/auth/refresh", { method: "POST", headers: bearer(coordinatorToken) });
+assert.equal(refreshResponse.status, 200);
+assert.ok(Date.parse((await refreshResponse.json()).expires_at) - Date.now() > 29 * 24 * 60 * 60 * 1000);
+assert.equal((await request("/api/auth/refresh", { method: "POST", headers: bearer(mutatedSession) })).status, 401);
 
 const subscribe = (token, endpoint) => request("/api/push/subscribe", {
   method: "POST",
@@ -108,5 +112,5 @@ assert.equal((await logoutAllResponse.json()).push_subscriptions_revoked, 1);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 401);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 401);
 
-console.log("P0_AUTH_LIFECYCLE=32/32");
+console.log("P0_AUTH_LIFECYCLE=35/35");
 process.exit(0);

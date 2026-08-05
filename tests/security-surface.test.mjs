@@ -4,6 +4,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 
 const worker = await readFile("functions/api/[[path]].js", "utf8");
+const client = await readFile("src/main.jsx", "utf8");
 
 async function sourceFiles(directory) {
   const result = [];
@@ -53,6 +54,14 @@ test("sessioni revocate, scadute o inattive non vengono accettate", () => {
   assert.match(worker, /s\.revoked_at IS NULL AND s\.expires_at>\?/);
   assert.match(worker, /COALESCE\(s\.last_used_at,s\.created_at\)>\?/);
   assert.match(worker, /UPDATE auth_sessions SET revoked_at=\?/);
+});
+
+test("il rinnovo estende soltanto una sessione ancora valida e prossima alla scadenza", () => {
+  assert.match(worker, /request\.method === "POST" && path === "auth\/refresh"[\s\S]*?sessionFromRequest\(request, env\)/);
+  assert.match(worker, /UPDATE auth_sessions SET last_used_at=\?,expires_at=\?[\s\S]*?revoked_at IS NULL AND expires_at>\?/);
+  assert.match(worker, /const expiresAt = futureIso\(24 \* 30\)/);
+  assert.match(client, /expiresAt - Date\.now\(\) < 7 \* 24 \* 60 \* 60 \* 1000[\s\S]*?\/auth\/refresh/);
+  assert.doesNotMatch(worker, /path === "auth\/refresh"[\s\S]{0,1200}?return json\(\{[^}]*token/);
 });
 
 test("revocare una sessione disattiva anche le notifiche del profilo", () => {
