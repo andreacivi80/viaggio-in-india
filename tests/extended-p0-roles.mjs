@@ -4,10 +4,11 @@ const base = String(process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 const travelerId = process.env.QA_PROFILE_ID;
 const otherId = process.env.QA_SECOND_PROFILE_ID;
 const inviteTargetId = process.env.QA_UNCLAIMED_PROFILE_ID;
+const coordinatorId = process.env.QA_COORDINATOR_PROFILE_ID;
 const traveler = { authorization: `Bearer ${process.env.QA_SESSION_TOKEN}` };
 const coordinator = { authorization: `Bearer ${process.env.QA_COORDINATOR_TOKEN}` };
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
-if (!base || !travelerId || !otherId || !inviteTargetId) throw new Error("Ambiente QA P0 ruoli incompleto");
+if (!base || !travelerId || !otherId || !inviteTargetId || !coordinatorId) throw new Error("Ambiente QA P0 ruoli incompleto");
 
 const profileForm = (name, role) => {
   const form = new FormData();
@@ -89,4 +90,20 @@ const post = await postResponse.json();
 assert.notEqual(post.author_name, "Coordinatore falsificato");
 assert.equal((await request(`/api/posts/${post.id}`, { method: "DELETE", headers: traveler })).status, 200);
 
-console.log("P0_ROLES=13/13");
+const coordinatorPostForm = new FormData();
+coordinatorPostForm.set("visibility", "public");
+coordinatorPostForm.set("day_index", "-1");
+coordinatorPostForm.set("text", `P0 identità coordinatore ${crypto.randomUUID()}`);
+coordinatorPostForm.set("author_name", "Profilo diverso falsificato");
+const coordinatorPostResponse = await request("/api/posts", {
+  method: "POST",
+  headers: { ...coordinator, "x-idempotency-key": crypto.randomUUID(), "x-qa-silent": "true" },
+  body: coordinatorPostForm,
+});
+assert.equal(coordinatorPostResponse.status, 201);
+const coordinatorPost = await coordinatorPostResponse.json();
+assert.equal(coordinatorPost.profile_id, coordinatorId);
+assert.notEqual(coordinatorPost.author_name, "Profilo diverso falsificato");
+assert.equal((await request(`/api/posts/${coordinatorPost.id}`, { method: "DELETE", headers: coordinator })).status, 200);
+
+console.log("P0_ROLES=18/18");

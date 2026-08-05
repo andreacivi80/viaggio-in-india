@@ -1,3 +1,8 @@
+param(
+  [ValidateSet("all", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
+  [string]$Suite = "document-concurrency"
+)
+
 $ErrorActionPreference = "Stop"
 $runId = [guid]::NewGuid().ToString("N")
 $persistRoot = Join-Path ([IO.Path]::GetTempPath()) "india-document-concurrency-$runId"
@@ -12,8 +17,11 @@ function Get-TokenHash([string]$Token) {
 }
 
 $ownerId = "local-owner-$runId"
+$otherId = "local-other-$runId"
 $coordinatorId = "local-coordinator-$runId"
+$unclaimedId = "local-unclaimed-$runId"
 $ownerToken = New-QaToken
+$otherToken = New-QaToken
 $coordinatorToken = New-QaToken
 $created = [DateTime]::UtcNow.ToString("o")
 $expires = [DateTime]::UtcNow.AddHours(1).ToString("o")
@@ -22,13 +30,18 @@ try {
   New-Item -ItemType Directory -Path $persistRoot | Out-Null
   & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file db\schema.sql | Out-Null
   if ($LASTEXITCODE -ne 0) { throw "Schema D1 locale non riuscito" }
+  & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file db\migrations\0014_realtime_sync_triggers.sql | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw "Trigger sincronizzazione D1 locali non riusciti" }
 
   $sql = @"
 INSERT INTO profiles(id,name,surname,role,created_at) VALUES
 ('$ownerId','Proprietario','Locale','traveler','$created'),
-('$coordinatorId','Coordinatore','Locale','coordinator','$created');
+('$otherId','Secondo','Locale','traveler','$created'),
+('$coordinatorId','Coordinatore','Locale','coordinator','$created'),
+('$unclaimedId','Invitato','Locale','traveler','$created');
 INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES
 ('$(Get-TokenHash $ownerToken)','$ownerId','local-owner-device','Telefono proprietario locale','$created','$created','$expires',NULL),
+('$(Get-TokenHash $otherToken)','$otherId','local-other-device','Secondo telefono locale','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $coordinatorToken)','$coordinatorId','local-coordinator-device','Telefono coordinatore locale','$created','$created','$expires',NULL);
 "@
   $setupFile = Join-Path $persistRoot "setup.sql"
@@ -62,9 +75,33 @@ INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at
   $env:TEST_BASE_URL = "http://127.0.0.1:$port"
   $env:QA_PROFILE_ID = $ownerId
   $env:QA_SESSION_TOKEN = $ownerToken
+  $env:QA_SECOND_PROFILE_ID = $otherId
+  $env:QA_SECOND_SESSION_TOKEN = $otherToken
   $env:QA_COORDINATOR_TOKEN = $coordinatorToken
-  & node tests\extended-p0-document-concurrency.mjs
-  if ($LASTEXITCODE -ne 0) { throw "Test concorrenza documenti non riuscito" }
+  $env:QA_COORDINATOR_PROFILE_ID = $coordinatorId
+  $env:QA_UNCLAIMED_PROFILE_ID = $unclaimedId
+  $suiteFiles = @{
+    "document-concurrency" = "tests\extended-p0-document-concurrency.mjs"
+    "documents" = "tests\extended-p0-documents.mjs"
+    "roles" = "tests\extended-p0-roles.mjs"
+    "location" = "tests\extended-p0-location.mjs"
+    "media" = "tests\extended-p0-media-delete.mjs"
+    "social" = "tests\extended-p0-social.mjs"
+    "sync" = "tests\extended-p0-sync-delete.mjs"
+    "avatar" = "tests\extended-p0-avatar-replacement.mjs"
+    "chunk-retry" = "tests\extended-p0-chunk-retry.mjs"
+  }
+  $selectedSuites = if ($Suite -eq "all") {
+    @("document-concurrency", "documents", "location", "media", "social", "sync", "avatar", "chunk-retry", "roles")
+  } else { @($Suite) }
+  foreach ($selectedSuite in $selectedSuites) {
+    Write-Host "P0_SUITE_START=$selectedSuite"
+    $suiteOutput = & node $suiteFiles[$selectedSuite] 2>&1
+    $suiteExit = $LASTEXITCODE
+    $suiteOutput | ForEach-Object { Write-Host $_ }
+    if ($suiteExit -ne 0) { throw "Test P0 locale non riuscito: $selectedSuite" }
+    Write-Host "P0_SUITE_PASS=$selectedSuite"
+  }
 }
 finally {
   if ($server -and -not $server.HasExited) { Stop-Process -Id $server.Id -Force }

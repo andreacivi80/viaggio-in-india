@@ -91,6 +91,7 @@ try {
   $env:QA_SECOND_SESSION_TOKEN = $otherToken
   $env:QA_SECOND_PROFILE_ID = $otherId
   $env:QA_COORDINATOR_TOKEN = $coordinatorToken
+  $env:QA_COORDINATOR_PROFILE_ID = $coordinatorId
   $env:QA_UNCLAIMED_PROFILE_ID = $unclaimedId
   $env:QA_EXPIRED_SESSION_TOKEN = $expiredToken
   $env:QA_SECOND_DEVICE_ID = $secondaryDeviceId

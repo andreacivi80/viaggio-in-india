@@ -121,5 +121,17 @@
   { "control": "Tentare clickjacking sui pulsanti Elimina.", "evidence": "production-smoke live: l’app non è incorporabile da origini esterne e le API non sono incorporabili" },
   { "control": "Nessuna pagina privata incorporabile in siti esterni.", "evidence": "production-smoke live: X-Frame-Options SAMEORIGIN e CSP frame-ancestors self sul documento HTML" },
   { "control": "Verificare che pagine pubbliche eventualmente incorporabili siano separate da quelle private.", "evidence": "production-smoke live: HTML limitato alla stessa origine; API private con frame-ancestors none e no-store" },
-  { "control": "gli URL diretti rispettano le autorizzazioni;", "evidence": "ui-critical produzione: richieste dirette a private, devices, locations e documents negate senza sessione" }
+  { "control": "gli URL diretti rispettano le autorizzazioni;", "evidence": "ui-critical produzione: richieste dirette a private, devices, locations e documents negate senza sessione" },
+  { "control": "“Documento privato” significhi controllo server per proprietario e ruolo;", "evidence": "P0 locale documenti: proprietario e coordinatore aprono; altro viaggiatore riceve diniego server" },
+  { "control": "Apertura documenti autorizzati.", "evidence": "P0 locale documenti 12/12 e concorrenza 18/18: media privata aperta soltanto da proprietario/coordinatore" },
+  { "control": "Apertura documento autorizzato.", "evidence": "P0 locale documenti: HEAD 200 per proprietario e coordinatore autenticati" },
+  { "control": "autorizzazioni dei ruoli;", "evidence": "P0 locale ruoli 18/18: matrice viaggiatore/coordinatore verificata direttamente sugli endpoint" },
+  { "control": "conferma che nessuna autorizzazione dipenda esclusivamente dal frontend.", "evidence": "P0 locale ruoli/documenti/posizione: richieste API falsificate respinte 403 dal Worker" },
+  { "control": "Coordinatore apre documenti autorizzati.", "evidence": "P0 locale documenti: coordinatore apre la chiave privata del documento del viaggiatore" },
+  { "control": "Coordinatore: documenti autorizzati del gruppo.", "evidence": "P0 locale documenti: stato privato coordinatore include il documento del gruppo e media accessibile" },
+  { "control": "il Coordinatore è autorizzato lato server;", "evidence": "P0 locale ruoli 18/18: promozione live abilita inviti e retrocessione li nega immediatamente" },
+  { "control": "Coordinatore sulla risorsa A;", "evidence": "P0 locale ruoli 18/18: post creato e rimosso con identità della sessione coordinatore" },
+  { "control": "Il Coordinatore non deve pubblicare accidentalmente come altro profilo.", "evidence": "P0 locale ruoli 18/18: author_name falsificato ignorato e profile_id imposto dalla sessione coordinatore" },
+  { "control": "telefono A – Coordinatore;", "evidence": "P0 locale ruoli: sessione coordinatore separata su dispositivo A simulato e vincolata al relativo profilo" },
+  { "control": "test come Coordinatore;", "evidence": "P0 locale ruoli 18/18 più documenti/posizione: operazioni coordinatore eseguite con token dedicato" }
 ]

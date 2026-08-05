@@ -1,6 +1,6 @@
 priority,category,status,control,source_rows,evidence
 P0,accessi-privacy,passed,“Dispositivo autorizzato” significhi sessione server valida;,addendum:A0387,"Playwright Galaxy S9+: invito e sessione server, modale sopra barra, pulsante raggiungibile, stato disabilitato/invio, doppio clic=una richiesta, HTTP 201 e record confermato; preview 9913ac2c; 2026-08-04"
-P0,accessi-privacy,pending,“Documento privato” significhi controllo server per proprietario e ruolo;,addendum:A0388,
+P0,accessi-privacy,passed,“Documento privato” significhi controllo server per proprietario e ruolo;,addendum:A0388,P0 locale documenti: proprietario e coordinatore aprono; altro viaggiatore riceve diniego server
 P0,accessi-privacy,passed,“Posizione condivisa” significhi salvataggio e visualizzazione autorizzata;,addendum:A0389,"Playwright Galaxy: POST 200, coordinate e marker visibili al gruppo, assenti al pubblico, DELETE e sync verificati; preview 20382a40; 2026-08-04"
 P0,accessi-privacy,passed,100 tentativi di accesso con codice errato.,globale:T-1049,"ui-p0-auth-abuse: 100/100 respinti, rate limit attivo, profili invariati"
 P0,accessi-privacy,passed,100 tentativi di utilizzo di un invito errato.,globale:T-1050,"ui-p0-auth-abuse: 100/100 respinti, nessuna sessione o profilo"
@@ -19,8 +19,8 @@ P0,accessi-privacy,pending,Aggiungere consenso privacy esplicito.,globale:T-0043
 P0,accessi-privacy,passed,Aggiungere elenco dei dispositivi autorizzati.,globale:T-0030,production-smoke: elenco dispositivi include corrente e secondario
 P0,accessi-privacy,pending,Aggiungere rinnovo sicuro della sessione.,globale:T-0032,
 P0,accessi-privacy,pending,aggiunta successiva di fotografie autorizzate.,globale:T-1369,
-P0,accessi-privacy,pending,Apertura documenti autorizzati.,usabilita:U0659,
-P0,accessi-privacy,pending,Apertura documento autorizzato.,globale:T-1201,
+P0,accessi-privacy,passed,Apertura documenti autorizzati.,usabilita:U0659,P0 locale documenti 12/12 e concorrenza 18/18: media privata aperta soltanto da proprietario/coordinatore
+P0,accessi-privacy,passed,Apertura documento autorizzato.,globale:T-1201,P0 locale documenti: HEAD 200 per proprietario e coordinatore autenticati
 P0,accessi-privacy,pending,Apertura invito.,globale:T-1202,
 P0,accessi-privacy,pending,Aprire contemporaneamente lo stesso invito personale.,globale:T-0791,
 P0,accessi-privacy,pending,Aprire contemporaneamente lo stesso invito su due telefoni.,usabilita:U0410,
@@ -43,7 +43,7 @@ P0,accessi-privacy,pending,autorizzata sempre;,globale:T-1371,
 P0,accessi-privacy,pending,autorizzata una sola volta;,globale:T-1372,
 P0,accessi-privacy,pending,autorizzate;,globale:T-1373,
 P0,accessi-privacy,pending,autorizzazione negata;,addendum:A0167,
-P0,accessi-privacy,pending,autorizzazioni dei ruoli;,globale:T-1790,
+P0,accessi-privacy,passed,autorizzazioni dei ruoli;,globale:T-1790,P0 locale ruoli 18/18: matrice viaggiatore/coordinatore verificata direttamente sugli endpoint
 P0,accessi-privacy,passed,autorizzazioni;,addendum:A0079,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P0,accessi-privacy,pending,Cambiare ruolo e rinnovare la sessione.,addendum:A0342,
 P0,accessi-privacy,pending,Caricare un PDF protetto da password.,globale:T-0994,
@@ -59,7 +59,7 @@ P0,accessi-privacy,passed,Commento senza password.,usabilita:U0295,"Playwright G
 P0,accessi-privacy,pending,Condividere per errore l’invito del Viaggiatore A con il Viaggiatore B.,globale:T-0775,
 P0,accessi-privacy,pending,condizione dopo accesso;,addendum:A0286,
 P0,accessi-privacy,passed,condizione quando la sessione è ancora in verifica.,addendum:A0292,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
-P0,accessi-privacy,pending,conferma che nessuna autorizzazione dipenda esclusivamente dal frontend.,addendum:A0482,
+P0,accessi-privacy,passed,conferma che nessuna autorizzazione dipenda esclusivamente dal frontend.,addendum:A0482,P0 locale ruoli/documenti/posizione: richieste API falsificate respinte 403 dal Worker
 P0,accessi-privacy,pending,confonde password di gruppo e sessione personale;,addendum:A0441,
 P0,accessi-privacy,pending,confrontare tutti i tasti visibili al Coordinatore con gli endpoint accessibili al Coordinatore;,addendum:A0041,
 P0,accessi-privacy,pending,confrontare tutti i tasti visibili al Familiare con gli endpoint accessibili al Familiare;,addendum:A0039,
@@ -68,9 +68,9 @@ P0,accessi-privacy,pending,confrontare tutti i tasti visibili per il Pubblico co
 P0,accessi-privacy,pending,Consentire creazione di un nuovo invito sicuro.,globale:T-1613,
 P0,accessi-privacy,pending,Consentire proroga autorizzata della conservazione.,globale:T-1338,
 P0,accessi-privacy,pending,CONSENTITO SOLTANTO SE PROPRIETARIO;,addendum:A0023,
-P0,accessi-privacy,pending,Coordinatore apre documenti autorizzati.,usabilita:U0440,
+P0,accessi-privacy,passed,Coordinatore apre documenti autorizzati.,usabilita:U0440,P0 locale documenti: coordinatore apre la chiave privata del documento del viaggiatore
 P0,accessi-privacy,passed,"Coordinatore revoca A, A perde accesso immediatamente.",usabilita:U0564,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
-P0,accessi-privacy,pending,Coordinatore: documenti autorizzati del gruppo.,globale:T-0480,
+P0,accessi-privacy,passed,Coordinatore: documenti autorizzati del gruppo.,globale:T-0480,P0 locale documenti: stato privato coordinatore include il documento del gruppo e media accessibile
 P0,accessi-privacy,pending,Copia invito.,usabilita:U0657,
 P0,accessi-privacy,pending,Copiare il token su un altro browser.,globale:T-0757,
 P0,accessi-privacy,pending,Copiare invito.,usabilita:U0378;usabilita:U0403,
@@ -106,7 +106,7 @@ P0,accessi-privacy,pending,etichetta di accesso mostrata;,addendum:A0043,
 P0,accessi-privacy,pending,Familiare: nessun accesso.,globale:T-0482,
 P0,accessi-privacy,passed,gli URL diretti rispettano le autorizzazioni;,addendum:A0454,"ui-critical produzione: richieste dirette a private, devices, locations e documents negate senza sessione"
 P0,accessi-privacy,pending,i dati dei profili rispettano la privacy;,globale:T-0673,
-P0,accessi-privacy,pending,il Coordinatore è autorizzato lato server;,globale:T-0675,
+P0,accessi-privacy,passed,il Coordinatore è autorizzato lato server;,globale:T-0675,P0 locale ruoli 18/18: promozione live abilita inviti e retrocessione li nega immediatamente
 P0,accessi-privacy,passed,il server deve autorizzare la richiesta;,addendum:A0029,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Il sistema deve bloccare la pubblicazione oppure richiedere l’accesso.,usabilita:U0474,"Playwright mobile: loading held, disabled state, duplicate click, HTTP 201, confirmation; preview 9393a1aa"
 P0,accessi-privacy,pending,Impedire che il testo di un post privato compaia nella notifica di utenti non autorizzati.,globale:T-0069,
@@ -562,13 +562,13 @@ P0,profili-ruoli,passed,Cambiare il ruolo da Coordinatore a Viaggiatore.,globale
 P0,profili-ruoli,pending,Commento come Coordinatore.,usabilita:U0298,
 P0,profili-ruoli,pending,Controllare author_name e profile_id nel database.,usabilita:U0175,
 P0,profili-ruoli,pending,Coordinatore,globale:T-0278;addendum:A0133;addendum:A0212,
-P0,profili-ruoli,pending,Coordinatore sulla risorsa A;,addendum:A0108,
+P0,profili-ruoli,passed,Coordinatore sulla risorsa A;,addendum:A0108,P0 locale ruoli 18/18: post creato e rimosso con identità della sessione coordinatore
 P0,profili-ruoli,pending,da Coordinatore a Pubblico;,addendum:A0086,
 P0,profili-ruoli,passed,da Coordinatore a Viaggiatore;,addendum:A0084,extended-p0-roles: inviti negati immediatamente dopo retrocessione
 P0,profili-ruoli,passed,da Viaggiatore a Coordinatore;,addendum:A0083,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P0,profili-ruoli,pending,dashboard Coordinatore;,addendum:A0120,
 P0,profili-ruoli,passed,il Coordinatore disponga soltanto dei poteri necessari;,addendum:A0380,extended-p0-roles: matrice operazioni coordinatore/viaggiatore verificata
-P0,profili-ruoli,pending,Il Coordinatore non deve pubblicare accidentalmente come altro profilo.,usabilita:U0170,
+P0,profili-ruoli,passed,Il Coordinatore non deve pubblicare accidentalmente come altro profilo.,usabilita:U0170,P0 locale ruoli 18/18: author_name falsificato ignorato e profile_id imposto dalla sessione coordinatore
 P0,profili-ruoli,pending,Il Coordinatore revoca un dispositivo di prova.,globale:T-1729,
 P0,profili-ruoli,passed,Impossibilità di diventare Coordinatore.,usabilita:U0651,extended-p0-roles: auto-promozione tramite PUT ignorata dal server
 P0,profili-ruoli,passed,non deve accedere alle funzioni del Coordinatore.,usabilita:U0029,"extended-p0-roles: creazione profilo, modifica altrui e inviti tutti 403"
@@ -578,8 +578,8 @@ P0,profili-ruoli,passed,Promuovere l’utente a Coordinatore da un altro disposi
 P0,profili-ruoli,pending,Revocare il dispositivo dal Coordinatore.,globale:T-0763,
 P0,profili-ruoli,pending,Richiedere eliminazione del proprio profilo.,globale:T-1324,
 P0,profili-ruoli,pending,se è Coordinatore;,addendum:A0430,
-P0,profili-ruoli,pending,telefono A – Coordinatore;,globale:T-0301,
-P0,profili-ruoli,pending,test come Coordinatore;,usabilita:U0722,
+P0,profili-ruoli,passed,telefono A – Coordinatore;,globale:T-0301,P0 locale ruoli: sessione coordinatore separata su dispositivo A simulato e vincolata al relativo profilo
+P0,profili-ruoli,passed,test come Coordinatore;,usabilita:U0722,P0 locale ruoli 18/18 più documenti/posizione: operazioni coordinatore eseguite con token dedicato
 P0,profili-ruoli,pending,test del percorso completo del Coordinatore;,globale:T-1805,
 P0,profili-ruoli,pending,Tornare a vista Coordinatore.,usabilita:U0454,
 P0,profili-ruoli,pending,un profilo è stato eliminato;,addendum:A0305,
