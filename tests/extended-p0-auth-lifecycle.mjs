@@ -5,7 +5,8 @@ const targetProfileId = process.env.QA_UNCLAIMED_PROFILE_ID;
 const expiredInviteToken = process.env.QA_EXPIRED_INVITE_TOKEN;
 const coordinatorToken = process.env.QA_COORDINATOR_TOKEN;
 const coordinatorSecondToken = process.env.QA_COORDINATOR_SECOND_TOKEN;
-if (!base || !targetProfileId || !expiredInviteToken || !coordinatorToken || !coordinatorSecondToken) {
+const coordinatorSecondDeviceId = process.env.QA_COORDINATOR_SECOND_DEVICE_ID;
+if (!base || !targetProfileId || !expiredInviteToken || !coordinatorToken || !coordinatorSecondToken || !coordinatorSecondDeviceId) {
   throw new Error("Ambiente QA P0 ciclo autenticazione incompleto");
 }
 
@@ -73,9 +74,25 @@ assert.equal((await request("/api/auth/session", { headers: bearer(winnerBody.to
 
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 200);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 200);
+
+const devicesResponse = await request("/api/auth/devices", { headers: bearer(coordinatorToken) });
+assert.equal(devicesResponse.status, 200);
+const devicesBeforeRevoke = (await devicesResponse.json()).devices;
+assert.equal(devicesBeforeRevoke.length, 2);
+assert.equal(devicesBeforeRevoke.filter((device) => device.current).length, 1);
+assert.ok(devicesBeforeRevoke.some((device) => device.device_id === coordinatorSecondDeviceId));
+assert.equal((await request(`/api/auth/devices/${coordinatorSecondDeviceId}`, {
+  method: "DELETE",
+  headers: bearer(coordinatorToken),
+})).status, 200);
+assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 200);
+assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 401);
+const devicesAfterRevoke = await (await request("/api/auth/devices", { headers: bearer(coordinatorToken) })).json();
+assert.equal(devicesAfterRevoke.devices.length, 1);
+
 assert.equal((await request("/api/auth/logout-all", { method: "POST", headers: bearer(coordinatorToken) })).status, 200);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 401);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 401);
 
-console.log("P0_AUTH_LIFECYCLE=20/20");
+console.log("P0_AUTH_LIFECYCLE=28/28");
 process.exit(0);

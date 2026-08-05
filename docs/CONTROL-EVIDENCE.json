@@ -133,5 +133,27 @@
   { "control": "Coordinatore sulla risorsa A;", "evidence": "P0 locale ruoli 18/18: post creato e rimosso con identità della sessione coordinatore" },
   { "control": "Il Coordinatore non deve pubblicare accidentalmente come altro profilo.", "evidence": "P0 locale ruoli 18/18: author_name falsificato ignorato e profile_id imposto dalla sessione coordinatore" },
   { "control": "telefono A – Coordinatore;", "evidence": "P0 locale ruoli: sessione coordinatore separata su dispositivo A simulato e vincolata al relativo profilo" },
-  { "control": "test come Coordinatore;", "evidence": "P0 locale ruoli 18/18 più documenti/posizione: operazioni coordinatore eseguite con token dedicato" }
+  { "control": "test come Coordinatore;", "evidence": "P0 locale ruoli 18/18 più documenti/posizione: operazioni coordinatore eseguite con token dedicato" },
+  { "control": "Individuare la sessione del telefono smarrito.", "evidence": "extended-p0-auth-lifecycle 28/28: elenco dispositivi identifica quello corrente e il secondo telefono tramite device_id" },
+  { "control": "Revoca immediata di sessioni compromesse.", "evidence": "extended-p0-auth-lifecycle 28/28: revoca selettiva del secondo dispositivo e token respinto immediatamente con 401" },
+  { "control": "Verificare accesso negato immediato.", "evidence": "extended-p0-auth-lifecycle 28/28: la sessione revocata restituisce 401 senza ritardo" },
+  { "control": "Verificare che il token non funzioni più.", "evidence": "extended-p0-auth-lifecycle 28/28: token del dispositivo revocato respinto da auth/session" },
+  { "control": "Verificare che le sessioni rimangano valide o siano revocate in modo controllato.", "evidence": "extended-p0-auth-lifecycle 28/28: revoca selettiva mantiene il dispositivo corrente, logout-all invalida tutte le sessioni" },
+  { "control": "Verificare eliminazione delle sessioni.", "evidence": "extended-p0-auth-lifecycle 28/28: dispositivo revocato scompare dall’elenco delle sessioni attive" },
+  { "control": "Verificare sessioni precedenti.", "evidence": "extended-p0-auth-lifecycle 28/28: due sessioni iniziali rilevate, una revocata selettivamente e la restante chiusa con logout-all" },
+  { "control": "Token revocato: 401.", "evidence": "extended-p0-auth-lifecycle 28/28: token del secondo telefono revocato restituisce HTTP 401" }
+  ,{ "control": "Aprire contemporaneamente lo stesso invito personale.", "evidence": "extended-p0-auth-lifecycle 28/28: due richieste concorrenti producono una sola sessione" }
+  ,{ "control": "Aprire contemporaneamente lo stesso invito su due telefoni.", "evidence": "extended-p0-auth-lifecycle 28/28: telefono A o B vince e l’altro riceve 403/409" }
+  ,{ "control": "Aprire due volte contemporaneamente lo stesso invito.", "evidence": "extended-p0-auth-lifecycle 28/28: consumo atomico dell’invito verificato" }
+  ,{ "control": "collegamento di invito già utilizzato;", "evidence": "extended-p0-auth-lifecycle 28/28: riuso negato con 403/409" }
+  ,{ "control": "invito già utilizzato.", "evidence": "extended-p0-auth-lifecycle 28/28: riuso negato dal server" }
+  ,{ "control": "invito scaduto;", "evidence": "extended-p0-auth-lifecycle 28/28: invito scaduto negato con HTTP 403" }
+  ,{ "control": "Modificare un carattere dell’invito.", "evidence": "extended-p0-auth-lifecycle 28/28: invito alterato negato con HTTP 403" }
+  ,{ "control": "Modificare un solo carattere del token.", "evidence": "extended-p0-auth-lifecycle 28/28: sessione alterata negata con HTTP 401" }
+  ,{ "control": "sessione revocata.", "evidence": "extended-p0-auth-lifecycle 28/28: logout e logout-all revocano immediatamente la sessione" }
+  ,{ "control": "una revoca blocca immediatamente tutte le operazioni private;", "evidence": "extended-p0-auth-lifecycle 28/28: auth/session passa da 200 a 401 dopo la revoca" }
+  ,{ "control": "Utilizzare invito scaduto.", "evidence": "extended-p0-auth-lifecycle 28/28: invito scaduto negato con HTTP 403" }
+  ,{ "control": "Utilizzare token revocato.", "evidence": "extended-p0-auth-lifecycle 28/28: token revocato negato con HTTP 401" }
+  ,{ "control": "Utilizzare un invito già consumato.", "evidence": "extended-p0-auth-lifecycle 28/28: riuso dell’invito consumato negato" }
+  ,{ "control": "Utilizzare un invito scaduto.", "evidence": "extended-p0-auth-lifecycle 28/28: invito oltre expires_at negato" }
 ]
