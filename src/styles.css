@@ -5372,19 +5372,50 @@ mark.mention {
 .routeMapSummary b { overflow: hidden; font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
 .routeMapSummary em { padding: 4px 7px; border-radius: 999px; background: #15382f; color: #fff; font-size: 9px; font-style: normal; font-weight: 900; }
 .routeMapSummary span:last-child { text-align: right; }
-.overviewRouteMap .vectorMarker { width: 20px; height: 20px; border-width: 2px; font-size: 8px; }
+.overviewRouteMap .vectorMarker { width: 18px; height: 18px; border-width: 2px; font-size: 7px; }
 .overviewModeMarker {
-  min-width: 23px;
-  height: 23px;
+  min-width: 19px;
+  height: 19px;
   display: grid;
   place-items: center;
-  padding: 0 3px;
-  border: 2px solid #fff;
+  padding: 0 2px;
+  border: 1px solid currentColor;
   border-radius: 999px;
-  background: #15382fe8;
-  box-shadow: 0 4px 12px #102d2560;
-  font-size: 12px;
+  background: #fffdf7ed;
+  box-shadow: 0 3px 9px #102d2540;
+  font-size: 10px;
 }
+.overviewModeMarker.mode-air { color: #1769aa; }
+.overviewModeMarker.mode-road { color: #d65015; }
+.overviewModeMarker.mode-rail { color: #7b2845; }
+.overviewModeMarker.mode-boat { color: #007f86; }
+.overviewModeMarker.mode-walk { color: #287943; }
+.overviewRouteLegend {
+  position: absolute;
+  z-index: 510;
+  right: 9px;
+  bottom: 28px;
+  left: 9px;
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  pointer-events: none;
+}
+.overviewRouteLegend span {
+  padding: 4px 6px;
+  border: 1px solid #ffffffb8;
+  border-radius: 999px;
+  background: #fffdf7e8;
+  box-shadow: 0 3px 10px #102d2526;
+  font-size: 8px;
+  font-weight: 900;
+  backdrop-filter: blur(6px);
+}
+.overviewRouteLegend .air { color: #1769aa; }
+.overviewRouteLegend .road { color: #d65015; }
+.overviewRouteLegend .rail { color: #7b2845; }
+.overviewRouteLegend .boat { color: #007f86; }
+.overviewRouteLegend .walk { color: #287943; }
 .travelerOriginsSheet {
   width: min(100%, 680px);
   height: min(88dvh, 760px);

@@ -189,6 +189,10 @@ const cityImages = {
 const places = {
   Delhi: [28.6139, 77.209],
   "Aeroporto DEL": [28.5562, 77.1],
+  "Aeroporto UDR": [24.6177, 73.8961],
+  "Agra Cantt": [27.1595, 77.9907],
+  "Varanasi Junction": [25.3268, 82.9861],
+  "Delhi Junction": [28.6614, 77.2273],
   "Rockland Hotel C R Park": [28.5429119, 77.2428399],
   "Akshay Niwas Boutique Hotel": [24.5793118, 73.6692829],
   Udaipur: [24.5854, 73.7125],
@@ -301,11 +305,13 @@ const roadPaths = {
     [28.5429119, 77.2428399],
   ],
   "Delhi-old-city": [
+    [28.5429119, 77.2428399],
     [28.5355, 77.278],
     [28.6562, 77.241],
     [28.6506, 77.2303],
     [28.6507, 77.2334],
     [28.6315, 77.2167],
+    [28.5429119, 77.2428399],
   ],
   "Udaipur-local": [
     [24.5793118, 73.6692829],
@@ -402,6 +408,33 @@ const roadPaths = {
   ],
   "Varanasi-Delhi": [
     [25.3385012, 82.9795559],
+    [28.6139, 77.209],
+  ],
+  "Delhi-airport-transfer": [
+    [28.5429119, 77.2428399],
+    [28.5498, 77.207],
+    [28.5578, 77.121],
+    [28.5562, 77.1],
+  ],
+  "Udaipur-airport-transfer": [
+    [24.6177, 73.8961],
+    [24.604, 73.831],
+    [24.594, 73.758],
+    [24.5793118, 73.6692829],
+  ],
+  "Agra-station-transfer": [
+    [27.1580309, 78.0592253],
+    [27.162, 78.031],
+    [27.1595, 77.9907],
+  ],
+  "Varanasi-station-transfer": [
+    [25.3268, 82.9861],
+    [25.333, 82.982],
+    [25.3385012, 82.9795559],
+  ],
+  "Delhi-station-transfer": [
+    [28.6614, 77.2273],
+    [28.637, 77.219],
     [28.6139, 77.209],
   ],
 };
@@ -963,7 +996,16 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
     const specialStops = selectedDay == null
       ? []
       : [
-          ...(selectedDay === 0 ? [["✈", "Aeroporto DEL", places["Aeroporto DEL"]]] : []),
+          ...([0, 2].includes(selectedDay) ? [["✈", "Aeroporto DEL", places["Aeroporto DEL"]]] : []),
+          ...(selectedDay === 2 ? [["✈", "Aeroporto UDR", places["Aeroporto UDR"]]] : []),
+          ...(selectedDay === 9 ? [
+            ["🚆", "Stazione Agra Cantt", places["Agra Cantt"]],
+            ["🚆", "Varanasi Junction", places["Varanasi Junction"]],
+          ] : []),
+          ...(selectedDay === 12 ? [
+            ["🚆", "Varanasi Junction", places["Varanasi Junction"]],
+            ["🚆", "Delhi Junction", places["Delhi Junction"]],
+          ] : []),
           ...(day?.hotel?.place ? [["🏨", day.hotel.name, places[day.hotel.place]]] : []),
         ];
     specialStops
@@ -976,8 +1018,8 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         const [lat, lng] = coordinates;
         const marker = new maplibregl.Marker({
           element: node,
-          anchor: "center",
-          offset: [0, 12],
+          anchor: "bottom",
+          offset: [0, -4],
         })
           .setLngLat([lng, lat])
           .setPopup(new maplibregl.Popup({ offset: 18 }).setHTML(`<strong>${label}</strong>`))
@@ -986,14 +1028,14 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       });
     if (selectedDay == null) {
       [
-        ["✈️", "Volo interno", [75.45, 26.6], [18, -22]],
-        ["🚐", "Spostamenti su strada", [74.15, 26.25], [-24, 15]],
-        ["🚆", "Treno notturno", [80.25, 25.55], [0, -24]],
-        ["⛵", "Barca sul Gange", [83.02, 25.31], [30, 22]],
-        ["👣", "Visite a piedi", [75.82, 26.92], [0, -32]],
-      ].forEach(([symbol, label, coordinates, offset]) => {
+        ["✈️", "Volo interno", "air", [76.7, 26.75], [0, 28]],
+        ["🚐", "Spostamenti su strada", "road", [74.15, 26.25], [-50, 17]],
+        ["🚆", "Treno notturno", "rail", [80.25, 25.55], [0, -24]],
+        ["⛵", "Barca sul Gange", "boat", [83.02, 25.31], [30, 22]],
+        ["👣", "Visite a piedi", "walk", [75.1, 27.05], [-12, -8]],
+      ].forEach(([symbol, label, mode, coordinates, offset]) => {
         const node = document.createElement("span");
-        node.className = "overviewModeMarker";
+        node.className = `overviewModeMarker mode-${mode}`;
         node.textContent = symbol;
         node.setAttribute("aria-label", label);
         markers.current.push(new maplibregl.Marker({ element: node, anchor: "center", offset })
@@ -1019,10 +1061,29 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
           ? [places[day.from]]
           : [places[day.from], places[day.to]];
       const routeMode = transportPresentation(day.transport).mode;
-      features =
-        coords.length > 1 ? [line(coords, routeMode)] : [];
+      if (selectedDay === 2) {
+        features = [
+          line(roadPaths["Delhi-airport-transfer"], "road"),
+          line([places["Aeroporto DEL"], [27.2, 75.45], places["Aeroporto UDR"]], "air"),
+          line(roadPaths["Udaipur-airport-transfer"], "road"),
+        ];
+      } else if (selectedDay === 9) {
+        features = [
+          line(roadPaths["Agra-station-transfer"], "road"),
+          line([places["Agra Cantt"], [26.15, 80.55], places["Varanasi Junction"]], "rail"),
+          line(roadPaths["Varanasi-station-transfer"], "road"),
+        ];
+      } else if (selectedDay === 12) {
+        features = [
+          line([...roadPaths["Varanasi-station-transfer"]].reverse(), "road"),
+          line([places["Varanasi Junction"], [26.75, 80.4], places["Delhi Junction"]], "rail"),
+          line(roadPaths["Delhi-station-transfer"], "road"),
+        ];
+      } else {
+        features = coords.length > 1 ? [line(coords, routeMode)] : [];
+      }
       fitPoints = [
-        ...coords,
+        ...features.flatMap((feature) => feature.geometry.coordinates.map(([lng, lat]) => [lat, lng])),
         ...visibleMarkerIndexes.map((index) => places[sequence[index]]),
         ...specialStops.map(([, , coordinates]) => coordinates),
       ].filter(Boolean);
@@ -1046,12 +1107,12 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       }
     } else {
       features = [
-        line([places["Rockland Hotel C R Park"], places["Akshay Niwas Boutique Hotel"]], "transit"),
-        line(roadPaths["Udaipur-Jodhpur"]),
-        line(roadPaths["Jodhpur-Jaipur"]),
-        line(roadPaths["Jaipur-Agra"]),
-        line(roadPaths["Agra-Varanasi-hotel"], "transit"),
-        line(roadPaths["Varanasi-Delhi"], "transit"),
+        line([places["Aeroporto DEL"], [27.2, 75.45], places["Aeroporto UDR"]], "air"),
+        line(roadPaths["Udaipur-Jodhpur"], "road"),
+        line(roadPaths["Jodhpur-Jaipur"], "road"),
+        line(roadPaths["Jaipur-Agra"], "road"),
+        line([places["Agra Cantt"], [26.15, 80.55], places["Varanasi Junction"]], "rail"),
+        line([places["Varanasi Junction"], [26.75, 80.4], places["Delhi Junction"]], "rail"),
       ];
       fitPoints = Object.values(places);
     }
@@ -1114,6 +1175,15 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         >
           <span>{transportPresentation(day.transport).icons}</span>
           <b>{day.transport}</b>
+        </div>
+      )}
+      {!day && (
+        <div className="overviewRouteLegend" aria-label="Legenda dei mezzi">
+          <span className="air">✈️ Aereo</span>
+          <span className="road">🚐 Van</span>
+          <span className="rail">🚆 Treno</span>
+          <span className="boat">⛵ Barca</span>
+          <span className="walk">👣 Piedi</span>
         </div>
       )}
       {day && (
