@@ -104,7 +104,7 @@ P0,accessi-privacy,pending,Eseguire logout e nuovo accesso.,addendum:A0340,
 P0,accessi-privacy,pending,esiste una matrice autorizzativa approvata;,addendum:A0444,
 P0,accessi-privacy,pending,etichetta di accesso mostrata;,addendum:A0043,
 P0,accessi-privacy,pending,Familiare: nessun accesso.,globale:T-0482,
-P0,accessi-privacy,pending,gli URL diretti rispettano le autorizzazioni;,addendum:A0454,
+P0,accessi-privacy,passed,gli URL diretti rispettano le autorizzazioni;,addendum:A0454,"ui-critical produzione: richieste dirette a private, devices, locations e documents negate senza sessione"
 P0,accessi-privacy,pending,i dati dei profili rispettano la privacy;,globale:T-0673,
 P0,accessi-privacy,pending,il Coordinatore è autorizzato lato server;,globale:T-0675,
 P0,accessi-privacy,passed,il server deve autorizzare la richiesta;,addendum:A0029,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
@@ -149,7 +149,7 @@ P0,accessi-privacy,pending,nessun token;,globale:T-1570,
 P0,accessi-privacy,passed,nessun utilizzo di autorizzazioni precedenti;,addendum:A0333,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,pending,nessuna estensione automatica del pubblico autorizzato.,addendum:A0375,
 P0,accessi-privacy,pending,nessuna informazione sull’esistenza di risorse non autorizzate.,addendum:A0335,
-P0,accessi-privacy,pending,Nessuna pagina privata incorporabile in siti esterni.,globale:T-1480,
+P0,accessi-privacy,passed,Nessuna pagina privata incorporabile in siti esterni.,globale:T-1480,production-smoke live: X-Frame-Options SAMEORIGIN e CSP frame-ancestors self sul documento HTML
 P0,accessi-privacy,pending,nessuna password.,globale:T-1571,
 P0,accessi-privacy,passed,Nessuna sessione.,usabilita:U0478,ui-critical produzione mobile: senza sessione /api/private e /api/auth/devices rispondono 401
 P0,accessi-privacy,pending,nessuna visualizzazione momentanea di dati privati;,addendum:A0137,
@@ -287,7 +287,7 @@ P0,accessi-privacy,pending,Verificare che il vecchio token non funzioni più.,us
 P0,accessi-privacy,pending,Verificare che il vecchio token non funzioni.,globale:T-1329,
 P0,accessi-privacy,pending,Verificare che l’invito funzioni una sola volta.,globale:T-0340,
 P0,accessi-privacy,pending,Verificare che le sessioni rimangano valide o siano revocate in modo controllato.,globale:T-1177,
-P0,accessi-privacy,pending,Verificare che pagine pubbliche eventualmente incorporabili siano separate da quelle private.,globale:T-1490,
+P0,accessi-privacy,passed,Verificare che pagine pubbliche eventualmente incorporabili siano separate da quelle private.,globale:T-1490,production-smoke live: HTML limitato alla stessa origine; API private con frame-ancestors none e no-store
 P0,accessi-privacy,pending,Verificare contenuti autorizzati.,usabilita:U0096,
 P0,accessi-privacy,passed,Verificare creazione della sessione.,usabilita:U0406,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,pending,Verificare dati dopo revoca della sessione.,globale:T-1625,
@@ -318,9 +318,9 @@ P0,accessi-privacy,pending,Viaggiatore non proprietario;,addendum:A0132,
 P0,accessi-privacy,pending,Viaggiatore proprietario;,addendum:A0131,
 P0,accessi-privacy,pending,Visualizzazione contenuti autorizzati.,globale:T-1239,
 P0,altro,passed,"A elimina il post, B lo vede scomparire.",usabilita:U0558,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P0,altro,pending,Avvisare gli utenti prima dell’eliminazione.,globale:T-1336,
-P0,altro,pending,Confermare eliminazione.,usabilita:U0283,
-P0,altro,pending,contenuto eliminato;,usabilita:U0511,
+P0,altro,passed,Avvisare gli utenti prima dell’eliminazione.,globale:T-1336,ui-documents QA: finestra Eliminare questo documento? mostrata prima del DELETE
+P0,altro,passed,Confermare eliminazione.,usabilita:U0283,"ui-documents QA: Annulla conserva il file, Elimina conferma la rimozione"
+P0,altro,passed,contenuto eliminato;,usabilita:U0511,"extended-p0-sync-delete: contenuto rimosso e assente su pubblico, proprietario e secondo dispositivo"
 P0,altro,pending,Definire se i contenuti vengono eliminati o anonimizzati.,globale:T-1320,
 P0,altro,pending,"Eliminare dallo ZIP le cartelle node_modules, .git, .wrangler e dist, se deve essere ricostruita automaticamente.",globale:T-0005,
 P0,altro,pending,Eliminare dallo ZIP le cartelle:,globale:T-0006,
@@ -332,7 +332,7 @@ P0,altro,pending,Eliminare.,globale:T-0448;usabilita:U0222,
 P0,altro,passed,eliminati;,addendum:A0352,Authenticated deleted-upload retry 404; preview a4b05356; 2026-08-04
 P0,altro,passed,Eliminazione mentre un altro dispositivo legge.,globale:T-0572,extended-p0-sync-delete: post visibile sul secondo dispositivo poi rimosso
 P0,altro,passed,eliminazione post altrui;,globale:T-0736,QA 1.31.0: attacco eliminazione post altrui respinto
-P0,altro,pending,eliminazione post proprio;,globale:T-0737,
+P0,altro,passed,eliminazione post proprio;,globale:T-0737,extended-p0-media-delete: proprietario elimina il proprio post con tre media
 P0,altro,pending,Errore durante eliminazione multipla.,globale:T-1149,
 P0,altro,pending,indicare esattamente cosa verrà eliminato;,addendum:A0252,
 P0,altro,pending,Inviare notifica relativa a un contenuto successivamente eliminato.,globale:T-0866,
@@ -341,26 +341,26 @@ P0,altro,pending,nessuna funzione esistente è stata eliminata;,globale:T-0684,
 P0,altro,pending,nessuna pressione del tasto Indietro confermi l’eliminazione;,addendum:A0263,
 P0,altro,pending,Permettere all’utente di eliminare elementi dalla coda.,globale:T-0847,
 P0,altro,pending,possibilità di eliminarli.,addendum:A0372,
-P0,altro,pending,post eliminato;,globale:T-1574,
+P0,altro,passed,post eliminato;,globale:T-1574,extended-p0-sync-delete: post eliminato e stato finale senza residui
 P0,altro,passed,prima dell’eliminazione;,addendum:A0115,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,altro,pending,Produrre un resoconto dei dati eliminati.,globale:T-1350,
 P0,altro,passed,Protezione contro eliminazione di post altrui.,globale:T-0223,QA 1.31.0: secondo viaggiatore non puo eliminare il post altrui
 P0,altro,passed,reinviarla dopo eliminazione della risorsa.,addendum:A0330,Authenticated deleted-upload retry 404; preview a4b05356; 2026-08-04
-P0,altro,pending,Tentare clickjacking sui pulsanti Elimina.,globale:T-1488,
+P0,altro,passed,Tentare clickjacking sui pulsanti Elimina.,globale:T-1488,production-smoke live: l’app non è incorporabile da origini esterne e le API non sono incorporabili
 P0,altro,passed,Tentare eliminazione di un post altrui.,usabilita:U0292,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,altro,passed,Tentare eliminazione diretta di post altrui.,usabilita:U0581,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,altro,passed,Tentare eliminazione post altrui.,globale:T-0625,QA 1.31.0: eliminazione post altrui negata con HTTP 403
-P0,altro,pending,un contenuto è stato eliminato da un altro dispositivo;,addendum:A0304,
-P0,altro,pending,Verificare che l’aggiornamento non elimini dati o bozze.,globale:T-0314,
+P0,altro,passed,un contenuto è stato eliminato da un altro dispositivo;,addendum:A0304,extended-p0-sync-delete: secondo dispositivo rileva la rimozione del post
+P0,altro,passed,Verificare che l’aggiornamento non elimini dati o bozze.,globale:T-0314,L1 migrazioni additive e ui-critical: token invalido rimosso conservando integralmente la bozza
 P0,altro,pending,Verificare che la pulizia automatica non elimini dati ancora validi.,globale:T-1351,
-P0,altro,pending,Verificare eliminazione dei file non più collegati.,globale:T-0803,
-P0,altro,pending,Verificare eliminazione del precedente.,usabilita:U0430,
-P0,altro,pending,Verificare eliminazione del vecchio file.,globale:T-0487,
+P0,altro,passed,Verificare eliminazione dei file non più collegati.,globale:T-0803,document-concurrency e media-delete: chiavi sostituite o scollegate non sono più raggiungibili
+P0,altro,passed,Verificare eliminazione del precedente.,usabilita:U0430,document-concurrency 18/18: chiave PDF precedente non raggiungibile dopo la sostituzione
+P0,altro,passed,Verificare eliminazione del vecchio file.,globale:T-0487,extended-p0-avatar-replacement e document-concurrency: vecchia chiave MEDIA rimossa
 P0,altro,pending,Verificare eliminazione dell’avatar.,globale:T-1333,
 P0,altro,pending,Verificare eliminazione della subscription Push.,globale:T-1619,
 P0,altro,pending,Verificare eliminazione della subscription.,globale:T-0878,
-P0,altro,pending,Verificare eliminazione di tutti i file collegati.,globale:T-0418,
-P0,altro,pending,Verificare eliminazione su tutti i dispositivi.,globale:T-0419,
+P0,altro,passed,Verificare eliminazione di tutti i file collegati.,globale:T-0418,"extended-p0-media-delete: JPEG, MP3 e MP4 collegati al post tutti rimossi"
+P0,altro,passed,Verificare eliminazione su tutti i dispositivi.,globale:T-0419,extended-p0-sync-delete: eliminazione propagata e verificata su tre viste separate
 P0,altro,pending,Verificare incremento della versione per eliminazione.,globale:T-1033,
 P0,altro,pending,Verificare log di eliminazione.,globale:T-1004,
 P0,altro,pending,Verificare se i metadati vengono conservati o eliminati.,globale:T-1439,
@@ -445,7 +445,7 @@ P0,documenti,passed,Sostituire il documento.,globale:T-0706,ui-documents QA: nuo
 P0,documenti,passed,Sostituire più volte lo stesso documento.,globale:T-1000,ui-documents QA: dieci iterazioni consecutive sullo stesso slot Passaporto
 P0,documenti,pending,Sostituzione documento durante il download.,globale:T-0573,
 P0,documenti,pending,sostituzione documento;,usabilita:U0548,
-P0,documenti,pending,Tentare clickjacking su Carica documento.,globale:T-1486,
+P0,documenti,passed,Tentare clickjacking su Carica documento.,globale:T-1486,production-smoke live: pagina X-Frame-Options SAMEORIGIN e CSP frame-ancestors self; API frame-ancestors none
 P0,documenti,pending,Tentare di aprire documenti.,usabilita:U0620;usabilita:U0635,
 P0,documenti,passed,Tornare da un documento.,globale:T-0975,ui-documents QA mobile: Chiudi documento elimina l’overlay e ripristina la schermata documenti
 P0,documenti,passed,trovare i propri documenti;,globale:T-1786,ui-documents QA ed extended-p0-documents: record proprio trovato nella scheda e nello stato privato

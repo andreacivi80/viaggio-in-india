@@ -104,5 +104,22 @@
   { "control": "Sostituire contemporaneamente lo stesso documento da due telefoni.", "evidence": "document-concurrency 18/18: due upload concorrenti ordinati dal batch D1 atomico" },
   { "control": "Verificare che rimanga un solo documento valido.", "evidence": "document-concurrency 18/18: un solo record Passaporto, chiave corrente accessibile e precedente rimossa" },
   { "control": "Verificare eliminazione dei documenti.", "evidence": "document-concurrency 18/18: record e media eliminati per tutti e quattro i tipi" },
-  { "control": "Verificare nuovo documento.", "evidence": "document-concurrency 18/18: nuova chiave PDF accessibile dopo sostituzione e diversa dalla precedente" }
+  { "control": "Verificare nuovo documento.", "evidence": "document-concurrency 18/18: nuova chiave PDF accessibile dopo sostituzione e diversa dalla precedente" },
+  { "control": "Avvisare gli utenti prima dell’eliminazione.", "evidence": "ui-documents QA: finestra Eliminare questo documento? mostrata prima del DELETE" },
+  { "control": "Confermare eliminazione.", "evidence": "ui-documents QA: Annulla conserva il file, Elimina conferma la rimozione" },
+  { "control": "contenuto eliminato;", "evidence": "extended-p0-sync-delete: contenuto rimosso e assente su pubblico, proprietario e secondo dispositivo" },
+  { "control": "eliminazione post proprio;", "evidence": "extended-p0-media-delete: proprietario elimina il proprio post con tre media" },
+  { "control": "post eliminato;", "evidence": "extended-p0-sync-delete: post eliminato e stato finale senza residui" },
+  { "control": "un contenuto è stato eliminato da un altro dispositivo;", "evidence": "extended-p0-sync-delete: secondo dispositivo rileva la rimozione del post" },
+  { "control": "Verificare che l’aggiornamento non elimini dati o bozze.", "evidence": "L1 migrazioni additive e ui-critical: token invalido rimosso conservando integralmente la bozza" },
+  { "control": "Verificare eliminazione dei file non più collegati.", "evidence": "document-concurrency e media-delete: chiavi sostituite o scollegate non sono più raggiungibili" },
+  { "control": "Verificare eliminazione del precedente.", "evidence": "document-concurrency 18/18: chiave PDF precedente non raggiungibile dopo la sostituzione" },
+  { "control": "Verificare eliminazione del vecchio file.", "evidence": "extended-p0-avatar-replacement e document-concurrency: vecchia chiave MEDIA rimossa" },
+  { "control": "Verificare eliminazione di tutti i file collegati.", "evidence": "extended-p0-media-delete: JPEG, MP3 e MP4 collegati al post tutti rimossi" },
+  { "control": "Verificare eliminazione su tutti i dispositivi.", "evidence": "extended-p0-sync-delete: eliminazione propagata e verificata su tre viste separate" },
+  { "control": "Tentare clickjacking su Carica documento.", "evidence": "production-smoke live: pagina X-Frame-Options SAMEORIGIN e CSP frame-ancestors self; API frame-ancestors none" },
+  { "control": "Tentare clickjacking sui pulsanti Elimina.", "evidence": "production-smoke live: l’app non è incorporabile da origini esterne e le API non sono incorporabili" },
+  { "control": "Nessuna pagina privata incorporabile in siti esterni.", "evidence": "production-smoke live: X-Frame-Options SAMEORIGIN e CSP frame-ancestors self sul documento HTML" },
+  { "control": "Verificare che pagine pubbliche eventualmente incorporabili siano separate da quelle private.", "evidence": "production-smoke live: HTML limitato alla stessa origine; API private con frame-ancestors none e no-store" },
+  { "control": "gli URL diretti rispettano le autorizzazioni;", "evidence": "ui-critical produzione: richieste dirette a private, devices, locations e documents negate senza sessione" }
 ]

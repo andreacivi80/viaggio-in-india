@@ -54,6 +54,19 @@ test("dominio, revisione, mappa e Service Worker sono coerenti", async () => {
   }
 });
 
+test("pagina e API impediscono clickjacking e cache privata", async () => {
+  const pageResponse = await request("/", { cache: "no-store" });
+  assert.equal(pageResponse.status, 200);
+  assert.match(pageResponse.headers.get("content-security-policy") || "", /frame-ancestors 'self'/);
+  assert.equal((pageResponse.headers.get("x-frame-options") || "").toUpperCase(), "SAMEORIGIN");
+
+  const apiResponse = await request("/api/health", { cache: "no-store" });
+  assert.equal(apiResponse.status, 200);
+  assert.match(apiResponse.headers.get("content-security-policy") || "", /frame-ancestors 'none'/);
+  assert.equal((apiResponse.headers.get("x-frame-options") || "").toUpperCase(), "SAMEORIGIN");
+  assert.match(apiResponse.headers.get("cache-control") || "", /no-store/);
+});
+
 test("stato pubblico non espone campi privati dei profili", async () => {
   const response = await request("/api/state", { cache: "no-store" });
   assert.equal(response.status, 200);
