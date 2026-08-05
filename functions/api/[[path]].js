@@ -1873,19 +1873,22 @@ export async function onRequest(context) {
         await abandonIdempotentOperation(env, operation.operationHash);
         throw error;
       }
-      const previous = await env.DB.prepare(
-        "SELECT file_key FROM document_status WHERE profile_id=? AND doc_type=?",
-      )
-        .bind(profileId, type)
-        .first();
       const status = media
         ? "uploaded"
         : String(form.get("status") || "missing");
+      let previous;
       try {
-        await env.DB.prepare(
-          "INSERT INTO document_status(profile_id,doc_type,file_key,file_name,status,verified_by,updated_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(profile_id,doc_type) DO UPDATE SET file_key=COALESCE(excluded.file_key,document_status.file_key),file_name=COALESCE(excluded.file_name,document_status.file_name),status=excluded.status,verified_by=excluded.verified_by,updated_at=excluded.updated_at",
-        )
-          .bind(
+        // La lettura della versione precedente e la sostituzione devono stare
+        // nello stesso batch D1: due telefoni concorrenti vedono così una
+        // sequenza ordinata e ciascuno elimina soltanto il file che ha davvero
+        // sostituito, senza lasciare oggetti privati orfani in MEDIA.
+        const statements = [
+          env.DB.prepare(
+            "SELECT file_key FROM document_status WHERE profile_id=? AND doc_type=?",
+          ).bind(profileId, type),
+          env.DB.prepare(
+            "INSERT INTO document_status(profile_id,doc_type,file_key,file_name,status,verified_by,updated_at) VALUES(?,?,?,?,?,?,?) ON CONFLICT(profile_id,doc_type) DO UPDATE SET file_key=COALESCE(excluded.file_key,document_status.file_key),file_name=COALESCE(excluded.file_name,document_status.file_name),status=excluded.status,verified_by=excluded.verified_by,updated_at=excluded.updated_at",
+          ).bind(
             profileId,
             type,
             media?.key || null,
@@ -1893,11 +1896,15 @@ export async function onRequest(context) {
             status,
             String(form.get("verified_by") || ""),
             now(),
-          )
-          .run();
+          ),
+        ];
         if (media?.uploadId)
-          await env.DB.prepare("UPDATE upload_sessions SET status='consumed',consumed_at=? WHERE id=? AND status='completed'")
-            .bind(now(), media.uploadId).run();
+          statements.push(
+            env.DB.prepare("UPDATE upload_sessions SET status='consumed',consumed_at=? WHERE id=? AND status='completed'")
+              .bind(now(), media.uploadId),
+          );
+        const [previousResult] = await env.DB.batch(statements);
+        previous = previousResult?.results?.[0];
       } catch (error) {
         if (media?.key && !media.uploadId) await deleteStoredMedia(env, media.key);
         await abandonIdempotentOperation(env, operation.operationHash);

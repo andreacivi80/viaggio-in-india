@@ -4,6 +4,7 @@ param(
   [switch]$RunLoad,
   [switch]$AbuseOnly,
   [switch]$ExtendedDocuments,
+  [switch]$ExtendedDocumentConcurrency,
   [switch]$ExtendedSync,
   [switch]$ExtendedMedia,
   [switch]$ExtendedLocation,
@@ -33,10 +34,10 @@ function Get-TokenHash([string]$Token) {
 }
 
 function Invoke-D1File([string]$Path) {
-  for ($attempt = 1; $attempt -le 4; $attempt += 1) {
-    & npx wrangler d1 execute viaggio-in-india-qa-db --remote --config wrangler.qa.jsonc --file $Path | Out-Null
+  for ($attempt = 1; $attempt -le 2; $attempt += 1) {
+    & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --remote --config wrangler.qa.jsonc --file $Path | Out-Null
     if ($LASTEXITCODE -eq 0) { return $true }
-    if ($attempt -lt 4) { Start-Sleep -Seconds (2 * $attempt) }
+    if ($attempt -lt 2) { Start-Sleep -Seconds 2 }
   }
   return $false
 }
@@ -96,7 +97,10 @@ try {
   $env:QA_RUN_ID = $runId
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
-  if ($ExtendedChunkRetry) {
+  if ($ExtendedDocumentConcurrency) {
+    & node tests\extended-p0-document-concurrency.mjs
+  }
+  elseif ($ExtendedChunkRetry) {
     & node tests\extended-p0-chunk-retry.mjs
   }
   elseif ($ExtendedAvatar) {

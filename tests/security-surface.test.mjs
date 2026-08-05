@@ -74,6 +74,13 @@ test("solo il proprietario può caricare o eliminare il proprio documento", () =
   assert.match(worker, /request\.method === "DELETE"[\s\S]*?session\.profile_id !== profileId[\s\S]*?Documento non autorizzato/);
 });
 
+test("la sostituzione concorrente di un documento ordina aggiornamento e pulizia", () => {
+  assert.match(worker, /const statements = \[[\s\S]*?SELECT file_key FROM document_status[\s\S]*?ON CONFLICT\(profile_id,doc_type\) DO UPDATE/);
+  assert.match(worker, /const \[previousResult\] = await env\.DB\.batch\(statements\)/);
+  assert.match(worker, /previous = previousResult\?\.results\?\.\[0\]/);
+  assert.match(worker, /previous\?\.file_key && previous\.file_key !== media\.key[\s\S]*?deleteStoredMedia\(env, previous\.file_key\)/);
+});
+
 test("la posizione può essere modificata e rimossa soltanto dal proprietario", () => {
   assert.match(worker, /String\(b\.profile_id \|\| ""\) !== session\.profile_id/);
   assert.match(worker, /session\.profile_id !== profileId[\s\S]*?Non puoi cancellare questa posizione/);

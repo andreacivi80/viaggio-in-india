@@ -25,11 +25,11 @@ P0,accessi-privacy,pending,Apertura invito.,globale:T-1202,
 P0,accessi-privacy,pending,Aprire contemporaneamente lo stesso invito personale.,globale:T-0791,
 P0,accessi-privacy,pending,Aprire contemporaneamente lo stesso invito su due telefoni.,usabilita:U0410,
 P0,accessi-privacy,pending,Aprire due volte contemporaneamente lo stesso invito.,globale:T-0774,
-P0,accessi-privacy,pending,Aprire il link senza password.,usabilita:U0268,
+P0,accessi-privacy,passed,Aprire il link senza password.,usabilita:U0268,ui-critical produzione mobile: il dominio pubblico apre la Bacheca senza creare una sessione privata
 P0,accessi-privacy,pending,Aprire invito sul telefono A.,globale:T-0322,
 P0,accessi-privacy,passed,Aprire invito sul telefono corretto.,usabilita:U0404,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,pending,Aprire la Bacheca con password.,usabilita:U0095,
-P0,accessi-privacy,pending,Aprire la Bacheca senza password.,usabilita:U0093,
+P0,accessi-privacy,passed,Aprire la Bacheca senza password.,usabilita:U0093,ui-critical produzione mobile: accesso Pubblico visibile e area privata assente
 P0,accessi-privacy,pending,"Aprire la griglia del Coordinatore, se autorizzato.",usabilita:U0072,
 P0,accessi-privacy,passed,Associare i commenti dei Viaggiatori alla sessione personale.,globale:T-0061,QA 1.31.0: commento del viaggiatore attribuito alla sessione e non ai campi del browser
 P0,accessi-privacy,pending,Attivazione sessione.,globale:T-1206,
@@ -87,7 +87,7 @@ P0,accessi-privacy,pending,diagramma degli stati di accesso;,addendum:A0466,
 P0,accessi-privacy,pending,dispositivo o sessione;,globale:T-1558,
 P0,accessi-privacy,pending,"Distinguere limiti per IP, sessione e profilo.",globale:T-1053,
 P0,accessi-privacy,passed,Divieto di leggere un post privato modificando direttamente l’URL.,globale:T-0067,QA 1.31.0: ospite e altro viaggiatore non leggono ne interagiscono col post privato
-P0,accessi-privacy,pending,"Documenti privati con private, no-store.",globale:T-1473,
+P0,accessi-privacy,passed,"Documenti privati con private, no-store.",globale:T-1473,"security-surface L1: risposte private impostano Cache-Control private, no-store"
 P0,accessi-privacy,pending,documento non autorizzato;,usabilita:U0498,
 P0,accessi-privacy,pending,documento privato;,addendum:A0125,
 P0,accessi-privacy,pending,è nascosto o disabilitato per il ruolo non autorizzato;,usabilita:U0668,
@@ -113,11 +113,11 @@ P0,accessi-privacy,pending,Impedire che il testo di un post privato compaia nell
 P0,accessi-privacy,pending,Impedire il riutilizzo di una sessione rubata.,globale:T-0036,
 P0,accessi-privacy,passed,impossibilità di aprire documenti prima della verifica della sessione;,addendum:A0318,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,impossibilità di utilizzare il ruolo conservato localmente come autorizzazione;,addendum:A0319,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
-P0,accessi-privacy,pending,Impossibilità di vedere documenti e posizioni private.,globale:T-1219,
+P0,accessi-privacy,passed,Impossibilità di vedere documenti e posizioni private.,globale:T-1219,ui-critical produzione: pubblico senza sessione non vede UI privata e gli endpoint sono negati
 P0,accessi-privacy,pending,Individuare la sessione del telefono smarrito.,globale:T-1614,
 P0,accessi-privacy,pending,Inserire la password corretta.,usabilita:U0009,
 P0,accessi-privacy,pending,Inserire password corretta.,usabilita:U0041;usabilita:U0625,
-P0,accessi-privacy,pending,Inserire password errata.,usabilita:U0043,
+P0,accessi-privacy,passed,Inserire password errata.,usabilita:U0043,ui-critical produzione mobile: codice-sbagliato mostra Codice non corretto e resta Pubblico
 P0,accessi-privacy,pending,Inserire spazi prima e dopo la password.,usabilita:U0047,
 P0,accessi-privacy,pending,Invio della notifica agli utenti autorizzati.,usabilita:U0165,
 P0,accessi-privacy,pending,invito creato;,globale:T-1566,
@@ -142,7 +142,7 @@ P0,accessi-privacy,pending,Modificare un carattere dell’invito.,globale:T-0778
 P0,accessi-privacy,pending,Modificare un solo carattere del token.,globale:T-0762,
 P0,accessi-privacy,pending,Nessun accesso.,usabilita:U0476,
 P0,accessi-privacy,pending,Nessun documento privato inserito senza consenso.,globale:T-1722,
-P0,accessi-privacy,pending,Nessun documento privato nei risultati pubblici.,globale:T-1692,
+P0,accessi-privacy,passed,Nessun documento privato nei risultati pubblici.,globale:T-1692,production-smoke: stato pubblico non espone documenti; /api/private senza sessione risponde 401
 P0,accessi-privacy,pending,nessun endpoint operativo sia privo di controllo delle autorizzazioni.,addendum:A0020,
 P0,accessi-privacy,pending,Nessun token negli URL.,globale:T-1479,
 P0,accessi-privacy,pending,nessun token;,globale:T-1570,
@@ -151,25 +151,25 @@ P0,accessi-privacy,pending,nessuna estensione automatica del pubblico autorizzat
 P0,accessi-privacy,pending,nessuna informazione sull’esistenza di risorse non autorizzate.,addendum:A0335,
 P0,accessi-privacy,pending,Nessuna pagina privata incorporabile in siti esterni.,globale:T-1480,
 P0,accessi-privacy,pending,nessuna password.,globale:T-1571,
-P0,accessi-privacy,pending,Nessuna sessione.,usabilita:U0478,
+P0,accessi-privacy,passed,Nessuna sessione.,usabilita:U0478,ui-critical produzione mobile: senza sessione /api/private e /api/auth/devices rispondono 401
 P0,accessi-privacy,pending,nessuna visualizzazione momentanea di dati privati;,addendum:A0137,
 P0,accessi-privacy,passed,Non accettare token impostati manualmente dal client.,addendum:A0344,Playwright false-token removal + remote session QA; preview a4b05356; 2026-08-04
 P0,accessi-privacy,pending,Non consentire alla password comune di impersonare un Viaggiatore esistente.,usabilita:U0005,
 P0,accessi-privacy,passed,Non creare inviti.,usabilita:U0369,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P0,accessi-privacy,pending,non deve cancellare la sessione personale;,addendum:A0276,
 P0,accessi-privacy,pending,non deve consentire operazioni private mentre è attiva;,addendum:A0278,
-P0,accessi-privacy,pending,non deve contenere password;,addendum:A0421,
-P0,accessi-privacy,pending,non deve contenere token;,addendum:A0422,
+P0,accessi-privacy,passed,non deve contenere password;,addendum:A0421,security-surface L1: codice gruppo assente dal bundle client e verificato solo contro il secret server
+P0,accessi-privacy,passed,non deve contenere token;,addendum:A0422,security-surface L1: token di sessione/invito non incorporati nel bundle client
 P0,accessi-privacy,pending,"non deve vedere posizioni, salvo autorizzazione esplicita;",usabilita:U0028,
 P0,accessi-privacy,passed,Non inserire token in query string.,addendum:A0346,Playwright invite URL cleanup and persisted session without URL token; preview a4b05356; 2026-08-04
-P0,accessi-privacy,pending,Non lasciare documenti privati nella cache.,globale:T-1623,
+P0,accessi-privacy,passed,Non lasciare documenti privati nella cache.,globale:T-1623,public-cache e security-surface L1: Service Worker esclude dati privati e API private sono no-store
 P0,accessi-privacy,passed,non mostrare temporaneamente documenti prima del controllo della sessione;,addendum:A0294,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,pending,Non mostrare testo di post riservati a utenti non autorizzati.,globale:T-1356,
 P0,accessi-privacy,pending,Non registrare token nei log.,addendum:A0347,
 P0,accessi-privacy,passed,non riceve log non autorizzati.,addendum:A0153,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,non riceve posizioni private;,addendum:A0144,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,non riceve sessioni o inviti altrui.,addendum:A0149,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
-P0,accessi-privacy,pending,non riceve token o segreti;,addendum:A0155,
+P0,accessi-privacy,passed,non riceve token o segreti;,addendum:A0155,"security-surface L1: bundle pubblico privo di codice gruppo, token di sessione e token Cloudflare"
 P0,accessi-privacy,passed,Non riutilizzare token già revocati.,addendum:A0345,Live revoke command 403 + authenticated remote QA 20/20; preview a4b05356; 2026-08-04
 P0,accessi-privacy,pending,non utilizzare la password comune per aggirare il rifiuto.,addendum:A0274,
 P0,accessi-privacy,pending,Notifica per invito personale.,globale:T-0085,
@@ -186,15 +186,15 @@ P0,accessi-privacy,pending,ogni tasto non autorizzato è nascosto o disabilitato
 P0,accessi-privacy,pending,password di gruppo e sessione Coordinatore;,addendum:A0054,
 P0,accessi-privacy,pending,password di gruppo e sessione scaduta;,addendum:A0055,
 P0,accessi-privacy,passed,password di gruppo e sessione Viaggiatore;,addendum:A0053,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
-P0,accessi-privacy,pending,password errata;,usabilita:U0492,
+P0,accessi-privacy,passed,password errata;,usabilita:U0492,ui-critical produzione mobile: password errata non sblocca Gruppo né documenti
 P0,accessi-privacy,pending,permesso autorizzato;,globale:T-1381,
 P0,accessi-privacy,pending,privacy dei profili;,globale:T-1795,
-P0,accessi-privacy,pending,privacy nella vista pubblica.,usabilita:U0401,
+P0,accessi-privacy,passed,privacy nella vista pubblica.,usabilita:U0401,ui-critical e production-smoke: cache privata filtrata e stato pubblico privo di campi privati
 P0,accessi-privacy,passed,profile_id della sessione prevale sempre sul profile_id del localStorage;,addendum:A0061,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,pending,Protezione contro accesso a documenti altrui.,globale:T-0222,
 P0,accessi-privacy,pending,prova ripetutamente una funzione non autorizzata;,addendum:A0438,
-P0,accessi-privacy,pending,pubblicazione non autorizzata;,usabilita:U0497,
-P0,accessi-privacy,pending,Pubblico: nessun accesso.,globale:T-0484,
+P0,accessi-privacy,passed,pubblicazione non autorizzata;,usabilita:U0497,ui-critical produzione mobile: Pubblica senza sessione mostra Accesso privato e non monta il compositore
+P0,accessi-privacy,passed,Pubblico: nessun accesso.,globale:T-0484,"ui-critical produzione mobile: nessun comando privato, documenti o griglia coordinatore"
 P0,accessi-privacy,pending,quali contenuti privati esistono.,addendum:A0359,
 P0,accessi-privacy,pending,quali inviti esistono;,addendum:A0357,
 P0,accessi-privacy,pending,quali sessioni sono attive;,addendum:A0358,
@@ -367,58 +367,58 @@ P0,altro,pending,Verificare se i metadati vengono conservati o eliminati.,global
 P0,documenti,pending,"Aggiornare README e documentazione, ancora riferiti a versioni precedenti.",globale:T-0001,
 P0,documenti,passed,apertura documento altrui;,globale:T-0724,extended-p0-documents: media privata negata ad altro viaggiatore
 P0,documenti,passed,apertura documento proprio;,globale:T-0725,extended-p0-documents: proprietario apre il PDF
-P0,documenti,pending,Aprire documenti.,usabilita:U0071,
-P0,documenti,pending,Aprire documento.,globale:T-0475,
-P0,documenti,pending,Aprire lo stesso documento da due dispositivi.,globale:T-0988,
-P0,documenti,pending,Aprire ogni documento.,usabilita:U0451,
+P0,documenti,passed,Aprire documenti.,usabilita:U0071,ui-documents QA mobile: apertura ripetuta di 10 PDF reali con rendering canvas verificato
+P0,documenti,passed,Aprire documento.,globale:T-0475,ui-documents QA mobile: visualizzatore PDF aperto e contenuto renderizzato
+P0,documenti,passed,Aprire lo stesso documento da due dispositivi.,globale:T-0988,document-concurrency 18/18: proprietario e coordinatore aprono simultaneamente lo stesso PDF
+P0,documenti,passed,Aprire ogni documento.,usabilita:U0451,ui-documents QA mobile: ciascuno dei 10 PDF caricati viene aperto e verificato
 P0,documenti,pending,area documenti;,addendum:A0119,
-P0,documenti,pending,"B carica documento, Coordinatore vede aggiornamento.",usabilita:U0559,
+P0,documenti,passed,"B carica documento, Coordinatore vede aggiornamento.",usabilita:U0559,ui-documents QA: viaggiatore carica Visto e Biglietti; dashboard coordinatore passa live 1/4→3/4
 P0,documenti,pending,Bacheca → profilo → documenti → indietro.,globale:T-1411,
 P0,documenti,pending,Calcolare spazio necessario per documenti.,globale:T-1531,
-P0,documenti,pending,Caricamento documenti.,globale:T-1207,
+P0,documenti,passed,Caricamento documenti.,globale:T-1207,ui-documents QA mobile: upload PDF reali con risposta 200 e stato Presente
 P0,documenti,pending,caricamento documento altrui;,globale:T-0728,
-P0,documenti,pending,caricamento documento proprio;,globale:T-0729,
-P0,documenti,pending,caricamento documento;,usabilita:U0547,
+P0,documenti,passed,caricamento documento proprio;,globale:T-0729,ui-documents QA ed extended-p0-documents: proprietario carica nel proprio profilo
+P0,documenti,passed,caricamento documento;,usabilita:U0547,ui-documents QA: caricamenti PDF reali ripetuti e verificati lato UI/API
 P0,documenti,passed,Caricare documento dal telefono del Viaggiatore.,usabilita:U0447,Playwright su due Galaxy separati: caricamento eseguito dal dispositivo viaggiatore; preview c90ec547; 2026-08-04
 P0,documenti,passed,Caricare passaporto.,globale:T-0478;usabilita:U0416,Playwright su due Galaxy: PDF reale caricato dal viaggiatore con risposta server 200; preview c90ec547; 2026-08-04
-P0,documenti,pending,Caricare quattro documenti dal telefono B.,globale:T-0695,
+P0,documenti,passed,Caricare quattro documenti dal telefono B.,globale:T-0695,"document-concurrency 18/18: sessione mobile isolata carica Passaporto, Visto, Biglietti e Assicurazione"
 P0,documenti,pending,Caricare una fotografia del passaporto verticale.,globale:T-0995,
-P0,documenti,pending,Confrontare numero di documenti.,globale:T-1160,
+P0,documenti,passed,Confrontare numero di documenti.,globale:T-1160,document-concurrency 18/18: stato privato contiene esattamente quattro slot dopo quattro upload
 P0,documenti,pending,"Consegnare uno ZIP pulito contenente sorgenti, configurazioni, migrazioni e documentazione.",globale:T-0004,
-P0,documenti,pending,Controllo documenti del gruppo.,globale:T-1212,
-P0,documenti,pending,Dashboard documenti.,usabilita:U0658,
+P0,documenti,passed,Controllo documenti del gruppo.,globale:T-1212,ui-documents QA: dashboard coordinatore mostra lo stato documentale del viaggiatore
+P0,documenti,passed,Dashboard documenti.,usabilita:U0658,ui-documents QA: dashboard coordinatore visibile e aggiornata senza refresh
 P0,documenti,pending,Deep link del documento.,globale:T-0241,
 P0,documenti,pending,Definire per quanto tempo vengono conservati i documenti.,globale:T-1343,
-P0,documenti,pending,Descrizione dello stato dei documenti.,globale:T-1065,
+P0,documenti,passed,Descrizione dello stato dei documenti.,globale:T-1065,"ui-documents QA: stati Non ancora caricato, Presente e conteggi 0/4–3/4 verificati"
 P0,documenti,pending,deve nascondere immediatamente documenti e posizioni;,addendum:A0279,
 P0,documenti,pending,Documentare e applicare una regola unica.,globale:T-0700,
 P0,documenti,pending,Documentare procedura e tempo di rollback.,globale:T-1172,
 P0,documenti,passed,Documentare tempo necessario al ripristino.,globale:T-1165,verify-d1-backup: tempo di ripristino misurato automaticamente
 P0,documenti,pending,documentato come funzione non completata.,addendum:A0197,
 P0,documenti,pending,documenti essenziali disponibili;,globale:T-1753,
-P0,documenti,pending,Documenti propri.,usabilita:U0645,
+P0,documenti,passed,Documenti propri.,usabilita:U0645,extended-p0-documents: il proprietario vede i propri documenti; altro viaggiatore no
 P0,documenti,pending,documenti;,addendum:A0075,
-P0,documenti,pending,Documento → visualizzatore → indietro.,globale:T-1412,
-P0,documenti,pending,documento aperto;,globale:T-1560,
-P0,documenti,pending,documento caricato;,globale:T-1561,
-P0,documenti,pending,documento eliminato;,globale:T-1562,
-P0,documenti,pending,documento scaricato;,globale:T-1563,
-P0,documenti,pending,documento sostituito;,globale:T-1564,
+P0,documenti,passed,Documento → visualizzatore → indietro.,globale:T-1412,"ui-documents QA mobile: Apri, rendering PDF, Chiudi documento e ritorno alla scheda"
+P0,documenti,passed,documento aperto;,globale:T-1560,ui-documents QA mobile: overlay visibile e canvas PDF non vuoto
+P0,documenti,passed,documento caricato;,globale:T-1561,"ui-documents QA: POST 200, nome file e stato Presente verificati"
+P0,documenti,passed,documento eliminato;,globale:T-1562,ui-documents QA: conferma DELETE 200 e ritorno a Non ancora caricato
+P0,documenti,passed,documento scaricato;,globale:T-1563,ui-documents QA: evento download e nome file documento-reale-10.pdf verificati
+P0,documenti,passed,documento sostituito;,globale:T-1564,"ui-documents QA: 10 cicli sullo stesso tipo documento, ogni nuova versione aperta correttamente"
 P0,documenti,passed,Eliminare documento.,globale:T-0481;usabilita:U0449,Playwright: eliminazione eseguita dal proprietario e confermata dal server; preview c90ec547; 2026-08-04
-P0,documenti,pending,Eliminare il documento durante un download.,globale:T-0998,
+P0,documenti,passed,Eliminare il documento durante un download.,globale:T-0998,document-concurrency 18/18: GET e DELETE concorrenti terminano con record e media assenti
 P0,documenti,pending,Eliminare un documento dal telefono B.,globale:T-0701,
 P0,documenti,passed,eliminazione documento altrui;,globale:T-0734,extended-p0-documents: DELETE altrui 403
 P0,documenti,passed,eliminazione documento proprio;,globale:T-0735,extended-p0-documents: DELETE proprio 200 e file rimosso
 P0,documenti,pending,Errore durante sostituzione documento.,globale:T-1150,
 P0,documenti,pending,Eseguire backup mentre vengono caricati documenti.,globale:T-1167,
-P0,documenti,pending,Il Coordinatore controlla i documenti.,globale:T-1728,
-P0,documenti,pending,Impossibilità di vedere documenti altrui.,usabilita:U0650,
+P0,documenti,passed,Il Coordinatore controlla i documenti.,globale:T-1728,ui-documents QA: coordinatore apre dalla dashboard il PDF del viaggiatore
+P0,documenti,passed,Impossibilità di vedere documenti altrui.,usabilita:U0650,extended-p0-documents: stato privato e media negati all’altro viaggiatore
 P0,documenti,pending,la visualizzazione dei documenti sia separata dalla gestione dei ruoli;,addendum:A0381,
 P0,documenti,pending,Misurare caricamento documento.,globale:T-0586,
 P0,documenti,pending,Modificare document profile_id.,usabilita:U0574,
 P0,documenti,pending,nessun contenuto completo del documento;,globale:T-1569,
 P0,documenti,pending,nessuna funzione dichiarata nella documentazione sia assente dall’interfaccia;,addendum:A0019,
-P0,documenti,pending,Non cancellare documenti o bozze senza conferma.,globale:T-0845,
+P0,documenti,passed,Non cancellare documenti o bozze senza conferma.,globale:T-0845,ui-documents QA: Annulla mantiene il PDF; solo la successiva conferma esegue DELETE
 P0,documenti,pending,Non compromettere documenti e funzioni essenziali.,globale:T-1650,
 P0,documenti,pending,non deve contenere documenti;,addendum:A0423,
 P0,documenti,pending,non deve vedere documenti;,usabilita:U0027,
@@ -430,8 +430,8 @@ P0,documenti,passed,non riceve documenti;,addendum:A0148,Authenticated remote QA
 P0,documenti,pending,Non visualizzare documenti.,usabilita:U0363;usabilita:U0367,
 P0,documenti,pending,Notifica per documento mancante o aggiornato.,globale:T-0084,
 P0,documenti,pending,Ogni documento deve essere collegato a un profilo esistente.,globale:T-1016,
-P0,documenti,pending,ogni Viaggiatore vede soltanto i propri documenti;,globale:T-0686,
-P0,documenti,pending,PDF nei documenti.,globale:T-0439,
+P0,documenti,passed,ogni Viaggiatore vede soltanto i propri documenti;,globale:T-0686,"extended-p0-documents: owner vede il file, secondo viaggiatore non vede record né media"
+P0,documenti,passed,PDF nei documenti.,globale:T-0439,ui-documents QA mobile: 10 PDF reali renderizzati con PDF.js su Samsung e iPhone
 P0,documenti,pending,"Preferenze separate per post, commenti, reazioni, documenti e posizione.",globale:T-0090,
 P0,documenti,pending,protezione dei documenti;,globale:T-1796,
 P0,documenti,passed,Prova di ripristino documentata.,globale:T-0639,verify-d1-backup: procedura ripetibile di ripristino documentata nel repository
@@ -439,16 +439,16 @@ P0,documenti,pending,quali profili hanno documenti;,addendum:A0355,
 P0,documenti,passed,quanti documenti esistono;,addendum:A0354,Public private-state 401 and minimized state; authenticated remote QA 20/20; preview a4b05356; 2026-08-04
 P0,documenti,passed,riceve soltanto i propri documenti;,addendum:A0150,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,documenti,passed,Scaricare documento.,globale:T-0485;usabilita:U0425,Playwright mobile: evento download ricevuto dopo comando Scarica; preview c90ec547; 2026-08-04
-P0,documenti,pending,Sostituire contemporaneamente lo stesso documento da due telefoni.,globale:T-0799,
-P0,documenti,pending,Sostituire documento.,globale:T-0486;usabilita:U0428,
-P0,documenti,pending,Sostituire il documento.,globale:T-0706,
-P0,documenti,pending,Sostituire più volte lo stesso documento.,globale:T-1000,
+P0,documenti,passed,Sostituire contemporaneamente lo stesso documento da due telefoni.,globale:T-0799,document-concurrency 18/18: due upload concorrenti ordinati dal batch D1 atomico
+P0,documenti,passed,Sostituire documento.,globale:T-0486;usabilita:U0428,ui-documents QA: sostituzione ripetuta del Passaporto con nuovo nome e contenuto apribile
+P0,documenti,passed,Sostituire il documento.,globale:T-0706,ui-documents QA: nuovo PDF caricato sullo stesso slot dopo eliminazione
+P0,documenti,passed,Sostituire più volte lo stesso documento.,globale:T-1000,ui-documents QA: dieci iterazioni consecutive sullo stesso slot Passaporto
 P0,documenti,pending,Sostituzione documento durante il download.,globale:T-0573,
 P0,documenti,pending,sostituzione documento;,usabilita:U0548,
 P0,documenti,pending,Tentare clickjacking su Carica documento.,globale:T-1486,
 P0,documenti,pending,Tentare di aprire documenti.,usabilita:U0620;usabilita:U0635,
-P0,documenti,pending,Tornare da un documento.,globale:T-0975,
-P0,documenti,pending,trovare i propri documenti;,globale:T-1786,
+P0,documenti,passed,Tornare da un documento.,globale:T-0975,ui-documents QA mobile: Chiudi documento elimina l’overlay e ripristina la schermata documenti
+P0,documenti,passed,trovare i propri documenti;,globale:T-1786,ui-documents QA ed extended-p0-documents: record proprio trovato nella scheda e nello stato privato
 P0,documenti,pending,un documento indicato dal database non esiste nell’archivio;,addendum:A0306,
 P0,documenti,pending,Un solo documento dopo dieci retry.,globale:T-0141,
 P0,documenti,passed,un Viaggiatore può vedere documenti altrui;,usabilita:U0690,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
@@ -459,19 +459,19 @@ P0,documenti,pending,"Verificare che il Coordinatore possa moderare, se previsto
 P0,documenti,pending,Verificare che il dispositivo revocato non possa più aprire documenti.,globale:T-0767,
 P0,documenti,passed,Verificare che il pubblico non veda documenti.,globale:T-0337,production-smoke: area documenti privata restituisce 401 al pubblico
 P0,documenti,pending,"Verificare che non vi siano differenze tra itinerario, mappe e documenti.",globale:T-1269,
-P0,documenti,pending,Verificare che rimanga un solo documento valido.,globale:T-0800,
+P0,documenti,passed,Verificare che rimanga un solo documento valido.,globale:T-0800,"document-concurrency 18/18: un solo record Passaporto, chiave corrente accessibile e precedente rimossa"
 P0,documenti,pending,Verificare documenti corretti.,globale:T-1606,
 P0,documenti,pending,Verificare documenti precedenti conservati.,globale:T-1032,
-P0,documenti,pending,Verificare eliminazione dei documenti.,globale:T-1332,
+P0,documenti,passed,Verificare eliminazione dei documenti.,globale:T-1332,document-concurrency 18/18: record e media eliminati per tutti e quattro i tipi
 P0,documenti,pending,Verificare impossibilità di aprire documenti già non disponibili offline.,globale:T-1620,
 P0,documenti,pending,Verificare nessun documento nella cache del browser.,globale:T-0491,
-P0,documenti,pending,Verificare nuovo documento.,usabilita:U0429,
+P0,documenti,passed,Verificare nuovo documento.,usabilita:U0429,document-concurrency 18/18: nuova chiave PDF accessibile dopo sostituzione e diversa dalla precedente
 P0,documenti,pending,Verificare quali documenti restano memorizzati.,globale:T-1630,
 P0,documenti,passed,Verificare quattro documenti per persona.,usabilita:U0445,Playwright mobile: griglia del viaggiatore espone conteggio su quattro documenti e Passaporto nominativo; preview c90ec547; 2026-08-04
 P0,documenti,passed,Viaggiatore A apre documento A.,usabilita:U0438,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,documenti,passed,Viaggiatore A tenta documento B: 403.,usabilita:U0439,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P0,documenti,pending,Viaggiatore A: impossibile aprire documento B.,globale:T-0493,
-P0,documenti,pending,Viaggiatore A: soltanto documenti A.,globale:T-0494,
+P0,documenti,passed,Viaggiatore A: impossibile aprire documento B.,globale:T-0493,extended-p0-documents: HEAD media di A dal token B non restituisce 200
+P0,documenti,passed,Viaggiatore A: soltanto documenti A.,globale:T-0494,extended-p0-documents: /api/private del viaggiatore esclude i documenti dell’altro profilo
 P0,mappe-posizione,pending,Eliminare automaticamente le posizioni non più necessarie.,globale:T-1346,
 P0,mappe-posizione,pending,nessun tasto Elimina occupi la posizione normalmente usata da Annulla;,addendum:A0262,
 P0,mappe-posizione,passed,Verifica posizioni ripristinate.,globale:T-0646,verify-d1-backup: posizione ripristinata
