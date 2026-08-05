@@ -475,8 +475,8 @@ P0,documenti,pending,Viaggiatore A: soltanto documenti A.,globale:T-0494,
 P0,mappe-posizione,pending,Eliminare automaticamente le posizioni non più necessarie.,globale:T-1346,
 P0,mappe-posizione,pending,nessun tasto Elimina occupi la posizione normalmente usata da Annulla;,addendum:A0262,
 P0,mappe-posizione,passed,Verifica posizioni ripristinate.,globale:T-0646,verify-d1-backup: posizione ripristinata
-P0,mappe-posizione,pending,Verificare eliminazione della posizione.,globale:T-1334,
-P0,mappe-posizione,pending,Verificare la posizione dal telefono del Coordinatore.,globale:T-0720,
+P0,mappe-posizione,passed,Verificare eliminazione della posizione.,globale:T-1334,"extended-p0-location: proprietario elimina, altri utenti non possono eliminare"
+P0,mappe-posizione,passed,Verificare la posizione dal telefono del Coordinatore.,globale:T-0720,extended-p0-location: coordinatore e viaggiatore autenticato vedono la posizione condivisa
 P0,media-upload,pending,Backup archivio MEDIA.,globale:T-0634,
 P0,media-upload,passed,"Coordinatore cambia ruolo, permessi aggiornati immediatamente.",usabilita:U0563,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P0,media-upload,passed,"Eliminando un post, eliminare media, commenti e reazioni.",globale:T-1010,extended-p0-media-delete: cascata completa e stato pulito su tre viste

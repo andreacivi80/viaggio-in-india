@@ -27,5 +27,7 @@
   { "control": "Eliminare un post già caricato.", "evidence": "extended-p0-media-delete: post con tre media eliminato dal proprietario" },
   { "control": "Verificare eliminazione degli audio.", "evidence": "extended-p0-media-delete: MP3 non più raggiungibile dopo DELETE" },
   { "control": "Verificare eliminazione dei video.", "evidence": "extended-p0-media-delete: MP4 non più raggiungibile dopo DELETE" },
-  { "control": "Verificare eliminazione delle fotografie.", "evidence": "extended-p0-media-delete: JPEG non più raggiungibile dopo DELETE" }
+  { "control": "Verificare eliminazione delle fotografie.", "evidence": "extended-p0-media-delete: JPEG non più raggiungibile dopo DELETE" },
+  { "control": "Verificare eliminazione della posizione.", "evidence": "extended-p0-location: proprietario elimina, altri utenti non possono eliminare" },
+  { "control": "Verificare la posizione dal telefono del Coordinatore.", "evidence": "extended-p0-location: coordinatore e viaggiatore autenticato vedono la posizione condivisa" }
 ]

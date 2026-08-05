@@ -5,7 +5,8 @@ param(
   [switch]$AbuseOnly,
   [switch]$ExtendedDocuments,
   [switch]$ExtendedSync,
-  [switch]$ExtendedMedia
+  [switch]$ExtendedMedia,
+  [switch]$ExtendedLocation
 )
 
 $ErrorActionPreference = "Stop"
@@ -90,7 +91,10 @@ try {
   $env:QA_RUN_ID = $runId
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
-  if ($ExtendedMedia) {
+  if ($ExtendedLocation) {
+    & node tests\extended-p0-location.mjs
+  }
+  elseif ($ExtendedMedia) {
     & node tests\extended-p0-media-delete.mjs
   }
   elseif ($ExtendedSync) {
