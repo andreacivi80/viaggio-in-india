@@ -1093,7 +1093,7 @@ export async function onRequest(context) {
         .bind(now())
         .run();
       const cutoff = now();
-      await env.DB.batch([
+      const cleanupResults = await env.DB.batch([
         env.DB.prepare("DELETE FROM auth_sessions WHERE expires_at<=?").bind(cutoff),
         env.DB.prepare("DELETE FROM guest_sessions WHERE expires_at<=?").bind(cutoff),
         env.DB.prepare("DELETE FROM rate_limits WHERE expires_at<=?").bind(cutoff),
@@ -1102,6 +1102,7 @@ export async function onRequest(context) {
           "DELETE FROM profile_invites WHERE expires_at<=? OR used_at IS NOT NULL",
         ).bind(cutoff),
       ]);
+      const removed = (index) => Number(cleanupResults[index]?.meta?.changes || 0);
       const state = await env.DB.prepare(
         "SELECT version,updated_at FROM sync_state WHERE id=1",
       ).first();
@@ -1109,6 +1110,13 @@ export async function onRequest(context) {
         ok: true,
         version: Number(state?.version || 0),
         updated_at: state?.updated_at || null,
+        maintenance: {
+          auth_sessions_removed: removed(0),
+          guest_sessions_removed: removed(1),
+          rate_limits_removed: removed(2),
+          idempotency_operations_removed: removed(3),
+          profile_invites_removed: removed(4),
+        },
       });
     }
     if (request.method === "GET" && path === "weather") {

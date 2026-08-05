@@ -1,4 +1,6 @@
 [
+  { "control": "Eliminare inviti scaduti.", "evidence": "extended-p0-auth-lifecycle 44/44: invito scaduto inserito in D1 locale isolato, health rimuove almeno una riga, claim successivo 403" },
+  { "control": "Eliminare sessioni scadute.", "evidence": "extended-p0-auth-lifecycle 44/44: sessione scaduta inserita in D1 locale isolato, health rimuove almeno una riga, sessione successiva 401" },
   { "control": "100 tentativi di accesso con codice errato.", "evidence": "ui-p0-auth-abuse: 100/100 respinti, rate limit attivo, profili invariati" },
   { "control": "100 tentativi di utilizzo di un invito errato.", "evidence": "ui-p0-auth-abuse: 100/100 respinti, nessuna sessione o profilo" },
   { "control": "Tentare accesso a documento altrui.", "evidence": "extended-p0-documents: media privata negata ad altro viaggiatore" },

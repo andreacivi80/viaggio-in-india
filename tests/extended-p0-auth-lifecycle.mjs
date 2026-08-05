@@ -3,10 +3,11 @@ import assert from "node:assert/strict";
 const base = String(process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 const targetProfileId = process.env.QA_UNCLAIMED_PROFILE_ID;
 const expiredInviteToken = process.env.QA_EXPIRED_INVITE_TOKEN;
+const expiredSessionToken = process.env.QA_EXPIRED_SESSION_TOKEN;
 const coordinatorToken = process.env.QA_COORDINATOR_TOKEN;
 const coordinatorSecondToken = process.env.QA_COORDINATOR_SECOND_TOKEN;
 const coordinatorSecondDeviceId = process.env.QA_COORDINATOR_SECOND_DEVICE_ID;
-if (!base || !targetProfileId || !expiredInviteToken || !coordinatorToken || !coordinatorSecondToken || !coordinatorSecondDeviceId) {
+if (!base || !targetProfileId || !expiredInviteToken || !expiredSessionToken || !coordinatorToken || !coordinatorSecondToken || !coordinatorSecondDeviceId) {
   throw new Error("Ambiente QA P0 ciclo autenticazione incompleto");
 }
 
@@ -17,6 +18,13 @@ const jsonHeaders = (token, device) => ({
   "content-type": "application/json",
   ...(device ? { "x-device-name": device } : {}),
 });
+
+const healthResponse = await request("/api/health");
+assert.equal(healthResponse.status, 200);
+const health = await healthResponse.json();
+assert.ok(health.maintenance.auth_sessions_removed >= 1);
+assert.ok(health.maintenance.profile_invites_removed >= 1);
+assert.equal((await request("/api/auth/session", { headers: bearer(expiredSessionToken) })).status, 401);
 
 const missingProfileInvite = await request("/api/auth/invites", {
   method: "POST",
@@ -134,5 +142,5 @@ assert.equal((await logoutAllResponse.json()).push_subscriptions_revoked, 1);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 401);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 401);
 
-console.log("P0_AUTH_LIFECYCLE=40/40");
+console.log("P0_AUTH_LIFECYCLE=44/44");
 process.exit(0);

@@ -90,6 +90,8 @@ const evidence = {
   "T-1025": ["SUPERATO", "production-smoke: unicita operazioni idempotenti verificata"],
   "T-1029": ["SUPERATO", "backup D1 creato e verificato prima della migrazione 0013"],
   "T-1182": ["SUPERATO", "production-smoke: Service Worker live contiene la revisione corrente"],
+  "T-1347": ["SUPERATO", "extended-p0-auth-lifecycle: invito scaduto inserito in D1 locale e rimosso da health"],
+  "T-1348": ["SUPERATO", "extended-p0-auth-lifecycle: sessione scaduta inserita in D1 locale e rimozione contata da health"],
   "T-1352": ["SUPERATO", "QA 1.31.0: contenuto Solo io assente dai feed non proprietari"],
   "T-1362": ["SUPERATO", "QA 1.31.0: dopo logout sessione e area privata restituiscono 401"],
   "T-1165": ["SUPERATO", "verify-d1-backup: tempo di ripristino misurato automaticamente"],

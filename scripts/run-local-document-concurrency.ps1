@@ -34,6 +34,7 @@ $coordinatorSecondaryToken = New-QaToken
 $deleteProfileToken = New-QaToken
 $coordinatorSecondaryDeviceId = "local-coordinator-secondary-device"
 $expiredInviteToken = New-QaToken
+$expiredSessionToken = New-QaToken
 $created = [DateTime]::UtcNow.ToString("o")
 $expires = [DateTime]::UtcNow.AddHours(1).ToString("o")
 $expired = [DateTime]::UtcNow.AddHours(-1).ToString("o")
@@ -58,8 +59,6 @@ INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at
 ('$(Get-TokenHash $coordinatorToken)','$coordinatorId','local-coordinator-device','Telefono coordinatore locale','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $coordinatorSecondaryToken)','$coordinatorId','$coordinatorSecondaryDeviceId','Secondo telefono coordinatore locale','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $deleteProfileToken)','$deleteProfileId','local-delete-device','Telefono profilo da eliminare','$created','$created','$expires',NULL);
-INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at)
-VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$created','$expired',NULL);
 "@
   $setupFile = Join-Path $persistRoot "setup.sql"
   [IO.File]::WriteAllText($setupFile, $sql, [Text.UTF8Encoding]::new($false))
@@ -89,6 +88,19 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
     throw "Server Pages locale non avviato. $details"
   }
 
+  # Inserisce i record scaduti soltanto dopo il controllo di disponibilita,
+  # perche /api/health esegue intenzionalmente la manutenzione silenziosa.
+  $expiredSql = @"
+INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at)
+VALUES('$(Get-TokenHash $expiredSessionToken)','$ownerId','local-expired-device','Telefono scaduto locale','$created','$created','$expired',NULL);
+INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at)
+VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$created','$expired',NULL);
+"@
+  $expiredFile = Join-Path $persistRoot "expired-auth.sql"
+  [IO.File]::WriteAllText($expiredFile, $expiredSql, [Text.UTF8Encoding]::new($false))
+  & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file $expiredFile | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw "Preparazione record autenticazione scaduti non riuscita" }
+
   $env:TEST_BASE_URL = "http://127.0.0.1:$port"
   $env:QA_PROFILE_ID = $ownerId
   $env:QA_SESSION_TOKEN = $ownerToken
@@ -100,6 +112,7 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
   $env:QA_COORDINATOR_SECOND_DEVICE_ID = $coordinatorSecondaryDeviceId
   $env:QA_UNCLAIMED_PROFILE_ID = $unclaimedId
   $env:QA_EXPIRED_INVITE_TOKEN = $expiredInviteToken
+  $env:QA_EXPIRED_SESSION_TOKEN = $expiredSessionToken
   $env:QA_DELETE_PROFILE_ID = $deleteProfileId
   $env:QA_DELETE_PROFILE_TOKEN = $deleteProfileToken
   $suiteFiles = @{

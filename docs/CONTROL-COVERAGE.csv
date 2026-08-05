@@ -95,9 +95,9 @@ P0,accessi-privacy,pending,elenco dei controlli di proprietà;,addendum:A0469,
 P0,accessi-privacy,pending,elenco dei messaggi di autorizzazione negata;,addendum:A0472,
 P0,accessi-privacy,passed,"Eliminando un profilo, gestire documenti, posizioni, sessioni e inviti.",globale:T-1011,"profile-deletion locale 40/40 + QA live 17/17: cascata reale verificata su documenti, posizione, sessione, invito e stato condiviso"
 P0,accessi-privacy,passed,Eliminare il profilo associato a una sessione attiva.,globale:T-0758,profile-deletion locale 40/40 + QA live 17/17: eliminazione dal dispositivo proprietario e sessione immediatamente respinta con 401
-P0,accessi-privacy,pending,Eliminare inviti scaduti.,globale:T-1347,
+P0,accessi-privacy,passed,Eliminare inviti scaduti.,globale:T-1347,"extended-p0-auth-lifecycle: invito scaduto inserito in D1 locale e rimosso da health | extended-p0-auth-lifecycle 44/44: invito scaduto inserito in D1 locale isolato, health rimuove almeno una riga, claim successivo 403"
 P0,accessi-privacy,pending,Eliminare l’endpoint che trasforma il codice comune in una sessione per un profilo scelto.,globale:T-0034,
-P0,accessi-privacy,pending,Eliminare sessioni scadute.,globale:T-1348,
+P0,accessi-privacy,passed,Eliminare sessioni scadute.,globale:T-1348,"extended-p0-auth-lifecycle: sessione scaduta inserita in D1 locale e rimozione contata da health | extended-p0-auth-lifecycle 44/44: sessione scaduta inserita in D1 locale isolato, health rimuove almeno una riga, sessione successiva 401"
 P0,accessi-privacy,pending,endpoint autorizzati;,addendum:A0048,
 P0,accessi-privacy,pending,entrare con un invito;,globale:T-1774,
 P0,accessi-privacy,pending,Eseguire logout e nuovo accesso.,addendum:A0340,

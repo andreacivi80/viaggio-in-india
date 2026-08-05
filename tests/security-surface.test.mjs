@@ -56,6 +56,13 @@ test("sessioni revocate, scadute o inattive non vengono accettate", () => {
   assert.match(worker, /UPDATE auth_sessions SET revoked_at=\?/);
 });
 
+test("la manutenzione elimina realmente sessioni e inviti scaduti e ne espone solo i conteggi", () => {
+  assert.match(worker, /DELETE FROM auth_sessions WHERE expires_at<=\?/);
+  assert.match(worker, /DELETE FROM profile_invites WHERE expires_at<=\? OR used_at IS NOT NULL/);
+  assert.match(worker, /auth_sessions_removed: removed\(0\)/);
+  assert.match(worker, /profile_invites_removed: removed\(4\)/);
+});
+
 test("il rinnovo estende soltanto una sessione ancora valida e prossima alla scadenza", () => {
   assert.match(worker, /request\.method === "POST" && path === "auth\/refresh"[\s\S]*?sessionFromRequest\(request, env\)/);
   assert.match(worker, /UPDATE auth_sessions SET last_used_at=\?,expires_at=\?[\s\S]*?revoked_at IS NULL AND expires_at>\?/);

@@ -1359,8 +1359,8 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1344 | 71 | Definire per quanto tempo vengono conservati i log. | NON ESEGUITO | — |
 | T-1345 | 71 | Definire per quanto tempo vengono conservati i post. | NON ESEGUITO | — |
 | T-1346 | 71 | Eliminare automaticamente le posizioni non più necessarie. | NON ESEGUITO | — |
-| T-1347 | 71 | Eliminare inviti scaduti. | NON ESEGUITO | — |
-| T-1348 | 71 | Eliminare sessioni scadute. | NON ESEGUITO | — |
+| T-1347 | 71 | Eliminare inviti scaduti. | SUPERATO | extended-p0-auth-lifecycle: invito scaduto inserito in D1 locale e rimosso da health |
+| T-1348 | 71 | Eliminare sessioni scadute. | SUPERATO | extended-p0-auth-lifecycle: sessione scaduta inserita in D1 locale e rimozione contata da health |
 | T-1349 | 71 | Eliminare subscription inattive. | NON ESEGUITO | — |
 | T-1350 | 71 | Produrre un resoconto dei dati eliminati. | NON ESEGUITO | — |
 | T-1351 | 71 | Verificare che la pulizia automatica non elimini dati ancora validi. | NON ESEGUITO | — |
