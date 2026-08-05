@@ -45,7 +45,7 @@ test("dominio, revisione, mappa e Service Worker sono coerenti", async () => {
   const registration = await (await request("/sw-register.js", { cache: "no-store" })).text();
   if (expectedVersion) {
     assert.match(worker, new RegExp(expectedVersion.replaceAll(".", "\\.")));
-    assert.match(registration, /serviceWorker\.register/);
+    assert.match(registration, /serviceWorker\s*\.register/);
     assert.doesNotMatch(
       registration,
       /location\.reload/,
