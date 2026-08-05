@@ -45,5 +45,12 @@
   { "control": "test di creazione, modifica ed eliminazione;", "evidence": "extended-p0-social: ciclo completo su due autori" },
   { "control": "Eseguire backup mentre vengono aggiunti commenti.", "evidence": "extended-p0-backup-comments: export D1 reale concorrente a 8 commenti, backup leggibile e stato integro" },
   { "control": "Verificare eliminazione della cache difettosa.", "evidence": "ui-p0-cache-recovery: cache corrotta rimossa e riapertura offline riuscita" },
-  { "control": "Verificare eliminazione della vecchia cache.", "evidence": "ui-p0-cache-recovery: cache 1.37.18 rimossa, resta soltanto 1.37.19" }
+  { "control": "Verificare eliminazione della vecchia cache.", "evidence": "ui-p0-cache-recovery: cache 1.37.18 rimossa, resta soltanto 1.37.19" },
+  { "control": "Verificare perdita immediata dei privilegi da Coordinatore.", "evidence": "extended-p0-roles: retrocessione live; il token già aperto perde immediatamente inviti e modifica profili" },
+  { "control": "Verificare eliminazione della vecchia fotografia.", "evidence": "extended-p0-avatar-replacement: sostituzione reale su QA, nuova foto disponibile e vecchia chiave MEDIA non più raggiungibile" },
+  { "control": "Verificare che la dashboard del Coordinatore passi immediatamente a 3/4.", "evidence": "ui-documents QA: due telefoni reali simulati, passaggio live 1/4→3/4 senza refresh su S20 FE, Samsung vecchio e iPhone piccolo" },
+  { "control": "Backup archivio MEDIA.", "evidence": "KV QA reale: fixture esportata in binario nella cartella Manuale con SHA-256, eliminata, ripristinata e riletta byte per byte" },
+  { "control": "Verifica media ripristinati.", "evidence": "test-kv-media-backup-restore: 75 byte ripristinati, SHA-256 ce646339…c320d29 identico, fixture poi ripulita" },
+  { "control": "Interruzione del database durante un upload.", "evidence": "fault injection persistUploadPart: caduta D1 dopo KV elimina il frammento orfano; retry riuscito; percorso QA chunk 12/12" },
+  { "control": "Interruzione dell’archivio MEDIA dopo salvataggio del database.", "evidence": "fault injection persistUploadPart: caduta MEDIA non registra la parte; sessione D1 resta ripetibile; retry live QA riuscito" }
 ]

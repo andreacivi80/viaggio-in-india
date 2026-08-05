@@ -455,6 +455,24 @@ async function digestHex(bytes) {
   const digest = await crypto.subtle.digest("SHA-256", bytes);
   return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
 }
+export async function persistUploadPart(env, upload, partNumber, bytes, etag, timestamp = now()) {
+  const key = chunkKey(upload.id, partNumber);
+  await env.MEDIA.put(key, bytes, {
+    metadata: { uploadId: upload.id, partNumber: String(partNumber), etag },
+  });
+  try {
+    await env.DB.prepare(
+      `INSERT INTO upload_parts(upload_session_id,part_number,part_size,etag,updated_at)
+       VALUES(?,?,?,?,?) ON CONFLICT(upload_session_id,part_number)
+       DO UPDATE SET part_size=excluded.part_size,etag=excluded.etag,updated_at=excluded.updated_at`,
+    ).bind(upload.id, partNumber, bytes.byteLength, etag, timestamp).run();
+  } catch (error) {
+    // Se D1 cade dopo la scrittura KV, non lasciamo una parte orfana: il
+    // caricamento resta ripetibile dal telefono quando la rete torna stabile.
+    try { await env.MEDIA.delete(key); } catch { /* la manutenzione riproverà */ }
+    throw error;
+  }
+}
 async function deleteStoredMedia(env, key) {
   if (!key) return;
   if (!key.startsWith("chunked/")) {
@@ -1135,14 +1153,7 @@ export async function onRequest(context) {
       if (partNumber === 1)
         validateFileBytes(bytes, upload.content_type, upload.file_name, upload.scope);
       const etag = await digestHex(bytes);
-      await env.MEDIA.put(chunkKey(upload.id, partNumber), bytes, {
-        metadata: { uploadId: upload.id, partNumber: String(partNumber), etag },
-      });
-      await env.DB.prepare(
-        `INSERT INTO upload_parts(upload_session_id,part_number,part_size,etag,updated_at)
-         VALUES(?,?,?,?,?) ON CONFLICT(upload_session_id,part_number)
-         DO UPDATE SET part_size=excluded.part_size,etag=excluded.etag,updated_at=excluded.updated_at`,
-      ).bind(upload.id, partNumber, bytes.byteLength, etag, now()).run();
+      await persistUploadPart(env, upload, partNumber, bytes, etag);
       return json({ ok: true, part_number: partNumber, etag });
     }
     const uploadCompleteMatch = path.match(/^uploads\/([^/]+)\/complete$/);

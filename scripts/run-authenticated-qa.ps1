@@ -9,7 +9,9 @@ param(
   [switch]$ExtendedLocation,
   [switch]$ExtendedRoles,
   [switch]$ExtendedSocial,
-  [switch]$ExtendedBackupComments
+  [switch]$ExtendedBackupComments,
+  [switch]$ExtendedAvatar,
+  [switch]$ExtendedChunkRetry
 )
 
 $ErrorActionPreference = "Stop"
@@ -94,7 +96,13 @@ try {
   $env:QA_RUN_ID = $runId
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
-  if ($ExtendedBackupComments) {
+  if ($ExtendedChunkRetry) {
+    & node tests\extended-p0-chunk-retry.mjs
+  }
+  elseif ($ExtendedAvatar) {
+    & node tests\extended-p0-avatar-replacement.mjs
+  }
+  elseif ($ExtendedBackupComments) {
     & node tests\extended-p0-backup-comments.mjs
   }
   elseif ($ExtendedSocial) {

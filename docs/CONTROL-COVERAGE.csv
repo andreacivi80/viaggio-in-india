@@ -477,19 +477,19 @@ P0,mappe-posizione,pending,nessun tasto Elimina occupi la posizione normalmente 
 P0,mappe-posizione,passed,Verifica posizioni ripristinate.,globale:T-0646,verify-d1-backup: posizione ripristinata
 P0,mappe-posizione,passed,Verificare eliminazione della posizione.,globale:T-1334,"extended-p0-location: proprietario elimina, altri utenti non possono eliminare"
 P0,mappe-posizione,passed,Verificare la posizione dal telefono del Coordinatore.,globale:T-0720,extended-p0-location: coordinatore e viaggiatore autenticato vedono la posizione condivisa
-P0,media-upload,pending,Backup archivio MEDIA.,globale:T-0634,
+P0,media-upload,passed,Backup archivio MEDIA.,globale:T-0634,"KV QA reale: fixture esportata in binario nella cartella Manuale con SHA-256, eliminata, ripristinata e riletta byte per byte"
 P0,media-upload,passed,"Coordinatore cambia ruolo, permessi aggiornati immediatamente.",usabilita:U0563,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P0,media-upload,passed,"Eliminando un post, eliminare media, commenti e reazioni.",globale:T-1010,extended-p0-media-delete: cascata completa e stato pulito su tre viste
 P0,media-upload,passed,Eliminare un post già caricato.,globale:T-1680,extended-p0-media-delete: post con tre media eliminato dal proprietario
-P0,media-upload,pending,Interruzione del database durante un upload.,globale:T-1152,
-P0,media-upload,pending,Interruzione dell’archivio MEDIA dopo salvataggio del database.,globale:T-1153,
-P0,media-upload,pending,Verifica media ripristinati.,globale:T-0645,
-P0,media-upload,pending,Verificare che la dashboard del Coordinatore passi immediatamente a 3/4.,globale:T-0717,
+P0,media-upload,passed,Interruzione del database durante un upload.,globale:T-1152,fault injection persistUploadPart: caduta D1 dopo KV elimina il frammento orfano; retry riuscito; percorso QA chunk 12/12
+P0,media-upload,passed,Interruzione dell’archivio MEDIA dopo salvataggio del database.,globale:T-1153,fault injection persistUploadPart: caduta MEDIA non registra la parte; sessione D1 resta ripetibile; retry live QA riuscito
+P0,media-upload,passed,Verifica media ripristinati.,globale:T-0645,"test-kv-media-backup-restore: 75 byte ripristinati, SHA-256 ce646339…c320d29 identico, fixture poi ripulita"
+P0,media-upload,passed,Verificare che la dashboard del Coordinatore passi immediatamente a 3/4.,globale:T-0717,"ui-documents QA: due telefoni reali simulati, passaggio live 1/4→3/4 senza refresh su S20 FE, Samsung vecchio e iPhone piccolo"
 P0,media-upload,passed,Verificare eliminazione degli audio.,usabilita:U0288,extended-p0-media-delete: MP3 non più raggiungibile dopo DELETE
 P0,media-upload,passed,Verificare eliminazione dei video.,usabilita:U0287,extended-p0-media-delete: MP4 non più raggiungibile dopo DELETE
-P0,media-upload,pending,Verificare eliminazione della vecchia fotografia.,globale:T-0358,
+P0,media-upload,passed,Verificare eliminazione della vecchia fotografia.,globale:T-0358,"extended-p0-avatar-replacement: sostituzione reale su QA, nuova foto disponibile e vecchia chiave MEDIA non più raggiungibile"
 P0,media-upload,passed,Verificare eliminazione delle fotografie.,usabilita:U0286,extended-p0-media-delete: JPEG non più raggiungibile dopo DELETE
-P0,media-upload,pending,Verificare perdita immediata dei privilegi da Coordinatore.,globale:T-0771,
+P0,media-upload,passed,Verificare perdita immediata dei privilegi da Coordinatore.,globale:T-0771,extended-p0-roles: retrocessione live; il token già aperto perde immediatamente inviti e modifica profili
 P0,media-upload,passed,Verificare scomparsa immediata dei comandi da Coordinatore.,addendum:A0097,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P0,persistenza,pending,aggiorna il database;,usabilita:U0676,
 P0,persistenza,pending,Applicare le migrazioni una alla volta.,globale:T-1026,

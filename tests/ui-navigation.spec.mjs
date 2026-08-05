@@ -61,8 +61,12 @@ test("tutte le quattordici giornate si aprono con foto e contenuto", async ({ pa
     expect(await article.locator(".checks label").count()).toBeGreaterThan(0);
     await expect(article.getByRole("button", { name: "Percorso", exact: true })).toBeVisible();
     await expect(article.getByRole("button", { name: "Aggiungi ricordo" })).toBeVisible();
-    await expect(article.locator("img")).toHaveJSProperty("complete", true);
-    expect(await article.locator("img").evaluate((image) => image.naturalWidth)).toBeGreaterThan(100);
+    const cityPhoto = article.locator("img");
+    await cityPhoto.scrollIntoViewIfNeeded();
+    await expect.poll(
+      () => cityPhoto.evaluate((image) => image.complete && image.naturalWidth > 100),
+      { timeout: 15_000, message: `foto della giornata ${index + 1} caricata nel viewport mobile` },
+    ).toBe(true);
   }
 });
 

@@ -110,6 +110,19 @@ test("viaggiatore gestisce 10 PDF reali e il coordinatore vede e apre l'ultimo",
     await expectPdfVisible(coordinatorViewer);
     await coordinatorViewer.getByRole("button", { name: "Chiudi documento" }).tap();
 
+    // La dashboard del coordinatore deve aggiornarsi davvero, senza refresh,
+    // mentre il viaggiatore completa altri due documenti dal proprio telefono.
+    for (const [label, fileName] of [["Visto", "visto-reale.pdf"], ["Biglietti", "biglietti-reali.pdf"]]) {
+      const documentCard = travelerPage.locator(".document").filter({ hasText: label });
+      const responsePromise = travelerPage.waitForResponse(
+        (response) => response.url().includes("/api/documents") && response.request().method() === "POST",
+      );
+      await documentCard.locator('input[type="file"]').setInputFiles({ name: fileName, mimeType: "application/pdf", buffer: pdfBytes });
+      expect((await responsePromise).status()).toBe(200);
+      await expect(documentCard).toContainText("✓ Presente");
+    }
+    await expect(travelerStatus).toContainText("3/4", { timeout: 20_000 });
+
     await passport.getByRole("button", { name: "Elimina" }).tap();
     let confirm = travelerPage.locator(".confirmCard").filter({ hasText: "Eliminare questo documento?" });
     await confirm.getByRole("button", { name: "Annulla" }).tap();
@@ -122,6 +135,18 @@ test("viaggiatore gestisce 10 PDF reali e il coordinatore vede e apre l'ultimo",
     await confirm.getByRole("button", { name: "Elimina" }).tap();
     expect((await deleteResponse).status()).toBe(200);
     await expect(passport).toContainText("Non ancora caricato");
+    await expect(travelerStatus).toContainText("2/4", { timeout: 15_000 });
+
+    for (const label of ["Visto", "Biglietti"]) {
+      const documentCard = travelerPage.locator(".document").filter({ hasText: label });
+      await documentCard.getByRole("button", { name: "Elimina" }).tap();
+      const cleanupConfirm = travelerPage.locator(".confirmCard").filter({ hasText: "Eliminare questo documento?" });
+      const cleanupResponse = travelerPage.waitForResponse(
+        (response) => response.url().includes("/api/documents/") && response.request().method() === "DELETE",
+      );
+      await cleanupConfirm.getByRole("button", { name: "Elimina" }).tap();
+      expect((await cleanupResponse).status()).toBe(200);
+    }
     await expect(travelerStatus).toContainText("0/4", { timeout: 15_000 });
   } finally {
     await Promise.all([travelerContext.close(), coordinatorContext.close()]);
