@@ -63,6 +63,6 @@ test("il deploy QA usa obbligatoriamente i binding QA", async () => {
   assert.match(qaConfig, /"name": "viaggio-in-india-2026-qa"/);
   assert.match(qaConfig, /"database_name": "viaggio-in-india-qa-db"/);
   const sessionDeploy = await readFile(new URL("../scripts/deploy-cloudflare-session.ps1", import.meta.url), "utf8");
-  assert.match(sessionDeploy, /--project-name viaggio-in-india-2026-qa[\s\S]*?--config wrangler\.qa\.jsonc/);
-  assert.match(sessionDeploy, /--project-name viaggio-in-india-2026[\s\S]*?--config wrangler\.jsonc/);
+  assert.match(sessionDeploy, /deploy-qa\.ps1/);
+  assert.doesNotMatch(sessionDeploy, /--project-name viaggio-in-india-2026-qa/);
 });

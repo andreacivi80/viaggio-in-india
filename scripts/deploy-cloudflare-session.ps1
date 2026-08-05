@@ -40,17 +40,14 @@ if (-not $SkipBuild) {
 }
 
 if ($Target -in @("qa", "both")) {
-  npx --yes wrangler@4.118.0 pages deploy dist `
-    --project-name viaggio-in-india-2026-qa `
-    --config wrangler.qa.jsonc `
-    --branch main `
-    --commit-dirty=true
+  & powershell -NoProfile -NonInteractive -WindowStyle Hidden -ExecutionPolicy Bypass `
+    -File (Join-Path $PSScriptRoot "deploy-qa.ps1")
+  if ($LASTEXITCODE -ne 0) { throw "Deploy QA isolato non riuscito" }
 }
 
 if ($Target -in @("production", "both")) {
   npx --yes wrangler@4.118.0 pages deploy dist `
     --project-name viaggio-in-india-2026 `
-    --config wrangler.jsonc `
     --branch main `
     --commit-dirty=true
 }
