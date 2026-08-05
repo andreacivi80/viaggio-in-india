@@ -6,7 +6,8 @@ param(
   [switch]$ExtendedDocuments,
   [switch]$ExtendedSync,
   [switch]$ExtendedMedia,
-  [switch]$ExtendedLocation
+  [switch]$ExtendedLocation,
+  [switch]$ExtendedRoles
 )
 
 $ErrorActionPreference = "Stop"
@@ -91,7 +92,10 @@ try {
   $env:QA_RUN_ID = $runId
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
-  if ($ExtendedLocation) {
+  if ($ExtendedRoles) {
+    & node tests\extended-p0-roles.mjs
+  }
+  elseif ($ExtendedLocation) {
     & node tests\extended-p0-location.mjs
   }
   elseif ($ExtendedMedia) {

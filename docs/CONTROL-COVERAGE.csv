@@ -552,26 +552,26 @@ P0,persistenza,pending,Verificare rollback della migrazione.,globale:T-1040,
 P0,persistenza,pending,Verificare stabilità del database.,globale:T-0578,
 P0,persistenza,passed,Viene eseguito un backup.,globale:T-1743,backup D1 pre-migrazione eseguito
 P0,persistenza,passed,Viene eseguito un ripristino.,globale:T-1744,backup D1 ripristinato in ambiente temporaneo
-P0,profili-ruoli,pending,Accedere come Coordinatore da altro dispositivo.,globale:T-1612,
+P0,profili-ruoli,passed,Accedere come Coordinatore da altro dispositivo.,globale:T-1612,ui-role-live L1: invito coordinatore aperto su contesto mobile separato
 P0,profili-ruoli,passed,Accedere come Coordinatore.,addendum:A0094,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P0,profili-ruoli,pending,Aggiungere moderazione del Coordinatore.,globale:T-0056,
 P0,profili-ruoli,pending,Aprire la Bacheca come Coordinatore.,usabilita:U0098,
 P0,profili-ruoli,passed,Aprire vista Coordinatore.,usabilita:U0443,Playwright mobile con sessione coordinatore reale: dashboard visibile; preview c90ec547; 2026-08-04
 P0,profili-ruoli,pending,Avvisare il Coordinatore in caso di abuso ripetuto.,globale:T-1052,
-P0,profili-ruoli,pending,Cambiare il ruolo da Coordinatore a Viaggiatore.,globale:T-0755,
+P0,profili-ruoli,passed,Cambiare il ruolo da Coordinatore a Viaggiatore.,globale:T-0755,extended-p0-roles: retrocessione immediata sul token già aperto
 P0,profili-ruoli,pending,Commento come Coordinatore.,usabilita:U0298,
 P0,profili-ruoli,pending,Controllare author_name e profile_id nel database.,usabilita:U0175,
 P0,profili-ruoli,pending,Coordinatore,globale:T-0278;addendum:A0133;addendum:A0212,
 P0,profili-ruoli,pending,Coordinatore sulla risorsa A;,addendum:A0108,
 P0,profili-ruoli,pending,da Coordinatore a Pubblico;,addendum:A0086,
-P0,profili-ruoli,pending,da Coordinatore a Viaggiatore;,addendum:A0084,
+P0,profili-ruoli,passed,da Coordinatore a Viaggiatore;,addendum:A0084,extended-p0-roles: inviti negati immediatamente dopo retrocessione
 P0,profili-ruoli,passed,da Viaggiatore a Coordinatore;,addendum:A0083,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P0,profili-ruoli,pending,dashboard Coordinatore;,addendum:A0120,
-P0,profili-ruoli,pending,il Coordinatore disponga soltanto dei poteri necessari;,addendum:A0380,
+P0,profili-ruoli,passed,il Coordinatore disponga soltanto dei poteri necessari;,addendum:A0380,extended-p0-roles: matrice operazioni coordinatore/viaggiatore verificata
 P0,profili-ruoli,pending,Il Coordinatore non deve pubblicare accidentalmente come altro profilo.,usabilita:U0170,
 P0,profili-ruoli,pending,Il Coordinatore revoca un dispositivo di prova.,globale:T-1729,
-P0,profili-ruoli,pending,Impossibilità di diventare Coordinatore.,usabilita:U0651,
-P0,profili-ruoli,pending,non deve accedere alle funzioni del Coordinatore.,usabilita:U0029,
+P0,profili-ruoli,passed,Impossibilità di diventare Coordinatore.,usabilita:U0651,extended-p0-roles: auto-promozione tramite PUT ignorata dal server
+P0,profili-ruoli,passed,non deve accedere alle funzioni del Coordinatore.,usabilita:U0029,"extended-p0-roles: creazione profilo, modifica altrui e inviti tutti 403"
 P0,profili-ruoli,passed,non mostrare temporaneamente tasti da Coordinatore a un Viaggiatore;,addendum:A0293,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,profili-ruoli,passed,non riceve dati amministrativi del Coordinatore;,addendum:A0152,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,profili-ruoli,passed,Promuovere l’utente a Coordinatore da un altro dispositivo.,addendum:A0090,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
@@ -583,11 +583,11 @@ P0,profili-ruoli,pending,test come Coordinatore;,usabilita:U0722,
 P0,profili-ruoli,pending,test del percorso completo del Coordinatore;,globale:T-1805,
 P0,profili-ruoli,pending,Tornare a vista Coordinatore.,usabilita:U0454,
 P0,profili-ruoli,pending,un profilo è stato eliminato;,addendum:A0305,
-P0,profili-ruoli,pending,un utente può diventare Coordinatore modificando la richiesta;,usabilita:U0691,
+P0,profili-ruoli,passed,un utente può diventare Coordinatore modificando la richiesta;,usabilita:U0691,extended-p0-roles: tentativo falsificato resta traveler
 P0,profili-ruoli,passed,Verifica profili ripristinati.,globale:T-0648,verify-d1-backup: 5 profili ripristinati
 P0,profili-ruoli,pending,Verificare che il Coordinatore visualizzi 4/4.,globale:T-0710,
 P0,profili-ruoli,pending,Verificare che il profilo non compaia nella dashboard del Coordinatore.,globale:T-1328,
-P0,profili-ruoli,pending,Verificare che non possa diventare Coordinatore.,globale:T-0341,
+P0,profili-ruoli,passed,Verificare che non possa diventare Coordinatore.,globale:T-0341,extended-p0-roles: sessione riletta dal server resta traveler
 P0,profili-ruoli,pending,Verificare notifica prioritaria al Coordinatore.,globale:T-1193,
 P0,profili-ruoli,pending,Verificare profile_id corretto nel database.,globale:T-0422,
 P0,profili-ruoli,pending,Visualizzare contatto del Coordinatore.,globale:T-1196,

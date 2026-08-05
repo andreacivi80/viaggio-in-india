@@ -29,5 +29,13 @@
   { "control": "Verificare eliminazione dei video.", "evidence": "extended-p0-media-delete: MP4 non più raggiungibile dopo DELETE" },
   { "control": "Verificare eliminazione delle fotografie.", "evidence": "extended-p0-media-delete: JPEG non più raggiungibile dopo DELETE" },
   { "control": "Verificare eliminazione della posizione.", "evidence": "extended-p0-location: proprietario elimina, altri utenti non possono eliminare" },
-  { "control": "Verificare la posizione dal telefono del Coordinatore.", "evidence": "extended-p0-location: coordinatore e viaggiatore autenticato vedono la posizione condivisa" }
+  { "control": "Verificare la posizione dal telefono del Coordinatore.", "evidence": "extended-p0-location: coordinatore e viaggiatore autenticato vedono la posizione condivisa" },
+  { "control": "Accedere come Coordinatore da altro dispositivo.", "evidence": "ui-role-live L1: invito coordinatore aperto su contesto mobile separato" },
+  { "control": "Cambiare il ruolo da Coordinatore a Viaggiatore.", "evidence": "extended-p0-roles: retrocessione immediata sul token già aperto" },
+  { "control": "da Coordinatore a Viaggiatore;", "evidence": "extended-p0-roles: inviti negati immediatamente dopo retrocessione" },
+  { "control": "il Coordinatore disponga soltanto dei poteri necessari;", "evidence": "extended-p0-roles: matrice operazioni coordinatore/viaggiatore verificata" },
+  { "control": "Impossibilità di diventare Coordinatore.", "evidence": "extended-p0-roles: auto-promozione tramite PUT ignorata dal server" },
+  { "control": "non deve accedere alle funzioni del Coordinatore.", "evidence": "extended-p0-roles: creazione profilo, modifica altrui e inviti tutti 403" },
+  { "control": "un utente può diventare Coordinatore modificando la richiesta;", "evidence": "extended-p0-roles: tentativo falsificato resta traveler" },
+  { "control": "Verificare che non possa diventare Coordinatore.", "evidence": "extended-p0-roles: sessione riletta dal server resta traveler" }
 ]
