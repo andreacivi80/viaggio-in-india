@@ -190,4 +190,5 @@
   ,{ "control": "Revocare un invito non ancora utilizzato.", "evidence": "auth-lifecycle 40/40: DELETE dell’invito pendente restituisce 200 e il successivo claim viene respinto" }
   ,{ "control": "Verificare eliminazione degli inviti.", "evidence": "auth-lifecycle 40/40: invito revocato rimosso dal database; viaggiatore non autorizzato riceve 403" }
   ,{ "control": "Verificare quale invito rimane valido.", "evidence": "auth-lifecycle 40/40: un invito revocato è invalido mentre il secondo invito dello stesso profilo resta utilizzabile una sola volta" }
+  ,{ "control": "Aggiungere consenso privacy esplicito.", "evidence": "privacy-consent 2/2 + auth-lifecycle 49/49: checkbox inizialmente non selezionata; registrazioni senza consenso o con consenso falso respinte; consenso vero registrato dal server con data/versione; migrazione additiva senza riscrivere profili esistenti" }
 ]

@@ -20,7 +20,7 @@ try {
   const register = await request("/api/auth/register", {
     method: "POST",
     headers: { "content-type": "application/json", "x-group-code": groupCode, "x-device-name": "QA eliminazione live" },
-    body: JSON.stringify({ name: `Eliminazione QA ${suffix}`, role: "traveler", origin_city: "QA" }),
+    body: JSON.stringify({ name: `Eliminazione QA ${suffix}`, role: "traveler", origin_city: "QA", privacy_consent: true }),
   });
   assert.equal(register.status, 201);
   const registered = await register.json();

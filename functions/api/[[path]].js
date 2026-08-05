@@ -21,6 +21,7 @@ const json = (data, status = 200, additionalHeaders = {}) =>
   });
 const id = () => crypto.randomUUID();
 const now = () => new Date().toISOString();
+const PRIVACY_CONSENT_VERSION = "2026-08-06";
 const imdStations = {
   Delhi: "42182",
   Udaipur: "42542",
@@ -598,6 +599,18 @@ async function ensureProfileGenderSchema(env) {
   ]);
   profileGenderSchemaReady = true;
 }
+let profilePrivacySchemaReady = false;
+async function ensureProfilePrivacySchema(env) {
+  if (profilePrivacySchemaReady) return;
+  for (const statement of [
+    "ALTER TABLE profiles ADD COLUMN privacy_consent_at TEXT",
+    "ALTER TABLE profiles ADD COLUMN privacy_consent_version TEXT DEFAULT ''",
+  ]) {
+    try { await env.DB.prepare(statement).run(); }
+    catch (error) { if (!/duplicate column|already exists/i.test(String(error?.message || error))) throw error; }
+  }
+  profilePrivacySchemaReady = true;
+}
 async function silentMaintenance(env) {
   const markerKey = "system/last-silent-maintenance";
   const lastRun = Number(await env.MEDIA.get(markerKey, { type: "text" })) || 0;
@@ -774,6 +787,7 @@ export async function onRequest(context) {
       : String(params.path || "")
   ).replace(/^\/+|\/+$/g, "");
   await ensureProfileGenderSchema(env);
+  await ensureProfilePrivacySchema(env);
   context.waitUntil?.(silentMaintenance(env).catch(() => {}));
   try {
     if (request.method === "POST" && path === "auth/bootstrap") {
@@ -784,17 +798,19 @@ export async function onRequest(context) {
       const name = String(body.name || "").trim();
       const surname = String(body.surname || "").trim();
       const originCity = String(body.origin_city || "").trim();
+      if (body.privacy_consent !== true)
+        return json({ error: "Accetta l’informativa privacy per creare il profilo" }, 400);
       if (!name) return json({ error: "Inserisci il nome del coordinatore" }, 400);
       if (name.length > 80 || surname.length > 80 || originCity.length > 100)
         return json({ error: "I dati inseriti sono troppo lunghi" }, 400);
       const profileId = id();
       const createdAt = now();
       const inserted = await env.DB.prepare(
-        `INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,created_at)
-         SELECT ?,?,?, '', '', ?, '', 'coordinator', NULL, ?
+        `INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,privacy_consent_at,privacy_consent_version,created_at)
+         SELECT ?,?,?, '', '', ?, '', 'coordinator', NULL, ?, ?, ?
          WHERE NOT EXISTS (SELECT 1 FROM profiles)`,
       )
-        .bind(profileId, name, surname, originCity, createdAt)
+        .bind(profileId, name, surname, originCity, createdAt, PRIVACY_CONSENT_VERSION, createdAt)
         .run();
       if (!inserted.meta?.changes)
         return json({ error: "Il gruppo è già stato inizializzato" }, 409);
@@ -838,15 +854,17 @@ export async function onRequest(context) {
       const role = body.role === "coordinator" ? "coordinator" : "traveler";
       const knownGender = { andrea: "male", sara: "female", valentina: "female" }[name.toLowerCase()] || "";
       const gender = ["female", "male"].includes(body.gender) ? body.gender : knownGender;
+      if (body.privacy_consent !== true)
+        return json({ error: "Accetta l’informativa privacy per creare il profilo" }, 400);
       if (!name) return json({ error: "Inserisci il tuo nome" }, 400);
       if (name.length > 80 || surname.length > 80 || originCity.length > 100)
         return json({ error: "I dati inseriti sono troppo lunghi" }, 400);
       const profileId = id();
       const createdAt = now();
       await env.DB.prepare(
-        `INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,created_at,gender)
-         VALUES(?,?,?, '', '', ?, '', ?, NULL, ?, ?)`,
-      ).bind(profileId, name, surname, originCity, role, createdAt, gender).run();
+        `INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,privacy_consent_at,privacy_consent_version,created_at,gender)
+         VALUES(?,?,?, '', '', ?, '', ?, NULL, ?, ?, ?, ?)`,
+      ).bind(profileId, name, surname, originCity, role, createdAt, PRIVACY_CONSENT_VERSION, createdAt, gender).run();
       try {
         const issued = await createSession(env, profileId, deviceNameFromRequest(request));
         return json({

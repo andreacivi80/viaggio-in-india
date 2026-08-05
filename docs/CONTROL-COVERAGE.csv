@@ -15,7 +15,7 @@ P0,accessi-privacy,passed,Accesso tramite rete Wi-Fi indiana.,globale:T-0650,"ui
 P0,accessi-privacy,passed,Accesso tramite roaming italiano.,globale:T-0651,"ui-network-india: roaming congestionato verificato sui tre profili mobile | ui-network-india 18/18: roaming congestionato a 256/96 kbps su S20 FE, Samsung vecchio e iPhone piccolo"
 P0,accessi-privacy,passed,Accesso tramite SIM indiana.,globale:T-0652,"ui-network-india: SIM indiana 3G verificata sui tre profili mobile | ui-network-india 18/18: SIM indiana 3G su S20 FE, Samsung vecchio e iPhone piccolo"
 P0,accessi-privacy,pending,accesso;,globale:T-1555,
-P0,accessi-privacy,pending,Aggiungere consenso privacy esplicito.,globale:T-0043,
+P0,accessi-privacy,passed,Aggiungere consenso privacy esplicito.,globale:T-0043,privacy-consent 2/2 + auth-lifecycle 49/49: checkbox inizialmente non selezionata; registrazioni senza consenso o con consenso falso respinte; consenso vero registrato dal server con data/versione; migrazione additiva senza riscrivere profili esistenti
 P0,accessi-privacy,passed,Aggiungere elenco dei dispositivi autorizzati.,globale:T-0030,production-smoke: elenco dispositivi include corrente e secondario
 P0,accessi-privacy,passed,Aggiungere rinnovo sicuro della sessione.,globale:T-0032,auth-lifecycle 35/35: solo un token ancora valido estende expires_at; token alterato o revocato riceve 401
 P0,accessi-privacy,pending,aggiunta successiva di fotografie autorizzate.,globale:T-1369,

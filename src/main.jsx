@@ -1566,6 +1566,7 @@ function App() {
     origin_city: "",
     gender: "",
     role: "traveler",
+    privacy_consent: false,
   });
   const [bootstrapBusy, setBootstrapBusy] = useState(false);
   const [travelerRegisterBusy, setTravelerRegisterBusy] = useState(false);
@@ -2019,6 +2020,10 @@ function App() {
       setQuickStatus("Inserisci almeno il tuo nome.");
       return;
     }
+    if (bootstrapForm.privacy_consent !== true) {
+      setQuickStatus("Accetta l’informativa privacy per creare il profilo.");
+      return;
+    }
     setTravelerRegisterBusy(true);
     setQuickStatus("Creo il tuo profilo e collego questo telefono…");
     try {
@@ -2399,6 +2404,16 @@ function App() {
                   <select value={bootstrapForm.gender} onChange={(event) => setBootstrapForm({ ...bootstrapForm, gender: event.target.value })}>
                     <option value="">Preferisco non indicarlo</option><option value="female">Donna</option><option value="male">Uomo</option>
                   </select>
+                </label>
+                <label className="privacyConsent">
+                  <input
+                    type="checkbox"
+                    checked={bootstrapForm.privacy_consent}
+                    onChange={(event) => setBootstrapForm({ ...bootstrapForm, privacy_consent: event.target.checked })}
+                  />
+                  <span>
+                    Accetto l’uso dei miei dati per il viaggio. Documenti e posizione restano nell’area privata.
+                  </span>
                 </label>
                 <button onClick={registerTraveler} disabled={travelerRegisterBusy}>
                   <CircleUserRound /> {travelerRegisterBusy ? "Collegamento…" : "Crea profilo e accedi"}

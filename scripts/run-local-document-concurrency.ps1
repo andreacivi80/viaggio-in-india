@@ -143,6 +143,7 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
   $env:QA_UNCLAIMED_PROFILE_ID = $unclaimedId
   $env:QA_EXPIRED_INVITE_TOKEN = $expiredInviteToken
   $env:QA_EXPIRED_SESSION_TOKEN = $expiredSessionToken
+  $env:QA_GROUP_CODE = "qa-local-only"
   $env:QA_DELETE_PROFILE_ID = $deleteProfileId
   $env:QA_DELETE_PROFILE_TOKEN = $deleteProfileToken
   $suiteFiles = @{

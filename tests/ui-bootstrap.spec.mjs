@@ -47,6 +47,8 @@ test("telefono nuovo: password, primo coordinatore, pubblicazione, riapertura e 
   await firstPage.getByPlaceholder("Nome *").fill(runCoordinatorName);
   await firstPage.getByPlaceholder("Cognome").fill("Collaudo");
   await firstPage.getByPlaceholder("Da dove vieni").fill("Roma");
+  await expect(firstPage.getByRole("checkbox")).not.toBeChecked();
+  await firstPage.getByRole("checkbox").check();
   const bootstrapResponse = firstPage.waitForResponse(
     (response) => response.url().endsWith("/api/auth/register") && response.request().method() === "POST",
   );

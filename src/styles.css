@@ -4783,6 +4783,26 @@ mark.mention {
   color: var(--color-text-primary);
   font: inherit;
 }
+.privacyConsent {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  align-items: start;
+  gap: 9px;
+  padding: 10px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 750;
+}
+.privacyConsent input {
+  width: 19px;
+  height: 19px;
+  margin: 0;
+  accent-color: var(--green);
+}
 .peopleGrid article.gender-female,
 .directoryPerson.gender-female { background: #fff1f5; border-color: #f3cad7; }
 .peopleGrid article.gender-male,

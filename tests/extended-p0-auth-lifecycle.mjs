@@ -7,7 +7,8 @@ const expiredSessionToken = process.env.QA_EXPIRED_SESSION_TOKEN;
 const coordinatorToken = process.env.QA_COORDINATOR_TOKEN;
 const coordinatorSecondToken = process.env.QA_COORDINATOR_SECOND_TOKEN;
 const coordinatorSecondDeviceId = process.env.QA_COORDINATOR_SECOND_DEVICE_ID;
-if (!base || !targetProfileId || !expiredInviteToken || !expiredSessionToken || !coordinatorToken || !coordinatorSecondToken || !coordinatorSecondDeviceId) {
+const groupCode = process.env.QA_GROUP_CODE;
+if (!base || !targetProfileId || !expiredInviteToken || !expiredSessionToken || !coordinatorToken || !coordinatorSecondToken || !coordinatorSecondDeviceId || !groupCode) {
   throw new Error("Ambiente QA P0 ciclo autenticazione incompleto");
 }
 
@@ -25,6 +26,35 @@ const health = await healthResponse.json();
 assert.ok(health.maintenance.auth_sessions_removed >= 1);
 assert.ok(health.maintenance.profile_invites_removed >= 1);
 assert.equal((await request("/api/auth/session", { headers: bearer(expiredSessionToken) })).status, 401);
+
+const registrationHeaders = {
+  "content-type": "application/json",
+  "x-group-code": groupCode,
+  "x-device-name": "Telefono consenso locale",
+};
+const registrationName = `Consenso ${crypto.randomUUID().slice(0, 8)}`;
+for (const privacyConsent of [undefined, false]) {
+  const body = { name: registrationName, role: "traveler" };
+  if (privacyConsent !== undefined) body.privacy_consent = privacyConsent;
+  const response = await request("/api/auth/register", {
+    method: "POST",
+    headers: registrationHeaders,
+    body: JSON.stringify(body),
+  });
+  assert.equal(response.status, 400);
+}
+const consentRegistration = await request("/api/auth/register", {
+  method: "POST",
+  headers: registrationHeaders,
+  body: JSON.stringify({ name: registrationName, role: "traveler", privacy_consent: true }),
+});
+assert.equal(consentRegistration.status, 201);
+const consentProfile = await consentRegistration.json();
+assert.equal((await request("/api/auth/session", { headers: bearer(consentProfile.token) })).status, 200);
+assert.equal((await request(`/api/profiles/${consentProfile.profile.id}`, {
+  method: "DELETE",
+  headers: bearer(consentProfile.token),
+})).status, 200);
 
 const missingProfileInvite = await request("/api/auth/invites", {
   method: "POST",
@@ -142,5 +172,5 @@ assert.equal((await logoutAllResponse.json()).push_subscriptions_revoked, 1);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 401);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 401);
 
-console.log("P0_AUTH_LIFECYCLE=44/44");
+console.log("P0_AUTH_LIFECYCLE=49/49");
 process.exit(0);

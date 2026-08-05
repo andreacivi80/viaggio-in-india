@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS profiles (
   role TEXT DEFAULT 'traveler',
   gender TEXT DEFAULT '',
   avatar_key TEXT,
+  privacy_consent_at TEXT,
+  privacy_consent_version TEXT DEFAULT '',
   created_at TEXT NOT NULL
 );
 CREATE TABLE IF NOT EXISTS posts (
