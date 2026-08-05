@@ -3,7 +3,9 @@ import { test, expect } from "@playwright/test";
 test.use({ serviceWorkers: "block" });
 
 const groupCode = process.env.QA_UI_GROUP_CODE;
-const canMutateQa = process.env.QA_UI_ALLOW_REGISTRATION === "true";
+const testBaseUrl = process.env.TEST_BASE_URL || "";
+const canMutateQa = process.env.QA_UI_ALLOW_REGISTRATION === "true"
+  && /^https:\/\/([^.]+\.)?viaggio-in-india-2026-qa\.pages\.dev\/?$/i.test(testBaseUrl);
 
 test("un dispositivo pubblico non vede comandi o dati privati", async ({ page }) => {
   await page.goto("/", { waitUntil: "networkidle" });

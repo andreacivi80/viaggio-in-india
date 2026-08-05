@@ -46,6 +46,11 @@ test("il collaudo UI usa soltanto la coppia QA isolata", async () => {
   assert.doesNotMatch(source, /DELETE FROM profiles[^\n]*LIKE/i);
   assert.match(source, /DELETE FROM profiles WHERE id IN \('\$profileId','\$coordinatorId'\)/i);
   assert.match(source, /TestFiles\.Count -ne 1/);
+  assert.match(source, /viaggio-in-india-2026-qa\\\.pages\\\.dev/);
+  assert.match(source, /Protezione dati:/);
+  const uiCritical = await readFile(new URL("../tests/ui-critical.spec.mjs", import.meta.url), "utf8");
+  assert.match(uiCritical, /QA_UI_ALLOW_REGISTRATION/);
+  assert.match(uiCritical, /viaggio-in-india-2026-qa\\\.pages\\\.dev/);
 });
 
 test("il deploy QA usa obbligatoriamente i binding QA", async () => {

@@ -8,6 +8,11 @@ if ($TestFiles.Count -ne 1) {
   throw "Ogni file UI deve ricevere profili e inviti QA nuovi: eseguire un solo file per volta."
 }
 
+$parsedBaseUrl = [Uri]$BaseUrl
+if ($parsedBaseUrl.Scheme -ne "https" -or $parsedBaseUrl.Host -notmatch '(^|\.)viaggio-in-india-2026-qa\.pages\.dev$') {
+  throw "Protezione dati: i collaudi UI scriventi possono essere eseguiti soltanto sul progetto QA isolato."
+}
+
 $ErrorActionPreference = "Stop"
 $runId = [guid]::NewGuid().ToString("N")
 $profileId = "qa-ui-$runId"
@@ -54,6 +59,7 @@ try {
   $env:QA_UI_COORDINATOR_NAME = $coordinatorName
   $env:QA_UI_COORDINATOR_INVITE_TOKEN = $coordinatorInviteToken
   $env:QA_UI_MANAGED_PROFILE_NAME = $managedProfileName
+  $env:QA_UI_ALLOW_REGISTRATION = "true"
   & npx playwright test @TestFiles --config playwright.release.config.mjs --project=$Project
   $testExit = $LASTEXITCODE
 }
