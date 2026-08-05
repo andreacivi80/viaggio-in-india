@@ -2,8 +2,8 @@ priority,category,status,control,source_rows,evidence
 P0,accessi-privacy,passed,“Dispositivo autorizzato” significhi sessione server valida;,addendum:A0387,"Playwright Galaxy S9+: invito e sessione server, modale sopra barra, pulsante raggiungibile, stato disabilitato/invio, doppio clic=una richiesta, HTTP 201 e record confermato; preview 9913ac2c; 2026-08-04"
 P0,accessi-privacy,pending,“Documento privato” significhi controllo server per proprietario e ruolo;,addendum:A0388,
 P0,accessi-privacy,passed,“Posizione condivisa” significhi salvataggio e visualizzazione autorizzata;,addendum:A0389,"Playwright Galaxy: POST 200, coordinate e marker visibili al gruppo, assenti al pubblico, DELETE e sync verificati; preview 20382a40; 2026-08-04"
-P0,accessi-privacy,pending,100 tentativi di accesso con codice errato.,globale:T-1049,
-P0,accessi-privacy,pending,100 tentativi di utilizzo di un invito errato.,globale:T-1050,
+P0,accessi-privacy,passed,100 tentativi di accesso con codice errato.,globale:T-1049,"ui-p0-auth-abuse: 100/100 respinti, rate limit attivo, profili invariati"
+P0,accessi-privacy,passed,100 tentativi di utilizzo di un invito errato.,globale:T-1050,"ui-p0-auth-abuse: 100/100 respinti, nessuna sessione o profilo"
 P0,accessi-privacy,passed,Accedere tramite invito personale.,globale:T-0753;addendum:A0337,QA 1.31.0: accesso tramite invito personale completato
 P0,accessi-privacy,pending,accesso completo;,globale:T-1366,
 P0,accessi-privacy,pending,accesso limitato ad alcune fotografie;,globale:T-1367,
@@ -233,7 +233,7 @@ P0,accessi-privacy,pending,sessione revocata.,addendum:A0135;addendum:A0214,
 P0,accessi-privacy,passed,sessione scaduta;,globale:T-1583;usabilita:U0494;addendum:A0134;addendum:A0166;addendum:A0213,QA 1.31.0: sessione inattiva respinta
 P0,accessi-privacy,pending,sessione valida/non valida;,addendum:A0415,
 P0,accessi-privacy,pending,spiegare quale autorizzazione manca;,addendum:A0265,
-P0,accessi-privacy,pending,Tentare accesso a documento altrui.,globale:T-0624,
+P0,accessi-privacy,passed,Tentare accesso a documento altrui.,globale:T-0624,extended-p0-documents: media privata negata ad altro viaggiatore
 P0,accessi-privacy,passed,Tentare accesso diretto ai documenti.,usabilita:U0580,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Tentare di creare un invito.,usabilita:U0623,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P0,accessi-privacy,pending,tentativo non autorizzato;,globale:T-1584,
@@ -325,12 +325,12 @@ P0,altro,pending,Definire se i contenuti vengono eliminati o anonimizzati.,globa
 P0,altro,pending,"Eliminare dallo ZIP le cartelle node_modules, .git, .wrangler e dist, se deve essere ricostruita automaticamente.",globale:T-0005,
 P0,altro,pending,Eliminare dallo ZIP le cartelle:,globale:T-0006,
 P0,altro,pending,Eliminare i dati del browser.,globale:T-0859,
-P0,altro,pending,Eliminare il post.,globale:T-0400,
+P0,altro,passed,Eliminare il post.,globale:T-0400,extended-p0-sync-delete: eliminazione reale propagata
 P0,altro,pending,Eliminare subscription inattive.,globale:T-1349,
 P0,altro,passed,Eliminare un proprio post.,usabilita:U0281,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,altro,pending,Eliminare.,globale:T-0448;usabilita:U0222,
 P0,altro,passed,eliminati;,addendum:A0352,Authenticated deleted-upload retry 404; preview a4b05356; 2026-08-04
-P0,altro,pending,Eliminazione mentre un altro dispositivo legge.,globale:T-0572,
+P0,altro,passed,Eliminazione mentre un altro dispositivo legge.,globale:T-0572,extended-p0-sync-delete: post visibile sul secondo dispositivo poi rimosso
 P0,altro,passed,eliminazione post altrui;,globale:T-0736,QA 1.31.0: attacco eliminazione post altrui respinto
 P0,altro,pending,eliminazione post proprio;,globale:T-0737,
 P0,altro,pending,Errore durante eliminazione multipla.,globale:T-1149,
@@ -365,8 +365,8 @@ P0,altro,pending,Verificare incremento della versione per eliminazione.,globale:
 P0,altro,pending,Verificare log di eliminazione.,globale:T-1004,
 P0,altro,pending,Verificare se i metadati vengono conservati o eliminati.,globale:T-1439,
 P0,documenti,pending,"Aggiornare README e documentazione, ancora riferiti a versioni precedenti.",globale:T-0001,
-P0,documenti,pending,apertura documento altrui;,globale:T-0724,
-P0,documenti,pending,apertura documento proprio;,globale:T-0725,
+P0,documenti,passed,apertura documento altrui;,globale:T-0724,extended-p0-documents: media privata negata ad altro viaggiatore
+P0,documenti,passed,apertura documento proprio;,globale:T-0725,extended-p0-documents: proprietario apre il PDF
 P0,documenti,pending,Aprire documenti.,usabilita:U0071,
 P0,documenti,pending,Aprire documento.,globale:T-0475,
 P0,documenti,pending,Aprire lo stesso documento da due dispositivi.,globale:T-0988,
@@ -407,8 +407,8 @@ P0,documenti,pending,documento sostituito;,globale:T-1564,
 P0,documenti,passed,Eliminare documento.,globale:T-0481;usabilita:U0449,Playwright: eliminazione eseguita dal proprietario e confermata dal server; preview c90ec547; 2026-08-04
 P0,documenti,pending,Eliminare il documento durante un download.,globale:T-0998,
 P0,documenti,pending,Eliminare un documento dal telefono B.,globale:T-0701,
-P0,documenti,pending,eliminazione documento altrui;,globale:T-0734,
-P0,documenti,pending,eliminazione documento proprio;,globale:T-0735,
+P0,documenti,passed,eliminazione documento altrui;,globale:T-0734,extended-p0-documents: DELETE altrui 403
+P0,documenti,passed,eliminazione documento proprio;,globale:T-0735,extended-p0-documents: DELETE proprio 200 e file rimosso
 P0,documenti,pending,Errore durante sostituzione documento.,globale:T-1150,
 P0,documenti,pending,Eseguire backup mentre vengono caricati documenti.,globale:T-1167,
 P0,documenti,pending,Il Coordinatore controlla i documenti.,globale:T-1728,
@@ -592,7 +592,7 @@ P0,profili-ruoli,pending,Verificare notifica prioritaria al Coordinatore.,global
 P0,profili-ruoli,pending,Verificare profile_id corretto nel database.,globale:T-0422,
 P0,profili-ruoli,pending,Visualizzare contatto del Coordinatore.,globale:T-1196,
 P0,social,pending,commento eliminato;,globale:T-1556,
-P0,social,pending,Commento mentre il post viene eliminato.,globale:T-0570,
+P0,social,passed,Commento mentre il post viene eliminato.,globale:T-0570,extended-p0-sync-delete: corsa commento/eliminazione senza residui
 P0,social,pending,Eliminare un commento mentre viene modificato da un altro dispositivo.,globale:T-0792,
 P0,social,pending,Eliminare un post mentre un altro utente sta inserendo un commento.,globale:T-0793,
 P0,social,passed,Eliminazione commento proprio.,usabilita:U0308,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
@@ -603,10 +603,10 @@ P0,social,passed,Tentativo di eliminare commento altrui.,globale:T-0471,QA 1.31.
 P0,social,passed,Tentativo di eliminazione di commento altrui.,usabilita:U0310,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,social,pending,"test di creazione, modifica ed eliminazione;",globale:T-0022,
 P0,social,passed,Verifica commenti ripristinati.,globale:T-0642,verify-d1-backup: 8 commenti ripristinati e leggibili
-P0,social,pending,Verificare eliminazione dei commenti.,usabilita:U0289,
-P0,social,pending,Verificare eliminazione delle reazioni.,usabilita:U0290,
+P0,social,passed,Verificare eliminazione dei commenti.,usabilita:U0289,extended-p0-sync-delete: cascata verificata nello stato finale
+P0,social,passed,Verificare eliminazione delle reazioni.,usabilita:U0290,extended-p0-sync-delete: cascata verificata nello stato finale
 P0,sync-rete,passed,Chiave idempotente nel database.,globale:T-0133,production-smoke: chiave idempotente riutilizzata e risposta replayed
-P0,sync-rete,pending,Sincronizzazione delle eliminazioni.,globale:T-0113,
+P0,sync-rete,passed,Sincronizzazione delle eliminazioni.,globale:T-0113,"extended-p0-sync-delete: assenza verificata su pubblico, proprietario e secondo dispositivo"
 P0,sync-rete,pending,Verificare eliminazione della cache difettosa.,globale:T-1181,
 P0,sync-rete,pending,Verificare eliminazione della vecchia cache.,globale:T-0840,
 P1,altro,pending,“Notifiche attive” significhi subscription registrata e prova ricevuta;,addendum:A0386,

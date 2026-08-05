@@ -1,0 +1,15 @@
+[
+  { "control": "100 tentativi di accesso con codice errato.", "evidence": "ui-p0-auth-abuse: 100/100 respinti, rate limit attivo, profili invariati" },
+  { "control": "100 tentativi di utilizzo di un invito errato.", "evidence": "ui-p0-auth-abuse: 100/100 respinti, nessuna sessione o profilo" },
+  { "control": "Tentare accesso a documento altrui.", "evidence": "extended-p0-documents: media privata negata ad altro viaggiatore" },
+  { "control": "apertura documento altrui;", "evidence": "extended-p0-documents: media privata negata ad altro viaggiatore" },
+  { "control": "apertura documento proprio;", "evidence": "extended-p0-documents: proprietario apre il PDF" },
+  { "control": "eliminazione documento altrui;", "evidence": "extended-p0-documents: DELETE altrui 403" },
+  { "control": "eliminazione documento proprio;", "evidence": "extended-p0-documents: DELETE proprio 200 e file rimosso" },
+  { "control": "Eliminare il post.", "evidence": "extended-p0-sync-delete: eliminazione reale propagata" },
+  { "control": "Eliminazione mentre un altro dispositivo legge.", "evidence": "extended-p0-sync-delete: post visibile sul secondo dispositivo poi rimosso" },
+  { "control": "Commento mentre il post viene eliminato.", "evidence": "extended-p0-sync-delete: corsa commento/eliminazione senza residui" },
+  { "control": "Verificare eliminazione dei commenti.", "evidence": "extended-p0-sync-delete: cascata verificata nello stato finale" },
+  { "control": "Verificare eliminazione delle reazioni.", "evidence": "extended-p0-sync-delete: cascata verificata nello stato finale" },
+  { "control": "Sincronizzazione delle eliminazioni.", "evidence": "extended-p0-sync-delete: assenza verificata su pubblico, proprietario e secondo dispositivo" }
+]

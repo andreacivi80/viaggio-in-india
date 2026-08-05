@@ -5,6 +5,7 @@ const USABILITY_CSV = "docs/USABILITY-MATRIX.csv";
 const ADDENDUM_CSV = "docs/USABILITY-ADDENDUM-MATRIX.csv";
 const OUTPUT_CSV = "docs/CONTROL-COVERAGE.csv";
 const OUTPUT_MD = "docs/CONTROL-COVERAGE.md";
+const EVIDENCE_JSON = "docs/CONTROL-EVIDENCE.json";
 
 function parseCsv(text) {
   const rows = [];
@@ -123,6 +124,14 @@ for (const entry of entries) {
   if (entry.status.toLowerCase() === "passed" || entry.status.toUpperCase() === "SUPERATO") current.status = "passed";
   if (entry.evidence) current.evidence.add(entry.evidence);
   unique.set(key, current);
+}
+
+const verifiedEvidence = JSON.parse(await readFile(EVIDENCE_JSON, "utf8"));
+for (const record of verifiedEvidence) {
+  const item = unique.get(normalize(record.control));
+  if (!item) throw new Error(`Controllo con evidenza non trovato: ${record.control}`);
+  item.status = "passed";
+  item.evidence.add(record.evidence);
 }
 
 const controls = [...unique.values()].sort((a, b) => a.priority.localeCompare(b.priority) || a.category.localeCompare(b.category) || a.control.localeCompare(b.control, "it"));

@@ -2,7 +2,9 @@ param(
   [Parameter(Mandatory = $true)][string]$BaseUrl,
   [Parameter(Mandatory = $true)][string]$ExpectedVersion,
   [switch]$RunLoad,
-  [switch]$AbuseOnly
+  [switch]$AbuseOnly,
+  [switch]$ExtendedDocuments,
+  [switch]$ExtendedSync
 )
 
 $ErrorActionPreference = "Stop"
@@ -87,7 +89,13 @@ try {
   $env:QA_RUN_ID = $runId
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
-  if ($AbuseOnly) {
+  if ($ExtendedSync) {
+    & node tests\extended-p0-sync-delete.mjs
+  }
+  elseif ($ExtendedDocuments) {
+    & node tests\extended-p0-documents.mjs
+  }
+  elseif ($AbuseOnly) {
     & node --test --test-concurrency=1 --test-name-pattern "limiti antispam|rate limiting" tests\production-smoke.test.mjs
   } else {
     & node --test --test-concurrency=1 tests\production-smoke.test.mjs
