@@ -68,6 +68,13 @@ test("l'elenco viaggiatori scorre senza muovere lo sfondo", () => {
   assert.match(styles, /\.directoryPerson \.coordinatorRole \{[\s\S]*?font-weight: 950/);
 });
 
+test("l'elenco viaggiatori mostra in modo compatto età e lavoro condivisi", () => {
+  assert.match(source, /const travelerDetails = \(person\) =>/);
+  assert.match(source, /person\.age && `\$\{person\.age\} anni`/);
+  assert.match(source, /person\.job/);
+  assert.match(source, /<small title=\{travelerDetails\(person\)\}>/);
+});
+
 test("il PDF viene renderizzato internamente pagina per pagina su cellulare", () => {
   assert.match(source, /function PdfDocumentViewer/);
   assert.match(source, /await import\("pdfjs-dist\/legacy\/build\/pdf\.mjs"\)/);

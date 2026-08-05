@@ -61,3 +61,11 @@ Questa regola vale per **ogni revisione**, senza eccezioni.
 - Bacheca utilizzabile su rete mobile lenta e moduli pesanti caricati solo quando servono.
 - Dopo una prima visita, la bacheca pubblica si riapre senza rete senza esporre dati privati.
 - Service worker con precache generata a ogni build e registrazione immediata.
+
+## Livello 2 della revisione 1.37.19
+
+- Livello 1 completo superato: 109/109.
+- Età e lavoro mostrati soltanto quando sono presenti nei dati condivisi del profilo.
+- Riga compatta composta da ruolo, città, età e lavoro senza campi vuoti.
+- Diciotto viaggiatori verificati su Samsung S20 FE, Samsung meno recente e iPhone piccolo.
+- Nessuna uscita orizzontale dai bordi; ordine, colori, scorrimento e chiusura invariati.

@@ -7,7 +7,7 @@ test.use({ serviceWorkers: "block" });
 const pdfBytes = await readFile(fileURLToPath(new URL("./fixtures/documento-prova.pdf", import.meta.url)));
 const createdAt = (index) => new Date(Date.UTC(2026, 7, 4, 8, index)).toISOString();
 const profiles = [
-  { id: "p01", name: "Valentina", surname: "C", origin_city: "Palermo", role: "coordinator", gender: "female", created_at: createdAt(0) },
+  { id: "p01", name: "Valentina", surname: "Careri", age: "45", job: "Architetto", origin_city: "Palermo", role: "coordinator", gender: "female", created_at: createdAt(0) },
   ...Array.from({ length: 6 }, (_, index) => ({ id: `f${index}`, name: `Donna${index + 1}`, surname: "Test", origin_city: "Roma", role: "traveler", gender: "female", created_at: createdAt(index + 1) })),
   ...Array.from({ length: 7 }, (_, index) => ({ id: `m${index}`, name: index === 6 ? "Andrea" : `Uomo${index + 1}`, surname: "Test", origin_city: index === 6 ? "Milano" : "Torino", role: "traveler", gender: "male", created_at: createdAt(index + 7) })),
   ...Array.from({ length: 4 }, (_, index) => ({ id: `u${index}`, name: `NonIndicato${index + 1}`, surname: "Test", origin_city: "", role: "traveler", gender: "", created_at: createdAt(index + 14) })),
@@ -140,6 +140,8 @@ test("18 viaggiatori scorrono fino ad Andrea, mantengono ordine e colori, la X r
   await expect(rows.nth(13)).toContainText("Andrea");
   await expect(rows.nth(14)).toContainText("NonIndicato1");
   await expect(rows.first().locator(".coordinatorRole")).toHaveText("Coordinatrice");
+  await expect(rows.first()).toContainText("Palermo · 45 anni · Architetto");
+  expect(await rows.first().evaluate((node) => node.scrollWidth <= node.clientWidth)).toBeTruthy();
   await page.screenshot({ path: testInfo.outputPath("viaggiatori-inizio.png") });
   const tallestRow = await rows.evaluateAll((nodes) => Math.max(...nodes.map((node) => node.getBoundingClientRect().height)));
   expect(tallestRow).toBeGreaterThanOrEqual(40);

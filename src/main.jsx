@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.18",
+const VERSION = "1.37.19",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -59,6 +59,10 @@ const travelerRoleLabel = (person) =>
     ? person.gender === "female" ? "Coordinatrice" : "Coordinatore"
     : person.gender === "female" ? "Viaggiatrice"
       : person.gender === "male" ? "Viaggiatore" : "Partecipante";
+const travelerDetails = (person) =>
+  [travelerRoleLabel(person), person.origin_city, person.age && `${person.age} anni`, person.job]
+    .filter(Boolean)
+    .join(" · ");
 const TRAVELER_ICON = "/traveler-icon.png";
 const tripDateKeys = Array.from({ length: 14 },
   (_, index) => `2026-08-${String(10 + index).padStart(2, "0")}`,
@@ -3100,11 +3104,11 @@ function Diary({
                       <b>{person.name} {person.surname || ""}</b>
                       <code>@{mentionHandle(person)}</code>
                     </span>
-                    <small>
+                    <small title={travelerDetails(person)}>
                       <strong className={person.role === "coordinator" ? "coordinatorRole" : undefined}>
                         {travelerRoleLabel(person)}
                       </strong>
-                      {person.origin_city ? ` · ${person.origin_city}` : ""}
+                      {travelerDetails(person).slice(travelerRoleLabel(person).length)}
                     </small>
                   </div>
                 </div>
@@ -4185,16 +4189,7 @@ function People({
             <h3>
               {x.name} {x.surname}{x.origin_city ? ` · ${x.origin_city}` : ""}
             </h3>
-            <small>
-              {[
-                travelerRoleLabel(x),
-                x.origin_city,
-                x.age && `${x.age} anni`,
-                x.job,
-              ]
-                .filter(Boolean)
-                .join(" · ")}
-            </small>
+            <small>{travelerDetails(x)}</small>
             <p>{x.bio}</p>
             {sessionToken && canEdit(x.id) && (
               <div className="profileActions">
