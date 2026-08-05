@@ -986,17 +986,17 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       });
     if (selectedDay == null) {
       [
-        ["✈️", "Volo interno", [76.15, 26.35]],
-        ["🚐", "Spostamenti su strada", [73.35, 26.35]],
-        ["🚆", "Treno notturno", [80.6, 25.6]],
-        ["⛵", "Barca sul Gange", [83.02, 25.31]],
-        ["👣", "Visite a piedi", [75.82, 26.92]],
-      ].forEach(([symbol, label, coordinates]) => {
+        ["✈️", "Volo interno", [75.45, 26.6], [18, -22]],
+        ["🚐", "Spostamenti su strada", [74.15, 26.25], [-24, 15]],
+        ["🚆", "Treno notturno", [80.25, 25.55], [0, -24]],
+        ["⛵", "Barca sul Gange", [83.02, 25.31], [30, 22]],
+        ["👣", "Visite a piedi", [75.82, 26.92], [0, -32]],
+      ].forEach(([symbol, label, coordinates, offset]) => {
         const node = document.createElement("span");
         node.className = "overviewModeMarker";
         node.textContent = symbol;
         node.setAttribute("aria-label", label);
-        markers.current.push(new maplibregl.Marker({ element: node, anchor: "center" })
+        markers.current.push(new maplibregl.Marker({ element: node, anchor: "center", offset })
           .setLngLat(coordinates)
           .setPopup(new maplibregl.Popup({ offset: 18 }).setText(label))
           .addTo(map.current));
