@@ -1,14 +1,22 @@
-name: Pubblica QA 1.37.3
+name: Test e pubblicazione verificata
 
 on:
   push:
     branches: [main]
     paths:
+      - "functions/**"
+      - "public/**"
+      - "scripts/**"
+      - "src/**"
+      - "tests/**"
+      - "package.json"
+      - "package-lock.json"
+      - "playwright.local.config.mjs"
       - ".github/workflows/deploy-qa-1373.yml"
   workflow_dispatch:
 
 concurrency:
-  group: deploy-qa-1373
+  group: deploy-india-verified
   cancel-in-progress: true
 
 jobs:
@@ -32,7 +40,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-      - name: Attendi la revisione QA
+      - name: Attendi QA
         run: |
           for attempt in {1..30}; do
             if curl --fail --silent https://viaggio-in-india-2026-qa.pages.dev/ | grep --quiet "root"; then
@@ -47,3 +55,17 @@ jobs:
         run: npm run test:ui-critical
         env:
           TEST_BASE_URL: https://viaggio-in-india-2026-qa.pages.dev
+      - name: Pubblicazione Cloudflare Pages produzione
+        run: npx wrangler pages deploy dist --project-name viaggio-in-india-2026 --branch main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Verifica produzione raggiungibile
+        run: |
+          for attempt in {1..30}; do
+            if curl --fail --silent https://viaggio-in-india-2026.pages.dev/ | grep --quiet "root"; then
+              exit 0
+            fi
+            sleep 2
+          done
+          exit 1
