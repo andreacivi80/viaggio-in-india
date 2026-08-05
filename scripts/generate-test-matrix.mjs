@@ -88,6 +88,8 @@ const evidence = {
   "T-0821": ["SUPERATO", "resumable-upload: stato server riletto prima della ripresa"],
   "T-0925": ["SUPERATO", "QA 1.29.0: lettura Range attraversa due parti e restituisce HTTP 206"],
   "T-1025": ["SUPERATO", "production-smoke: unicita operazioni idempotenti verificata"],
+  "T-1017": ["SUPERATO", "P0_DB_AUTH_INTEGRITY: D1 respinge inviti senza profilo e li elimina a cascata"],
+  "T-1021": ["SUPERATO", "P0_DB_AUTH_INTEGRITY: D1 respinge sessioni senza profilo e le elimina a cascata"],
   "T-1029": ["SUPERATO", "backup D1 creato e verificato prima della migrazione 0013"],
   "T-1182": ["SUPERATO", "production-smoke: Service Worker live contiene la revisione corrente"],
   "T-1347": ["SUPERATO", "extended-p0-auth-lifecycle: invito scaduto inserito in D1 locale e rimosso da health"],

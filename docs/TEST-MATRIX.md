@@ -1029,11 +1029,11 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1014 | 54 | Ogni allegato deve essere collegato a un post esistente. | NON ESEGUITO | — |
 | T-1015 | 54 | Ogni commento deve essere collegato a un post esistente. | NON ESEGUITO | — |
 | T-1016 | 54 | Ogni documento deve essere collegato a un profilo esistente. | NON ESEGUITO | — |
-| T-1017 | 54 | Ogni invito deve essere collegato a un profilo esistente. | NON ESEGUITO | — |
+| T-1017 | 54 | Ogni invito deve essere collegato a un profilo esistente. | SUPERATO | P0_DB_AUTH_INTEGRITY: D1 respinge inviti senza profilo e li elimina a cascata |
 | T-1018 | 54 | Ogni posizione deve essere collegata a un profilo esistente. | NON ESEGUITO | — |
 | T-1019 | 54 | Ogni post deve avere un autore valido. | NON ESEGUITO | — |
 | T-1020 | 54 | Ogni reazione deve essere collegata a un post esistente. | NON ESEGUITO | — |
-| T-1021 | 54 | Ogni sessione deve essere collegata a un profilo esistente. | NON ESEGUITO | — |
+| T-1021 | 54 | Ogni sessione deve essere collegata a un profilo esistente. | SUPERATO | P0_DB_AUTH_INTEGRITY: D1 respinge sessioni senza profilo e le elimina a cascata |
 | T-1022 | 54 | Verificare comportamento con database temporaneamente non disponibile. | NON ESEGUITO | — |
 | T-1023 | 54 | Verificare indici sulle query più utilizzate. | NON ESEGUITO | — |
 | T-1024 | 54 | Verificare rollback dopo errore a metà operazione. | NON ESEGUITO | — |

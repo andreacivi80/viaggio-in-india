@@ -178,9 +178,9 @@ P0,accessi-privacy,passed,notifiche autorizzate correttamente;,globale:T-1793,pu
 P0,accessi-privacy,passed,Notifiche inviate soltanto agli utenti autorizzati a vedere il post.,globale:T-0070,"push-audience 5/5: matrice public/family/group/private verificata per pubblico, ospite e profilo"
 P0,accessi-privacy,pending,nuove funzioni basate sulla sessione;,addendum:A0400,
 P0,accessi-privacy,passed,"offrire accesso o collegamento del profilo, se appropriato;",addendum:A0270,"TypeScript JSX inventory: 115 interactive elements, zero missing handlers/empty links; Playwright credential flow"
-P0,accessi-privacy,pending,Ogni invito deve essere collegato a un profilo esistente.,globale:T-1017,
+P0,accessi-privacy,passed,Ogni invito deve essere collegato a un profilo esistente.,globale:T-1017,P0_DB_AUTH_INTEGRITY: D1 respinge inviti senza profilo e li elimina a cascata | P0_DB_AUTH_INTEGRITY 3/3: trigger D1 respinge INSERT invito con profile_id inesistente e pulisce gli inviti alla cancellazione del profilo
 P0,accessi-privacy,passed,ogni richiesta non autorizzata viene rifiutata dal server;,addendum:A0448,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
-P0,accessi-privacy,pending,Ogni sessione deve essere collegata a un profilo esistente.,globale:T-1021,
+P0,accessi-privacy,passed,Ogni sessione deve essere collegata a un profilo esistente.,globale:T-1021,P0_DB_AUTH_INTEGRITY: D1 respinge sessioni senza profilo e le elimina a cascata | P0_DB_AUTH_INTEGRITY 3/3: trigger D1 respinge INSERT sessione con profile_id inesistente e pulisce le sessioni alla cancellazione del profilo
 P0,accessi-privacy,pending,ogni tasto autorizzato funziona realmente;,addendum:A0446,
 P0,accessi-privacy,pending,ogni tasto non autorizzato è nascosto o disabilitato;,addendum:A0447,
 P0,accessi-privacy,pending,password di gruppo e sessione Coordinatore;,addendum:A0054,

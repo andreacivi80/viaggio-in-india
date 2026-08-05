@@ -45,6 +45,36 @@ try {
   if ($LASTEXITCODE -ne 0) { throw "Schema D1 locale non riuscito" }
   & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file db\migrations\0014_realtime_sync_triggers.sql | Out-Null
   if ($LASTEXITCODE -ne 0) { throw "Trigger sincronizzazione D1 locali non riusciti" }
+  & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file db\migrations\0016_auth_profile_integrity.sql | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw "Vincoli profilo autenticazione D1 locali non riusciti" }
+
+  if ($Suite -in @("all", "auth-lifecycle")) {
+    $invalidSessionSql = "INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES('invalid-session-$runId','missing-profile-$runId','invalid-device-$runId','Non valido','$created','$created','$expires',NULL);"
+    $invalidInviteSql = "INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at) VALUES('invalid-invite-$runId','missing-profile-$runId',NULL,'$created','$expires',NULL);"
+    foreach ($invalidSql in @($invalidSessionSql, $invalidInviteSql)) {
+      $previousErrorActionPreference = $ErrorActionPreference
+      $ErrorActionPreference = "Continue"
+      $invalidOutput = & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --command $invalidSql 2>&1
+      $invalidExit = $LASTEXITCODE
+      $ErrorActionPreference = $previousErrorActionPreference
+      if ($invalidExit -eq 0) { throw "Il database ha accettato un record autenticazione senza profilo: $invalidOutput" }
+    }
+
+    $cascadeProfileId = "integrity-profile-$runId"
+    $cascadeSql = @"
+INSERT INTO profiles(id,name,surname,role,created_at) VALUES('$cascadeProfileId','Integrita','Locale','traveler','$created');
+INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES('integrity-session-$runId','$cascadeProfileId','integrity-device-$runId','Integrita','$created','$created','$expires',NULL);
+INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at) VALUES('integrity-invite-$runId','$cascadeProfileId','$cascadeProfileId','$created','$expires',NULL);
+DELETE FROM profiles WHERE id='$cascadeProfileId';
+INSERT INTO profiles(id,name,surname,role,created_at) VALUES('$cascadeProfileId','Integrita','Locale','traveler','$created');
+INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES('integrity-session-$runId','$cascadeProfileId','integrity-device-$runId','Integrita','$created','$created','$expires',NULL);
+INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at) VALUES('integrity-invite-$runId','$cascadeProfileId','$cascadeProfileId','$created','$expires',NULL);
+DELETE FROM profiles WHERE id='$cascadeProfileId';
+"@
+    & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --command $cascadeSql | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Pulizia a cascata di sessioni e inviti non riuscita" }
+    Write-Output "P0_DB_AUTH_INTEGRITY=3/3"
+  }
 
   $sql = @"
 INSERT INTO profiles(id,name,surname,role,created_at) VALUES

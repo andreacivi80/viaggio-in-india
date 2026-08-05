@@ -29,6 +29,17 @@ test("le migrazioni sono numerate, additive e non cancellano dati reali", async 
   }
 });
 
+test("il database impedisce sessioni e inviti senza un profilo valido", async () => {
+  const schema = await readFile(new URL("../db/schema.sql", import.meta.url), "utf8");
+  const migration = await readFile(new URL("../db/migrations/0016_auth_profile_integrity.sql", import.meta.url), "utf8");
+  for (const source of [schema, migration]) {
+    assert.match(source, /auth_sessions_profile_insert_guard/);
+    assert.match(source, /profile_invites_profile_insert_guard/);
+    assert.match(source, /auth_profile_delete_cleanup/);
+    assert.match(source, /NOT EXISTS \(SELECT 1 FROM profiles WHERE id = NEW\.profile_id\)/);
+  }
+});
+
 test("il runner QA usa identificativi isolati e pulizie circoscritte", async () => {
   const runner = await readFile(new URL("../scripts/run-authenticated-qa.ps1", import.meta.url), "utf8");
   assert.match(runner, /qa-owner-\$runId/);
