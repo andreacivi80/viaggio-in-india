@@ -339,7 +339,7 @@ html.travelerDirectoryOpen body {
   z-index: 4;
   top: 59px;
   left: 18px;
-  width: 108px;
+  width: 122px;
   height: 45px;
   padding: 0;
   border: 1px solid #ffffffa8;
@@ -5402,7 +5402,7 @@ mark.mention {
 .italyOriginsLegend b { font-size: 12px; }
 .italyOriginsLegend small { color: #61756e; font-size: 9px; line-height: 1.3; }
 @media (max-width: 370px) {
-  .heroTravelers { width: 104px; }
+  .heroTravelers { width: 118px; }
   .routeMapSummary { gap: 5px; padding: 7px 8px; }
   .routeMapSummary b { font-size: 9px; }
 }
