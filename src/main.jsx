@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.22",
+const VERSION = "1.37.23",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -64,6 +64,22 @@ const travelerDetails = (person) =>
     .filter(Boolean)
     .join(" · ");
 const TRAVELER_ICON = "/traveler-icon.png";
+const ITALIAN_CITY_COORDINATES = {
+  milano: [9.19, 45.464], roma: [12.496, 41.903], palermo: [13.362, 38.116],
+  cagliari: [9.11, 39.224], torino: [7.686, 45.07], genova: [8.946, 44.405],
+  venezia: [12.315, 45.44], trieste: [13.777, 45.65], bologna: [11.342, 44.494],
+  firenze: [11.255, 43.77], napoli: [14.268, 40.852], bari: [16.872, 41.118],
+  ancona: [13.518, 43.616], perugia: [12.389, 43.112], l_aquila: [13.399, 42.35],
+  campobasso: [14.659, 41.56], potenza: [15.805, 40.64], catanzaro: [16.594, 38.91],
+  aosta: [7.32, 45.738], trento: [11.121, 46.067], bolzano: [11.354, 46.499],
+  verona: [10.992, 45.438], padova: [11.876, 45.407], bergamo: [9.67, 45.698],
+  brescia: [10.212, 45.541], parma: [10.328, 44.801], modena: [10.925, 44.647],
+  pisa: [10.402, 43.716], livorno: [10.316, 43.548], salerno: [14.759, 40.682],
+  lecce: [18.172, 40.352], messina: [15.554, 38.193], catania: [15.087, 37.503],
+  siracusa: [15.293, 37.075], sassari: [8.56, 40.726], rimini: [12.568, 44.067],
+};
+const normalizeItalianCity = (value = "") => String(value).trim().toLocaleLowerCase("it-IT")
+  .normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]+/g, "_").replace(/^_|_$/g, "");
 const tripDateKeys = Array.from({ length: 14 },
   (_, index) => `2026-08-${String(10 + index).padStart(2, "0")}`,
 );
@@ -968,6 +984,24 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
           .addTo(map.current);
         markers.current.push(marker);
       });
+    if (selectedDay == null) {
+      [
+        ["✈️", "Volo interno", [76.15, 26.35]],
+        ["🚐", "Spostamenti su strada", [73.35, 26.35]],
+        ["🚆", "Treno notturno", [80.6, 25.6]],
+        ["⛵", "Barca sul Gange", [83.02, 25.31]],
+        ["👣", "Visite a piedi", [75.82, 26.92]],
+      ].forEach(([symbol, label, coordinates]) => {
+        const node = document.createElement("span");
+        node.className = "overviewModeMarker";
+        node.textContent = symbol;
+        node.setAttribute("aria-label", label);
+        markers.current.push(new maplibregl.Marker({ element: node, anchor: "center" })
+          .setLngLat(coordinates)
+          .setPopup(new maplibregl.Popup({ offset: 18 }).setText(label))
+          .addTo(map.current));
+      });
+    }
     const line = (coords, mode = "road") => ({
       type: "Feature",
       properties: { mode },
@@ -992,6 +1026,24 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         ...visibleMarkerIndexes.map((index) => places[sequence[index]]),
         ...specialStops.map(([, , coordinates]) => coordinates),
       ].filter(Boolean);
+      if (coords.length > 1) {
+        [
+          ["start", "Partenza", day.from, coords[0]],
+          ["finish", "Arrivo", day.to, coords[coords.length - 1]],
+        ].forEach(([kind, label, place, coordinates]) => {
+          const node = document.createElement("span");
+          node.className = `routeEndpointMarker ${kind}`;
+          node.textContent = kind === "start" ? "▶" : "●";
+          node.setAttribute("aria-label", `${label}: ${place}`);
+          const [lat, lng] = coordinates;
+          markers.current.push(new maplibregl.Marker({ element: node, anchor: "center" })
+            .setLngLat([lng, lat])
+            .setPopup(new maplibregl.Popup({ offset: 18 }).setHTML(
+              `<strong>${label}</strong><br><small>${place}</small>`,
+            ))
+            .addTo(map.current));
+        });
+      }
     } else {
       features = [
         line([places["Rockland Hotel C R Park"], places["Akshay Niwas Boutique Hotel"]], "transit"),
@@ -1049,7 +1101,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
     });
   }, [selectedDay, ready, currentDayIndex]);
   return (
-    <div className="realMapWrap">
+    <div className={`realMapWrap ${day ? "dayRouteMap" : "overviewRouteMap"}`}>
       <div
         className="realMap"
         ref={el}
@@ -1062,6 +1114,13 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         >
           <span>{transportPresentation(day.transport).icons}</span>
           <b>{day.transport}</b>
+        </div>
+      )}
+      {day && (
+        <div className="routeMapSummary" aria-label={`Percorso da ${day.from} a ${day.to}`}>
+          <span><i className="start">▶</i><small>Partenza</small><b>{day.from}</b></span>
+          <em>{day.km} km</em>
+          <span><i className="finish">●</i><small>Arrivo</small><b>{day.to}</b></span>
         </div>
       )}
       {!visualReady && (
@@ -1248,6 +1307,78 @@ function PeopleLocationMap({ locations }) {
   );
 }
 
+function ItalyTravelerMap({ people }) {
+  const elementRef = useRef(null);
+  const groups = useMemo(() => {
+    const grouped = new Map();
+    people.forEach((person) => {
+      const key = normalizeItalianCity(person.origin_city);
+      const coordinates = ITALIAN_CITY_COORDINATES[key];
+      if (!coordinates) return;
+      const existing = grouped.get(key) || {
+        city: String(person.origin_city).trim(),
+        coordinates,
+        people: [],
+      };
+      existing.people.push(person);
+      grouped.set(key, existing);
+    });
+    return [...grouped.values()];
+  }, [people]);
+  useEffect(() => {
+    if (!elementRef.current) return undefined;
+    let map;
+    let cancelled = false;
+    import("maplibre-gl").then(({ default: maplibregl }) => {
+      if (cancelled || !elementRef.current) return;
+      map = new maplibregl.Map({
+        container: elementRef.current,
+        style: "https://tiles.openfreemap.org/styles/liberty",
+        center: [12.4, 42.4],
+        zoom: 4.5,
+        minZoom: 4,
+        attributionControl: false,
+        cooperativeGestures: true,
+        antialias: true,
+      });
+      map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+      map.on("load", () => {
+        const bounds = new maplibregl.LngLatBounds();
+        groups.forEach((group) => {
+          const markerNode = document.createElement("button");
+          markerNode.className = "italyOriginMarker";
+          markerNode.textContent = String(group.people.length);
+          markerNode.setAttribute("aria-label", `${group.people.length} da ${group.city}`);
+          new maplibregl.Marker({ element: markerNode })
+            .setLngLat(group.coordinates)
+            .setPopup(new maplibregl.Popup({ offset: 18 }).setHTML(
+              `<strong>${group.city}</strong><br><small>${group.people.map((person) => `${person.name} ${person.surname || ""}`.trim()).join(" · ")}</small>`,
+            ))
+            .addTo(map);
+          bounds.extend(group.coordinates);
+        });
+        map.resize();
+        if (groups.length === 1) map.easeTo({ center: groups[0].coordinates, zoom: 7, duration: 500 });
+        else if (groups.length > 1) map.fitBounds(bounds, { padding: 58, maxZoom: 7, duration: 600 });
+      });
+    });
+    return () => { cancelled = true; map?.remove(); };
+  }, [groups]);
+  const mappedCount = groups.reduce((total, group) => total + group.people.length, 0);
+  return (
+    <div className="italyOriginsBody">
+      <div className="italyOriginsMap" ref={elementRef} aria-label="Provenienza dei viaggiatori sulla cartina dell’Italia" />
+      <div className="italyOriginsLegend">
+        <b>{mappedCount} viaggiatori localizzati</b>
+        <small>Il numero nel punto indica quante persone arrivano dalla stessa città.</small>
+        {people.length > mappedCount && (
+          <small>{people.length - mappedCount} senza città indicata o da localizzare.</small>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const initialParams = new URLSearchParams(location.search);
   const initialDay = Math.max(
@@ -1280,6 +1411,7 @@ function App() {
     [notificationOpen, setNotificationOpen] = useState(false),
     [quickProfileOpen, setQuickProfileOpen] = useState(false),
     [travelersOpen, setTravelersOpen] = useState(false),
+    [travelerOriginsOpen, setTravelerOriginsOpen] = useState(false),
     [cityPanel, setCityPanel] = useState(null),
     [weatherByDate, setWeatherByDate] = useState({}),
     [indiaClock, setIndiaClock] = useState(() => Date.now()),
@@ -1330,15 +1462,16 @@ function App() {
   }).format(indiaClock);
 
   useEffect(() => {
-    if (!travelersOpen) return undefined;
+    if (!travelersOpen && !travelerOriginsOpen) return undefined;
     document.documentElement.classList.add("travelerDirectoryOpen");
     return () => {
       document.documentElement.classList.remove("travelerDirectoryOpen");
     };
-  }, [travelersOpen]);
+  }, [travelersOpen, travelerOriginsOpen]);
   useEffect(() => {
     // Cambiare sezione non deve lasciare un overlay o un blocco dello scroll attivo.
     setTravelersOpen(false);
+    setTravelerOriginsOpen(false);
     setNotificationOpen(false);
     document.documentElement.classList.remove("travelerDirectoryOpen");
   }, [tab]);
@@ -1959,17 +2092,23 @@ function App() {
           </button>
         </div>
         {tab === "diary" && (
-          <button
-            className="heroTravelers"
-            onClick={() => setTravelersOpen(true)}
-            aria-label={`Apri elenco viaggiatori, ${people.length} persone`}
-          >
-            <img src={TRAVELER_ICON} alt="" aria-hidden="true" />
-            <span>
-              <b>Viaggiatori</b>
-              <small>{people.length}</small>
-            </span>
-          </button>
+          <div className="heroTravelers">
+            <button
+              type="button"
+              className="heroTravelersMain"
+              onClick={() => setTravelersOpen(true)}
+              aria-label={`Apri elenco viaggiatori, ${people.length} persone`}
+            >
+              <img src={TRAVELER_ICON} alt="" aria-hidden="true" />
+              <span><b>Viaggiatori</b><small>{people.length}</small></span>
+            </button>
+            <button
+              type="button"
+              className="heroTravelersMapButton"
+              onClick={() => setTravelerOriginsOpen(true)}
+              aria-label="Apri la cartina di provenienza dei viaggiatori"
+            >+</button>
+          </div>
         )}
         {notificationOpen && (
           <div className="notificationPanel">
@@ -2372,7 +2511,7 @@ function App() {
                       )}
                       {d.transport.includes("Aereo") && (
                         <details className="flightBaggageCard">
-                          <summary><span aria-hidden="true">\u2708\uFE0F</span><div><small>VOLO INTERNO INDIGO</small><b>Misure e peso dei bagagli</b></div><strong>+</strong></summary>
+                          <summary><span aria-hidden="true">✈️</span><div><small>VOLO INTERNO INDIGO</small><b>Misure e peso dei bagagli</b></div><strong>+</strong></summary>
                           <div className="flightBaggageBody">
                             <section><b>Bagaglio a mano</b><span>55 x 35 x 25 cm</span><small>Ruote e maniglie incluse</small></section>
                             <section><b>Peso in cabina</b><span>7 kg</span><small>Fino a 8 kg soltanto se previsto dalla tariffa</small></section>
@@ -2556,6 +2695,8 @@ function App() {
             }}
             directoryOpen={travelersOpen}
             setDirectoryOpen={setTravelersOpen}
+            originsOpen={travelerOriginsOpen}
+            setOriginsOpen={setTravelerOriginsOpen}
           />
         )}{" "}
         {tab === "people" && verifiedSessionToken && (
@@ -2711,6 +2852,8 @@ function Diary({
   onSessionInvalid,
   directoryOpen,
   setDirectoryOpen,
+  originsOpen,
+  setOriginsOpen,
 }) {
   const locationRequestRef = useRef(0);
   const postOperationRef = useRef("");
@@ -3324,6 +3467,23 @@ function Diary({
               ))}
             </div>
           </div>
+        </div>
+      )}
+      {originsOpen && (
+        <div className="directoryBackdrop" onClick={() => setOriginsOpen(false)}>
+          <section
+            className="travelerOriginsSheet"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Da dove arriviamo"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="directoryHead">
+              <div><small>IL NOSTRO GRUPPO</small><h3>Da dove arriviamo</h3></div>
+              <button type="button" onClick={() => setOriginsOpen(false)} aria-label="Chiudi cartina di provenienza">×</button>
+            </div>
+            <ItalyTravelerMap people={people} />
+          </section>
         </div>
       )}
     </section>
