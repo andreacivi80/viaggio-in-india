@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.38.1",
+const VERSION = "1.38.2",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -443,6 +443,10 @@ const days = [
   {
     date: "Lun 10 ago",
     city: "Delhi",
+    birthdays: [
+      { name: "Antonella", age: 26 },
+      { name: "Ludovica", age: 28 },
+    ],
     title: "Partenza: prima notte a Nuova Delhi",
     story:
       "Atterriamo all’aeroporto internazionale di Delhi e raggiungiamo il Rockland Hotel C.R. Park. Sistemazione, incontro con il gruppo e prima notte nella capitale.",
@@ -606,6 +610,7 @@ const days = [
   {
     date: "Lun 17 ago",
     city: "Jaipur",
+    birthdays: [{ name: "Paolo", age: 37 }],
     title: "Templi e fortezze",
     story:
       "Galta Ji al mattino, Amber Fort nel pomeriggio e una cena panoramica per festeggiare il compleanno di Paolo.",
@@ -706,6 +711,7 @@ const days = [
   {
     date: "Ven 21 ago",
     city: "Varanasi",
+    birthdays: [{ name: "Davide Spinaci", age: 29 }],
     title: "Alba sul Gange",
     story:
       "Partenza in barca prima del sole, yoga sul rooftop e tempo libero nei vicoli. La sera festeggiamo Davide.",
@@ -811,6 +817,16 @@ const transportPresentation = (transport = "") => {
           ? "walk"
           : "road";
   return { icons: [...new Set(icons)].join(" ") || "\uD83D\uDE90", mode };
+};
+
+const birthdayProfile = (people, birthdayName) => {
+  const wanted = normalizeItalianCity(birthdayName);
+  const wantedFirstName = wanted.split(" ")[0];
+  return people.find((person) => {
+    const fullName = normalizeItalianCity(`${person.name || ""} ${person.surname || ""}`);
+    const firstName = normalizeItalianCity(person.name || "");
+    return fullName === wanted || (wanted.split(" ").length === 1 && firstName === wantedFirstName);
+  });
 };
 
 function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
@@ -2514,6 +2530,11 @@ function App() {
                       {forecast.max}°/{forecast.min}°
                     </em>
                   )}
+                  {day.birthdays?.length > 0 && (
+                    <i className="birthdayPickerDot" title="Compleanno in viaggio" aria-label="Compleanno in viaggio">
+                      <img src="/ui/birthday-party-we-road-v1.jpg" alt="" />
+                    </i>
+                  )}
                   {todayTripIndex === index && (
                     <i className="todayDot" title="Oggi" aria-hidden="true" />
                   )}
@@ -2565,6 +2586,36 @@ function App() {
                     </div>
                     <ChevronDown className={open === i ? "rot" : ""} />
                   </button>
+                  {d.birthdays?.length > 0 && (
+                    <div
+                      className="dayBirthdayRibbon"
+                      aria-label={`Compleanni del ${d.date}: ${d.birthdays.map((birthday) => `${birthday.name}, ${birthday.age} anni`).join("; ")}`}
+                    >
+                      <img
+                        className="birthdayPartyScene"
+                        src="/ui/birthday-party-we-road-v1.jpg"
+                        alt="Gruppo di viaggiatori WE ROAD in festa in India"
+                        loading="lazy"
+                      />
+                      <div className="birthdayRibbonCopy">
+                        <span className="birthdayCake" aria-hidden="true">🎉</span>
+                        <div>
+                          <small>IL GRUPPO FESTEGGIA IN INDIA</small>
+                          <b>{d.birthdays.map((birthday) => `${birthday.name} · ${birthday.age} anni`).join("  •  ")}</b>
+                        </div>
+                        <span className="birthdayTravelers" aria-hidden="true">
+                          {d.birthdays.map((birthday) => {
+                            const profile = birthdayProfile(people, birthday.name);
+                            return profile?.avatar_url ? (
+                              <img key={birthday.name} src={profile.avatar_url} alt="" />
+                            ) : (
+                              <i key={birthday.name}>{birthday.name[0]}</i>
+                            );
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  )}
                   {facts && (
                     <button
                       type="button"
