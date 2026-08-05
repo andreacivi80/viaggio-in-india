@@ -42,6 +42,7 @@ if (-not $SkipBuild) {
 if ($Target -in @("qa", "both")) {
   npx --yes wrangler@4.118.0 pages deploy dist `
     --project-name viaggio-in-india-2026-qa `
+    --config wrangler.qa.jsonc `
     --branch main `
     --commit-dirty=true
 }
@@ -49,6 +50,7 @@ if ($Target -in @("qa", "both")) {
 if ($Target -in @("production", "both")) {
   npx --yes wrangler@4.118.0 pages deploy dist `
     --project-name viaggio-in-india-2026 `
+    --config wrangler.jsonc `
     --branch main `
     --commit-dirty=true
 }
