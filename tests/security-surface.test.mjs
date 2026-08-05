@@ -75,6 +75,9 @@ test("invito personale e registrazione sono limitati contro gli abusi", () => {
   assert.match(worker, /rateLimit\(env, request, "auth-claim", 20, 60\)/);
   assert.match(worker, /UPDATE profile_invites SET used_at=\?[\s\S]*?used_at IS NULL/);
   assert.match(worker, /if \(!claim\.meta\?\.changes\)[\s\S]*?Invito già utilizzato/);
+  assert.match(worker, /request\.method === "DELETE" && path\.startsWith\("auth\/invites\/"\)/);
+  assert.match(worker, /Solo il coordinatore può revocare inviti/);
+  assert.match(worker, /DELETE FROM profile_invites WHERE token_hash=\? AND used_at IS NULL/);
 });
 
 test("documenti privati sono leggibili solo dal proprietario o coordinatore", () => {

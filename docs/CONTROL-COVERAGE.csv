@@ -204,8 +204,8 @@ P0,accessi-privacy,pending,"regola di precedenza tra password, sessione e dati l
 P0,accessi-privacy,passed,reinviarla con token differente;,addendum:A0326,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Revoca immediata di sessioni compromesse.,globale:T-0230,extended-p0-auth-lifecycle 28/28: revoca selettiva del secondo dispositivo e token respinto immediatamente con 401
 P0,accessi-privacy,passed,Revocare il dispositivo mentre è aperta una finestra privata.,addendum:A0101,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
-P0,accessi-privacy,pending,"Revocare invito, se previsto.",usabilita:U0381,
-P0,accessi-privacy,pending,Revocare un invito non ancora utilizzato.,globale:T-0779,
+P0,accessi-privacy,passed,"Revocare invito, se previsto.",usabilita:U0381,auth-lifecycle 40/40: il coordinatore revoca selettivamente un invito tramite identificativo non utilizzabile come token
+P0,accessi-privacy,passed,Revocare un invito non ancora utilizzato.,globale:T-0779,auth-lifecycle 40/40: DELETE dell’invito pendente restituisce 200 e il successivo claim viene respinto
 P0,accessi-privacy,passed,riceve soltanto contenuti autorizzati ai familiari;,addendum:A0146,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,pending,Ricezione invito.,globale:T-1233,
 P0,accessi-privacy,pending,Richiedere invito personale.,usabilita:U0483,
@@ -291,7 +291,7 @@ P0,accessi-privacy,passed,Verificare che pagine pubbliche eventualmente incorpor
 P0,accessi-privacy,pending,Verificare contenuti autorizzati.,usabilita:U0096,
 P0,accessi-privacy,passed,Verificare creazione della sessione.,usabilita:U0406,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Verificare dati dopo revoca della sessione.,globale:T-1625,auth-lifecycle 32/32: token revocato restituisce 401 e tutte le sottoscrizioni push del profilo vengono eliminate
-P0,accessi-privacy,pending,Verificare eliminazione degli inviti.,globale:T-1331,
+P0,accessi-privacy,passed,Verificare eliminazione degli inviti.,globale:T-1331,auth-lifecycle 40/40: invito revocato rimosso dal database; viaggiatore non autorizzato riceve 403
 P0,accessi-privacy,passed,Verificare eliminazione delle sessioni.,globale:T-1335,extended-p0-auth-lifecycle 28/28: dispositivo revocato scompare dall’elenco delle sessioni attive
 P0,accessi-privacy,pending,Verificare emissione di un nuovo token.,addendum:A0338,
 P0,accessi-privacy,pending,Verificare esecuzione dell’accesso.,usabilita:U0046,
@@ -306,7 +306,7 @@ P0,accessi-privacy,pending,Verificare messaggio di accesso riuscito.,usabilita:U
 P0,accessi-privacy,pending,Verificare nessun URL permanente condivisibile senza sessione.,globale:T-1006,
 P0,accessi-privacy,passed,Verificare privacy dei dati sul profilo pubblico.,globale:T-0359,production-smoke: nessun campo privato nei profili pubblici
 P0,accessi-privacy,passed,Verificare privacy del testo mostrato sul blocco schermo.,globale:T-0532,push-audience 5/5: testo group/private escluso dalle sottoscrizioni pubbliche o familiari non autorizzate
-P0,accessi-privacy,pending,Verificare quale invito rimane valido.,globale:T-0789,
+P0,accessi-privacy,passed,Verificare quale invito rimane valido.,globale:T-0789,auth-lifecycle 40/40: un invito revocato è invalido mentre il secondo invito dello stesso profilo resta utilizzabile una sola volta
 P0,accessi-privacy,passed,Verificare revoca automatica di tutte le sessioni del profilo.,globale:T-0772,profile-deletion 40/40: tutte le auth_sessions del profilo eliminate nella stessa transazione D1
 P0,accessi-privacy,pending,Verificare richiesta di nuovo accesso.,globale:T-0773,
 P0,accessi-privacy,passed,Verificare rimozione del token dall’URL.,usabilita:U0407,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04

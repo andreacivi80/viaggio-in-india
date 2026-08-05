@@ -1051,10 +1051,24 @@ export async function onRequest(context) {
         )
         .run();
       return json({
+        invite_id: await tokenHash(token),
         invite_token: token,
         expires_at: expiresAt,
         profile,
       }, 201);
+    }
+    if (request.method === "DELETE" && path.startsWith("auth/invites/")) {
+      const session = await sessionFromRequest(request, env);
+      if (!session || session.role !== "coordinator")
+        return json({ error: "Solo il coordinatore può revocare inviti" }, 403);
+      const inviteId = path.slice("auth/invites/".length);
+      if (!/^[a-f0-9]{64}$/i.test(inviteId))
+        return json({ error: "Invito non valido" }, 400);
+      const revoked = await env.DB.prepare(
+        "DELETE FROM profile_invites WHERE token_hash=? AND used_at IS NULL",
+      ).bind(inviteId.toLowerCase()).run();
+      if (!revoked.meta?.changes) return json({ error: "Invito non trovato o già utilizzato" }, 404);
+      return json({ ok: true, invite_id: inviteId.toLowerCase() });
     }
     if (request.method === "GET" && path === "state") {
       await ensureStaticPosts(env);

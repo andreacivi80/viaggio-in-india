@@ -176,4 +176,8 @@
   ,{ "control": "Ridurre la durata della sessione, attualmente prevista fino a 90 giorni.", "evidence": "security-surface + auth-lifecycle 35/35: durata massima ridotta a 30 giorni e inattività massima a 21 giorni" }
   ,{ "control": "Registrare data, ora e ultimo utilizzo della sessione.", "evidence": "auth-lifecycle 35/35: created_at, last_used_at ed expires_at sono registrati e mostrati nell’elenco dispositivi" }
   ,{ "control": "Verificare mantenimento della sessione.", "evidence": "auth-lifecycle 35/35: rinnovo mantiene lo stesso token valido sul dispositivo e aggiorna la scadenza oltre 29 giorni" }
+  ,{ "control": "Revocare invito, se previsto.", "evidence": "auth-lifecycle 40/40: il coordinatore revoca selettivamente un invito tramite identificativo non utilizzabile come token" }
+  ,{ "control": "Revocare un invito non ancora utilizzato.", "evidence": "auth-lifecycle 40/40: DELETE dell’invito pendente restituisce 200 e il successivo claim viene respinto" }
+  ,{ "control": "Verificare eliminazione degli inviti.", "evidence": "auth-lifecycle 40/40: invito revocato rimosso dal database; viaggiatore non autorizzato riceve 403" }
+  ,{ "control": "Verificare quale invito rimane valido.", "evidence": "auth-lifecycle 40/40: un invito revocato è invalido mentre il secondo invito dello stesso profilo resta utilizzabile una sola volta" }
 ]

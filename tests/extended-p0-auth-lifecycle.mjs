@@ -25,6 +25,28 @@ const missingProfileInvite = await request("/api/auth/invites", {
 });
 assert.equal(missingProfileInvite.status, 404);
 
+const revokedInviteResponse = await request("/api/auth/invites", {
+  method: "POST",
+  headers: jsonHeaders(coordinatorToken),
+  body: JSON.stringify({ profile_id: targetProfileId }),
+});
+assert.equal(revokedInviteResponse.status, 201);
+const revokedInvite = await revokedInviteResponse.json();
+assert.match(revokedInvite.invite_id, /^[a-f0-9]{64}$/);
+assert.equal((await request(`/api/auth/invites/${revokedInvite.invite_id}`, {
+  method: "DELETE",
+  headers: bearer(process.env.QA_SESSION_TOKEN),
+})).status, 403);
+assert.equal((await request(`/api/auth/invites/${revokedInvite.invite_id}`, {
+  method: "DELETE",
+  headers: bearer(coordinatorToken),
+})).status, 200);
+assert.equal((await request("/api/auth/claim", {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ invite_token: revokedInvite.invite_token }),
+})).status, 403);
+
 const inviteResponse = await request("/api/auth/invites", {
   method: "POST",
   headers: jsonHeaders(coordinatorToken),
@@ -112,5 +134,5 @@ assert.equal((await logoutAllResponse.json()).push_subscriptions_revoked, 1);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 401);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 401);
 
-console.log("P0_AUTH_LIFECYCLE=35/35");
+console.log("P0_AUTH_LIFECYCLE=40/40");
 process.exit(0);
