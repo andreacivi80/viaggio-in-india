@@ -208,4 +208,7 @@
   ,{ "control": "accesso completo;", "evidence": "authorization-matrix 55/55: il proprietario autenticato vede public, family, group e il proprio private" }
   ,{ "control": "accesso limitato ad alcune fotografie;", "evidence": "authorization-matrix 55/55: familiare vede public+family, viaggiatore vede public+family+group, nessuno vede private altrui" }
   ,{ "control": "accesso negato;", "evidence": "authorization-matrix 55/55: contenuti fuori visibilità e operazioni fuori ruolo restituiscono 401/403" }
+  ,{ "control": "Copiare il token su un altro browser.", "evidence": "session-device-binding 2/2 + auth-lifecycle 57/57: token valido con chiave browser diversa o assente restituisce 401" }
+  ,{ "control": "Copiare token su altro dispositivo.", "evidence": "auth-lifecycle 57/57: sessione nuova e sessione precedente dopo il primo binding accettano soltanto la chiave del dispositivo originario" }
+  ,{ "control": "Impedire il riutilizzo di una sessione rubata.", "evidence": "auth-lifecycle 57/57: il bearer token copiato non è sufficiente; il server confronta l’hash della chiave dispositivo e nega chiave mancante o differente" }
 ]

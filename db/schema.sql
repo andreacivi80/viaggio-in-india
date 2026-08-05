@@ -87,6 +87,7 @@ CREATE TABLE IF NOT EXISTS auth_sessions (
   profile_id TEXT NOT NULL,
   device_id TEXT UNIQUE,
   device_name TEXT DEFAULT 'Dispositivo',
+  device_key_hash TEXT,
   created_at TEXT NOT NULL,
   last_used_at TEXT NOT NULL,
   expires_at TEXT NOT NULL,

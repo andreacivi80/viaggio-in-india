@@ -40,6 +40,7 @@ test("bozza, riselezione file e commento con foto restano utilizzabili", async (
     .poll(() => page.evaluate(() => localStorage.getItem("india-session-token")))
     .toBeTruthy();
   const sessionToken = await page.evaluate(() => localStorage.getItem("india-session-token"));
+  const deviceKey = await page.evaluate(() => localStorage.getItem("india-device-key"));
   try {
     await page.getByRole("button", { name: "Pubblica" }).tap();
     let sheet = page.locator(".uploadSheet");
@@ -102,7 +103,7 @@ test("bozza, riselezione file e commento con foto restano utilizzabili", async (
   } finally {
     if (createdPostId)
       await page.request.delete(`${baseUrl}/api/posts/${encodeURIComponent(createdPostId)}`, {
-        headers: { authorization: `Bearer ${sessionToken}` },
+        headers: { authorization: `Bearer ${sessionToken}`, "x-device-key": deviceKey },
         timeout: 15_000,
       }).catch(() => {});
     await page.evaluate(() => localStorage.removeItem("india-draft")).catch(() => {});

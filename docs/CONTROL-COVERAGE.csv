@@ -72,9 +72,9 @@ P0,accessi-privacy,passed,Coordinatore apre documenti autorizzati.,usabilita:U04
 P0,accessi-privacy,passed,"Coordinatore revoca A, A perde accesso immediatamente.",usabilita:U0564,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P0,accessi-privacy,passed,Coordinatore: documenti autorizzati del gruppo.,globale:T-0480,P0 locale documenti: stato privato coordinatore include il documento del gruppo e media accessibile
 P0,accessi-privacy,pending,Copia invito.,usabilita:U0657,
-P0,accessi-privacy,pending,Copiare il token su un altro browser.,globale:T-0757,
+P0,accessi-privacy,passed,Copiare il token su un altro browser.,globale:T-0757,session-device-binding 2/2 + auth-lifecycle 57/57: token valido con chiave browser diversa o assente restituisce 401
 P0,accessi-privacy,pending,Copiare invito.,usabilita:U0378;usabilita:U0403,
-P0,accessi-privacy,pending,Copiare token su altro dispositivo.,globale:T-0615,
+P0,accessi-privacy,passed,Copiare token su altro dispositivo.,globale:T-0615,auth-lifecycle 57/57: sessione nuova e sessione precedente dopo il primo binding accettano soltanto la chiave del dispositivo originario
 P0,accessi-privacy,pending,Creare due inviti successivi per la stessa persona.,globale:T-0776,
 P0,accessi-privacy,pending,Creare invito per Viaggiatore A.,globale:T-0324,
 P0,accessi-privacy,passed,Creare invito.,usabilita:U0377;usabilita:U0402,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04 | Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
@@ -110,7 +110,7 @@ P0,accessi-privacy,passed,il Coordinatore è autorizzato lato server;,globale:T-
 P0,accessi-privacy,passed,il server deve autorizzare la richiesta;,addendum:A0029,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Il sistema deve bloccare la pubblicazione oppure richiedere l’accesso.,usabilita:U0474,"Playwright mobile: loading held, disabled state, duplicate click, HTTP 201, confirmation; preview 9393a1aa"
 P0,accessi-privacy,passed,Impedire che il testo di un post privato compaia nella notifica di utenti non autorizzati.,globale:T-0069,"push-audience 5/5: un post privato non produce notifiche per pubblico, familiari o altri viaggiatori"
-P0,accessi-privacy,pending,Impedire il riutilizzo di una sessione rubata.,globale:T-0036,
+P0,accessi-privacy,passed,Impedire il riutilizzo di una sessione rubata.,globale:T-0036,auth-lifecycle 57/57: il bearer token copiato non è sufficiente; il server confronta l’hash della chiave dispositivo e nega chiave mancante o differente
 P0,accessi-privacy,passed,impossibilità di aprire documenti prima della verifica della sessione;,addendum:A0318,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,impossibilità di utilizzare il ruolo conservato localmente come autorizzazione;,addendum:A0319,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,Impossibilità di vedere documenti e posizioni private.,globale:T-1219,ui-critical produzione: pubblico senza sessione non vede UI privata e gli endpoint sono negati

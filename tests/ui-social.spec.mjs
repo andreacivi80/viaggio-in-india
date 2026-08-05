@@ -26,12 +26,14 @@ test("visitatore e viaggiatore interagiscono senza ereditare comandi non autoriz
     });
     await expect(travelerPage.locator(".accessPill")).toContainText(profileName.split(" ")[0]);
     const sessionToken = await travelerPage.evaluate(() => localStorage.getItem("india-session-token"));
+    const travelerDeviceKey = await travelerPage.evaluate(() => localStorage.getItem("india-device-key"));
     expect(sessionToken).toBeTruthy();
 
     const postText = `Social UI ${Date.now()}`;
     const createResponse = await travelerPage.request.post(`${baseUrl}/api/posts`, {
       headers: {
         authorization: `Bearer ${sessionToken}`,
+        "x-device-key": travelerDeviceKey,
         "x-idempotency-key": crypto.randomUUID(),
         "x-qa-silent": "true",
       },
@@ -48,11 +50,13 @@ test("visitatore e viaggiatore interagiscono senza ereditare comandi non autoriz
       waitUntil: "networkidle",
     });
     coordinatorToken = await coordinatorPage.evaluate(() => localStorage.getItem("india-session-token"));
+    const coordinatorDeviceKey = await coordinatorPage.evaluate(() => localStorage.getItem("india-device-key"));
     expect(coordinatorToken).toBeTruthy();
     const coordinatorPostText = `Post coordinatore ${Date.now()}`;
     const coordinatorResponse = await coordinatorPage.request.post(`${baseUrl}/api/posts`, {
       headers: {
         authorization: `Bearer ${coordinatorToken}`,
+        "x-device-key": coordinatorDeviceKey,
         "x-idempotency-key": crypto.randomUUID(),
         "x-qa-silent": "true",
       },
@@ -153,14 +157,18 @@ test("visitatore e viaggiatore interagiscono senza ereditare comandi non autoriz
   } finally {
     if (createdPostId) {
       const sessionToken = await travelerPage.evaluate(() => localStorage.getItem("india-session-token")).catch(() => "");
+      const deviceKey = await travelerPage.evaluate(() => localStorage.getItem("india-device-key")).catch(() => "");
       if (sessionToken)
         await travelerPage.request.delete(`${baseUrl}/api/posts/${encodeURIComponent(createdPostId)}`, {
-          headers: { authorization: `Bearer ${sessionToken}` },
+          headers: { authorization: `Bearer ${sessionToken}`, "x-device-key": deviceKey },
         }).catch(() => {});
     }
     if (coordinatorPostId && coordinatorToken)
       await coordinatorPage.request.delete(`${baseUrl}/api/posts/${encodeURIComponent(coordinatorPostId)}`, {
-        headers: { authorization: `Bearer ${coordinatorToken}` },
+        headers: {
+          authorization: `Bearer ${coordinatorToken}`,
+          "x-device-key": await coordinatorPage.evaluate(() => localStorage.getItem("india-device-key")).catch(() => ""),
+        },
       }).catch(() => {});
     await Promise.all([
       travelerContext.close(),

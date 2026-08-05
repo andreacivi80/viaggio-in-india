@@ -543,9 +543,10 @@ test("invito personale monouso collega un dispositivo e il logout revoca la sess
   });
   assert.equal(invitationResponse.status, 201);
   const invitation = await invitationResponse.json();
+  const claimedDeviceKey = "f".repeat(64);
   const claim = await request("/api/auth/claim", {
     method: "POST",
-    headers: { "content-type": "application/json", "x-device-name": "Telefono QA invitato" },
+    headers: { "content-type": "application/json", "x-device-name": "Telefono QA invitato", "x-device-key": claimedDeviceKey },
     body: JSON.stringify({ invite_token: invitation.invite_token }),
   });
   assert.equal(claim.status, 200);
@@ -558,9 +559,9 @@ test("invito personale monouso collega un dispositivo e il logout revoca la sess
     body: JSON.stringify({ invite_token: invitation.invite_token }),
   })).status, 403);
   const claimedAuthorization = `Bearer ${claimed.token}`;
-  assert.equal((await request("/api/auth/session", { headers: { authorization: claimedAuthorization } })).status, 200);
-  assert.equal((await request("/api/auth/logout", { method: "POST", headers: { authorization: claimedAuthorization } })).status, 200);
-  assert.equal((await request("/api/auth/session", { headers: { authorization: claimedAuthorization } })).status, 401);
+  assert.equal((await request("/api/auth/session", { headers: { authorization: claimedAuthorization, "x-device-key": claimedDeviceKey } })).status, 200);
+  assert.equal((await request("/api/auth/logout", { method: "POST", headers: { authorization: claimedAuthorization, "x-device-key": claimedDeviceKey } })).status, 200);
+  assert.equal((await request("/api/auth/session", { headers: { authorization: claimedAuthorization, "x-device-key": claimedDeviceKey } })).status, 401);
 });
 
 test("sessioni scadute o inattive non aprono dati privati", {

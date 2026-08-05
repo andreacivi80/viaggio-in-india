@@ -109,6 +109,7 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
     .poll(() => page.evaluate(() => localStorage.getItem("india-session-token")))
     .toBeTruthy();
   const sessionToken = await page.evaluate(() => localStorage.getItem("india-session-token"));
+  const deviceKey = await page.evaluate(() => localStorage.getItem("india-device-key"));
   const video = await readFile(videoPath);
   expect(video.byteLength).toBeGreaterThan(0);
   const audio = makeWave();
@@ -184,7 +185,7 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
   } finally {
     if (createdPostId && sessionToken)
       await page.request.delete(`${baseUrl}/api/posts/${encodeURIComponent(createdPostId)}`, {
-        headers: { authorization: `Bearer ${sessionToken}` },
+        headers: { authorization: `Bearer ${sessionToken}`, "x-device-key": deviceKey },
       }).catch(() => {});
   }
 });

@@ -181,6 +181,10 @@ async function tokenHash(token) {
     byte.toString(16).padStart(2, "0"),
   ).join("");
 }
+const deviceKeyFromRequest = (request) => {
+  const key = String(request.headers.get("x-device-key") || "").trim().toLowerCase();
+  return /^[a-f0-9]{64}$/.test(key) ? key : "";
+};
 async function sessionFromRequest(request, env) {
   const authorization = request.headers.get("authorization") || "";
   const token = authorization.startsWith("Bearer ")
@@ -192,7 +196,7 @@ async function sessionFromRequest(request, env) {
     Date.now() - 21 * 24 * 60 * 60 * 1000,
   ).toISOString();
   const session = await env.DB.prepare(
-    `SELECT s.profile_id,s.device_id,s.device_name,s.expires_at,s.last_used_at,p.name,p.surname,p.role
+    `SELECT s.profile_id,s.device_id,s.device_name,s.device_key_hash,s.expires_at,s.last_used_at,p.name,p.surname,p.role
      FROM auth_sessions s
      JOIN profiles p ON p.id=s.profile_id
      WHERE s.token_hash=? AND s.revoked_at IS NULL AND s.expires_at>?
@@ -201,6 +205,23 @@ async function sessionFromRequest(request, env) {
     .bind(tokenDigest, now(), inactivityLimit)
     .first();
   if (session) {
+    const deviceKey = deviceKeyFromRequest(request);
+    if (session.device_key_hash) {
+      if (!deviceKey || (await tokenHash(deviceKey)) !== session.device_key_hash)
+        return null;
+    } else if (deviceKey) {
+      const boundHash = await tokenHash(deviceKey);
+      const bound = await env.DB.prepare(
+        "UPDATE auth_sessions SET device_key_hash=? WHERE token_hash=? AND device_key_hash IS NULL",
+      ).bind(boundHash, tokenDigest).run();
+      if (!bound.meta?.changes) {
+        const current = await env.DB.prepare(
+          "SELECT device_key_hash FROM auth_sessions WHERE token_hash=?",
+        ).bind(tokenDigest).first();
+        if (!current?.device_key_hash || current.device_key_hash !== boundHash) return null;
+      }
+      session.device_key_hash = boundHash;
+    }
     const lastUsed = Date.parse(session.last_used_at || 0);
     if (!Number.isFinite(lastUsed) || Date.now() - lastUsed > 60 * 60 * 1000)
       await env.DB.prepare(
@@ -221,15 +242,17 @@ function deviceNameFromRequest(request) {
   if (/macintosh|mac os/i.test(userAgent)) return "Computer Mac";
   return "Dispositivo";
 }
-async function createSession(env, profileId, deviceName = "Dispositivo") {
+async function createSession(env, profileId, deviceName = "Dispositivo", deviceKey = "") {
+  if (!/^[a-f0-9]{64}$/.test(deviceKey))
+    throw Object.assign(new Error("Identità dispositivo non valida"), { status: 400 });
   const token = secureToken();
   const deviceId = id();
   const createdAt = now();
   const expiresAt = futureIso(24 * 30);
   await env.DB.prepare(
-    "INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES(?,?,?,?,?,?,?,NULL)",
+    "INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,device_key_hash,created_at,last_used_at,expires_at,revoked_at) VALUES(?,?,?,?,?,?,?,?,NULL)",
   )
-    .bind(await tokenHash(token), profileId, deviceId, deviceName, createdAt, createdAt, expiresAt)
+    .bind(await tokenHash(token), profileId, deviceId, deviceName, await tokenHash(deviceKey), createdAt, createdAt, expiresAt)
     .run();
   return { token, expires_at: expiresAt, device_id: deviceId };
 }
@@ -611,6 +634,13 @@ async function ensureProfilePrivacySchema(env) {
   }
   profilePrivacySchemaReady = true;
 }
+let sessionDeviceSchemaReady = false;
+async function ensureSessionDeviceSchema(env) {
+  if (sessionDeviceSchemaReady) return;
+  try { await env.DB.prepare("ALTER TABLE auth_sessions ADD COLUMN device_key_hash TEXT").run(); }
+  catch (error) { if (!/duplicate column|already exists/i.test(String(error?.message || error))) throw error; }
+  sessionDeviceSchemaReady = true;
+}
 async function silentMaintenance(env) {
   const markerKey = "system/last-silent-maintenance";
   const lastRun = Number(await env.MEDIA.get(markerKey, { type: "text" })) || 0;
@@ -793,6 +823,7 @@ export async function onRequest(context) {
   ).replace(/^\/+|\/+$/g, "");
   await ensureProfileGenderSchema(env);
   await ensureProfilePrivacySchema(env);
+  await ensureSessionDeviceSchema(env);
   context.waitUntil?.(silentMaintenance(env).catch(() => {}));
   try {
     if (request.method === "POST" && path === "auth/bootstrap") {
@@ -820,7 +851,7 @@ export async function onRequest(context) {
       if (!inserted.meta?.changes)
         return json({ error: "Il gruppo è già stato inizializzato" }, 409);
       try {
-        const issued = await createSession(env, profileId, deviceNameFromRequest(request));
+        const issued = await createSession(env, profileId, deviceNameFromRequest(request), deviceKeyFromRequest(request));
         return json({
           ...issued,
           profile: { id: profileId, name, surname, origin_city: originCity, role: "coordinator" },
@@ -871,7 +902,7 @@ export async function onRequest(context) {
          VALUES(?,?,?, '', '', ?, '', ?, NULL, ?, ?, ?, ?)`,
       ).bind(profileId, name, surname, originCity, role, createdAt, PRIVACY_CONSENT_VERSION, createdAt, gender).run();
       try {
-        const issued = await createSession(env, profileId, deviceNameFromRequest(request));
+        const issued = await createSession(env, profileId, deviceNameFromRequest(request), deviceKeyFromRequest(request));
         return json({
           ...issued,
           profile: { id: profileId, name, surname, origin_city: originCity, role, gender },
@@ -906,7 +937,7 @@ export async function onRequest(context) {
         return json({ error: "Invito già utilizzato" }, 409);
       let issued;
       try {
-        issued = await createSession(env, invite.profile_id, deviceNameFromRequest(request));
+        issued = await createSession(env, invite.profile_id, deviceNameFromRequest(request), deviceKeyFromRequest(request));
       } catch (error) {
         await env.DB.prepare(
           "UPDATE profile_invites SET used_at=NULL WHERE token_hash=? AND used_at=?",

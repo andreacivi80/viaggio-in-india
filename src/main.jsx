@@ -142,9 +142,20 @@ const normalizeMobileUpload = async (file) => {
     { type: "image/jpeg", lastModified: Date.now() },
   );
 };
+const deviceKey = () => {
+  let key = localStorage.getItem("india-device-key") || "";
+  if (!/^[a-f0-9]{64}$/.test(key)) {
+    key = Array.from(crypto.getRandomValues(new Uint8Array(32)), (byte) =>
+      byte.toString(16).padStart(2, "0"),
+    ).join("");
+    localStorage.setItem("india-device-key", key);
+  }
+  return key;
+};
 const sessionHeaders = (token, additional = {}) => ({
   ...additional,
   ...(token ? { authorization: `Bearer ${token}` } : {}),
+  ...(token ? { "x-device-key": deviceKey() } : {}),
 });
 async function guestHeaders(displayName) {
   const normalizedName = String(displayName || "").trim();
@@ -153,7 +164,7 @@ async function guestHeaders(displayName) {
   if (!token || storedName !== normalizedName) {
     const response = await fetch(`${API}/auth/guest`, {
       method: "POST",
-      headers: { "content-type": "application/json", "x-device-name": deviceName() },
+      headers: { "content-type": "application/json", "x-device-name": deviceName(), "x-device-key": deviceKey() },
       body: JSON.stringify({ display_name: normalizedName }),
     });
     const result = await response.json().catch(() => ({}));
@@ -1845,7 +1856,7 @@ function App() {
     sessionStorage.setItem("india-pending-invite", inviteToken);
     fetch(`${API}/auth/claim`, {
       method: "POST",
-      headers: { "content-type": "application/json", "x-device-name": deviceName() },
+      headers: { "content-type": "application/json", "x-device-name": deviceName(), "x-device-key": deviceKey() },
       body: JSON.stringify({ invite_token: inviteToken }),
     })
       .then(async (response) => {
@@ -1993,6 +2004,7 @@ function App() {
           "content-type": "application/json",
           "x-group-code": groupCode,
           "x-device-name": deviceName(),
+          "x-device-key": deviceKey(),
         },
         body: JSON.stringify(bootstrapForm),
       });
@@ -2033,6 +2045,7 @@ function App() {
           "content-type": "application/json",
           "x-group-code": groupCode,
           "x-device-name": deviceName(),
+          "x-device-key": deviceKey(),
         },
         body: JSON.stringify(bootstrapForm),
       });

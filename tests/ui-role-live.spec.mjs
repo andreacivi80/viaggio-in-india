@@ -24,7 +24,10 @@ const changeRole = (page, profileId, role) => page.evaluate(async ({ id, nextRol
   form.set("role", nextRole);
   const response = await fetch(`/api/profiles/${encodeURIComponent(id)}`, {
     method: "PUT",
-    headers: { authorization: `Bearer ${localStorage.getItem("india-session-token")}` },
+    headers: {
+      authorization: `Bearer ${localStorage.getItem("india-session-token")}`,
+      "x-device-key": localStorage.getItem("india-device-key"),
+    },
     body: form,
   });
   return response.status;
@@ -61,6 +64,7 @@ test("promozione, retrocessione e revoca aggiornano subito un telefono già aper
         method: "POST",
         headers: {
           authorization: `Bearer ${localStorage.getItem("india-session-token")}`,
+          "x-device-key": localStorage.getItem("india-device-key"),
           "content-type": "application/json",
         },
         body: JSON.stringify({ profile_id: targetProfileId }),
@@ -81,13 +85,14 @@ test("promozione, retrocessione e revoca aggiornano subito un telefono già aper
 
     const revokeStatus = await secondPage.evaluate(async () => {
       const authorization = `Bearer ${localStorage.getItem("india-session-token")}`;
-      const devicesResponse = await fetch("/api/auth/devices", { headers: { authorization } });
+      const deviceKey = localStorage.getItem("india-device-key");
+      const devicesResponse = await fetch("/api/auth/devices", { headers: { authorization, "x-device-key": deviceKey } });
       const { devices } = await devicesResponse.json();
       const target = devices.find((device) => !device.current);
       if (!target) return 404;
       const response = await fetch(`/api/auth/devices/${encodeURIComponent(target.device_id)}`, {
         method: "DELETE",
-        headers: { authorization },
+        headers: { authorization, "x-device-key": deviceKey },
       });
       return response.status;
     });
@@ -95,7 +100,10 @@ test("promozione, retrocessione e revoca aggiornano subito un telefono già aper
     const revokedCommandStatus = await travelerPage.evaluate(async ({ id, token }) => {
       const response = await fetch(`/api/locations/${encodeURIComponent(id)}`, {
         method: "DELETE",
-        headers: { authorization: `Bearer ${token}` },
+        headers: {
+          authorization: `Bearer ${token}`,
+          "x-device-key": localStorage.getItem("india-device-key"),
+        },
       });
       return response.status;
     }, { id: profileId, token: soonRevokedToken });

@@ -13,7 +13,10 @@ if (!base || !targetProfileId || !expiredInviteToken || !expiredSessionToken || 
 }
 
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
-const bearer = (token) => ({ authorization: `Bearer ${token}` });
+const bearer = (token, deviceKey = "") => ({
+  authorization: `Bearer ${token}`,
+  ...(deviceKey ? { "x-device-key": deviceKey } : {}),
+});
 const jsonHeaders = (token, device) => ({
   ...bearer(token),
   "content-type": "application/json",
@@ -31,6 +34,7 @@ const registrationHeaders = {
   "content-type": "application/json",
   "x-group-code": groupCode,
   "x-device-name": "Telefono consenso locale",
+  "x-device-key": "a".repeat(64),
 };
 const registrationName = `Consenso ${crypto.randomUUID().slice(0, 8)}`;
 for (const privacyConsent of [undefined, false]) {
@@ -50,10 +54,12 @@ const consentRegistration = await request("/api/auth/register", {
 });
 assert.equal(consentRegistration.status, 201);
 const consentProfile = await consentRegistration.json();
-assert.equal((await request("/api/auth/session", { headers: bearer(consentProfile.token) })).status, 200);
+assert.equal((await request("/api/auth/session", { headers: bearer(consentProfile.token, "a".repeat(64)) })).status, 200);
+assert.equal((await request("/api/auth/session", { headers: bearer(consentProfile.token, "b".repeat(64)) })).status, 401);
+assert.equal((await request("/api/auth/session", { headers: bearer(consentProfile.token) })).status, 401);
 assert.equal((await request(`/api/profiles/${consentProfile.profile.id}`, {
   method: "DELETE",
-  headers: bearer(consentProfile.token),
+  headers: bearer(consentProfile.token, "a".repeat(64)),
 })).status, 200);
 
 const missingProfileInvite = await request("/api/auth/invites", {
@@ -107,19 +113,26 @@ assert.equal((await request("/api/auth/claim", {
   body: JSON.stringify({ invite_token: expiredInviteToken }),
 })).status, 403);
 
-const claims = await Promise.all(["Telefono A", "Telefono B"].map((device) => request("/api/auth/claim", {
+const claimDevices = [
+  { name: "Telefono A", key: "c".repeat(64) },
+  { name: "Telefono B", key: "d".repeat(64) },
+];
+const claims = await Promise.all(claimDevices.map((device) => request("/api/auth/claim", {
   method: "POST",
-  headers: { "content-type": "application/json", "x-device-name": device },
+  headers: { "content-type": "application/json", "x-device-name": device.name, "x-device-key": device.key },
   body: JSON.stringify({ invite_token: invite.invite_token }),
 })));
 const statuses = claims.map((response) => response.status).sort((a, b) => a - b);
 assert.equal(statuses[0], 200);
 assert.ok([403, 409].includes(statuses[1]));
-const winner = claims.find((response) => response.status === 200);
+const winnerIndex = claims.findIndex((response) => response.status === 200);
+const winner = claims[winnerIndex];
+const winnerDeviceKey = claimDevices[winnerIndex].key;
 const winnerBody = await winner.json();
 assert.ok(winnerBody.token);
 assert.equal(winnerBody.profile.id, targetProfileId);
-assert.equal((await request("/api/auth/session", { headers: bearer(winnerBody.token) })).status, 200);
+assert.equal((await request("/api/auth/session", { headers: bearer(winnerBody.token, winnerDeviceKey) })).status, 200);
+assert.equal((await request("/api/auth/session", { headers: bearer(winnerBody.token, "e".repeat(64)) })).status, 401);
 
 assert.ok([403, 409].includes((await request("/api/auth/claim", {
   method: "POST",
@@ -129,8 +142,8 @@ assert.ok([403, 409].includes((await request("/api/auth/claim", {
 
 const mutatedSession = `${winnerBody.token.slice(0, -1)}${winnerBody.token.at(-1) === "a" ? "b" : "a"}`;
 assert.equal((await request("/api/auth/session", { headers: bearer(mutatedSession) })).status, 401);
-assert.equal((await request("/api/auth/logout", { method: "POST", headers: bearer(winnerBody.token) })).status, 200);
-assert.equal((await request("/api/auth/session", { headers: bearer(winnerBody.token) })).status, 401);
+assert.equal((await request("/api/auth/logout", { method: "POST", headers: bearer(winnerBody.token, winnerDeviceKey) })).status, 200);
+assert.equal((await request("/api/auth/session", { headers: bearer(winnerBody.token, winnerDeviceKey) })).status, 401);
 
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 200);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 200);
@@ -172,5 +185,19 @@ assert.equal((await logoutAllResponse.json()).push_subscriptions_revoked, 1);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken) })).status, 401);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 401);
 
-console.log("P0_AUTH_LIFECYCLE=49/49");
+const legacyDeviceKey = "1".repeat(64);
+assert.equal((await request("/api/auth/session", {
+  headers: bearer(process.env.QA_SESSION_TOKEN, legacyDeviceKey),
+})).status, 200);
+assert.equal((await request("/api/auth/session", {
+  headers: bearer(process.env.QA_SESSION_TOKEN, "2".repeat(64)),
+})).status, 401);
+assert.equal((await request("/api/auth/session", {
+  headers: bearer(process.env.QA_SESSION_TOKEN),
+})).status, 401);
+assert.equal((await request("/api/auth/session", {
+  headers: bearer(process.env.QA_SESSION_TOKEN, legacyDeviceKey),
+})).status, 200);
+
+console.log("P0_AUTH_LIFECYCLE=57/57");
 process.exit(0);

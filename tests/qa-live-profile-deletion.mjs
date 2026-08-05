@@ -9,6 +9,7 @@ if (host !== "viaggio-in-india-2026-qa.pages.dev" && !host.endsWith(".viaggio-in
 
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
 const suffix = crypto.randomUUID().slice(0, 8);
+const deviceKey = crypto.randomBytes(32).toString("hex");
 const png = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
   "base64",
@@ -19,14 +20,14 @@ let token = "";
 try {
   const register = await request("/api/auth/register", {
     method: "POST",
-    headers: { "content-type": "application/json", "x-group-code": groupCode, "x-device-name": "QA eliminazione live" },
+    headers: { "content-type": "application/json", "x-group-code": groupCode, "x-device-name": "QA eliminazione live", "x-device-key": deviceKey },
     body: JSON.stringify({ name: `Eliminazione QA ${suffix}`, role: "traveler", origin_city: "QA", privacy_consent: true }),
   });
   assert.equal(register.status, 201);
   const registered = await register.json();
   profileId = registered.profile.id;
   token = registered.token;
-  const owner = { authorization: `Bearer ${token}` };
+  const owner = { authorization: `Bearer ${token}`, "x-device-key": deviceKey };
   const jsonHeaders = { ...owner, "content-type": "application/json" };
 
   assert.equal((await request("/api/locations", {
@@ -94,7 +95,7 @@ finally {
   if (profileId && token) {
     await request(`/api/profiles/${profileId}`, {
       method: "DELETE",
-      headers: { authorization: `Bearer ${token}` },
+      headers: { authorization: `Bearer ${token}`, "x-device-key": deviceKey },
     }).catch(() => {});
   }
 }

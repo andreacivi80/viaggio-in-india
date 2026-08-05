@@ -14,12 +14,14 @@ test("commenti con audio e video reali vengono salvati e riprodotti", async ({ p
   let createdPostId = "";
   await page.goto(`${baseUrl}/?invite=${encodeURIComponent(inviteToken)}`, { waitUntil: "networkidle" });
   const sessionToken = await page.evaluate(() => localStorage.getItem("india-session-token"));
+  const deviceKey = await page.evaluate(() => localStorage.getItem("india-device-key"));
   expect(sessionToken).toBeTruthy();
   try {
     const marker = `Commenti media ${Date.now()}`;
     const createResponse = await page.request.post(`${baseUrl}/api/posts`, {
       headers: {
         authorization: `Bearer ${sessionToken}`,
+        "x-device-key": deviceKey,
         "x-idempotency-key": crypto.randomUUID(),
         "x-qa-silent": "true",
       },
@@ -57,7 +59,7 @@ test("commenti con audio e video reali vengono salvati e riprodotti", async ({ p
   } finally {
     if (createdPostId)
       await page.request.delete(`${baseUrl}/api/posts/${encodeURIComponent(createdPostId)}`, {
-        headers: { authorization: `Bearer ${sessionToken}` },
+        headers: { authorization: `Bearer ${sessionToken}`, "x-device-key": deviceKey },
         timeout: 15_000,
       }).catch(() => {});
   }

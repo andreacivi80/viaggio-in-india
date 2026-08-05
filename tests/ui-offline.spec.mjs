@@ -29,6 +29,7 @@ test("invio offline sopravvive alla chiusura e parte una sola volta al ritorno d
   await page.goto(`${baseUrl}/?invite=${encodeURIComponent(inviteToken)}`, { waitUntil: "domcontentloaded" });
   await expect(page.locator(".accessPill")).toContainText(profileName.split(" ")[0]);
   const sessionToken = await page.evaluate(() => localStorage.getItem("india-session-token"));
+  const deviceKey = await page.evaluate(() => localStorage.getItem("india-device-key"));
   expect(sessionToken).toBeTruthy();
   const marker = `Offline QA ${Date.now()}`;
   try {
@@ -51,7 +52,7 @@ test("invio offline sopravvive alla chiusura e parte una sola volta al ritorno d
     await expect.poll(() => offlineCount(page), { timeout: 20_000 }).toBe(0);
 
     const stateResponse = await page.request.get(`${baseUrl}/api/state`, {
-      headers: { authorization: `Bearer ${sessionToken}` },
+      headers: { authorization: `Bearer ${sessionToken}`, "x-device-key": deviceKey },
     });
     const state = await stateResponse.json();
     const matches = state.posts.filter((item) => item.text === marker);
@@ -62,7 +63,7 @@ test("invio offline sopravvive alla chiusura e parte una sola volta al ritorno d
   } finally {
     if (createdPostId)
       await page.request.delete(`${baseUrl}/api/posts/${encodeURIComponent(createdPostId)}`, {
-        headers: { authorization: `Bearer ${sessionToken}` },
+        headers: { authorization: `Bearer ${sessionToken}`, "x-device-key": deviceKey },
         timeout: 15_000,
       }).catch(() => {});
     await context.close();
