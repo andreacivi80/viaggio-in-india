@@ -22,8 +22,8 @@ const documents = profiles.slice(0, 10).map((profile, index) => ({
 
 const state = { sync_version: 1, sync_updated_at: new Date().toISOString(), profiles, posts: [] };
 
-async function mockApi(page, authenticated = false, profileCreation = []) {
-  const runtimeProfiles = structuredClone(profiles);
+async function mockApi(page, authenticated = false, profileCreation = [], initialProfiles = profiles) {
+  const runtimeProfiles = structuredClone(initialProfiles);
   let createdIndex = 0;
   if (authenticated) {
     await page.addInitScript(() => {
@@ -214,29 +214,70 @@ test("venti passaggi Bacheca-Viaggio mantengono lo scorrimento touch libero", as
   }
 });
 
-test("Il nostro gruppo usa uno scorrimento touch stabile senza muovere lo sfondo", async ({ page }, testInfo) => {
+test("Il nostro gruppo usa un solo scorrimento touch naturale e stabile", async ({ page }, testInfo) => {
   await mockApi(page, true);
   await page.goto("/", { waitUntil: "networkidle" });
   await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
-  const groupMain = page.locator("main.groupMain");
+  const groupMain = page.locator("main");
   const grid = page.locator(".peopleGrid");
   const cards = grid.locator(".profileCard");
   await expect(cards).toHaveCount(18);
   await page.screenshot({ path: testInfo.outputPath("gruppo-inizio.png") });
-  const metrics = await groupMain.evaluate((node) => ({ clientHeight: node.clientHeight, scrollHeight: node.scrollHeight }));
+  const metrics = await page.evaluate(() => ({ clientHeight: innerHeight, scrollHeight: document.documentElement.scrollHeight }));
   expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
-  const bodyBefore = await page.evaluate(() => scrollY);
   for (let attempt = 0; attempt < 4; attempt += 1) {
-    await groupMain.evaluate((node) => { node.scrollTop = 0; });
-    const before = await groupMain.evaluate((node) => node.scrollTop);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    const before = await page.evaluate(() => scrollY);
     await swipeUpLikeARealFinger(page, groupMain);
-    const after = await groupMain.evaluate((node) => node.scrollTop);
+    const after = await page.evaluate(() => scrollY);
     expect(after).toBeGreaterThan(before + 20);
   }
-  await groupMain.evaluate((node) => { node.scrollTop = node.scrollHeight; });
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await expect(cards.last()).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath("gruppo-fondo.png") });
-  expect(await page.evaluate(() => scrollY)).toBe(bodyBefore);
+  expect(await groupMain.evaluate((node) => getComputedStyle(node).overflowY)).not.toMatch(/auto|scroll/);
+
+  const bacheca = page.getByRole("button", { name: "Bacheca", exact: true });
+  const viaggio = page.getByRole("button", { name: "Viaggio", exact: true });
+  const gruppo = page.getByRole("button", { name: "Gruppo", exact: true });
+  for (let attempt = 0; attempt < 12; attempt += 1) {
+    await (attempt % 2 ? bacheca : viaggio).tap();
+    await gruppo.tap();
+    await expect(page.locator(".peopleGrid .profileCard")).toHaveCount(18);
+    await page.evaluate(() => window.scrollTo(0, 0));
+    const before = await page.evaluate(() => scrollY);
+    await swipeUpLikeARealFinger(page, page.locator("main"));
+    const after = await page.evaluate(() => scrollY);
+    expect(after).toBeGreaterThan(before + 20);
+    const scrollState = await page.evaluate(() => ({
+      directoryLock: document.documentElement.classList.contains("travelerDirectoryOpen"),
+      bodyOverflow: getComputedStyle(document.body).overflowY,
+      mainOverflow: getComputedStyle(document.querySelector("main")).overflowY,
+    }));
+    expect(scrollState.directoryLock).toBeFalsy();
+    expect(scrollState.bodyOverflow).not.toBe("hidden");
+    expect(scrollState.mainOverflow).not.toMatch(/auto|scroll/);
+  }
+});
+
+test("tre persone restano visibili e scorrevoli dopo ripetuti cambi di schermata", async ({ page }) => {
+  await mockApi(page, true, [], profiles.slice(0, 3));
+  await page.goto("/", { waitUntil: "networkidle" });
+  const bacheca = page.getByRole("button", { name: "Bacheca", exact: true });
+  const viaggio = page.getByRole("button", { name: "Viaggio", exact: true });
+  const gruppo = page.getByRole("button", { name: "Gruppo", exact: true });
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    await (attempt % 2 ? bacheca : viaggio).tap();
+    await gruppo.tap();
+    const cards = page.locator(".peopleGrid .profileCard");
+    await expect(cards).toHaveCount(3);
+    await expect(cards.first()).toContainText("Valentina");
+    await expect(cards.last()).toContainText("Donna2");
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await swipeUpLikeARealFinger(page, page.locator("main"));
+    expect(await page.evaluate(() => scrollY)).toBeGreaterThan(20);
+    expect(await page.evaluate(() => document.documentElement.classList.contains("travelerDirectoryOpen"))).toBeFalsy();
+  }
 });
 
 test("nuove iscrizioni donna, uomo e genere non indicato mantengono etichetta, colore e posizione", async ({ page }) => {

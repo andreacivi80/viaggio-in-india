@@ -1,11 +1,14 @@
-const CACHE = "india-insieme-v1.37.17";
+const CACHE = "india-insieme-v1.37.18";
+const PRECACHE = [
+  "./",
+  "./manifest.webmanifest",
+  "./icon.svg",
+  "./sw-register.js",
+  /* BUILD_PRECACHE */
+];
 self.addEventListener("install", (event) => {
   self.skipWaiting();
-  event.waitUntil(
-    caches
-      .open(CACHE)
-      .then((cache) => cache.addAll(["./", "./manifest.webmanifest"])),
-  );
+  event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(PRECACHE)));
 });
 self.addEventListener("activate", (event) =>
   event.waitUntil(
@@ -30,18 +33,19 @@ self.addEventListener("fetch", (event) => {
     event.respondWith(fetch(event.request));
     return;
   }
-  event.respondWith(
-    fetch(event.request)
+  const network = fetch(event.request);
+  event.waitUntil(
+    network
       .then((response) => {
-        if (response.ok && url.origin === self.location.origin)
-          caches
-            .open(CACHE)
-            .then((cache) => cache.put(event.request, response.clone()));
-        return response;
+        if (!response.ok || url.origin !== self.location.origin) return;
+        return caches.open(CACHE).then((cache) => cache.put(event.request, response.clone()));
       })
-      .catch(() =>
-        caches.match(event.request).then((hit) => hit || caches.match("./")),
-      ),
+      .catch(() => {}),
+  );
+  event.respondWith(
+    network.catch(() =>
+      caches.match(event.request).then((hit) => hit || caches.match("./")),
+    ),
   );
 });
 self.addEventListener("push", (event) => {

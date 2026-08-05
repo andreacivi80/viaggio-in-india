@@ -1,14 +1,14 @@
 {
   "name": "viaggio-in-india",
   "private": true,
-  "version": "1.37.17",
+  "version": "1.37.18",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
-    "build": "vite build",
+    "build": "vite build && node scripts/inject-sw-precache.mjs",
     "test": "node --test tests/*.test.mjs && npm run build",
     "test:smoke": "node --test tests/production-smoke.test.mjs",
-    "deploy:qa": "vite build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/deploy-qa.ps1",
+    "deploy:qa": "npm run build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/deploy-qa.ps1",
     "test:ui-bootstrap": "playwright test tests/ui-bootstrap.spec.mjs",
     "test:ui-critical": "playwright test tests/ui-critical.spec.mjs tests/ui-navigation.spec.mjs tests/ui-social.spec.mjs tests/ui-media.spec.mjs tests/ui-documents.spec.mjs tests/ui-location.spec.mjs tests/ui-people.spec.mjs tests/ui-role-live.spec.mjs tests/ui-responsive.spec.mjs tests/ui-secondary.spec.mjs"
   },

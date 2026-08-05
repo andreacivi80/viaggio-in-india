@@ -1226,15 +1226,6 @@ h3 {
   gap: 10px;
   min-width: 0;
 }
-.groupMain {
-  height: calc(100dvh - 62px);
-  overflow-y: auto;
-  overflow-x: hidden;
-  overscroll-behavior-y: contain;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
-  scrollbar-gutter: stable;
-}
 .peopleGrid article {
   text-align: center;
   margin: 0;

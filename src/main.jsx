@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.17",
+const VERSION = "1.37.18",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -893,7 +893,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       );
       map.current.fitBounds(bounds, {
         padding: day
-          ? { top: 72, right: 30, bottom: 72, left: 30 }
+          ? { top: 76, right: 40, bottom: 76, left: 40 }
           : { top: 112, right: 56, bottom: 108, left: 56 },
         maxZoom: day
           ? day.km <= 15
@@ -2056,7 +2056,7 @@ function App() {
           </button>
         ))}
       </nav>
-      <main className={tab === "people" ? "groupMain" : undefined}>
+      <main>
         {tab === "roadmap" && (
           <section>
             <div className="sectionHead">

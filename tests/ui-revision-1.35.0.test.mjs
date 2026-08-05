@@ -62,7 +62,8 @@ test("l'elenco viaggiatori scorre senza muovere lo sfondo", () => {
   assert.match(styles, /\.travelerDirectory \{[\s\S]*?grid-template-rows: auto auto minmax\(0, 1fr\)/);
   assert.match(styles, /\.directoryList \{[\s\S]*?overflow-y: auto;[\s\S]*?touch-action: pan-y/);
   assert.match(styles, /\.directoryBackdrop \{[\s\S]*?touch-action: pan-y/);
-  assert.match(styles, /\.groupMain \{[\s\S]*?overflow-y: auto;[\s\S]*?touch-action: pan-y/);
+  assert.doesNotMatch(source, /className=\{tab === "people" \? "groupMain"/);
+  assert.doesNotMatch(styles, /\.groupMain\s*\{/);
   assert.match(styles, /\.directoryHead > button \{[\s\S]*?pointer-events: auto/);
   assert.match(styles, /\.directoryPerson \.coordinatorRole \{[\s\S]*?font-weight: 950/);
 });

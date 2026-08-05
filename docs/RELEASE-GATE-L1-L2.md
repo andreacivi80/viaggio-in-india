@@ -47,3 +47,17 @@ Questa regola vale per **ogni revisione**, senza eccezioni.
 - Tutti i marker devono restare interamente dentro la mappa dopo ogni animazione.
 - Verifica consecutiva delle 14 giornate su viewport mobile reale.
 - Vista generale ancora priva di icone hotel.
+
+## Livello 2 della revisione 1.37.18
+
+- Livello 1 completo superato: 109/109.
+- Un solo scorrimento naturale della pagina nella sezione Gruppo, senza contenitori concorrenti.
+- Tre persone sempre visibili dopo 20 passaggi Bacheca/Viaggio/Gruppo su Samsung S20 FE, Samsung meno recente e iPhone piccolo.
+- Diciotto persone raggiungibili tramite touch, con ordine, colori, ruoli, `@nome` e chiusura invariati.
+- Dieci PDF appartenenti a dieci persone aperti dal coordinatore nel visualizzatore mobile con ritorno all'app.
+- Audio e video arrestati quando l'app passa in background.
+- Percorsi, hotel, zoom e marker verificati nelle quattordici giornate; nessun marker fuori mappa.
+- Meteo e ora India leggibili senza sovrapposizioni nelle quattordici giornate.
+- Bacheca utilizzabile su rete mobile lenta e moduli pesanti caricati solo quando servono.
+- Dopo una prima visita, la bacheca pubblica si riapre senza rete senza esporre dati privati.
+- Service worker con precache generata a ogni build e registrazione immediata.
