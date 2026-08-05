@@ -12,6 +12,7 @@ on:
       - "package.json"
       - "package-lock.json"
       - "playwright.local.config.mjs"
+      - "vite.config.js"
       - ".github/workflows/deploy-qa-1373.yml"
   workflow_dispatch:
 
