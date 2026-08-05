@@ -30,7 +30,7 @@ test("i quattro compleanni sono visibili nelle giornate anche con un solo profil
   await expect(page.locator('.dayBirthdayRibbon[aria-label*="Davide Spinaci, 29 anni"]')).toBeVisible();
   await page.getByRole("button", { name: /Giorno 1, Lun 10 ago, Delhi/ }).click();
   await expect(page.locator('.dayBirthdayRibbon[aria-label*="Antonella"] .birthdayPartyScene')).toBeVisible();
-  await expect(page.locator('.dayBirthdayRibbon[aria-label*="Antonella"] .birthdayWeRoadLogo')).toBeVisible();
+  await expect(page.locator('.dayBirthdayRibbon[aria-label*="Antonella"] .birthdayWeRoadLogo')).toHaveCount(0);
   await expect(page.locator('.dayBirthdayRibbon[aria-label*="Antonella"] .birthdayTravelers img')).toHaveCount(1);
 
   const layout = await page.locator('.dayBirthdayRibbon[aria-label*="Antonella"]').evaluate((ribbon) => {

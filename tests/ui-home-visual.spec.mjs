@@ -27,6 +27,7 @@ test("bacheca armonica: i comandi non coprono il Taj Mahal", async ({ browser },
       page.locator(".accessPill"),
       page.locator(".headerIcon"),
       page.locator(".heroTravelers"),
+      page.locator(".heroWeRoadLogo"),
     ];
     const controls = await Promise.all(controlLocators.map((locator) => locator.boundingBox()));
     expect(controls.every(Boolean)).toBe(true);
@@ -41,6 +42,7 @@ test("bacheca armonica: i comandi non coprono il Taj Mahal", async ({ browser },
         expect(intersects(controls[left], controls[right]), `${name}: comandi superiori sovrapposti`).toBe(false);
     expect(intersects(controls[4], controls[2]), `${name}: viaggiatori sopra accesso`).toBe(false);
     expect(intersects(controls[4], controls[3]), `${name}: viaggiatori sopra notifiche`).toBe(false);
+    expect(intersects(controls[4], controls[5]), `${name}: viaggiatori sopra logo WEROAD`).toBe(false);
 
     const visualAreas = await Promise.all(controlLocators.map((locator) => locator.evaluate((element) => {
       const style = getComputedStyle(element);
@@ -50,7 +52,7 @@ test("bacheca armonica: i comandi non coprono il Taj Mahal", async ({ browser },
       return Math.max(0, rect.width - insetX * 2) * Math.max(0, rect.height - insetY * 2);
     })));
     const controlArea = visualAreas.reduce((sum, area) => sum + area, 0);
-    expect(controlArea / (heroBox.width * heroBox.height)).toBeLessThan(0.22);
+    expect(controlArea / (heroBox.width * heroBox.height)).toBeLessThan(0.30);
     const centerCoveredByButton = await hero.evaluate((element) => {
       const rect = element.getBoundingClientRect();
       return Boolean(document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height * 0.58)?.closest("button"));

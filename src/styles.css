@@ -402,6 +402,20 @@ html.travelerDirectoryOpen body {
   font-weight: 800;
   line-height: 1;
 }
+.heroWeRoadLogo {
+  position: absolute;
+  z-index: 4;
+  right: 14px;
+  bottom: 13px;
+  width: 82px;
+  height: auto;
+  display: block;
+  padding: 4px 6px;
+  border: 1px solid #ffffff75;
+  border-radius: 8px;
+  background: #050505dc;
+  box-shadow: 0 5px 16px #071b1455;
+}
 .syncErrorToast {
   position: fixed;
   z-index: 120;
@@ -4836,19 +4850,6 @@ mark.mention {
 }
 .birthdayPartyVisual { position: relative; background: #e9a34d; }
 .birthdayPartyScene { width: 100%; height: auto; display: block; aspect-ratio: 16 / 9; object-fit: contain; }
-.birthdayWeRoadLogo {
-  position: absolute;
-  right: 9px;
-  bottom: 9px;
-  width: clamp(64px, 24%, 96px);
-  height: auto;
-  display: block;
-  padding: 4px 6px;
-  border: 1px solid #ffffff99;
-  border-radius: 8px;
-  background: #050505e8;
-  box-shadow: 0 3px 10px #0007;
-}
 .birthdayRibbonCopy {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;

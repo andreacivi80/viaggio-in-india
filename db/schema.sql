@@ -200,5 +200,19 @@ INSERT OR IGNORE INTO post_media(
 ) VALUES
   ('india-welcome-photo', 'india-welcome', 'static:/cities/india-insieme-collage.png', 'image/png', 'India insieme', 0, 0, CURRENT_TIMESTAMP),
   ('india-welcome-audio', 'india-welcome', 'static:/audio/india-insieme-demo.wav', 'audio/wav', 'Il suono dell’India', 0, 1, CURRENT_TIMESTAMP);
+INSERT OR IGNORE INTO posts(
+  id, author_name, profile_id, day_index, visibility, text, place_name,
+  media_key, media_type, media_name, media_size, created_at
+) VALUES(
+  'weroad-predeparture', 'India insieme', '', -1, 'public',
+  'Il gruppo si sta formando: preparativi in corso, valigie quasi pronte e l’India sempre più vicina. Si parte insieme con WEROAD!',
+  '', NULL, NULL, NULL, 0, '2026-08-04 13:30:16'
+);
+INSERT OR IGNORE INTO post_media(
+  id, post_id, media_key, media_type, media_name, media_size, position, created_at
+) VALUES(
+  'weroad-predeparture-photo', 'weroad-predeparture', 'static:/ui/weroad-logo.png',
+  'image/png', 'WEROAD · Preparativi per l’India', 55812, 0, '2026-08-04 13:30:16'
+);
 CREATE INDEX IF NOT EXISTS profile_invites_profile_idx
   ON profile_invites(profile_id, expires_at);

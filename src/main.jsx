@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.38.3",
+const VERSION = "1.38.4",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -449,7 +449,7 @@ const days = [
     ],
     title: "Partenza: prima notte a Nuova Delhi",
     story:
-      "Atterriamo all’aeroporto internazionale di Delhi e raggiungiamo il Rockland Hotel C.R. Park. Sistemazione, incontro con il gruppo e prima notte nella capitale.",
+      "Atterriamo all’aeroporto internazionale di Delhi e raggiungiamo il Rockland Hotel C.R. Park. Sistemazione, incontro con il gruppo WEROAD e prima notte nella capitale.",
     goal: "Arrivare, riunire il gruppo e sistemarci in hotel",
     km: 15,
     time: "30–45 min",
@@ -2225,6 +2225,7 @@ function App() {
           </button>
         </div>
         {tab === "diary" && (
+          <>
           <div className="heroTravelers">
             <button
               type="button"
@@ -2242,6 +2243,8 @@ function App() {
               aria-label="Apri la cartina di provenienza dei viaggiatori"
             >+</button>
           </div>
+          <img className="heroWeRoadLogo" src="/ui/weroad-logo.png" alt="WEROAD" />
+          </>
         )}
         {notificationOpen && (
           <div className="notificationPanel">
@@ -2598,7 +2601,6 @@ function App() {
                           alt="Gruppo di viaggiatori WEROAD in festa in India"
                           loading="lazy"
                         />
-                        <img className="birthdayWeRoadLogo" src="/ui/weroad-logo.png" alt="WEROAD" />
                       </div>
                       <div className="birthdayRibbonCopy">
                         <span className="birthdayCake" aria-hidden="true">🎉</span>
