@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.38.0",
+const VERSION = "1.38.1",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -73,7 +73,8 @@ const ITALIAN_CITY_COORDINATES = {
   campobasso: [14.659, 41.56], potenza: [15.805, 40.64], catanzaro: [16.594, 38.91],
   aosta: [7.32, 45.738], trento: [11.121, 46.067], bolzano: [11.354, 46.499],
   verona: [10.992, 45.438], padova: [11.876, 45.407], bergamo: [9.67, 45.698],
-  brescia: [10.212, 45.541], parma: [10.328, 44.801], modena: [10.925, 44.647],
+  brescia: [10.212, 45.541], mantova: [10.7914, 45.1564], mantua: [10.7914, 45.1564],
+  parma: [10.328, 44.801], modena: [10.925, 44.647],
   pisa: [10.402, 43.716], livorno: [10.316, 43.548], salerno: [14.759, 40.682],
   lecce: [18.172, 40.352], messina: [15.554, 38.193], catania: [15.087, 37.503],
   siracusa: [15.293, 37.075], sassari: [8.56, 40.726], rimini: [12.568, 44.067],
@@ -1027,17 +1028,25 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         markers.current.push(marker);
       });
     if (selectedDay == null) {
+      const midpointLngLat = (start, finish) => [
+        (start[1] + finish[1]) / 2,
+        (start[0] + finish[0]) / 2,
+      ];
+      const roadReference = roadPaths["Udaipur-Jodhpur"][
+        Math.floor(roadPaths["Udaipur-Jodhpur"].length / 2)
+      ];
       [
-        ["✈️", "Volo interno", "air", [76.7, 26.75], [0, 28]],
-        ["🚐", "Spostamenti su strada", "road", [74.15, 26.25], [-50, 17]],
-        ["🚆", "Treno notturno", "rail", [80.25, 25.55], [0, -24]],
-        ["⛵", "Barca sul Gange", "boat", [83.02, 25.31], [30, 22]],
-        ["👣", "Visite a piedi", "walk", [75.1, 27.05], [-12, -8]],
-      ].forEach(([symbol, label, mode, coordinates, offset]) => {
+        ["✈️", "Volo interno DEL–UDR", "air", midpointLngLat(places["Aeroporto DEL"], places["Aeroporto UDR"]), [0, -28], "DEL–UDR"],
+        ["🚐", "Spostamenti su strada Udaipur–Jodhpur", "road", [roadReference[1], roadReference[0]], [30, 26], "Udaipur–Jodhpur"],
+        ["🚆", "Treno notturno Agra–Varanasi", "rail", midpointLngLat(places["Agra Cantt"], places["Varanasi Junction"]), [20, -22], "Agra–Varanasi"],
+        ["⛵", "Barca sul Gange a Varanasi", "boat", [places.Varanasi[1], places.Varanasi[0]], [30, -18], "Varanasi"],
+        ["👣", "Visite a piedi a Jodhpur", "walk", [places.Jodhpur[1], places.Jodhpur[0]], [-8, -25], "Jodhpur"],
+      ].forEach(([symbol, label, mode, coordinates, offset, reference]) => {
         const node = document.createElement("span");
         node.className = `overviewModeMarker mode-${mode}`;
         node.textContent = symbol;
         node.setAttribute("aria-label", label);
+        node.dataset.routeReference = reference;
         markers.current.push(new maplibregl.Marker({ element: node, anchor: "center", offset })
           .setLngLat(coordinates)
           .setPopup(new maplibregl.Popup({ offset: 18 }).setText(label))
@@ -1379,11 +1388,49 @@ function PeopleLocationMap({ locations }) {
 
 function ItalyTravelerMap({ people }) {
   const elementRef = useRef(null);
+  const [resolvedCities, setResolvedCities] = useState({});
+  const unknownCities = useMemo(() => {
+    const result = new Map();
+    people.forEach((person) => {
+      const city = String(person.origin_city || "").trim();
+      const key = normalizeItalianCity(city);
+      if (key && !ITALIAN_CITY_COORDINATES[key] && !resolvedCities[key]) result.set(key, city);
+    });
+    return [...result.entries()];
+  }, [people, resolvedCities]);
+  useEffect(() => {
+    if (!unknownCities.length) return undefined;
+    const controller = new AbortController();
+    Promise.all(unknownCities.map(async ([key, city]) => {
+      try {
+        const response = await fetch(`${API}/places/search?q=${encodeURIComponent(`${city}, Italia`)}`, {
+          signal: controller.signal,
+        });
+        if (!response.ok) return null;
+        const result = await response.json();
+        const italianPlace = (result.places || []).find((place) =>
+          Number(place.longitude) >= 6.4 && Number(place.longitude) <= 18.9 &&
+          Number(place.latitude) >= 35.4 && Number(place.latitude) <= 47.2,
+        );
+        return italianPlace
+          ? [key, [Number(italianPlace.longitude), Number(italianPlace.latitude)]]
+          : null;
+      } catch (error) {
+        if (error.name !== "AbortError") return null;
+        return null;
+      }
+    })).then((entries) => {
+      if (controller.signal.aborted) return;
+      const found = Object.fromEntries(entries.filter(Boolean));
+      if (Object.keys(found).length) setResolvedCities((current) => ({ ...current, ...found }));
+    });
+    return () => controller.abort();
+  }, [unknownCities]);
   const groups = useMemo(() => {
     const grouped = new Map();
     people.forEach((person) => {
       const key = normalizeItalianCity(person.origin_city);
-      const coordinates = ITALIAN_CITY_COORDINATES[key];
+      const coordinates = ITALIAN_CITY_COORDINATES[key] || resolvedCities[key];
       if (!coordinates) return;
       const existing = grouped.get(key) || {
         city: String(person.origin_city).trim(),
@@ -1394,7 +1441,7 @@ function ItalyTravelerMap({ people }) {
       grouped.set(key, existing);
     });
     return [...grouped.values()];
-  }, [people]);
+  }, [people, resolvedCities]);
   useEffect(() => {
     if (!elementRef.current) return undefined;
     let map;

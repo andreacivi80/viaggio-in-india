@@ -5428,7 +5428,7 @@ mark.mention {
 }
 .italyOriginsBody { min-height: 0; display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 10px; }
 .italyOriginsMap { min-height: 360px; overflow: hidden; border: 1px solid #d9c7ad; border-radius: 18px; background: #dbe4dd; }
-.italyOriginMarker { width: 34px; height: 34px; display: grid; place-items: center; padding: 0; border: 3px solid #fff; border-radius: 50%; background: #ed6a24; color: #fff; box-shadow: 0 5px 15px #16352b66; font-size: 13px; font-weight: 950; }
+.italyOriginMarker { width: 28px; height: 28px; display: grid; place-items: center; padding: 0; border: 2px solid #fff; border-radius: 50%; background: #ed6a24; color: #fff; box-shadow: 0 4px 12px #16352b5c; font-size: 11px; font-weight: 950; }
 .italyOriginsLegend { display: grid; gap: 3px; padding: 9px 11px; border-radius: 13px; background: #eaf5ef; color: #15382f; }
 .italyOriginsLegend b { font-size: 12px; }
 .italyOriginsLegend small { color: #61756e; font-size: 9px; line-height: 1.3; }

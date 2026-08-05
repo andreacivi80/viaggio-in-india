@@ -23,6 +23,8 @@ $unclaimedId = "local-unclaimed-$runId"
 $ownerToken = New-QaToken
 $otherToken = New-QaToken
 $coordinatorToken = New-QaToken
+$coordinatorSecondaryToken = New-QaToken
+$coordinatorSecondaryDeviceId = "local-coordinator-secondary-device"
 $created = [DateTime]::UtcNow.ToString("o")
 $expires = [DateTime]::UtcNow.AddHours(1).ToString("o")
 
@@ -42,7 +44,8 @@ INSERT INTO profiles(id,name,surname,role,created_at) VALUES
 INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES
 ('$(Get-TokenHash $ownerToken)','$ownerId','local-owner-device','Telefono proprietario locale','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $otherToken)','$otherId','local-other-device','Secondo telefono locale','$created','$created','$expires',NULL),
-('$(Get-TokenHash $coordinatorToken)','$coordinatorId','local-coordinator-device','Telefono coordinatore locale','$created','$created','$expires',NULL);
+('$(Get-TokenHash $coordinatorToken)','$coordinatorId','local-coordinator-device','Telefono coordinatore locale','$created','$created','$expires',NULL),
+('$(Get-TokenHash $coordinatorSecondaryToken)','$coordinatorId','$coordinatorSecondaryDeviceId','Secondo telefono coordinatore locale','$created','$created','$expires',NULL);
 "@
   $setupFile = Join-Path $persistRoot "setup.sql"
   [IO.File]::WriteAllText($setupFile, $sql, [Text.UTF8Encoding]::new($false))
@@ -79,6 +82,8 @@ INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at
   $env:QA_SECOND_SESSION_TOKEN = $otherToken
   $env:QA_COORDINATOR_TOKEN = $coordinatorToken
   $env:QA_COORDINATOR_PROFILE_ID = $coordinatorId
+  $env:QA_COORDINATOR_SECOND_TOKEN = $coordinatorSecondaryToken
+  $env:QA_COORDINATOR_SECOND_DEVICE_ID = $coordinatorSecondaryDeviceId
   $env:QA_UNCLAIMED_PROFILE_ID = $unclaimedId
   $suiteFiles = @{
     "document-concurrency" = "tests\extended-p0-document-concurrency.mjs"

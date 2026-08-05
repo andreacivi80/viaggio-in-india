@@ -51,9 +51,11 @@ $referencePostId = "qa-reference-$runId"
 $ownerToken = New-QaToken
 $otherToken = New-QaToken
 $coordinatorToken = New-QaToken
+$coordinatorSecondaryToken = New-QaToken
 $expiredToken = New-QaToken
 $secondaryDeviceToken = New-QaToken
 $secondaryDeviceId = "device-owner-secondary-$runId"
+$coordinatorSecondaryDeviceId = "device-coordinator-secondary-$runId"
 $created = [DateTime]::UtcNow.ToString("o")
 $expires = [DateTime]::UtcNow.AddHours(3).ToString("o")
 $oldLastUse = [DateTime]::UtcNow.AddDays(-30).ToString("o")
@@ -72,6 +74,7 @@ INSERT OR IGNORE INTO auth_sessions(token_hash,profile_id,device_id,device_name,
 ('$(Get-TokenHash $secondaryDeviceToken)','$ownerId','$secondaryDeviceId','Secondo telefono proprietario QA','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $otherToken)','$otherId','device-other-$runId','Secondo telefono QA','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $coordinatorToken)','$coordinatorId','device-coordinator-$runId','Telefono coordinatore QA','$created','$created','$expires',NULL),
+('$(Get-TokenHash $coordinatorSecondaryToken)','$coordinatorId','$coordinatorSecondaryDeviceId','Secondo telefono coordinatore QA','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $expiredToken)','$ownerId','device-expired-$runId','Sessione inattiva QA','$oldLastUse','$oldLastUse','$expires',NULL);
 INSERT OR IGNORE INTO posts(id,author_name,profile_id,day_index,visibility,text,created_at)
 VALUES('$referencePostId','Proprietario QA','$ownerId',-1,'public','Pubblicazione di riferimento QA $runId','$created');
@@ -92,6 +95,8 @@ try {
   $env:QA_SECOND_PROFILE_ID = $otherId
   $env:QA_COORDINATOR_TOKEN = $coordinatorToken
   $env:QA_COORDINATOR_PROFILE_ID = $coordinatorId
+  $env:QA_COORDINATOR_SECOND_TOKEN = $coordinatorSecondaryToken
+  $env:QA_COORDINATOR_SECOND_DEVICE_ID = $coordinatorSecondaryDeviceId
   $env:QA_UNCLAIMED_PROFILE_ID = $unclaimedId
   $env:QA_EXPIRED_SESSION_TOKEN = $expiredToken
   $env:QA_SECOND_DEVICE_ID = $secondaryDeviceId
