@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.37.16",
+const VERSION = "1.37.17",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -854,7 +854,11 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       );
       features =
         coords.length > 1 ? [line(coords, transit ? "transit" : "road")] : [];
-      fitPoints = coords;
+      fitPoints = [
+        ...coords,
+        ...visibleMarkerIndexes.map((index) => places[sequence[index]]),
+        ...specialStops.map(([, , coordinates]) => coordinates),
+      ].filter(Boolean);
     } else {
       features = [
         line([places["Rockland Hotel C R Park"], places["Akshay Niwas Boutique Hotel"]], "transit"),
@@ -1184,26 +1188,39 @@ function App() {
 
   useEffect(() => {
     if (!travelersOpen) return undefined;
-    const scrollY = window.scrollY;
-    const previous = {
-      position: document.body.style.position,
-      top: document.body.style.top,
-      left: document.body.style.left,
-      right: document.body.style.right,
-      width: document.body.style.width,
-      overflow: document.body.style.overflow,
-    };
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.left = "0";
-    document.body.style.right = "0";
-    document.body.style.width = "100%";
-    document.body.style.overflow = "visible";
+    document.documentElement.classList.add("travelerDirectoryOpen");
     return () => {
-      Object.assign(document.body.style, previous);
-      window.scrollTo(0, scrollY);
+      document.documentElement.classList.remove("travelerDirectoryOpen");
     };
   }, [travelersOpen]);
+  useEffect(() => {
+    // Cambiare sezione non deve lasciare un overlay o un blocco dello scroll attivo.
+    setTravelersOpen(false);
+    setNotificationOpen(false);
+    document.documentElement.classList.remove("travelerDirectoryOpen");
+  }, [tab]);
+  useEffect(() => {
+    const pauseEveryMedia = () => {
+      document.querySelectorAll("audio, video").forEach((media) => {
+        if (!media.paused) media.pause();
+      });
+      if ("mediaSession" in navigator) {
+        try { navigator.mediaSession.playbackState = "paused"; } catch {}
+      }
+    };
+    const onVisibilityChange = () => {
+      if (document.hidden) pauseEveryMedia();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("pagehide", pauseEveryMedia);
+    window.addEventListener("freeze", pauseEveryMedia);
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("pagehide", pauseEveryMedia);
+      window.removeEventListener("freeze", pauseEveryMedia);
+      document.documentElement.classList.remove("travelerDirectoryOpen");
+    };
+  }, []);
   const simulatedDate = initialParams.get("simulateDate");
   const activeDateKey = /^2026-08-(1\d|2[0-3])$/.test(simulatedDate || "")
     ? simulatedDate

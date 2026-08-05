@@ -65,7 +65,7 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     await expect(form.getByRole("status")).toContainText("Viaggiatore inserito correttamente.");
 
     let card = coordinatorPage.locator(".peopleGrid article").filter({ hasText: managedName });
-    await expect(card).toContainText("Viaggiatore");
+    await expect(card).toContainText("Partecipante");
     await expect(card).toContainText("Torino");
     await expect(card).toContainText("29 anni");
     await expect(card).toContainText("Designer");
@@ -115,10 +115,10 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     const publicPage = await publicContext.newPage();
     await publicPage.goto(baseUrl, { waitUntil: "networkidle" });
     await tapBottom(publicPage, "Gruppo");
-    const publicView = publicPage.locator(".peopleGrid article").filter({ hasText: managedName });
-    await expect(publicView).toContainText("Coordinatore", { timeout: 15_000 });
-    await expect(publicView).toContainText("Bologna");
-    await expect(publicView.getByRole("button")).toHaveCount(0);
+    await expect(publicPage.locator(".privateGroupGate")).toBeVisible();
+    await expect(publicPage.locator(".quickProfilePanel").getByPlaceholder("Password")).toBeVisible();
+    await expect(publicPage.locator(".peopleGrid article")).toHaveCount(0);
+    await expect(publicPage.getByText(managedName)).toHaveCount(0);
   } finally {
     await Promise.all(
       [coordinatorContext, travelerContext, publicContext]

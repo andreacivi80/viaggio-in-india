@@ -29,6 +29,8 @@ test("i cinque nuovi hotel sono collegati a indirizzi, coordinate e giornate", (
 test("lo zoom giornaliero privilegia gli spostamenti brevi", () => {
   assert.match(source, /day\.km <= 15[\s\S]*?13\.2[\s\S]*?day\.km <= 40[\s\S]*?12\.4/);
   assert.match(source, /top: 72, right: 30, bottom: 72, left: 30/);
+  assert.match(source, /visibleMarkerIndexes\.map\(\(index\) => places\[sequence\[index\]\]\)/);
+  assert.match(source, /specialStops\.map\(\(\[, , coordinates\]\) => coordinates\)/);
 });
 
 test("le linee di trasferimento usano gli hotel come estremi", () => {

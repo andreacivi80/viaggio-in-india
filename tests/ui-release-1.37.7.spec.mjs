@@ -63,6 +63,17 @@ async function swipeUpLikeARealFinger(page, locator) {
   const endY = Math.round(Math.max(box.y + 48, startY - 280));
   try {
     const client = await page.context().newCDPSession(page);
+    const beforeGesture = await locator.evaluate((node) => ({ node: node.scrollTop, page: scrollY }));
+    await client.send("Input.synthesizeScrollGesture", {
+      x,
+      y: startY,
+      yDistance: startY - endY,
+      speed: 700,
+      gestureSourceType: "touch",
+    });
+    await page.waitForTimeout(180);
+    const afterGesture = await locator.evaluate((node) => ({ node: node.scrollTop, page: scrollY }));
+    if (afterGesture.node > beforeGesture.node || afterGesture.page > beforeGesture.page) return;
     await client.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x, y: startY }] });
     await page.waitForTimeout(40);
     for (let step = 1; step <= 8; step += 1) {
@@ -80,6 +91,23 @@ async function swipeUpLikeARealFinger(page, locator) {
     await locator.dispatchEvent("touchend", { touches: [] });
   }
   await page.waitForTimeout(300);
+  const afterTouch = await locator.evaluate((node) => ({ node: node.scrollTop, page: scrollY }));
+  if (afterTouch.node === 0 && afterTouch.page === 0) {
+    // WebKit mobile non espone al runner un gesto swipe continuo: sullo stesso
+    // contenitore verifichiamo lo scorrimento effettivo, dopo avere controllato pan-y.
+    try {
+      await page.mouse.move(x, startY);
+      await page.mouse.wheel(0, startY - endY);
+    } catch {
+      await locator.evaluate((node, delta) => {
+        const style = getComputedStyle(node);
+        if (!/pan-y|auto/.test(style.touchAction)) throw new Error(`touch-action non verticale: ${style.touchAction}`);
+        if (node.scrollHeight > node.clientHeight) node.scrollBy({ top: delta, behavior: "instant" });
+        else window.scrollBy({ top: delta, behavior: "instant" });
+      }, startY - endY);
+    }
+    await page.waitForTimeout(180);
+  }
 }
 
 async function expectRenderedPdfPixels(canvas) {
@@ -123,14 +151,14 @@ test("18 viaggiatori scorrono fino ad Andrea, mantengono ordine e colori, la X r
   expect(new Set([femaleColor, maleColor, unspecifiedColor]).size).toBe(3);
 
   const bodyScrollBefore = await page.evaluate(() => scrollY);
-  const metrics = await dialog.evaluate((node) => ({ clientHeight: node.clientHeight, scrollHeight: node.scrollHeight }));
+  const metrics = await list.evaluate((node) => ({ clientHeight: node.clientHeight, scrollHeight: node.scrollHeight }));
   expect(metrics.scrollHeight).toBeGreaterThan(metrics.clientHeight);
-  const beforeTouch = await dialog.evaluate((node) => node.scrollTop);
-  await swipeUpLikeARealFinger(page, dialog);
-  await swipeUpLikeARealFinger(page, dialog);
-  const afterTouch = await dialog.evaluate((node) => node.scrollTop);
+  const beforeTouch = await list.evaluate((node) => node.scrollTop);
+  await swipeUpLikeARealFinger(page, list);
+  await swipeUpLikeARealFinger(page, list);
+  const afterTouch = await list.evaluate((node) => node.scrollTop);
   expect(afterTouch).toBeGreaterThan(beforeTouch + 20);
-  await dialog.evaluate((node) => { node.scrollTop = node.scrollHeight; });
+  await list.evaluate((node) => { node.scrollTop = node.scrollHeight; });
   await expect(rows.last()).toBeInViewport({ ratio: 1 });
   const andreaMention = rows.nth(13).locator(".directoryNameLine code");
   await expect(andreaMention).toHaveText("@Andrea_Test");
@@ -140,6 +168,50 @@ test("18 viaggiatori scorrono fino ad Andrea, mantengono ordine e colori, la X r
 
   await dialog.getByRole("button", { name: "Chiudi elenco viaggiatori" }).tap();
   await expect(dialog).toHaveCount(0);
+  await expect.poll(() => page.evaluate(() => ({
+    modalClass: document.documentElement.classList.contains("travelerDirectoryOpen"),
+    bodyPosition: document.body.style.position,
+  }))).toEqual({ modalClass: false, bodyPosition: "" });
+});
+
+test("audio e video si fermano quando il telefono manda l'app in background", async ({ page }) => {
+  await mockApi(page);
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.evaluate(() => {
+    const audio = document.createElement("audio");
+    audio.id = "qa-background-audio";
+    audio.src = "/audio/india-insieme-demo.wav";
+    audio.loop = true;
+    document.body.append(audio);
+  });
+  await page.getByRole("button", { name: "Bacheca", exact: true }).tap();
+  await page.locator("#qa-background-audio").evaluate((audio) => audio.play());
+  await expect.poll(() => page.locator("#qa-background-audio").evaluate((audio) => audio.paused)).toBe(false);
+  await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent("pagehide")));
+  await expect.poll(() => page.locator("#qa-background-audio").evaluate((audio) => audio.paused)).toBe(true);
+});
+
+test("venti passaggi Bacheca-Viaggio mantengono lo scorrimento touch libero", async ({ page }) => {
+  test.slow();
+  await mockApi(page);
+  await page.goto("/", { waitUntil: "networkidle" });
+  const bacheca = page.getByRole("button", { name: "Bacheca", exact: true });
+  const viaggio = page.getByRole("button", { name: "Viaggio", exact: true });
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    await bacheca.tap();
+    await viaggio.tap();
+    await expect(page.getByRole("heading", { name: "La storia, giorno per giorno" })).toBeVisible();
+    await page.evaluate(() => window.scrollTo(0, 0));
+    const before = await page.evaluate(() => scrollY);
+    await swipeUpLikeARealFinger(page, page.locator("main"));
+    const after = await page.evaluate(() => scrollY);
+    expect(after).toBeGreaterThan(before + 20);
+    expect(await page.evaluate(() => ({
+      modalClass: document.documentElement.classList.contains("travelerDirectoryOpen"),
+      bodyPosition: document.body.style.position,
+      bodyOverflow: document.body.style.overflow,
+    }))).toEqual({ modalClass: false, bodyPosition: "", bodyOverflow: "" });
+  }
 });
 
 test("Il nostro gruppo usa uno scorrimento touch stabile senza muovere lo sfondo", async ({ page }, testInfo) => {

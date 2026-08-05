@@ -104,20 +104,21 @@ test("la mappa seleziona automaticamente tutte le tappe e torna alla bacheca", a
     await expect(page.locator(".mapTrip")).toContainText(`Giorno ${index + 1}`);
     await expect(page.locator(".vectorMarker").first()).toBeVisible();
     await expect(page.locator(".mapLoading")).toBeHidden({ timeout: 20_000 });
-    const mapBounds = await page.locator(".mapShell").boundingBox();
-    const markerBounds = await page.locator(".vectorMarker").evaluateAll((markers) =>
-      markers.map((marker) => {
-        const rect = marker.getBoundingClientRect();
-        return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom };
-      }),
-    );
-    expect(mapBounds).not.toBeNull();
-    for (const marker of markerBounds) {
-      expect(marker.left).toBeGreaterThanOrEqual(mapBounds.x);
-      expect(marker.right).toBeLessThanOrEqual(mapBounds.x + mapBounds.width);
-      expect(marker.top).toBeGreaterThanOrEqual(mapBounds.y);
-      expect(marker.bottom).toBeLessThanOrEqual(mapBounds.y + mapBounds.height);
-    }
+    await expect.poll(async () => {
+      const mapBounds = await page.locator(".mapShell").boundingBox();
+      const markerBounds = await page.locator(".vectorMarker").evaluateAll((markers) =>
+        markers.map((marker) => {
+          const rect = marker.getBoundingClientRect();
+          return { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom };
+        }),
+      );
+      return Boolean(mapBounds) && markerBounds.every((marker) =>
+        marker.left >= mapBounds.x &&
+        marker.right <= mapBounds.x + mapBounds.width &&
+        marker.top >= mapBounds.y &&
+        marker.bottom <= mapBounds.y + mapBounds.height
+      );
+    }, { timeout: 10_000 }).toBe(true);
   }
   await page.getByRole("button", { name: "Vedi tutto" }).tap();
   await expect(page.getByRole("heading", { name: "Tutto l’itinerario" })).toBeVisible();

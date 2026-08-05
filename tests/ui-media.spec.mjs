@@ -80,6 +80,25 @@ const makePlayableWebm = async (page) => {
   return Buffer.from(base64, "base64");
 };
 
+const swipeMediaLikeAFinger = async (page, carousel) => {
+  const box = await carousel.boundingBox();
+  expect(box).not.toBeNull();
+  const client = await page.context().newCDPSession(page);
+  const startX = Math.round(box.x + box.width * 0.82);
+  const endX = Math.round(box.x + box.width * 0.18);
+  const y = Math.round(box.y + box.height / 2);
+  await client.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: startX, y }] });
+  for (let step = 1; step <= 10; step += 1) {
+    await client.send("Input.dispatchTouchEvent", {
+      type: "touchMove",
+      touchPoints: [{ x: Math.round(startX + ((endX - startX) * step) / 10), y }],
+    });
+    await page.waitForTimeout(25);
+  }
+  await client.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+  await page.waitForTimeout(250);
+};
+
 test("foto, video con audio e messaggio audio si caricano e restano riproducibili", async ({ page }) => {
   test.slow();
   let createdPostId = "";
@@ -124,19 +143,20 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
     await expect(post).toBeVisible();
     await expect(post.locator("img", { has: undefined })).toBeVisible();
     const audioPlayer = post.locator("audio");
-    await expect(audioPlayer).toBeVisible();
+    await expect(audioPlayer).toHaveCount(1);
+    await expect(audioPlayer).toBeHidden();
     await expect.poll(() => audioPlayer.evaluate((element) => element.duration)).toBeGreaterThan(0);
-    await post.locator(".postMediaCarousel").evaluate((element) => {
-      element.dispatchEvent(new TouchEvent("touchstart", {
-        bubbles: true,
-        touches: [new Touch({ identifier: 1, target: element, clientX: 300, clientY: 180 })],
-      }));
-      element.dispatchEvent(new TouchEvent("touchend", {
-        bubbles: true,
-        changedTouches: [new Touch({ identifier: 1, target: element, clientX: 110, clientY: 180 })],
-      }));
-    });
-    await expect(post.locator(".mediaCounter")).toHaveText("2/2");
+    const compactPlay = post.getByRole("button", { name: "Ascolta il racconto" });
+    await expect(compactPlay).toBeVisible();
+    await compactPlay.tap();
+    await expect.poll(() => audioPlayer.evaluate((element) => element.paused)).toBe(false);
+    await page.evaluate(() => window.dispatchEvent(new PageTransitionEvent("pagehide")));
+    await expect.poll(() => audioPlayer.evaluate((element) => element.paused)).toBe(true);
+    const carousel = post.locator(".postMediaCarousel");
+    const beforeSwipe = await carousel.evaluate((element) => element.scrollLeft);
+    await swipeMediaLikeAFinger(page, carousel);
+    await expect.poll(() => carousel.evaluate((element) => element.scrollLeft)).toBeGreaterThan(beforeSwipe + 20);
+    await expect(post.locator(".mediaCounter")).toHaveText("2 contenuti · scorri");
     await expect(post.getByRole("button", { name: /Contenuto (precedente|successivo)/ })).toHaveCount(0);
     const videoPlayer = post.locator("video");
     await expect(videoPlayer).toBeVisible();

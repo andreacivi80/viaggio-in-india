@@ -208,6 +208,11 @@
 body {
   margin: 0;
 }
+html.travelerDirectoryOpen,
+html.travelerDirectoryOpen body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
 .app {
   max-width: 680px;
   margin: auto;
@@ -2840,42 +2845,44 @@ h2 {
 }
 .directoryBackdrop {
   position: fixed;
-  z-index: 1400;
+  z-index: 6100;
   inset: 0;
   display: flex;
   align-items: flex-end;
   justify-content: center;
   background: #10241ccc;
   backdrop-filter: blur(4px);
-  overflow: visible;
+  overflow: hidden;
   overscroll-behavior: none;
   touch-action: pan-y;
 }
 .travelerDirectory {
   width: min(100%, 680px);
-  height: min(78vh, 78dvh);
-  max-height: min(78vh, 78dvh);
-  overflow-y: auto;
+  height: calc(100dvh - 12px);
+  max-height: 920px;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  overflow-y: hidden;
   overflow-x: hidden;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
-  padding: 16px 16px calc(88px + env(safe-area-inset-bottom));
+  padding: 8px 12px calc(12px + env(safe-area-inset-bottom));
   border-radius: 24px 24px 0 0;
   background: #fffaf2;
   box-shadow: 0 -20px 60px #0005;
 }
 .directoryHead {
   position: sticky;
-  top: -16px;
+  top: 0;
   z-index: 2;
   flex: 0 0 auto;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin: -2px -2px 0;
-  padding: 18px 2px 7px;
+  margin: 0;
+  padding: 3px 0 7px;
   background: #fffaf2;
 }
 .directoryHead small {
@@ -2909,8 +2916,17 @@ h2 {
 }
 .directoryList {
   display: grid;
+  align-content: start;
   gap: 3px;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+  position: relative;
   pointer-events: auto;
+  padding: 1px 2px calc(14px + env(safe-area-inset-bottom));
 }
 .directoryPerson {
   min-width: 0;
@@ -4677,7 +4693,12 @@ mark.mention {
   touch-action: pan-y;
 }
 .directoryList {
-  overflow: visible;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
   scrollbar-gutter: stable;
   padding: 1px 2px calc(12px + env(safe-area-inset-bottom));
 }
@@ -4885,6 +4906,49 @@ mark.mention {
     margin-bottom: 0;
     align-self: end;
   }
+}
+
+/* Area touch sicura da 44px, con bordo visibile compatto da 30px. */
+.reply {
+  grid-template-columns: minmax(0, 1fr) 44px 44px;
+}
+.reply label,
+.reply button {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  align-self: center;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.reply label::before,
+.reply button::before {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border-radius: 8px;
+  pointer-events: none;
+}
+.reply label::before {
+  border: 1px solid #d7c9b8;
+  background: #ece3d6;
+}
+.reply button::before {
+  border: 1px solid #1d2925;
+  background: #1d2925;
+}
+.reply label svg,
+.reply button svg {
+  position: relative;
+  z-index: 1;
+}
+.reply button svg {
+  color: #fff;
 }
 
 

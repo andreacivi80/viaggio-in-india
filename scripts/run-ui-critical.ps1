@@ -1,8 +1,12 @@
 param(
   [Parameter(Mandatory = $true)][string]$BaseUrl,
-  [string[]]$TestFiles = @("tests/ui-critical.spec.mjs", "tests/ui-navigation.spec.mjs", "tests/ui-social.spec.mjs", "tests/ui-media.spec.mjs", "tests/ui-documents.spec.mjs", "tests/ui-location.spec.mjs", "tests/ui-people.spec.mjs", "tests/ui-role-live.spec.mjs", "tests/ui-responsive.spec.mjs", "tests/ui-secondary.spec.mjs"),
+  [Parameter(Mandatory = $true)][string[]]$TestFiles,
   [string]$Project = "Samsung-S20-FE"
 )
+
+if ($TestFiles.Count -ne 1) {
+  throw "Ogni file UI deve ricevere profili e inviti QA nuovi: eseguire un solo file per volta."
+}
 
 $ErrorActionPreference = "Stop"
 $runId = [guid]::NewGuid().ToString("N")

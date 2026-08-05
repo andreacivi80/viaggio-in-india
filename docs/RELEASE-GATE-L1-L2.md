@@ -40,3 +40,10 @@ Questa regola vale per **ogni revisione**, senza eccezioni.
 - Otto tappe numerate e linee del percorso generale invariate.
 - Hotel ancora visibile nel dettaglio di ogni giornata interessata.
 - Zoom e ricentratura giornalieri invariati.
+
+## Livello 2 della revisione 1.37.17
+
+- Inquadratura calcolata su percorso, tappe numerate e punto hotel del dettaglio.
+- Tutti i marker devono restare interamente dentro la mappa dopo ogni animazione.
+- Verifica consecutiva delle 14 giornate su viewport mobile reale.
+- Vista generale ancora priva di icone hotel.

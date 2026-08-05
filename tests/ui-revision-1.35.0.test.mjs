@@ -23,15 +23,19 @@ test("le fotografie social sono adattate senza ritaglio", () => {
   assert.doesNotMatch(styles, /\.postMediaSlide > img[\s\S]{0,240}?object-fit: cover/);
 });
 
-test("l'audio associato alla foto usa i controlli per la riproduzione in background", () => {
+test("l'audio associato alla foto usa controlli compatti e si ferma in background", () => {
   assert.match(source, /function BackgroundAudio/);
   assert.match(source, /navigator\.mediaSession\.metadata/);
   assert.match(source, /setActionHandler\("play"/);
   assert.match(source, /className="photoAudioOverlay"[\s\S]*?<BackgroundAudio/);
+  assert.match(source, /window\.addEventListener\("pagehide", pauseEveryMedia\)/);
+  assert.match(source, /if \(document\.hidden\) pauseEveryMedia\(\)/);
 });
 
 test("graffetta e invio usano i controlli compatti della revisione 1.37.3", () => {
-  assert.match(styles, /\.reply label,\s*\n\s*\.reply button \{\s*\n\s*width: 36px;\s*\n\s*height: 36px;/);
+  assert.match(styles, /Area touch sicura da 44px/);
+  assert.match(styles, /\.reply label,\s*\n\s*\.reply button \{[\s\S]*?width: 44px;[\s\S]*?height: 44px;/);
+  assert.match(styles, /\.reply label::before,\s*\n\s*\.reply button::before \{[\s\S]*?inset: 7px;/);
   assert.match(styles, /\.reply label svg,\s*\n\s*\.reply button svg \{\s*\n\s*width: 13px;\s*\n\s*height: 13px;/);
 });
 
@@ -50,13 +54,13 @@ test("i PDF caricati vengono riconosciuti anche con MIME generico", () => {
 });
 
 test("l'elenco viaggiatori scorre senza muovere lo sfondo", () => {
-  assert.match(source, /document\.body\.style\.position = "fixed"/);
-  assert.match(source, /document\.body\.style\.top = `-\$\{scrollY\}px`/);
-  assert.match(source, /window\.scrollTo\(0, scrollY\)/);
-  assert.doesNotMatch(source, /document\.body\.style\.touchAction = "none"/);
-  assert.match(styles, /\.travelerDirectory \{[\s\S]*?height: min\(78vh, 78dvh\)/);
-  assert.match(styles, /\.travelerDirectory \{[\s\S]*?overflow-y: auto;[\s\S]*?touch-action: pan-y/);
-  assert.match(styles, /\.directoryList \{[\s\S]*?overflow: visible/);
+  assert.match(source, /document\.documentElement\.classList\.add\("travelerDirectoryOpen"\)/);
+  assert.match(source, /document\.documentElement\.classList\.remove\("travelerDirectoryOpen"\)/);
+  assert.doesNotMatch(source, /document\.body\.style\.position = "fixed"/);
+  assert.match(styles, /html\.travelerDirectoryOpen,[\s\S]*?overflow: hidden/);
+  assert.match(styles, /\.travelerDirectory \{[\s\S]*?height: calc\(100dvh - 12px\)/);
+  assert.match(styles, /\.travelerDirectory \{[\s\S]*?grid-template-rows: auto auto minmax\(0, 1fr\)/);
+  assert.match(styles, /\.directoryList \{[\s\S]*?overflow-y: auto;[\s\S]*?touch-action: pan-y/);
   assert.match(styles, /\.directoryBackdrop \{[\s\S]*?touch-action: pan-y/);
   assert.match(styles, /\.groupMain \{[\s\S]*?overflow-y: auto;[\s\S]*?touch-action: pan-y/);
   assert.match(styles, /\.directoryHead > button \{[\s\S]*?pointer-events: auto/);

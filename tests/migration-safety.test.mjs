@@ -45,4 +45,21 @@ test("il collaudo UI usa soltanto la coppia QA isolata", async () => {
   assert.doesNotMatch(source, /DELETE FROM profiles\s*;/i);
   assert.doesNotMatch(source, /DELETE FROM profiles[^\n]*LIKE/i);
   assert.match(source, /DELETE FROM profiles WHERE id IN \('\$profileId','\$coordinatorId'\)/i);
+  assert.match(source, /TestFiles\.Count -ne 1/);
+});
+
+test("il deploy QA usa obbligatoriamente i binding QA", async () => {
+  const packageSource = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
+  const command = packageSource.scripts["deploy:qa"];
+  assert.match(command, /scripts\/deploy-qa\.ps1/);
+  assert.doesNotMatch(command, /--project-name viaggio-in-india-2026(?:\s|$)/);
+  const deployScript = await readFile(new URL("../scripts/deploy-qa.ps1", import.meta.url), "utf8");
+  assert.match(deployScript, /wrangler\.qa\.jsonc/);
+  assert.match(deployScript, /Destination \(Join-Path \$deployRoot "wrangler\.jsonc"\)/);
+  assert.match(deployScript, /ItemType Junction[\s\S]*?\$deployRoot "node_modules"/);
+  assert.match(deployScript, /"viaggio-in-india-qa-db"/);
+  assert.match(deployScript, /--cwd \$deployRoot/);
+  const qaConfig = await readFile(new URL("../wrangler.qa.jsonc", import.meta.url), "utf8");
+  assert.match(qaConfig, /"name": "viaggio-in-india-2026-qa"/);
+  assert.match(qaConfig, /"database_name": "viaggio-in-india-qa-db"/);
 });
