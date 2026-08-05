@@ -43,5 +43,7 @@
   { "control": "Eliminare un post mentre un altro utente sta inserendo un commento.", "evidence": "extended-p0-sync-delete: corsa DELETE post/POST commento senza residui" },
   { "control": "Eliminazione commento.", "evidence": "extended-p0-social: proprietà server e DELETE verificate" },
   { "control": "test di creazione, modifica ed eliminazione;", "evidence": "extended-p0-social: ciclo completo su due autori" },
-  { "control": "Eseguire backup mentre vengono aggiunti commenti.", "evidence": "extended-p0-backup-comments: export D1 reale concorrente a 8 commenti, backup leggibile e stato integro" }
+  { "control": "Eseguire backup mentre vengono aggiunti commenti.", "evidence": "extended-p0-backup-comments: export D1 reale concorrente a 8 commenti, backup leggibile e stato integro" },
+  { "control": "Verificare eliminazione della cache difettosa.", "evidence": "ui-p0-cache-recovery: cache corrotta rimossa e riapertura offline riuscita" },
+  { "control": "Verificare eliminazione della vecchia cache.", "evidence": "ui-p0-cache-recovery: cache 1.37.18 rimossa, resta soltanto 1.37.19" }
 ]

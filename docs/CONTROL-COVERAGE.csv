@@ -607,8 +607,8 @@ P0,social,passed,Verificare eliminazione dei commenti.,usabilita:U0289,extended-
 P0,social,passed,Verificare eliminazione delle reazioni.,usabilita:U0290,extended-p0-sync-delete: cascata verificata nello stato finale
 P0,sync-rete,passed,Chiave idempotente nel database.,globale:T-0133,production-smoke: chiave idempotente riutilizzata e risposta replayed
 P0,sync-rete,passed,Sincronizzazione delle eliminazioni.,globale:T-0113,"extended-p0-sync-delete: assenza verificata su pubblico, proprietario e secondo dispositivo"
-P0,sync-rete,pending,Verificare eliminazione della cache difettosa.,globale:T-1181,
-P0,sync-rete,pending,Verificare eliminazione della vecchia cache.,globale:T-0840,
+P0,sync-rete,passed,Verificare eliminazione della cache difettosa.,globale:T-1181,ui-p0-cache-recovery: cache corrotta rimossa e riapertura offline riuscita
+P0,sync-rete,passed,Verificare eliminazione della vecchia cache.,globale:T-0840,"ui-p0-cache-recovery: cache 1.37.18 rimossa, resta soltanto 1.37.19"
 P1,altro,pending,“Notifiche attive” significhi subscription registrata e prova ricevuta;,addendum:A0386,
 P1,altro,pending,Aprire il pannello notifiche.,usabilita:U0056,
 P1,altro,pending,Aprire la notifica.,globale:T-0516,
