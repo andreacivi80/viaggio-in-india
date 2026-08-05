@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
+import { readFile, stat } from "node:fs/promises";
 
 const source = await readFile(new URL("../src/main.jsx", import.meta.url), "utf8");
 const styles = await readFile(new URL("../src/styles.css", import.meta.url), "utf8");
@@ -20,4 +20,12 @@ test("il compleanno resta visibile anche senza profilo e usa la foto quando disp
   assert.match(source, /Gruppo di viaggiatori WEROAD in festa in India/);
   assert.doesNotMatch(source, /birthdayWeRoadLogo/);
   assert.match(styles, /\.dayBirthdayRibbon\s*\{/);
+});
+
+test("la scena WEROAD ottimizzata resta leggera per la rete mobile", async () => {
+  const image = await stat(new URL("../public/ui/birthday-party-we-road-v1.jpg", import.meta.url));
+  assert.ok(image.size > 150_000);
+  assert.ok(image.size < 400_000);
+  assert.match(styles, /\.birthdayPartyScene[^}]*aspect-ratio:\s*2\s*\/\s*1/s);
+  assert.match(styles, /\.heroWeRoadLogo[^}]*width:\s*70px/s);
 });

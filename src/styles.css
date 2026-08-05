@@ -407,7 +407,7 @@ html.travelerDirectoryOpen body {
   z-index: 4;
   right: 14px;
   bottom: 13px;
-  width: 82px;
+  width: 70px;
   height: auto;
   display: block;
   padding: 4px 6px;
@@ -4849,7 +4849,7 @@ mark.mention {
   box-shadow: 0 5px 14px #7b3d2617;
 }
 .birthdayPartyVisual { position: relative; background: #e9a34d; }
-.birthdayPartyScene { width: 100%; height: auto; display: block; aspect-ratio: 16 / 9; object-fit: contain; }
+.birthdayPartyScene { width: 100%; height: auto; display: block; aspect-ratio: 2 / 1; object-fit: contain; }
 .birthdayRibbonCopy {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;

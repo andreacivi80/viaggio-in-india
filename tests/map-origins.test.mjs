@@ -23,4 +23,5 @@ test("le icone della mappa generale sono ancorate a tratte reali", () => {
   assert.match(source, /midpointLngLat\(places\["Aeroporto DEL"\], places\["Aeroporto UDR"\]\)/);
   assert.match(source, /roadPaths\["Udaipur-Jodhpur"\]/);
   assert.match(source, /midpointLngLat\(places\["Agra Cantt"\], places\["Varanasi Junction"\]\)/);
+  assert.match(source, /"Barca sul Gange a Varanasi", "boat", \[83\.009, 25\.305\], \[34, 22\]/);
 });

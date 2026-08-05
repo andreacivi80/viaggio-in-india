@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.38.4",
+const VERSION = "1.38.5",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -1055,7 +1055,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         ["✈️", "Volo interno DEL–UDR", "air", midpointLngLat(places["Aeroporto DEL"], places["Aeroporto UDR"]), [0, -28], "DEL–UDR"],
         ["🚐", "Spostamenti su strada Udaipur–Jodhpur", "road", [roadReference[1], roadReference[0]], [30, 26], "Udaipur–Jodhpur"],
         ["🚆", "Treno notturno Agra–Varanasi", "rail", midpointLngLat(places["Agra Cantt"], places["Varanasi Junction"]), [20, -22], "Agra–Varanasi"],
-        ["⛵", "Barca sul Gange a Varanasi", "boat", [places.Varanasi[1], places.Varanasi[0]], [30, -18], "Varanasi"],
+        ["⛵", "Barca sul Gange a Varanasi", "boat", [83.009, 25.305], [34, 22], "Varanasi"],
         ["👣", "Visite a piedi a Jodhpur", "walk", [places.Jodhpur[1], places.Jodhpur[0]], [-8, -25], "Jodhpur"],
       ].forEach(([symbol, label, mode, coordinates, offset, reference]) => {
         const node = document.createElement("span");
