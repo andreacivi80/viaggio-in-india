@@ -147,6 +147,26 @@ const mediaUrl = (key) => {
   if (String(key).startsWith("static:")) return String(key).slice(7);
   return `/api/media/${key}`;
 };
+async function ensureStaticPosts(env) {
+  const existing = await env.DB.prepare("SELECT id FROM posts WHERE id='weroad-predeparture'").first();
+  if (existing) return;
+  await env.DB.batch([
+    env.DB.prepare(
+      `INSERT OR IGNORE INTO posts(
+        id,author_name,profile_id,day_index,visibility,text,place_name,
+        media_key,media_type,media_name,media_size,created_at
+      ) VALUES('weroad-predeparture','India insieme','',-1,'public',?,'',NULL,NULL,NULL,0,?)`,
+    ).bind(
+      "Il gruppo si sta formando: preparativi in corso, valigie quasi pronte e l’India sempre più vicina. Si parte insieme con WEROAD!",
+      "2026-08-04 13:30:16",
+    ),
+    env.DB.prepare(
+      `INSERT OR IGNORE INTO post_media(
+        id,post_id,media_key,media_type,media_name,media_size,position,created_at
+      ) VALUES('weroad-predeparture-photo','weroad-predeparture','static:/ui/weroad-logo.png','image/png',?,55812,0,?)`,
+    ).bind("WEROAD · Preparativi per l’India", "2026-08-04 13:30:16"),
+  ]);
+}
 const futureIso = (hours) =>
   new Date(Date.now() + hours * 60 * 60 * 1000).toISOString();
 const secureToken = () =>
@@ -938,6 +958,7 @@ export async function onRequest(context) {
       }, 201);
     }
     if (request.method === "GET" && path === "state") {
+      await ensureStaticPosts(env);
       const session = await sessionFromRequest(request, env);
       const guest = session ? null : await guestFromRequest(request, env);
       return json(await readState(env, session, guest));
@@ -952,6 +973,7 @@ export async function onRequest(context) {
       });
     }
     if (request.method === "GET" && path === "health") {
+      await ensureStaticPosts(env);
       await env.DB.prepare(
         "INSERT OR IGNORE INTO sync_state(id,version,updated_at) VALUES(1,0,?)",
       )

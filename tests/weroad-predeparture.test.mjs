@@ -5,6 +5,7 @@ import { readFile } from "node:fs/promises";
 const schema = await readFile(new URL("../db/schema.sql", import.meta.url), "utf8");
 const migration = await readFile(new URL("../db/migrations/0015_weroad_predeparture_post.sql", import.meta.url), "utf8");
 const source = await readFile(new URL("../src/main.jsx", import.meta.url), "utf8");
+const api = await readFile(new URL("../functions/api/[[path]].js", import.meta.url), "utf8");
 
 test("la seconda pubblicazione WEROAD è pubblica, nei preparativi e senza luogo", () => {
   for (const sql of [schema, migration]) {
@@ -13,6 +14,14 @@ test("la seconda pubblicazione WEROAD è pubblica, nei preparativi e senza luogo
     assert.match(sql, /static:\/ui\/weroad-logo\.png/);
     assert.match(sql, /WEROAD · Preparativi per l’India/);
   }
+});
+
+test("l’API inizializza la pubblicazione una sola volta senza toccare i dati esistenti", () => {
+  assert.match(api, /async function ensureStaticPosts/);
+  assert.match(api, /SELECT id FROM posts WHERE id='weroad-predeparture'/);
+  assert.match(api, /INSERT OR IGNORE INTO posts/);
+  assert.match(api, /INSERT OR IGNORE INTO post_media/);
+  assert.match(api, /GET" && path === "state"[\s\S]*await ensureStaticPosts\(env\)/);
 });
 
 test("il logo ufficiale è solo nella testata della Bacheca e il diario cita il gruppo WEROAD", () => {
