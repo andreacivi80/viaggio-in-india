@@ -11,5 +11,16 @@
   { "control": "Commento mentre il post viene eliminato.", "evidence": "extended-p0-sync-delete: corsa commento/eliminazione senza residui" },
   { "control": "Verificare eliminazione dei commenti.", "evidence": "extended-p0-sync-delete: cascata verificata nello stato finale" },
   { "control": "Verificare eliminazione delle reazioni.", "evidence": "extended-p0-sync-delete: cascata verificata nello stato finale" },
-  { "control": "Sincronizzazione delle eliminazioni.", "evidence": "extended-p0-sync-delete: assenza verificata su pubblico, proprietario e secondo dispositivo" }
+  { "control": "Sincronizzazione delle eliminazioni.", "evidence": "extended-p0-sync-delete: assenza verificata su pubblico, proprietario e secondo dispositivo" },
+  { "control": "assenza di perdita dati.", "evidence": "baseline D1 2026-08-05: conteggi produzione invariati prima/dopo" },
+  { "control": "dati database prima e dopo;", "evidence": "baseline D1 2026-08-05: 4 profili, 1 post, 2 documenti invariati" },
+  { "control": "esistono backup e ripristino;", "evidence": "export D1 verificato e precedente backup ripristinato su SQLite temporaneo" },
+  { "control": "test backup e ripristino;", "evidence": "backup pre-1.33 ripristinato in 1,925 s; export 1.37.19 con SHA-256 registrato" },
+  { "control": "test delle migrazioni;", "evidence": "schema, colonne, 10 tabelle e 21 trigger confrontati su QA e produzione" },
+  { "control": "ultimo backup;", "evidence": "pre-migration-baseline-1.37.19-2026-08-05.sql, SHA-256 FF6250E9…6573" },
+  { "control": "Verificare che ogni migrazione venga applicata una sola volta.", "evidence": "d1_migrations riallineato; Wrangler conferma nessuna migrazione pendente" },
+  { "control": "Verificare compatibilità del database.", "evidence": "schema richiesto e API health verificati dopo il baseline" },
+  { "control": "Verificare compatibilità delle migrazioni.", "evidence": "effetti di 14 migrazioni presenti prima del baseline" },
+  { "control": "Verificare migrazione già applicata.", "evidence": "migrazioni già presenti registrate senza riesecuzione SQL" },
+  { "control": "Verificare ordine corretto delle migrazioni.", "evidence": "registro d1_migrations ordinato 1-14 e lista Wrangler vuota" }
 ]

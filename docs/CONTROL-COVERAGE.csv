@@ -493,7 +493,7 @@ P0,media-upload,pending,Verificare perdita immediata dei privilegi da Coordinato
 P0,media-upload,passed,Verificare scomparsa immediata dei comandi da Coordinatore.,addendum:A0097,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P0,persistenza,pending,aggiorna il database;,usabilita:U0676,
 P0,persistenza,pending,Applicare le migrazioni una alla volta.,globale:T-1026,
-P0,persistenza,pending,assenza di perdita dati.,globale:T-1109,
+P0,persistenza,passed,assenza di perdita dati.,globale:T-1109,baseline D1 2026-08-05: conteggi produzione invariati prima/dopo
 P0,persistenza,passed,Backup D1.,globale:T-0635,backup D1 pre-1.29.0 esportato e verificato
 P0,persistenza,pending,Backup delle chiavi Push.,globale:T-0636,
 P0,persistenza,pending,Backup delle configurazioni.,globale:T-0637,
@@ -506,12 +506,12 @@ P0,persistenza,pending,Controllo database,usabilita:U0038,
 P0,persistenza,pending,Creare un database dalla schema completa.,globale:T-1027,
 P0,persistenza,pending,Creare un database partendo dalla prima versione.,globale:T-1028,
 P0,persistenza,pending,database non disponibile;,usabilita:U0508,
-P0,persistenza,pending,dati database prima e dopo;,globale:T-1246,
+P0,persistenza,passed,dati database prima e dopo;,globale:T-1246,"baseline D1 2026-08-05: 4 profili, 1 post, 2 documenti invariati"
 P0,persistenza,pending,Eliminazione della subscription dal database quando l’utente le disattiva.,globale:T-0078,
 P0,persistenza,pending,Errore database.,globale:T-1546,
 P0,persistenza,pending,Eseguire backup mentre vengono creati post.,globale:T-1168,
 P0,persistenza,passed,Eseguire backup prima di ogni migrazione di produzione.,globale:T-1029,backup D1 creato e verificato prima della migrazione 0013
-P0,persistenza,pending,esistono backup e ripristino;,globale:T-0667,
+P0,persistenza,passed,esistono backup e ripristino;,globale:T-0667,export D1 verificato e precedente backup ripristinato su SQLite temporaneo
 P0,persistenza,passed,il database deve registrare il risultato;,addendum:A0030,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,persistenza,passed,il database non deve essere modificato;,addendum:A0034,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,persistenza,pending,il database non riceva valori non validi;,globale:T-1292,
@@ -528,26 +528,26 @@ P0,persistenza,passed,Registrazione data e ora backup.,globale:T-0640,"backup D1
 P0,persistenza,passed,Ripristinare il backup in un ambiente vuoto.,globale:T-1169,verify-d1-backup: export importato in database temporaneo vuoto
 P0,persistenza,passed,Ripristino in ambiente di prova.,globale:T-0641,verify-d1-backup: ripristino eseguito in database temporaneo vuoto
 P0,persistenza,pending,tabella requisito → tasto → API → database → test;,addendum:A0480,
-P0,persistenza,pending,test backup e ripristino;,usabilita:U0729,
+P0,persistenza,passed,test backup e ripristino;,usabilita:U0729,"backup pre-1.33 ripristinato in 1,925 s; export 1.37.19 con SHA-256 registrato"
 P0,persistenza,pending,test del database;,globale:T-0015,
-P0,persistenza,pending,test delle migrazioni;,globale:T-0018,
-P0,persistenza,pending,ultimo backup;,globale:T-1767,
+P0,persistenza,passed,test delle migrazioni;,globale:T-0018,"schema, colonne, 10 tabelle e 21 trigger confrontati su QA e produzione"
+P0,persistenza,passed,ultimo backup;,globale:T-1767,"pre-migration-baseline-1.37.19-2026-08-05.sql, SHA-256 FF6250E9…6573"
 P0,persistenza,pending,un file esiste nell’archivio ma non nel database.,addendum:A0307,
 P0,persistenza,passed,Verifica integrità backup.,globale:T-0644,verify-d1-backup: PRAGMA integrity_check restituisce ok
 P0,persistenza,passed,Verifica post ripristinati.,globale:T-0647,verify-d1-backup: 10 post ripristinati
 P0,persistenza,pending,Verificare backup e politica di conservazione.,globale:T-1325,
 P0,persistenza,pending,Verificare che i telefoni ricevano la versione ripristinata.,globale:T-1176,
-P0,persistenza,pending,Verificare che ogni migrazione venga applicata una sola volta.,globale:T-1030,
-P0,persistenza,pending,Verificare compatibilità del database.,globale:T-1178,
-P0,persistenza,pending,Verificare compatibilità delle migrazioni.,globale:T-1179,
+P0,persistenza,passed,Verificare che ogni migrazione venga applicata una sola volta.,globale:T-1030,d1_migrations riallineato; Wrangler conferma nessuna migrazione pendente
+P0,persistenza,passed,Verificare compatibilità del database.,globale:T-1178,schema richiesto e API health verificati dopo il baseline
+P0,persistenza,passed,Verificare compatibilità delle migrazioni.,globale:T-1179,effetti di 14 migrazioni presenti prima del baseline
 P0,persistenza,pending,Verificare comportamento con database temporaneamente non disponibile.,globale:T-1022,
 P0,persistenza,pending,Verificare consistenza temporale del backup.,globale:T-1171,
 P0,persistenza,passed,Verificare coordinate nel database.,usabilita:U0459,"Playwright mobile + API privata: 28.6139, 77.2090 salvate e restituite su due sessioni; preview 20382a40; 2026-08-04"
 P0,persistenza,pending,Verificare day_index nel database.,usabilita:U0178,
 P0,persistenza,pending,Verificare inserimento nel database.,usabilita:U0017,
-P0,persistenza,pending,Verificare migrazione già applicata.,globale:T-1036,
+P0,persistenza,passed,Verificare migrazione già applicata.,globale:T-1036,migrazioni già presenti registrate senza riesecuzione SQL
 P0,persistenza,pending,Verificare migrazione interrotta.,globale:T-1037,
-P0,persistenza,pending,Verificare ordine corretto delle migrazioni.,globale:T-1038,
+P0,persistenza,passed,Verificare ordine corretto delle migrazioni.,globale:T-1038,registro d1_migrations ordinato 1-14 e lista Wrangler vuota
 P0,persistenza,pending,Verificare rollback della migrazione.,globale:T-1040,
 P0,persistenza,pending,Verificare stabilità del database.,globale:T-0578,
 P0,persistenza,passed,Viene eseguito un backup.,globale:T-1743,backup D1 pre-migrazione eseguito
