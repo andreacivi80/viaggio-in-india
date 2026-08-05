@@ -191,4 +191,21 @@
   ,{ "control": "Verificare eliminazione degli inviti.", "evidence": "auth-lifecycle 40/40: invito revocato rimosso dal database; viaggiatore non autorizzato riceve 403" }
   ,{ "control": "Verificare quale invito rimane valido.", "evidence": "auth-lifecycle 40/40: un invito revocato è invalido mentre il secondo invito dello stesso profilo resta utilizzabile una sola volta" }
   ,{ "control": "Aggiungere consenso privacy esplicito.", "evidence": "privacy-consent 2/2 + auth-lifecycle 49/49: checkbox inizialmente non selezionata; registrazioni senza consenso o con consenso falso respinte; consenso vero registrato dal server con data/versione; migrazione additiva senza riscrivere profili esistenti" }
+  ,{ "control": "la password del gruppo non dia privilegi da Viaggiatore;", "evidence": "authorization-matrix 55/55: la sola password riceve 401/403 su area privata, commenti, reazioni e notifica globale; serve una sessione personale" }
+  ,{ "control": "la password comune non permette impersonazioni;", "evidence": "authorization-matrix 55/55 + roles 20/20: auth/unlock non crea sessioni; autore, profilo e ruolo derivano sempre dal token server" }
+  ,{ "control": "Non consentire alla password comune di impersonare un Viaggiatore esistente.", "evidence": "authorization-matrix 55/55: auth/unlock con password corretta restituisce 403 e richiede l’invito personale monouso" }
+  ,{ "control": "Protezione contro accesso a documenti altrui.", "evidence": "authorization-matrix 55/55: pubblico, ospite e altro viaggiatore ricevono 403; proprietario e coordinatore aprono; solo il proprietario sostituisce o elimina" }
+  ,{ "control": "Risultato atteso: nessun contenuto privato visibile.", "evidence": "authorization-matrix 55/55: stato pubblico=solo public, familiare=public+family, altro viaggiatore e coordinatore non vedono il private altrui" }
+  ,{ "control": "i dati dei profili rispettano la privacy;", "evidence": "authorization-matrix 55/55 + security-surface: stato pubblico ridotto e metadati privacy_consent_at/version assenti anche nello stato autenticato" }
+  ,{ "control": "privacy dei profili;", "evidence": "authorization-matrix 55/55: campi tecnici del consenso esclusi dalla risposta condivisa; documenti e posizioni restano su endpoint autenticato" }
+  ,{ "control": "documento non autorizzato;", "evidence": "authorization-matrix 55/55: HEAD del PDF privato restituisce 403 senza sessione e con sessione di altro viaggiatore" }
+  ,{ "control": "documento privato;", "evidence": "authorization-matrix 55/55: documento reale in storage temporaneo visibile soltanto a proprietario e coordinatore" }
+  ,{ "control": "nessuna estensione automatica del pubblico autorizzato.", "evidence": "authorization-matrix 55/55: una sessione ospite aggiunge solo family; una sessione gruppo non aggiunge private altrui" }
+  ,{ "control": "non deve vedere posizioni, salvo autorizzazione esplicita;", "evidence": "authorization-matrix 55/55 + location 10/10: area posizioni restituisce 401 a pubblico/ospite/password; una sessione gruppo vede e modifica soltanto la propria" }
+  ,{ "control": "Limitazione dell’accesso alle persone autorizzate.", "evidence": "authorization-matrix 55/55: matrice reale pubblico/ospite/viaggiatore/proprietario/coordinatore verificata su post, profili, documenti, posizioni e notifiche" }
+  ,{ "control": "endpoint autorizzati;", "evidence": "authorization-matrix 55/55: richieste HTTP reali confermano i confini server per tutte le risorse sensibili della matrice" }
+  ,{ "control": "tentativo non autorizzato;", "evidence": "authorization-matrix 55/55: operazioni fuori ruolo ricevono 401/403 senza creare o modificare dati" }
+  ,{ "control": "accesso completo;", "evidence": "authorization-matrix 55/55: il proprietario autenticato vede public, family, group e il proprio private" }
+  ,{ "control": "accesso limitato ad alcune fotografie;", "evidence": "authorization-matrix 55/55: familiare vede public+family, viaggiatore vede public+family+group, nessuno vede private altrui" }
+  ,{ "control": "accesso negato;", "evidence": "authorization-matrix 55/55: contenuti fuori visibilità e operazioni fuori ruolo restituiscono 401/403" }
 ]

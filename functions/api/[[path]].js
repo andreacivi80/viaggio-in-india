@@ -701,7 +701,12 @@ async function readState(env, session = null, guest = null) {
     sync_version: Number(syncState?.version || 0),
     sync_updated_at: syncState?.updated_at || null,
     profiles: profiles.results.map((p) => {
-      const { avatar_key: avatarKey, ...profileFields } = p;
+      const {
+        avatar_key: avatarKey,
+        privacy_consent_at: _privacyConsentAt,
+        privacy_consent_version: _privacyConsentVersion,
+        ...profileFields
+      } = p;
       return session
         ? { ...profileFields, avatar_url: mediaUrl(avatarKey) }
         : {
@@ -1271,7 +1276,11 @@ export async function onRequest(context) {
       return json({ ok: true });
     }
     if (request.method === "POST" && path === "push/test") {
-      if (!groupOk(request, env)) return json({ error: "Accesso negato" }, 403);
+      const session = await sessionFromRequest(request, env);
+      if (!session || session.role !== "coordinator")
+        return json({ error: "Solo il coordinatore può inviare una notifica di prova" }, 403);
+      const limited = await rateLimit(env, request, "push-test", 3, 300, session.profile_id);
+      if (limited) return limited;
       const delivery = await notifySubscribers(env, {
         title: "India Insieme",
         body: "Notifica di prova ricevuta correttamente, anche con l’app chiusa.",

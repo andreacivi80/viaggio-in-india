@@ -1,31 +1,30 @@
-# Matrice autorizzativa unica — 1.31.0
+# Matrice autorizzativa verificata
 
-Questa matrice è il contratto comune di interfaccia, API e test. La password comune `india26` non identifica una persona e non aumenta i privilegi. Per scrivere come Viaggiatore o Coordinatore serve sempre una sessione personale ottenuta da un invito monouso.
+Questa matrice descrive i controlli applicati dal server. La grafica non concede mai privilegi: ogni richiesta viene rivalidata dall’API usando una sessione personale o una sessione ospite.
 
-Legenda: **Sì**, **No**, **Proprietario**, **Approvazione** (serve consenso esplicito), **N/A**.
+| Operazione | Pubblico | Familiare / ospite | Viaggiatore | Proprietario | Coordinatore |
+|---|---:|---:|---:|---:|---:|
+| Vedere post pubblico | Sì | Sì | Sì | Sì | Sì |
+| Vedere post familiari | No | Sì | Sì | Sì | Sì |
+| Vedere post del gruppo | No | No | Sì | Sì | Sì |
+| Vedere un post privato | No | No | No | Solo il proprio | Solo se proprietario |
+| Commentare o reagire | Serve identità ospite/personale | Sì, se vede il post | Sì, se vede il post | Sì | Sì |
+| Pubblicare | No | No | Sì | Sì | Sì |
+| Modificare profilo | No | No | Solo il proprio | Sì | Tutti |
+| Creare profili e inviti | No | No | No | No | Sì |
+| Vedere documenti | No | No | Solo i propri | Sì | Tutti |
+| Caricare/sostituire/eliminare documenti | No | No | Solo i propri | Sì | Solo i propri |
+| Verificare documenti altrui | No | No | No | No | Sì |
+| Vedere le posizioni del gruppo | No | No | Sì | Sì | Sì |
+| Aggiornare/eliminare posizione | No | No | Solo la propria | Sì | Solo la propria |
+| Inviare notifica globale di prova | No | No | No | No | Sì |
 
-| Operazione | Pubblico | Familiare con password | Ospite autenticato | Viaggiatore proprietario | Viaggiatore non proprietario | Coordinatore | Scaduta | Revocata |
-|---|---|---|---|---|---|---|---|---|
-| Visualizzare contenuti | Solo pubblici | Solo pubblici | Pubblici + Familiari | Pubblici + Familiari + Gruppo + propri privati | Pubblici + Familiari + Gruppo | Contenuti del gruppo | Solo pubblici | Solo pubblici |
-| Creare contenuti | No | No | No | Sì | Sì | Sì | No | No |
-| Modificare contenuti | No | No | No | Proprietario | Proprietario | Moderazione | No | No |
-| Eliminare contenuti | No | No | No | Proprietario | Proprietario | Moderazione | No | No |
-| Condividere contenuti | Solo pubblici | Solo pubblici | Contenuti visibili | Contenuti visibili | Contenuti visibili | Contenuti visibili | Solo pubblici | Solo pubblici |
-| Commentare | Dopo identità Ospite | Dopo identità Ospite | Sì, sui contenuti visibili | Sì, sui contenuti visibili | Sì, sui contenuti visibili | Sì, sui contenuti visibili | Dopo nuova identità Ospite | Dopo nuova identità Ospite |
-| Reagire | Dopo identità Ospite | Dopo identità Ospite | Sì, sui contenuti visibili | Sì, sui contenuti visibili | Sì, sui contenuti visibili | Sì, sui contenuti visibili | Dopo nuova identità Ospite | Dopo nuova identità Ospite |
-| Gestire profilo | No | No | No | Proprietario | Proprietario | Tutti i profili | No | No |
-| Gestire inviti | No | No | No | No | No | Sì | No | No |
-| Gestire documenti | No | No | No | Proprietario | Proprietario | Coordinamento | No | No |
-| Gestire posizione | No | No | No | Proprietario + approvazione GPS | Proprietario + approvazione GPS | Coordinamento | No | No |
-| Attivare notifiche | Approvazione | Approvazione | Approvazione | Approvazione | Approvazione | Approvazione | Approvazione pubblica | Approvazione pubblica |
-| Moderare | No | No | No | No | No | Sì | No | No |
-| Visualizzare log | No | No | No | No | No | Solo log non sensibili | No | No |
-| Revocare dispositivi | No | No | No | Propri dispositivi | Propri dispositivi | Propri dispositivi | No | No |
+## Regole non negoziabili
 
-Regole inderogabili:
+- La password comune verifica soltanto l’ingresso al flusso di registrazione: non identifica una persona e non autorizza operazioni private.
+- Un profilo esistente si collega con un invito personale monouso; l’endpoint storico di sblocco non crea sessioni.
+- Il server ricava nome, profilo e ruolo dalla sessione: valori dichiarati dal browser non possono impersonare altri viaggiatori.
+- Il consenso privacy è esplicito nelle nuove registrazioni; data e versione del consenso non vengono esposte nello stato condiviso.
+- I test con scritture accettano soltanto localhost o il dominio QA e rifiutano sempre il dominio ufficiale.
 
-- l’identità e il ruolo restituiti dal server prevalgono sempre su nome, ruolo e `profile_id` locali;
-- una password comune non può creare una sessione personale o scegliere un profilo;
-- una sessione scaduta, revocata o sconosciuta viene rimossa dal dispositivo;
-- l’interfaccia non deve mostrare come utilizzabile un comando che l’API rifiuterà sistematicamente;
-- il server verifica ruolo e proprietà anche se la richiesta viene costruita manualmente.
+Evidenza automatica principale: `extended-p0-authorization-matrix.mjs`, eseguita su un database D1 e uno storage temporanei con pulizia finale.
