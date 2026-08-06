@@ -9,4 +9,8 @@ test("la matrice autorizzativa documenta tutti i ruoli e le risorse sensibili", 
   for (const resource of ["post privato", "documenti", "posizioni", "notifica globale", "inviti"])
     assert.match(matrix, new RegExp(resource, "i"));
   assert.match(matrix, /password comune[\s\S]*non autorizza operazioni private/i);
+  assert.match(matrix, /token scaduto[\s\S]*token alterato[\s\S]*401/i);
+  assert.match(matrix, /Logout e revoca[\s\S]*nuovo invito[\s\S]*token differente/i);
+  assert.match(matrix, /Cache-Control: no-store/i);
+  assert.match(matrix, /extended-p0-access-session-boundaries\.mjs[\s\S]*17\/17/i);
 });

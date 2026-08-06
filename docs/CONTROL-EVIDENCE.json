@@ -246,4 +246,20 @@
   ,{ "control": "test delle autorizzazioni;", "evidence": "endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59" }
   ,{ "control": "un tasto autorizzato riceve 401 o 403;", "evidence": "authorization-matrix 59/59: nessuna operazione consentita riceve 401/403" }
   ,{ "control": "un tasto non autorizzato riceve successo;", "evidence": "authorization-matrix 59/59: nessuna operazione vietata riceve successo" }
+  ,{ "control": "Aumento dei tentativi di accesso errati.", "evidence": "access-session-boundaries 17/17: dodici password errate attivano 429 senza creare profili" }
+  ,{ "control": "Eseguire logout e nuovo accesso.", "evidence": "auth-lifecycle 68/68: logout invalida il token e un nuovo invito emette una nuova sessione" }
+  ,{ "control": "Modificare token.", "evidence": "access-session-boundaries 17/17 + auth-lifecycle 68/68: token alterato restituisce 401" }
+  ,{ "control": "prova ripetutamente una funzione non autorizzata;", "evidence": "access-session-boundaries 17/17: venticinque richieste private con sessioni false restano tutte 401" }
+  ,{ "control": "Risultato atteso: sessione non valida.", "evidence": "access-session-boundaries 17/17 + auth-lifecycle 68/68: sessioni scadute alterate e revocate ricevono 401" }
+  ,{ "control": "sessione valida/non valida;", "evidence": "access-session-boundaries 17/17: sessione legata al dispositivo 200; assente scaduta o alterata 401" }
+  ,{ "control": "test con sessione scaduta;", "evidence": "access-session-boundaries 17/17 + auth-lifecycle 68/68: sessione scaduta negata su stato e area privata" }
+  ,{ "control": "Utilizzare soltanto password di gruppo contro endpoint personali.", "evidence": "access-session-boundaries 17/17 + authorization-matrix 59/59: password comune non apre area privata" }
+  ,{ "control": "Verificare accesso negato.", "evidence": "access-session-boundaries 17/17: pubblico password comune token scaduto e token alterato sono negati" }
+  ,{ "control": "Verificare che i dati sensibili non siano visibili senza autorizzazione.", "evidence": "access-session-boundaries 17/17 + authorization-matrix 59/59: area privata 401 senza sessione" }
+  ,{ "control": "Verificare contenuti autorizzati.", "evidence": "access-session-boundaries 17/17 + authorization-matrix 59/59: proprietario autenticato apre la propria area" }
+  ,{ "control": "Verificare emissione di un nuovo token.", "evidence": "auth-lifecycle 68/68: nuovo invito e refresh emettono token nuovi e differenti" }
+  ,{ "control": "Verificare intestazione private, no-store.", "evidence": "access-session-boundaries 17/17: no-store verificato su dinieghi stato sessione e area privata autorizzata" }
+  ,{ "control": "Verificare rimozione dell’accesso.", "evidence": "auth-lifecycle 68/68: logout revoca dispositivo e logout-all invalidano immediatamente le sessioni" }
+  ,{ "control": "Verificare token differente.", "evidence": "auth-lifecycle 68/68: il nuovo accesso produce un token diverso dal precedente" }
+  ,{ "control": "Visualizzazione contenuti autorizzati.", "evidence": "access-session-boundaries 17/17 + authorization-matrix 59/59: risposta privata contiene il viewer derivato dalla sessione" }
 ]

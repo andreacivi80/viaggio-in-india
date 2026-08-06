@@ -145,6 +145,31 @@ assert.equal((await request("/api/auth/session", { headers: bearer(mutatedSessio
 assert.equal((await request("/api/auth/logout", { method: "POST", headers: bearer(winnerBody.token, winnerDeviceKey) })).status, 200);
 assert.equal((await request("/api/auth/session", { headers: bearer(winnerBody.token, winnerDeviceKey) })).status, 401);
 
+const returnInviteResponse = await request("/api/auth/invites", {
+  method: "POST",
+  headers: jsonHeaders(coordinatorToken),
+  body: JSON.stringify({ profile_id: targetProfileId }),
+});
+assert.equal(returnInviteResponse.status, 201);
+const returnInvite = await returnInviteResponse.json();
+const returnDeviceKey = "f".repeat(64);
+const returnClaimResponse = await request("/api/auth/claim", {
+  method: "POST",
+  headers: {
+    "content-type": "application/json",
+    "x-device-name": "Telefono nuovo accesso",
+    "x-device-key": returnDeviceKey,
+  },
+  body: JSON.stringify({ invite_token: returnInvite.invite_token }),
+});
+assert.equal(returnClaimResponse.status, 200);
+const returnClaim = await returnClaimResponse.json();
+assert.ok(returnClaim.token);
+assert.notEqual(returnClaim.token, winnerBody.token);
+assert.equal((await request("/api/auth/session", { headers: bearer(returnClaim.token, returnDeviceKey) })).status, 200);
+assert.equal((await request("/api/auth/logout", { method: "POST", headers: bearer(returnClaim.token, returnDeviceKey) })).status, 200);
+assert.equal((await request("/api/auth/session", { headers: bearer(returnClaim.token, returnDeviceKey) })).status, 401);
+
 const coordinatorDeviceKey = "3".repeat(64);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorToken, coordinatorDeviceKey) })).status, 200);
 assert.equal((await request("/api/auth/session", { headers: bearer(coordinatorSecondToken) })).status, 200);
@@ -209,5 +234,5 @@ assert.equal((await request("/api/auth/session", {
   headers: bearer(process.env.QA_SESSION_TOKEN, legacyDeviceKey),
 })).status, 200);
 
-console.log("P0_AUTH_LIFECYCLE=61/61");
+console.log("P0_AUTH_LIFECYCLE=68/68");
 process.exit(0);

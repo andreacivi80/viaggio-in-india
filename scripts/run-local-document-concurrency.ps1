@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("all", "authorization-matrix", "auth-lifecycle", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
+  [ValidateSet("all", "authorization-matrix", "auth-lifecycle", "access-session-boundaries", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
   [string]$Suite = "document-concurrency"
 )
 
@@ -149,6 +149,7 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
   $suiteFiles = @{
     "authorization-matrix" = "tests\extended-p0-authorization-matrix.mjs"
     "auth-lifecycle" = "tests\extended-p0-auth-lifecycle.mjs"
+    "access-session-boundaries" = "tests\extended-p0-access-session-boundaries.mjs"
     "profile-deletion" = "tests\extended-p0-profile-deletion.mjs"
     "document-concurrency" = "tests\extended-p0-document-concurrency.mjs"
     "documents" = "tests\extended-p0-documents.mjs"
@@ -161,7 +162,7 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
     "chunk-retry" = "tests\extended-p0-chunk-retry.mjs"
   }
   $selectedSuites = if ($Suite -eq "all") {
-    @("authorization-matrix", "document-concurrency", "documents", "location", "media", "social", "sync", "avatar", "chunk-retry", "roles", "profile-deletion", "auth-lifecycle")
+    @("authorization-matrix", "document-concurrency", "documents", "location", "media", "social", "sync", "avatar", "chunk-retry", "roles", "profile-deletion", "auth-lifecycle", "access-session-boundaries")
   } else { @($Suite) }
   foreach ($selectedSuite in $selectedSuites) {
     Write-Host "P0_SUITE_START=$selectedSuite"

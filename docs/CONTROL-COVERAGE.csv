@@ -33,7 +33,7 @@ P0,accessi-privacy,passed,Aprire la Bacheca senza password.,usabilita:U0093,ui-c
 P0,accessi-privacy,pending,"Aprire la griglia del Coordinatore, se autorizzato.",usabilita:U0072,
 P0,accessi-privacy,passed,Associare i commenti dei Viaggiatori alla sessione personale.,globale:T-0061,QA 1.31.0: commento del viaggiatore attribuito alla sessione e non ai campi del browser
 P0,accessi-privacy,pending,Attivazione sessione.,globale:T-1206,
-P0,accessi-privacy,pending,Aumento dei tentativi di accesso errati.,globale:T-1539,
+P0,accessi-privacy,passed,Aumento dei tentativi di accesso errati.,globale:T-1539,access-session-boundaries 17/17: dodici password errate attivano 429 senza creare profili
 P0,accessi-privacy,pending,Autorizzare GPS.,usabilita:U0235,
 P0,accessi-privacy,pending,Autorizzare il microfono.,globale:T-0445;usabilita:U0215,
 P0,accessi-privacy,pending,Autorizzare il permesso.,usabilita:U0188,
@@ -100,7 +100,7 @@ P0,accessi-privacy,passed,Eliminare l’endpoint che trasforma il codice comune 
 P0,accessi-privacy,passed,Eliminare sessioni scadute.,globale:T-1348,"extended-p0-auth-lifecycle: sessione scaduta inserita in D1 locale e rimozione contata da health | extended-p0-auth-lifecycle 44/44: sessione scaduta inserita in D1 locale isolato, health rimuove almeno una riga, sessione successiva 401"
 P0,accessi-privacy,passed,endpoint autorizzati;,addendum:A0048,authorization-matrix 55/55: richieste HTTP reali confermano i confini server per tutte le risorse sensibili della matrice
 P0,accessi-privacy,passed,entrare con un invito;,globale:T-1774,auth-lifecycle 61/61: claim valido restituisce sessione e profilo corretto
-P0,accessi-privacy,pending,Eseguire logout e nuovo accesso.,addendum:A0340,
+P0,accessi-privacy,passed,Eseguire logout e nuovo accesso.,addendum:A0340,auth-lifecycle 68/68: logout invalida il token e un nuovo invito emette una nuova sessione
 P0,accessi-privacy,passed,esiste una matrice autorizzativa approvata;,addendum:A0444,AUTHORIZATION-MATRIX + endpoint-authorization-inventory 2/2
 P0,accessi-privacy,pending,etichetta di accesso mostrata;,addendum:A0043,
 P0,accessi-privacy,pending,Familiare: nessun accesso.,globale:T-0482,
@@ -137,7 +137,7 @@ P0,accessi-privacy,passed,Lasciare la sessione inattiva fino alla scadenza previ
 P0,accessi-privacy,passed,Limitazione dell’accesso alle persone autorizzate.,globale:T-0210,"authorization-matrix 55/55: matrice reale pubblico/ospite/viaggiatore/proprietario/coordinatore verificata su post, profili, documenti, posizioni e notifiche"
 P0,accessi-privacy,passed,Memorizzare un vecchio token prima dell’accesso.,addendum:A0336,session-token-rotation 2/2 + auth-lifecycle 61/61: token precedente conservato e verificato separatamente
 P0,accessi-privacy,pending,Modalità privata del browser.,globale:T-1094,
-P0,accessi-privacy,pending,Modificare token.,globale:T-0623,
+P0,accessi-privacy,passed,Modificare token.,globale:T-0623,access-session-boundaries 17/17 + auth-lifecycle 68/68: token alterato restituisce 401
 P0,accessi-privacy,passed,Modificare un carattere dell’invito.,globale:T-0778,extended-p0-auth-lifecycle 28/28: invito alterato negato con HTTP 403
 P0,accessi-privacy,passed,Modificare un solo carattere del token.,globale:T-0762,extended-p0-auth-lifecycle 28/28: sessione alterata negata con HTTP 401
 P0,accessi-privacy,pending,Nessun accesso.,usabilita:U0476,
@@ -192,7 +192,7 @@ P0,accessi-privacy,passed,privacy dei profili;,globale:T-1795,authorization-matr
 P0,accessi-privacy,passed,privacy nella vista pubblica.,usabilita:U0401,ui-critical e production-smoke: cache privata filtrata e stato pubblico privo di campi privati
 P0,accessi-privacy,passed,profile_id della sessione prevale sempre sul profile_id del localStorage;,addendum:A0061,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Protezione contro accesso a documenti altrui.,globale:T-0222,"authorization-matrix 55/55: pubblico, ospite e altro viaggiatore ricevono 403; proprietario e coordinatore aprono; solo il proprietario sostituisce o elimina"
-P0,accessi-privacy,pending,prova ripetutamente una funzione non autorizzata;,addendum:A0438,
+P0,accessi-privacy,passed,prova ripetutamente una funzione non autorizzata;,addendum:A0438,access-session-boundaries 17/17: venticinque richieste private con sessioni false restano tutte 401
 P0,accessi-privacy,passed,pubblicazione non autorizzata;,usabilita:U0497,ui-critical produzione mobile: Pubblica senza sessione mostra Accesso privato e non monta il compositore
 P0,accessi-privacy,passed,Pubblico: nessun accesso.,globale:T-0484,"ui-critical produzione mobile: nessun comando privato, documenti o griglia coordinatore"
 P0,accessi-privacy,pending,quali contenuti privati esistono.,addendum:A0359,
@@ -216,7 +216,7 @@ P0,accessi-privacy,pending,Riprovare dopo autorizzazione dalle impostazioni.,usa
 P0,accessi-privacy,pending,rispetta le autorizzazioni;,usabilita:U0684,
 P0,accessi-privacy,passed,Risultato atteso: accesso negato.,globale:T-0331;usabilita:U0409,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Risultato atteso: nessun contenuto privato visibile.,globale:T-0871,"authorization-matrix 55/55: stato pubblico=solo public, familiare=public+family, altro viaggiatore e coordinatore non vedono il private altrui"
-P0,accessi-privacy,pending,Risultato atteso: sessione non valida.,globale:T-0765,
+P0,accessi-privacy,passed,Risultato atteso: sessione non valida.,globale:T-0765,access-session-boundaries 17/17 + auth-lifecycle 68/68: sessioni scadute alterate e revocate ricevono 401
 P0,accessi-privacy,passed,Riutilizzare lo stesso invito su telefono B.,globale:T-0333,auth-lifecycle 61/61: un solo claim concorrente e riuso respinto 403/409
 P0,accessi-privacy,passed,Riutilizzare lo stesso invito.,usabilita:U0408,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Ruotare il token dopo operazioni sensibili.,globale:T-0040,session-token-rotation 2/2 + auth-lifecycle 61/61: rotazione atomica e nuova credenziale legata allo stesso dispositivo
@@ -231,14 +231,14 @@ P0,accessi-privacy,passed,sessione B sulla risorsa A;,addendum:A0107,Authenticat
 P0,accessi-privacy,passed,sessione mancante;,usabilita:U0493,"Playwright mobile: loading held, disabled state, duplicate click, HTTP 201, confirmation; preview 9393a1aa"
 P0,accessi-privacy,passed,sessione revocata.,addendum:A0135;addendum:A0214,extended-p0-auth-lifecycle 28/28: logout e logout-all revocano immediatamente la sessione
 P0,accessi-privacy,passed,sessione scaduta;,globale:T-1583;usabilita:U0494;addendum:A0134;addendum:A0166;addendum:A0213,QA 1.31.0: sessione inattiva respinta
-P0,accessi-privacy,pending,sessione valida/non valida;,addendum:A0415,
+P0,accessi-privacy,passed,sessione valida/non valida;,addendum:A0415,access-session-boundaries 17/17: sessione legata al dispositivo 200; assente scaduta o alterata 401
 P0,accessi-privacy,pending,spiegare quale autorizzazione manca;,addendum:A0265,
 P0,accessi-privacy,passed,Tentare accesso a documento altrui.,globale:T-0624,extended-p0-documents: media privata negata ad altro viaggiatore
 P0,accessi-privacy,passed,Tentare accesso diretto ai documenti.,usabilita:U0580,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Tentare di creare un invito.,usabilita:U0623,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P0,accessi-privacy,passed,tentativo non autorizzato;,globale:T-1584,authorization-matrix 55/55: operazioni fuori ruolo ricevono 401/403 senza creare o modificare dati
 P0,accessi-privacy,pending,test con password;,usabilita:U0718,
-P0,accessi-privacy,pending,test con sessione scaduta;,usabilita:U0723,
+P0,accessi-privacy,passed,test con sessione scaduta;,usabilita:U0723,access-session-boundaries 17/17 + auth-lifecycle 68/68: sessione scaduta negata su stato e area privata
 P0,accessi-privacy,passed,test delle autorizzazioni;,globale:T-0017,endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,pending,test di accessibilità;,globale:T-0020,
 P0,accessi-privacy,pending,test senza password;,usabilita:U0719,
@@ -258,7 +258,7 @@ P0,accessi-privacy,pending,una sessione scaduta non viene recuperata utilizzando
 P0,accessi-privacy,passed,uno screenshot della vista pubblica non deve mostrare dati privati.,addendum:A0284,Public-cache unit + delayed-state Playwright 6/6; preview 63b53987; 2026-08-04
 P0,accessi-privacy,pending,Utilizzare il codice comune soltanto come invito iniziale al gruppo.,globale:T-0041,
 P0,accessi-privacy,passed,Utilizzare invito scaduto.,globale:T-0335;usabilita:U0412,extended-p0-auth-lifecycle 28/28: invito scaduto negato con HTTP 403
-P0,accessi-privacy,pending,Utilizzare soltanto password di gruppo contro endpoint personali.,usabilita:U0579,
+P0,accessi-privacy,passed,Utilizzare soltanto password di gruppo contro endpoint personali.,usabilita:U0579,access-session-boundaries 17/17 + authorization-matrix 59/59: password comune non apre area privata
 P0,accessi-privacy,passed,Utilizzare token di un altro utente.,usabilita:U0576,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Utilizzare token revocato.,globale:T-0627;usabilita:U0578,extended-p0-auth-lifecycle 28/28: token revocato negato con HTTP 401
 P0,accessi-privacy,passed,Utilizzare token scaduto.,globale:T-0628;usabilita:U0577,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
@@ -272,13 +272,13 @@ P0,accessi-privacy,passed,vecchio profile_id e nuova sessione;,addendum:A0056,Pl
 P0,accessi-privacy,passed,Verificare “Elimina” soltanto per proprietario o Coordinatore.,usabilita:U0279,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
 P0,accessi-privacy,pending,Verificare accesso amministrativo con autenticazione a più fattori.,globale:T-1505,
 P0,accessi-privacy,passed,Verificare accesso negato immediato.,globale:T-0336,extended-p0-auth-lifecycle 28/28: la sessione revocata restituisce 401 senza ritardo
-P0,accessi-privacy,pending,Verificare accesso negato.,usabilita:U0414,
+P0,accessi-privacy,passed,Verificare accesso negato.,usabilita:U0414,access-session-boundaries 17/17: pubblico password comune token scaduto e token alterato sono negati
 P0,accessi-privacy,passed,Verificare aggiornamento della sessione.,addendum:A0091,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P0,accessi-privacy,pending,Verificare aggiornamento delle autorizzazioni.,addendum:A0343,
 P0,accessi-privacy,passed,Verificare assenza di “Elimina” per utenti non autorizzati.,usabilita:U0280,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
 P0,accessi-privacy,passed,Verificare autorizzazione server.,usabilita:U0424,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Verificare che ciascun invito sia collegato alla persona corretta.,globale:T-0783,invite-link-privacy 3/3 + auth-lifecycle 61/61: profilo restituito uguale al target
-P0,accessi-privacy,pending,Verificare che i dati sensibili non siano visibili senza autorizzazione.,globale:T-1191,
+P0,accessi-privacy,passed,Verificare che i dati sensibili non siano visibili senza autorizzazione.,globale:T-1191,access-session-boundaries 17/17 + authorization-matrix 59/59: area privata 401 senza sessione
 P0,accessi-privacy,passed,Verificare che il Coordinatore gestisca i profili autorizzati.,globale:T-0355,"roles 20/20: creazione, modifica, promozione, retrocessione e inviti sono autorizzati lato server"
 P0,accessi-privacy,passed,Verificare che il server utilizzi l’identità della sessione.,usabilita:U0172,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P0,accessi-privacy,passed,Verificare che il token non funzioni più.,globale:T-0339,extended-p0-auth-lifecycle 28/28: token del dispositivo revocato respinto da auth/session
@@ -288,16 +288,16 @@ P0,accessi-privacy,passed,Verificare che il vecchio token non funzioni.,globale:
 P0,accessi-privacy,passed,Verificare che l’invito funzioni una sola volta.,globale:T-0340,auth-lifecycle 61/61: consumo atomico e riuso respinto
 P0,accessi-privacy,passed,Verificare che le sessioni rimangano valide o siano revocate in modo controllato.,globale:T-1177,"extended-p0-auth-lifecycle 28/28: revoca selettiva mantiene il dispositivo corrente, logout-all invalida tutte le sessioni"
 P0,accessi-privacy,passed,Verificare che pagine pubbliche eventualmente incorporabili siano separate da quelle private.,globale:T-1490,production-smoke live: HTML limitato alla stessa origine; API private con frame-ancestors none e no-store
-P0,accessi-privacy,pending,Verificare contenuti autorizzati.,usabilita:U0096,
+P0,accessi-privacy,passed,Verificare contenuti autorizzati.,usabilita:U0096,access-session-boundaries 17/17 + authorization-matrix 59/59: proprietario autenticato apre la propria area
 P0,accessi-privacy,passed,Verificare creazione della sessione.,usabilita:U0406,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Verificare dati dopo revoca della sessione.,globale:T-1625,auth-lifecycle 32/32: token revocato restituisce 401 e tutte le sottoscrizioni push del profilo vengono eliminate
 P0,accessi-privacy,passed,Verificare eliminazione degli inviti.,globale:T-1331,auth-lifecycle 40/40: invito revocato rimosso dal database; viaggiatore non autorizzato riceve 403
 P0,accessi-privacy,passed,Verificare eliminazione delle sessioni.,globale:T-1335,extended-p0-auth-lifecycle 28/28: dispositivo revocato scompare dall’elenco delle sessioni attive
-P0,accessi-privacy,pending,Verificare emissione di un nuovo token.,addendum:A0338,
+P0,accessi-privacy,passed,Verificare emissione di un nuovo token.,addendum:A0338,auth-lifecycle 68/68: nuovo invito e refresh emettono token nuovi e differenti
 P0,accessi-privacy,pending,Verificare esecuzione dell’accesso.,usabilita:U0046,
 P0,accessi-privacy,pending,Verificare impossibilità di utilizzare la cronologia del browser per tornare nella dashboard autorizzata.,addendum:A0100,
 P0,accessi-privacy,pending,Verificare informazioni autorizzate.,usabilita:U0366,
-P0,accessi-privacy,pending,"Verificare intestazione private, no-store.",globale:T-0488,
+P0,accessi-privacy,passed,"Verificare intestazione private, no-store.",globale:T-0488,access-session-boundaries 17/17: no-store verificato su dinieghi stato sessione e area privata autorizzata
 P0,accessi-privacy,pending,Verificare invalidazione dell’eventuale token temporaneo precedente.,addendum:A0339,
 P0,accessi-privacy,pending,Verificare la regola prevista per il riutilizzo del token.,globale:T-0770,
 P0,accessi-privacy,pending,"Verificare mantenimento dell’accesso, se previsto.",usabilita:U0052,
@@ -310,13 +310,13 @@ P0,accessi-privacy,passed,Verificare quale invito rimane valido.,globale:T-0789,
 P0,accessi-privacy,passed,Verificare revoca automatica di tutte le sessioni del profilo.,globale:T-0772,profile-deletion 40/40: tutte le auth_sessions del profilo eliminate nella stessa transazione D1
 P0,accessi-privacy,pending,Verificare richiesta di nuovo accesso.,globale:T-0773,
 P0,accessi-privacy,passed,Verificare rimozione del token dall’URL.,usabilita:U0407,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
-P0,accessi-privacy,pending,Verificare rimozione dell’accesso.,usabilita:U0054,
+P0,accessi-privacy,passed,Verificare rimozione dell’accesso.,usabilita:U0054,auth-lifecycle 68/68: logout revoca dispositivo e logout-all invalidano immediatamente le sessioni
 P0,accessi-privacy,passed,Verificare sessioni precedenti.,globale:T-1041,"extended-p0-auth-lifecycle 28/28: due sessioni iniziali rilevate, una revocata selettivamente e la restante chiusa con logout-all"
-P0,accessi-privacy,pending,Verificare token differente.,addendum:A0341,
+P0,accessi-privacy,passed,Verificare token differente.,addendum:A0341,auth-lifecycle 68/68: il nuovo accesso produce un token diverso dal precedente
 P0,accessi-privacy,pending,Verificare VAPID_PRIVATE_KEY.,globale:T-1520,
 P0,accessi-privacy,pending,Viaggiatore non proprietario;,addendum:A0132,
 P0,accessi-privacy,pending,Viaggiatore proprietario;,addendum:A0131,
-P0,accessi-privacy,pending,Visualizzazione contenuti autorizzati.,globale:T-1239,
+P0,accessi-privacy,passed,Visualizzazione contenuti autorizzati.,globale:T-1239,access-session-boundaries 17/17 + authorization-matrix 59/59: risposta privata contiene il viewer derivato dalla sessione
 P0,altro,passed,"A elimina il post, B lo vede scomparire.",usabilita:U0558,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,altro,passed,Avvisare gli utenti prima dell’eliminazione.,globale:T-1336,ui-documents QA: finestra Eliminare questo documento? mostrata prima del DELETE
 P0,altro,passed,Confermare eliminazione.,usabilita:U0283,"ui-documents QA: Annulla conserva il file, Elimina conferma la rimozione"

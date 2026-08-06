@@ -50,3 +50,14 @@ Il test `endpoint-authorization-inventory.test.mjs` confronta tutte le rotte dic
 | Commenta/reagisce | Profilo o familiare identificato | sessione personale o ospite valida e autorizzata alla visibilità del post |
 
 La UI nasconde i comandi non pertinenti, ma la sicurezza non dipende dalla UI: una richiesta forzata viene comunque respinta dal Worker.
+
+## Confini della sessione
+
+- Senza token, con token scaduto o con token alterato, l’area privata restituisce `401`.
+- La sola password comune non apre endpoint personali e non crea un profilo.
+- Una sessione valida deve essere accompagnata dalla chiave del dispositivo associato.
+- Logout e revoca rendono subito inutilizzabile il token precedente; un accesso successivo richiede un nuovo invito e produce un token differente.
+- Le risposte di autenticazione e i contenuti privati, sia concessi sia negati, usano sempre `Cache-Control: no-store`.
+- Tentativi ripetuti con sessioni false non recuperano privilegi; i tentativi ripetuti con password errata attivano `429` senza creare profili.
+
+Evidenze automatiche: `extended-p0-auth-lifecycle.mjs` (68/68) e `extended-p0-access-session-boundaries.mjs` (17/17), eseguite soltanto su database e storage temporanei locali.
