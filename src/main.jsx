@@ -1981,13 +1981,13 @@ function App() {
     localStorage.removeItem("india-role");
   }, [sessionToken]);
   useEffect(() => {
-    if (!currentProfile) return;
+    if (!currentProfile || !verifiedSessionToken) return;
     localStorage.setItem("india-profile-id", currentProfile.id);
     localStorage.setItem(
       "india-visitor-name",
       `${currentProfile.name} ${currentProfile.surname || ""}`.trim(),
     );
-  }, [currentProfile?.id]);
+  }, [currentProfile?.id, verifiedSessionToken]);
   const openComposer = (dayIndex) => {
     // Pubblicare e' un'azione del gruppo: non lasciare il pannello bloccato
     // dalla sola anteprima pubblica quando questo dispositivo e' gia' sbloccato.
@@ -4926,6 +4926,7 @@ function VaultOnline({
     }
   }, [privateData.viewer?.profile_id, privateData.viewer?.role]);
   useEffect(() => {
+    if (!sessionToken) return;
     if (preferredProfileId && people.some((p) => p.id === preferredProfileId)) {
       setProfileId(preferredProfileId);
       localStorage.setItem("india-profile-id", preferredProfileId);
@@ -4946,7 +4947,7 @@ function VaultOnline({
           savedName || person.name.trim().toLowerCase() === savedName,
     );
     if (match) setProfileId(match.id);
-  }, [people, preferredProfileId]);
+  }, [people, preferredProfileId, sessionToken]);
   useEffect(() => {
     const person = people.find((item) => item.id === profileId);
     if (person)

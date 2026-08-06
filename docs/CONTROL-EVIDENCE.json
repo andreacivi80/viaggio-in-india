@@ -270,4 +270,11 @@
   ,{ "control": "Verificare aggiornamento delle autorizzazioni.", "evidence": "ui-role-live touch 2/2: promozione retrocessione e revoca aggiornano telefono e comandi" }
   ,{ "control": "Verificare esecuzione dell’accesso.", "evidence": "ui-role-live touch 2/2: tre inviti personali collegano due telefoni viaggiatore e uno coordinatore" }
   ,{ "control": "Verificare impossibilità di utilizzare la cronologia del browser per tornare nella dashboard autorizzata.", "evidence": "ui-role-live touch 2/2: indietro dopo revoca mantiene sessione nulla e gate privato" }
+  ,{ "control": "Autorizzare GPS.", "evidence": "ui-location touch 1/1: consenso GPS e coordinate Delhi condivise dal profilo autorizzato" }
+  ,{ "control": "Autorizzare il permesso.", "evidence": "ui-location touch 1/1: grant geolocation abilita la condivisione reale" }
+  ,{ "control": "autorizzata durante l’uso;", "evidence": "ui-location touch 1/1: permesso geolocation limitato al contesto mobile attivo" }
+  ,{ "control": "autorizzate;", "evidence": "ui-location touch 1/1: con permesso concesso API posizione 200 e sincronizzazione visibile" }
+  ,{ "control": "autorizzazione negata;", "evidence": "ui-location touch 1/1: diniego mostra messaggio e produce zero richieste POST" }
+  ,{ "control": "permesso autorizzato;", "evidence": "ui-location touch 1/1: permesso riattivato consente nuovo invio e successiva cancellazione" }
+  ,{ "control": "Riprovare dopo autorizzazione dalle impostazioni.", "evidence": "ui-location touch 1/1: dopo clear e nuovo grant la riprova invia e cancella la posizione" }
 ]

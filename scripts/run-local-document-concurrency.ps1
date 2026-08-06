@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("all", "authorization-matrix", "auth-lifecycle", "access-session-boundaries", "ui-session-history", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
+  [ValidateSet("all", "authorization-matrix", "auth-lifecycle", "access-session-boundaries", "ui-session-history", "ui-location-permissions", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
   [string]$Suite = "document-concurrency"
 )
 
@@ -102,6 +102,25 @@ INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at
   & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file $setupFile | Out-Null
   if ($LASTEXITCODE -ne 0) { throw "Preparazione D1 locale non riuscita" }
 
+  # I dati UI devono essere creati prima dell'avvio di Pages. Scrivere nello
+  # stesso database locale con un secondo processo Wrangler mentre il browser
+  # lo usa può interrompere Miniflare e produrre falsi errori di rete.
+  if ($Suite -in @("ui-session-history", "ui-location-permissions")) {
+    $uiSetupSql = @"
+INSERT INTO profiles(id,name,surname,role,created_at) VALUES
+('$uiTravelerId','$uiTravelerName','','traveler','$created'),
+('$uiCoordinatorId','$uiCoordinatorName','','coordinator','$created');
+INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at) VALUES
+('$(Get-TokenHash $uiTravelerInvite)','$uiTravelerId','$uiCoordinatorId','$created','$expires',NULL),
+('$(Get-TokenHash $uiTravelerSecondInvite)','$uiTravelerId','$uiCoordinatorId','$created','$expires',NULL),
+('$(Get-TokenHash $uiCoordinatorInvite)','$uiCoordinatorId','$uiCoordinatorId','$created','$expires',NULL);
+"@
+    $uiSetupFile = Join-Path $persistRoot "ui-session-history.sql"
+    [IO.File]::WriteAllText($uiSetupFile, $uiSetupSql, [Text.UTF8Encoding]::new($false))
+    & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file $uiSetupFile | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Preparazione profili UI locali non riuscita" }
+  }
+
   $npx = (Get-Command npx.cmd).Source
   $serverOut = Join-Path $persistRoot "pages-dev.out.log"
   $serverErr = Join-Path $persistRoot "pages-dev.err.log"
@@ -181,21 +200,9 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
     Write-Host "P0_SUITE_START=$selectedSuite"
     $previousErrorActionPreference = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
-    if ($selectedSuite -eq "ui-session-history") {
-      $uiSetupSql = @"
-INSERT INTO profiles(id,name,surname,role,created_at) VALUES
-('$uiTravelerId','$uiTravelerName','','traveler','$created'),
-('$uiCoordinatorId','$uiCoordinatorName','','coordinator','$created');
-INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at) VALUES
-('$(Get-TokenHash $uiTravelerInvite)','$uiTravelerId','$uiCoordinatorId','$created','$expires',NULL),
-('$(Get-TokenHash $uiTravelerSecondInvite)','$uiTravelerId','$uiCoordinatorId','$created','$expires',NULL),
-('$(Get-TokenHash $uiCoordinatorInvite)','$uiCoordinatorId','$uiCoordinatorId','$created','$expires',NULL);
-"@
-      $uiSetupFile = Join-Path $persistRoot "ui-session-history.sql"
-      [IO.File]::WriteAllText($uiSetupFile, $uiSetupSql, [Text.UTF8Encoding]::new($false))
-      & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file $uiSetupFile | Out-Null
-      if ($LASTEXITCODE -ne 0) { throw "Preparazione profili UI locali non riuscita" }
-      $suiteOutput = & npx playwright test tests/ui-role-live.spec.mjs --config playwright.release.config.mjs --project=Samsung-S20-FE 2>&1
+    if ($selectedSuite -in @("ui-session-history", "ui-location-permissions")) {
+      $uiTestFile = if ($selectedSuite -eq "ui-session-history") { "tests/ui-role-live.spec.mjs" } else { "tests/ui-location.spec.mjs" }
+      $suiteOutput = & npx playwright test $uiTestFile --config playwright.release.config.mjs --project=Samsung-S20-FE 2>&1
     } else {
       $suiteOutput = & node $suiteFiles[$selectedSuite] 2>&1
     }

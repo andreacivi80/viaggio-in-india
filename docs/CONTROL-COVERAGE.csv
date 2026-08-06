@@ -34,15 +34,15 @@ P0,accessi-privacy,pending,"Aprire la griglia del Coordinatore, se autorizzato."
 P0,accessi-privacy,passed,Associare i commenti dei Viaggiatori alla sessione personale.,globale:T-0061,QA 1.31.0: commento del viaggiatore attribuito alla sessione e non ai campi del browser
 P0,accessi-privacy,pending,Attivazione sessione.,globale:T-1206,
 P0,accessi-privacy,passed,Aumento dei tentativi di accesso errati.,globale:T-1539,access-session-boundaries 17/17: dodici password errate attivano 429 senza creare profili
-P0,accessi-privacy,pending,Autorizzare GPS.,usabilita:U0235,
+P0,accessi-privacy,passed,Autorizzare GPS.,usabilita:U0235,ui-location touch 1/1: consenso GPS e coordinate Delhi condivise dal profilo autorizzato
 P0,accessi-privacy,pending,Autorizzare il microfono.,globale:T-0445;usabilita:U0215,
-P0,accessi-privacy,pending,Autorizzare il permesso.,usabilita:U0188,
+P0,accessi-privacy,passed,Autorizzare il permesso.,usabilita:U0188,ui-location touch 1/1: grant geolocation abilita la condivisione reale
 P0,accessi-privacy,pending,Autorizzare notifiche.,globale:T-0519,
-P0,accessi-privacy,pending,autorizzata durante l’uso;,globale:T-1370,
+P0,accessi-privacy,passed,autorizzata durante l’uso;,globale:T-1370,ui-location touch 1/1: permesso geolocation limitato al contesto mobile attivo
 P0,accessi-privacy,pending,autorizzata sempre;,globale:T-1371,
 P0,accessi-privacy,pending,autorizzata una sola volta;,globale:T-1372,
-P0,accessi-privacy,pending,autorizzate;,globale:T-1373,
-P0,accessi-privacy,pending,autorizzazione negata;,addendum:A0167,
+P0,accessi-privacy,passed,autorizzate;,globale:T-1373,ui-location touch 1/1: con permesso concesso API posizione 200 e sincronizzazione visibile
+P0,accessi-privacy,passed,autorizzazione negata;,addendum:A0167,ui-location touch 1/1: diniego mostra messaggio e produce zero richieste POST
 P0,accessi-privacy,passed,autorizzazioni dei ruoli;,globale:T-1790,P0 locale ruoli 18/18: matrice viaggiatore/coordinatore verificata direttamente sugli endpoint
 P0,accessi-privacy,passed,autorizzazioni;,addendum:A0079,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P0,accessi-privacy,passed,Cambiare ruolo e rinnovare la sessione.,addendum:A0342,roles 20/20: promozione e retrocessione sono rilevate dal token già aperto; l’ultimo coordinatore non può essere retrocesso
@@ -187,7 +187,7 @@ P0,accessi-privacy,pending,password di gruppo e sessione Coordinatore;,addendum:
 P0,accessi-privacy,pending,password di gruppo e sessione scaduta;,addendum:A0055,
 P0,accessi-privacy,passed,password di gruppo e sessione Viaggiatore;,addendum:A0053,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,password errata;,usabilita:U0492,ui-critical produzione mobile: password errata non sblocca Gruppo né documenti
-P0,accessi-privacy,pending,permesso autorizzato;,globale:T-1381,
+P0,accessi-privacy,passed,permesso autorizzato;,globale:T-1381,ui-location touch 1/1: permesso riattivato consente nuovo invio e successiva cancellazione
 P0,accessi-privacy,passed,privacy dei profili;,globale:T-1795,authorization-matrix 55/55: campi tecnici del consenso esclusi dalla risposta condivisa; documenti e posizioni restano su endpoint autenticato
 P0,accessi-privacy,passed,privacy nella vista pubblica.,usabilita:U0401,ui-critical e production-smoke: cache privata filtrata e stato pubblico privo di campi privati
 P0,accessi-privacy,passed,profile_id della sessione prevale sempre sul profile_id del localStorage;,addendum:A0061,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
@@ -212,7 +212,7 @@ P0,accessi-privacy,pending,Richiedere invito personale.,usabilita:U0483,
 P0,accessi-privacy,passed,Richiedere l’invito personale per collegare un dispositivo a un profilo.,globale:T-0038,QA 1.31.0: nuovo dispositivo collegato tramite invito personale monouso
 P0,accessi-privacy,pending,Richiesta di nuovo accesso.,usabilita:U0488,
 P0,accessi-privacy,passed,"Ridurre la durata della sessione, attualmente prevista fino a 90 giorni.",globale:T-0039,security-surface + auth-lifecycle 35/35: durata massima ridotta a 30 giorni e inattività massima a 21 giorni
-P0,accessi-privacy,pending,Riprovare dopo autorizzazione dalle impostazioni.,usabilita:U0064,
+P0,accessi-privacy,passed,Riprovare dopo autorizzazione dalle impostazioni.,usabilita:U0064,ui-location touch 1/1: dopo clear e nuovo grant la riprova invia e cancella la posizione
 P0,accessi-privacy,pending,rispetta le autorizzazioni;,usabilita:U0684,
 P0,accessi-privacy,passed,Risultato atteso: accesso negato.,globale:T-0331;usabilita:U0409,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Risultato atteso: nessun contenuto privato visibile.,globale:T-0871,"authorization-matrix 55/55: stato pubblico=solo public, familiare=public+family, altro viaggiatore e coordinatore non vedono il private altrui"

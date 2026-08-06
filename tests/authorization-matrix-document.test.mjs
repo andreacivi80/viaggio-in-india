@@ -15,4 +15,6 @@ test("la matrice autorizzativa documenta tutti i ruoli e le risorse sensibili", 
   assert.match(matrix, /extended-p0-access-session-boundaries\.mjs[\s\S]*17\/17/i);
   assert.match(matrix, /ui-role-live\.spec\.mjs[\s\S]*Galaxy S20 FE/i);
   assert.match(matrix, /sessione realmente scaduta[\s\S]*dati locali obsoleti/i);
+  assert.match(matrix, /ui-location\.spec\.mjs[\s\S]*Galaxy S20 FE/i);
+  assert.match(matrix, /diniego senza alcuna richiesta di scrittura[\s\S]*riattivato il permesso/i);
 });

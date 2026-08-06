@@ -41,8 +41,9 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
   const publicPage = await publicContext.newPage();
   try {
     await travelerPage.goto(`${baseUrl}/#invite=${encodeURIComponent(travelerInvite)}`, {
-      waitUntil: "networkidle",
+      waitUntil: "domcontentloaded",
     });
+    await expect(travelerPage.locator(".accessPill")).toContainText(travelerName.split(" ")[0]);
     await openPersonalPanel(travelerPage);
     await expect(travelerPage.locator(".quickProfilePanel")).toContainText(travelerName);
     const locationResponse = travelerPage.waitForResponse(
@@ -77,8 +78,9 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
     await expect(travelerPage.locator(".peopleLocationMap")).toHaveCount(0);
 
     await coordinatorPage.goto(`${baseUrl}/#invite=${encodeURIComponent(coordinatorInvite)}`, {
-      waitUntil: "networkidle",
+      waitUntil: "domcontentloaded",
     });
+    await expect(coordinatorPage.locator(".accessPill")).toContainText(coordinatorName.split(" ")[0]);
     await openPersonalPanel(coordinatorPage);
     await coordinatorPage.getByRole("button", { name: "Griglia coordinatore" }).tap();
     await coordinatorPage.getByRole("button", { name: /Apri mappa posizioni/ }).tap();
@@ -88,7 +90,8 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
     await coordinatorPage.getByRole("button", { name: /Chiudi mappa posizioni/ }).tap();
     await expect(coordinatorPage.locator(".peopleLocationMap")).toHaveCount(0);
 
-    await publicPage.goto(baseUrl, { waitUntil: "networkidle" });
+    await publicPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
+    await expect(publicPage.locator(".accessPill")).toContainText("Pubblico");
     await openPersonalPanel(publicPage);
     await expect(publicPage.locator(".lockedComposer")).toContainText("Accesso privato");
     await expect(publicPage.locator(".locationList")).toHaveCount(0);
@@ -112,6 +115,19 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
     await travelerPage.getByRole("button", { name: "Condividi posizione" }).tap();
     await expect(travelerPage.getByText("Permesso posizione non disponibile.")).toBeVisible();
     expect(deniedRequestCount).toBe(0);
+
+    await travelerContext.grantPermissions(["geolocation"], { origin: baseUrl });
+    const retryLocationResponse = travelerPage.waitForResponse(
+      (response) => response.url().endsWith("/api/locations") && response.request().method() === "POST",
+    );
+    await travelerPage.getByRole("button", { name: "Condividi posizione" }).tap();
+    expect((await retryLocationResponse).status()).toBe(200);
+    await expect(travelerPage.getByText("Posizione condivisa adesso.")).toBeVisible();
+    const retryDeleteResponse = travelerPage.waitForResponse(
+      (response) => response.url().includes("/api/locations/") && response.request().method() === "DELETE",
+    );
+    await travelerPage.getByRole("button", { name: "Cancella posizione" }).tap();
+    expect((await retryDeleteResponse).status()).toBe(200);
   } finally {
     await Promise.all([
       travelerContext.close(),
