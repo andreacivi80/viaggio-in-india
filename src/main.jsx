@@ -27,6 +27,7 @@ import {
   Paperclip,
   Send,
   Link,
+  X,
 } from "./icons.jsx";
 import "./styles.css";
 import { publicationAccessStep, publicationEntryState } from "./accessFlow.js";
@@ -39,8 +40,29 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.43.1",
+const VERSION = "1.43.2",
   API = "/api";
+const safeWebStorage = (name) => {
+  const fallback = new Map();
+  let nativeStorage = null;
+  try { nativeStorage = window[name]; } catch { /* storage bloccato dal browser */ }
+  return {
+    getItem(key) {
+      try { return nativeStorage?.getItem(key) ?? fallback.get(key) ?? null; }
+      catch { return fallback.get(key) ?? null; }
+    },
+    setItem(key, value) {
+      fallback.set(key, String(value));
+      try { nativeStorage?.setItem(key, String(value)); } catch { /* mantiene la sessione in memoria */ }
+    },
+    removeItem(key) {
+      fallback.delete(key);
+      try { nativeStorage?.removeItem(key); } catch { /* storage non disponibile */ }
+    },
+  };
+};
+const localStorage = safeWebStorage("localStorage");
+const sessionStorage = safeWebStorage("sessionStorage");
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
   if (/iPhone|iPad|iPod/i.test(userAgent)) return "iPhone o iPad";
@@ -2941,7 +2963,9 @@ function App() {
                   <section className="citySheet" role="dialog" aria-modal="true" aria-label={`Conosci ${city}`} onClick={(event) => event.stopPropagation()}>
                     <header>
                       <img src={cityImages[city]} alt={`Panorama di ${city}`} />
-                      <button type="button" onClick={() => setCityPanel(null)} aria-label="Chiudi informazioni citta">X</button>
+                      <button className="citySheetClose" type="button" onClick={() => setCityPanel(null)} aria-label="Chiudi informazioni città">
+                        <X aria-hidden="true" strokeWidth={2.4} />
+                      </button>
                       <div><small>CONOSCIAMO LA TAPPA</small><h2>{city}</h2></div>
                     </header>
                     <div className="citySheetBody">
@@ -2954,7 +2978,6 @@ function App() {
                       </dl>
                       <article><small>UNA CITTA, NON SOLO UNA TAPPA</small><p>{facts.identity}</p></article>
                       <article><small>COSA LA RENDE SPECIALE</small><p>{facts.knownFor}</p></article>
-                      <footer>{facts.scope} - dati indicativi da fonti pubbliche indiane</footer>
                     </div>
                   </section>
                 </div>
@@ -5724,4 +5747,23 @@ function Empty({ icon: I, title, text }) {
     </div>
   );
 }
-createRoot(document.getElementById("root")).render(<App />);
+class AppErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { failed: false };
+  }
+  static getDerivedStateFromError() { return { failed: true }; }
+  componentDidCatch(error) { console.error("Errore applicazione recuperabile", error); }
+  render() {
+    if (!this.state.failed) return this.props.children;
+    return (
+      <main className="appRecovery" role="alert">
+        <span aria-hidden="true">🇮🇳</span>
+        <h1>Riapriamo il viaggio</h1>
+        <p>I dati salvati non vengono cancellati. Ricarica l’app per riprendere.</p>
+        <button type="button" onClick={() => window.location.reload()}>Ricarica l’app</button>
+      </main>
+    );
+  }
+}
+createRoot(document.getElementById("root")).render(<AppErrorBoundary><App /></AppErrorBoundary>);

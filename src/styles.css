@@ -5311,18 +5311,48 @@ mark.mention {
   height: 100%;
   object-fit: cover;
 }
-.citySheet header > button {
+.citySheet header > .citySheetClose {
   position: absolute;
   z-index: 3;
   top: calc(12px + env(safe-area-inset-top));
   right: 14px;
   width: 44px;
   height: 44px;
-  border: 1px solid #fff9;
+  display: grid;
+  place-items: center;
+  border: 1px solid #ffffffb8;
   border-radius: 50%;
   background: #102d25dc;
   color: #fff;
-  font-size: 18px;
+  box-shadow: 0 5px 18px #0005;
+  backdrop-filter: blur(8px);
+  -webkit-tap-highlight-color: transparent;
+}
+.citySheetClose svg {
+  width: 21px;
+  height: 21px;
+}
+.citySheetClose:active { transform: scale(.94); }
+.citySheetClose:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+.appRecovery {
+  min-height: 100dvh;
+  display: grid;
+  place-content: center;
+  gap: 12px;
+  padding: 28px;
+  text-align: center;
+  background: linear-gradient(160deg, #fff8ed, #e9f5ee);
+  color: #153b31;
+}
+.appRecovery > span { font-size: 44px; }
+.appRecovery h1, .appRecovery p { margin: 0; }
+.appRecovery button {
+  min-height: 48px;
+  margin-top: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: #153b31;
+  color: #fff;
   font-weight: 900;
 }
 .citySheet header > div {
@@ -5344,7 +5374,6 @@ mark.mention {
 .citySheetBody article { padding: 15px; border: 1px solid #eadbc5; border-radius: 16px; background: #fff; }
 .citySheetBody article small { color: var(--orange); font-size: 9px; font-weight: 950; letter-spacing: 1px; }
 .citySheetBody article p { margin: 7px 0 0; color: #354b44; line-height: 1.5; }
-.citySheetBody footer { color: #718078; font-size: 9px; line-height: 1.35; text-align: center; }
 @media (max-width: 370px) {
   .citySheetBody dl { grid-template-columns: 1fr; }
   .citySheet header h2 { font-size: 32px; }

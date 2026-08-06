@@ -49,8 +49,15 @@ test("giornate aperte mostrano clima, alba, tramonto e informazioni della città
     await expect(citySheet).toContainText("Altitudine");
     await expect(citySheet).toContainText("Lingue diffuse");
     await expect(citySheet).toContainText("COSA LA RENDE SPECIALE");
+    await expect(citySheet).not.toContainText("dati indicativi da fonti pubbliche indiane");
+    await expect(citySheet).not.toContainText("Censimento 2011");
     expect(await citySheet.evaluate((node) => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
-    await citySheet.getByRole("button", { name: "Chiudi informazioni citta" }).tap();
+    const closeButton = citySheet.getByRole("button", { name: "Chiudi informazioni città" });
+    await expect(closeButton.locator("svg")).toHaveCount(1);
+    const closeSize = await closeButton.boundingBox();
+    expect(closeSize.width).toBeGreaterThanOrEqual(44);
+    expect(closeSize.height).toBeGreaterThanOrEqual(44);
+    await closeButton.tap();
     await expect(citySheet).toHaveCount(0);
     if (index === 2) {
       const baggage = day.locator(".flightBaggageCard");

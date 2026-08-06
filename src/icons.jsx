@@ -26,4 +26,5 @@ export {
   Paperclip,
   Send,
   Link,
+  X,
 } from "lucide-react";
