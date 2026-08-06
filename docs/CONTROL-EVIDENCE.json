@@ -317,4 +317,9 @@
   ,{ "control": "Modalità privata del browser.", "evidence": "ui-private-browser-session touch 1/1: sessione confinata al contesto privato; dopo la chiusura il nuovo contesto è Pubblico, senza credenziali e con area privata 401" }
   ,{ "control": "Verificare nessun URL permanente condivisibile senza sessione.", "evidence": "ui-private-browser-session touch 1/1: invito rimosso dall’URL; lo stesso URL ripulito aperto in un nuovo contesto non trasferisce token, profilo o accesso" }
   ,{ "control": "la gestione dei contenuti sia separata dalla gestione delle sessioni;", "evidence": "ui-people touch 1/1: creazione, modifica e apertura documenti altrui non sostituiscono più profile-id, nome o ruolo della sessione coordinatore" }
+  ,{ "control": "Copia invito.", "evidence": "ui-multi-invite-copy touch 1/1 ripetuto due volte: pulsante Copia link azionato e URL letto realmente dagli appunti del telefono" }
+  ,{ "control": "Copiare invito.", "evidence": "ui-multi-invite-copy touch 1/1 ripetuto due volte: tre link distinti copiati, senza query e con token soltanto nel frammento" }
+  ,{ "control": "Creare un invito per ogni Viaggiatore.", "evidence": "ui-multi-invite-copy touch 1/1 ripetuto due volte: tre schede diverse producono tre inviti personali distinti" }
+  ,{ "control": "Tutti i partecipanti aprono il proprio invito.", "evidence": "ui-multi-invite-copy touch 1/1 ripetuto due volte: tre telefoni nuovi aprono i tre link e ricevono tre profile-id differenti e corretti" }
+  ,{ "control": "Verificare la regola prevista per il riutilizzo del token.", "evidence": "ui-multi-invite-copy touch + auth-lifecycle: ciascuno dei tre inviti crea una sola sessione; il riuso riceve 403/409 e resta Pubblico" }
 ]

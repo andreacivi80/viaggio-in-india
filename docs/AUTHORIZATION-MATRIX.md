@@ -96,6 +96,10 @@ Il collaudo touch `ui-private-browser-session.spec.mjs` usa un Galaxy S20 FE e u
 
 Il collaudo touch `ui-people.spec.mjs` conserva l’identificativo della sessione coordinatore prima e dopo tre operazioni su un’altra persona: creazione del profilo, modifica e apertura dei relativi documenti. L’identificativo locale e l’etichetta di accesso restano quelli del coordinatore; la persona selezionata serve soltanto a scegliere il contenuto visualizzato. Tornando al Gruppo il dispositivo è ancora collegato al profilo originario. In questo modo un contenuto gestito non può diventare accidentalmente l’identità attiva del telefono.
 
+## Inviti multipli e copia del link
+
+Il collaudo touch `ui-multi-invite-copy.spec.mjs` crea dal telefono del coordinatore tre inviti personali per tre viaggiatori distinti. Per ciascuna scheda tocca `Crea invito personale`, tocca `Copia link` e legge realmente gli appunti del telefono: i tre URL sono differenti, non contengono query e conservano il segreto soltanto nel frammento. Tre contesti mobili nuovi aprono ciascuno il proprio link, ricevono tre profili differenti e mostrano l’etichetta di accesso corretta senza cambiare l’identità del coordinatore. Il successivo riutilizzo di ogni link viene respinto con `403` o `409` e non crea una sessione.
+
 ## PDF protetti da password
 
 Il collaudo touch `ui-protected-pdf.spec.mjs` carica un PDF AES-256 realmente cifrato dal telefono del proprietario. Il file viene conservato nell’area privata, compare nella griglia del coordinatore e resta scaricabile senza che l’app richieda o memorizzi la password. Il visualizzatore riconosce `PasswordException`, non mostra pagine vuote o contenuto parziale e propone esplicitamente il lettore PDF del telefono. Proprietario e coordinatore ricevono lo stesso comportamento controllato; il proprietario elimina infine il file. La fixture contiene soltanto dati fittizi ed è verificata con password corretta, password errata e rendering visivo prima del test.

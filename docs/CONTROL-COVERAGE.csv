@@ -71,15 +71,15 @@ P0,accessi-privacy,passed,CONSENTITO SOLTANTO SE PROPRIETARIO;,addendum:A0023,en
 P0,accessi-privacy,passed,Coordinatore apre documenti autorizzati.,usabilita:U0440,P0 locale documenti: coordinatore apre la chiave privata del documento del viaggiatore
 P0,accessi-privacy,passed,"Coordinatore revoca A, A perde accesso immediatamente.",usabilita:U0564,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P0,accessi-privacy,passed,Coordinatore: documenti autorizzati del gruppo.,globale:T-0480,P0 locale documenti: stato privato coordinatore include il documento del gruppo e media accessibile
-P0,accessi-privacy,pending,Copia invito.,usabilita:U0657,
+P0,accessi-privacy,passed,Copia invito.,usabilita:U0657,ui-multi-invite-copy touch 1/1 ripetuto due volte: pulsante Copia link azionato e URL letto realmente dagli appunti del telefono
 P0,accessi-privacy,passed,Copiare il token su un altro browser.,globale:T-0757,session-device-binding 2/2 + auth-lifecycle 57/57: token valido con chiave browser diversa o assente restituisce 401
-P0,accessi-privacy,pending,Copiare invito.,usabilita:U0378;usabilita:U0403,
+P0,accessi-privacy,passed,Copiare invito.,usabilita:U0378;usabilita:U0403,"ui-multi-invite-copy touch 1/1 ripetuto due volte: tre link distinti copiati, senza query e con token soltanto nel frammento"
 P0,accessi-privacy,passed,Copiare token su altro dispositivo.,globale:T-0615,auth-lifecycle 57/57: sessione nuova e sessione precedente dopo il primo binding accettano soltanto la chiave del dispositivo originario
 P0,accessi-privacy,passed,Creare due inviti successivi per la stessa persona.,globale:T-0776,"auth-lifecycle 61/61: primo invito creato e revocato, secondo creato separatamente e consumato correttamente"
 P0,accessi-privacy,passed,Creare invito per Viaggiatore A.,globale:T-0324,auth-lifecycle 61/61: invito creato per targetProfileId e risposta claim associata allo stesso profilo
 P0,accessi-privacy,passed,Creare invito.,usabilita:U0377;usabilita:U0402,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04 | Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Creare un invito o procedura di trasferimento sicura.,globale:T-1602,"invite-link-privacy 3/3: frammento non inviato al server, rimosso prima del claim; token monouso memorizzato come hash"
-P0,accessi-privacy,pending,Creare un invito per ogni Viaggiatore.,globale:T-0777,
+P0,accessi-privacy,passed,Creare un invito per ogni Viaggiatore.,globale:T-0777,ui-multi-invite-copy touch 1/1 ripetuto due volte: tre schede diverse producono tre inviti personali distinti
 P0,accessi-privacy,passed,creazione invito;,globale:T-0732;globale:T-1218;usabilita:U0656,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P0,accessi-privacy,passed,dati privati nella cache.,addendum:A0082,Public-cache unit + delayed-state Playwright 6/6; preview 63b53987; 2026-08-04
 P0,accessi-privacy,passed,deve ricevere una sessione Ospite sicura;,usabilita:U0024,guest-session-device-binding 2/2 + authorization-matrix 59/59: token familiare vincolato alla chiave del telefono; chiave assente o differente vede soltanto contenuti pubblici
@@ -248,7 +248,7 @@ P0,accessi-privacy,passed,Token revocato: 401.,usabilita:U0442,extended-p0-auth-
 P0,accessi-privacy,passed,token scaduto sulla risorsa A;,addendum:A0110,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Token scaduto: 401.,usabilita:U0441,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,tornando alla vista gruppo deve ricontrollare la sessione sul server;,addendum:A0281,ui-role-live touch 2/2: dopo revoca il Gruppo torna al gate e non mostra comandi privati
-P0,accessi-privacy,pending,Tutti i partecipanti aprono il proprio invito.,globale:T-1735,
+P0,accessi-privacy,passed,Tutti i partecipanti aprono il proprio invito.,globale:T-1735,ui-multi-invite-copy touch 1/1 ripetuto due volte: tre telefoni nuovi aprono i tre link e ricevono tre profile-id differenti e corretti
 P0,accessi-privacy,passed,un link privato è accessibile senza sessione;,usabilita:U0698,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,un tasto autorizzato riceve 401 o 403;,addendum:A0217,authorization-matrix 59/59: nessuna operazione consentita riceve 401/403
 P0,accessi-privacy,passed,un tasto non autorizzato riceve successo;,addendum:A0218,authorization-matrix 59/59: nessuna operazione vietata riceve successo
@@ -299,7 +299,7 @@ P0,accessi-privacy,passed,Verificare impossibilità di utilizzare la cronologia 
 P0,accessi-privacy,pending,Verificare informazioni autorizzate.,usabilita:U0366,
 P0,accessi-privacy,passed,"Verificare intestazione private, no-store.",globale:T-0488,access-session-boundaries 17/17: no-store verificato su dinieghi stato sessione e area privata autorizzata
 P0,accessi-privacy,pending,Verificare invalidazione dell’eventuale token temporaneo precedente.,addendum:A0339,
-P0,accessi-privacy,pending,Verificare la regola prevista per il riutilizzo del token.,globale:T-0770,
+P0,accessi-privacy,passed,Verificare la regola prevista per il riutilizzo del token.,globale:T-0770,ui-multi-invite-copy touch + auth-lifecycle: ciascuno dei tre inviti crea una sola sessione; il riuso riceve 403/409 e resta Pubblico
 P0,accessi-privacy,passed,"Verificare mantenimento dell’accesso, se previsto.",usabilita:U0052,ui-password-access touch 1/1: refresh completo conserva la sessione personale e riapre la scheda del proprietario
 P0,accessi-privacy,passed,Verificare mantenimento della sessione.,globale:T-0318,auth-lifecycle 35/35: rinnovo mantiene lo stesso token valido sul dispositivo e aggiorna la scadenza oltre 29 giorni
 P0,accessi-privacy,passed,Verificare messaggio di accesso riuscito.,usabilita:U0042,ui-password-access touch 1/1: messaggio Telefono collegato al nuovo profilo verificato dopo risposta 201

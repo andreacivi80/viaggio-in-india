@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("all", "authorization-matrix", "resource-enumeration", "auth-lifecycle", "access-session-boundaries", "ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-people", "ui-protected-pdf", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
+  [ValidateSet("all", "authorization-matrix", "resource-enumeration", "auth-lifecycle", "access-session-boundaries", "ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-multi-invite-copy", "ui-people", "ui-protected-pdf", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
   [string]$Suite = "document-concurrency"
 )
 
@@ -106,7 +106,7 @@ INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at
   # I dati UI devono essere creati prima dell'avvio di Pages. Scrivere nello
   # stesso database locale con un secondo processo Wrangler mentre il browser
   # lo usa può interrompere Miniflare e produrre falsi errori di rete.
-  if ($Suite -in @("ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-people", "ui-protected-pdf")) {
+  if ($Suite -in @("ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-multi-invite-copy", "ui-people", "ui-protected-pdf")) {
     $uiSetupSql = @"
 INSERT INTO profiles(id,name,surname,role,created_at) VALUES
 ('$uiTravelerId','$uiTravelerName','','traveler','$created'),
@@ -205,7 +205,7 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
     Write-Host "P0_SUITE_START=$selectedSuite"
     $previousErrorActionPreference = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
-    if ($selectedSuite -in @("ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-people", "ui-protected-pdf")) {
+    if ($selectedSuite -in @("ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-multi-invite-copy", "ui-people", "ui-protected-pdf")) {
       $uiTestFile = switch ($selectedSuite) {
         "ui-session-history" { "tests/ui-role-live.spec.mjs" }
         "ui-location-permissions" { "tests/ui-location.spec.mjs" }
@@ -214,6 +214,7 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
         "ui-coordinator-grid" { "tests/ui-coordinator-grid-access.spec.mjs" }
         "ui-invite-misdelivery" { "tests/ui-invite-misdelivery.spec.mjs" }
         "ui-private-browser-session" { "tests/ui-private-browser-session.spec.mjs" }
+        "ui-multi-invite-copy" { "tests/ui-multi-invite-copy.spec.mjs" }
         "ui-people" { "tests/ui-people.spec.mjs" }
         "ui-protected-pdf" { "tests/ui-protected-pdf.spec.mjs" }
       }
