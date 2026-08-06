@@ -57,6 +57,8 @@ try {
   if ($LASTEXITCODE -ne 0) { throw "Vincoli profilo autenticazione D1 locali non riusciti" }
   & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file db\migrations\0021_document_profile_integrity.sql | Out-Null
   if ($LASTEXITCODE -ne 0) { throw "Vincoli profilo documenti D1 locali non riusciti" }
+  & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file db\migrations\0022_location_profile_integrity.sql | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw "Vincoli profilo posizioni D1 locali non riusciti" }
 
   if ($Suite -in @("all", "auth-lifecycle")) {
     $invalidSessionSql = "INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES('invalid-session-$runId','missing-profile-$runId','invalid-device-$runId','Non valido','$created','$created','$expires',NULL);"
@@ -136,6 +138,17 @@ INSERT INTO locations(profile_id,display_name,latitude,longitude,updated_at) VAL
     & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --command "DELETE FROM document_status WHERE profile_id='$ownerId' AND doc_type='integrity-check';" | Out-Null
     if ($LASTEXITCODE -ne 0) { throw "Pulizia documento di integrità locale non riuscita" }
     Write-Output "P0_DOCUMENT_PROFILE_INTEGRITY=2/2"
+  }
+
+  if ($Suite -in @("all", "location", "location-retention")) {
+    $invalidLocationSql = "INSERT INTO locations(profile_id,display_name,latitude,longitude,updated_at) VALUES('missing-profile-$runId','Non valida',1,1,'$created');"
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    $invalidLocationOutput = & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --command $invalidLocationSql 2>&1
+    $invalidLocationExit = $LASTEXITCODE
+    $ErrorActionPreference = $previousErrorActionPreference
+    if ($invalidLocationExit -eq 0) { throw "Il database ha accettato una posizione senza profilo: $invalidLocationOutput" }
+    Write-Output "P1_LOCATION_PROFILE_INTEGRITY=1/1"
   }
 
   # I dati UI devono essere creati prima dell'avvio di Pages. Scrivere nello

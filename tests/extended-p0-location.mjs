@@ -22,6 +22,13 @@ assert.equal((await request("/api/locations", {
 assert.ok((await privateState(owner)).locations.some((location) => location.profile_id === ownerId));
 assert.ok((await privateState(other)).locations.some((location) => location.profile_id === ownerId));
 assert.ok((await privateState(coordinator)).locations.some((location) => location.profile_id === ownerId));
+const retryResponses = await Promise.all(Array.from({ length: 10 }, (_, index) => request("/api/locations", {
+  method: "POST",
+  headers: { ...owner, "content-type": "application/json", "x-idempotency-key": "location-retry-same-operation" },
+  body: JSON.stringify({ profile_id: ownerId, latitude: 28.6139 + index / 10000, longitude: 77.209 + index / 10000 }),
+})));
+assert.equal(retryResponses.every((response) => response.status === 200), true);
+assert.equal((await privateState(owner)).locations.filter((location) => location.profile_id === ownerId).length, 1);
 assert.equal((await request("/api/locations", {
   method: "POST",
   headers: { ...other, "content-type": "application/json" },
@@ -33,4 +40,4 @@ assert.ok(!(await privateState(owner)).locations.some((location) => location.pro
 assert.ok(!(await privateState(coordinator)).locations.some((location) => location.profile_id === ownerId));
 assert.equal((await request(`/api/locations/${otherId}`, { method: "DELETE", headers: owner })).status, 403);
 
-console.log("P0_LOCATION=10/10");
+console.log("P0_LOCATION=22/22");

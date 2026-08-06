@@ -21,10 +21,11 @@ test("le migrazioni sono numerate, additive e non cancellano dati reali", async 
     const sql = await readFile(new URL(name, migrationDirectory), "utf8");
     assert.doesNotMatch(sql, /\bDROP\s+(?:TABLE|COLUMN)\b/i, `${name}: DROP distruttivo`);
     assert.doesNotMatch(sql, /\bTRUNCATE\b/i, `${name}: TRUNCATE distruttivo`);
-    assert.doesNotMatch(sql, new RegExp(`\\bDELETE\\s+FROM\\s+(?:${coreTables})\\b`, "i"), `${name}: DELETE sui dati reali`);
     for (const statement of sql.split(";")) {
       if (new RegExp(`^\\s*UPDATE\\s+(?:${coreTables})\\b`, "i").test(statement))
         assert.match(statement, /\bWHERE\b/i, `${name}: UPDATE globale senza WHERE`);
+      if (new RegExp(`(?:^|\\bBEGIN\\s+)\\s*DELETE\\s+FROM\\s+(?:${coreTables})\\b`, "i").test(statement))
+        assert.match(statement, /\bWHERE\b/i, `${name}: DELETE globale senza WHERE`);
     }
   }
 });
@@ -48,6 +49,17 @@ test("il database impedisce documenti collegati a profili inesistenti", async ()
     assert.match(source, /document_profile_update_guard/);
     assert.match(source, /BEFORE UPDATE OF profile_id ON document_status/);
     assert.match(source, /NOT EXISTS \(SELECT 1 FROM profiles WHERE id = NEW\.profile_id\)/);
+  }
+});
+
+test("il database impedisce posizioni orfane e le elimina con il profilo", async () => {
+  const schema = await readFile(new URL("../db/schema.sql", import.meta.url), "utf8");
+  const migration = await readFile(new URL("../db/migrations/0022_location_profile_integrity.sql", import.meta.url), "utf8");
+  for (const source of [schema, migration]) {
+    assert.match(source, /location_profile_insert_guard/);
+    assert.match(source, /location_profile_update_guard/);
+    assert.match(source, /private_profile_delete_cleanup/);
+    assert.match(source, /DELETE FROM locations WHERE profile_id = OLD\.id/);
   }
 });
 

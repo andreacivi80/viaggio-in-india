@@ -1,7 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
 Controlli selezionati: **120** tra 352 controlli P0–P2 ancora privi di evidenza conclusiva.
-Stato del pacchetto: **40 superati**, **80 pendenti**.
+Stato del pacchetto: **50 superati**, **70 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -80,13 +80,13 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
 - [x] **K-034 · mappe-posizione** — Eliminare automaticamente le posizioni non più necessarie.
   Sorgente: `globale:T-1346`. P0_LOCATION_RETENTION 5/5: la manutenzione elimina automaticamente posizioni più vecchie di 24 ore e conserva quelle recenti; il proprietario mantiene la cancellazione manuale immediata.
 - [x] **K-035 · persistenza** — Applicare le migrazioni una alla volta.
-  Sorgente: `globale:T-1026`. P0_MIGRATION_CHAIN 22/22: ogni migrazione viene applicata singolarmente in ordine su D1 locale e, dopo ciascun passaggio, profilo, post e documento sentinella restano presenti.
+  Sorgente: `globale:T-1026`. P0_MIGRATION_CHAIN 23/23: ogni migrazione viene applicata singolarmente in ordine su D1 locale e, dopo ciascun passaggio, profilo, post e documento sentinella restano presenti.
 - [x] **K-036 · persistenza** — controlli eventuale modifica del database.
-  Sorgente: `addendum:A0208`. migration-safety 7/7 + P0_MIGRATION_CHAIN 22/22: ogni modifica database è additiva, ordinata e verificata con dati sentinella prima/dopo.
+  Sorgente: `addendum:A0208`. migration-safety 8/8 + P0_MIGRATION_CHAIN 23/23: ogni modifica database è additiva, ordinata e verificata con dati sentinella prima/dopo.
 - [x] **K-037 · persistenza** — Creare un database dalla schema completa.
   Sorgente: `globale:T-1027`. P0_FULL_SCHEMA_CREATE 2/2: db/schema.sql crea da zero tutte le 12 tabelle critiche ed è riapplicabile senza errore o duplicazione.
 - [x] **K-038 · persistenza** — Creare un database partendo dalla prima versione.
-  Sorgente: `globale:T-1028`. P0_MIGRATION_CHAIN 22/22 + P0_LEGACY_DATA_PRESERVATION 3/3: la nuova baseline 0001 ricostruisce la prima versione e raggiunge lo schema attuale conservando i dati reali sentinella.
+  Sorgente: `globale:T-1028`. P0_MIGRATION_CHAIN 23/23 + P0_LEGACY_DATA_PRESERVATION 3/3: la nuova baseline 0001 ricostruisce la prima versione e raggiunge lo schema attuale conservando i dati reali sentinella.
 - [x] **K-039 · persistenza** — Eseguire backup mentre vengono creati post.
   Sorgente: `globale:T-1168`. P0_BACKUP_CONTENT 24/24: snapshot online durante cinque creazioni concorrenti; tutti i post completati restano unici e presenti nello stato finale.
 - [x] **K-040 · persistenza** — nessun dato precedente ripristinato erroneamente.
@@ -110,22 +110,22 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-1040`. Aggiornamenti, guasti e retry non devono perdere o duplicare dati.
 - [ ] **K-048 · persistenza** — Verificare stabilità del database.
   Sorgente: `globale:T-0578`. Aggiornamenti, guasti e retry non devono perdere o duplicare dati.
-- [ ] **K-049 · profili-ruoli** — Aggiungere moderazione del Coordinatore.
-  Sorgente: `globale:T-0056`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
+- [x] **K-049 · profili-ruoli** — Aggiungere moderazione del Coordinatore.
+  Sorgente: `globale:T-0056`. P0_AUTHORIZATION_MATRIX 86/86: il coordinatore può moderare contenuti condivisi; viaggiatore, familiare e pubblico non acquisiscono privilegi di moderazione.
 - [ ] **K-050 · profili-ruoli** — Aprire la Bacheca come Coordinatore.
   Sorgente: `usabilita:U0098`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
 - [ ] **K-051 · profili-ruoli** — Avvisare il Coordinatore in caso di abuso ripetuto.
   Sorgente: `globale:T-1052`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-052 · profili-ruoli** — Il Coordinatore revoca un dispositivo di prova.
-  Sorgente: `globale:T-1729`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-053 · profili-ruoli** — Revocare il dispositivo dal Coordinatore.
-  Sorgente: `globale:T-0763`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
+- [x] **K-052 · profili-ruoli** — Il Coordinatore revoca un dispositivo di prova.
+  Sorgente: `globale:T-1729`. P0_AUTH_LIFECYCLE 68/68: il coordinatore revoca il dispositivo scelto, la relativa sessione riceve 401 e le altre sessioni autorizzate restano attive.
+- [x] **K-053 · profili-ruoli** — Revocare il dispositivo dal Coordinatore.
+  Sorgente: `globale:T-0763`. P0_AUTH_LIFECYCLE 68/68: il coordinatore revoca il dispositivo scelto, la relativa sessione riceve 401 e le altre sessioni autorizzate restano attive.
 - [ ] **K-054 · profili-ruoli** — Tornare a vista Coordinatore.
   Sorgente: `usabilita:U0454`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
 - [ ] **K-055 · profili-ruoli** — Verificare che il Coordinatore visualizzi 4/4.
   Sorgente: `globale:T-0710`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-056 · profili-ruoli** — Verificare che il profilo non compaia nella dashboard del Coordinatore.
-  Sorgente: `globale:T-1328`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
+- [x] **K-056 · profili-ruoli** — Verificare che il profilo non compaia nella dashboard del Coordinatore.
+  Sorgente: `globale:T-1328`. P0_PROFILE_DELETION 40/40: dopo eliminazione il profilo e i documenti collegati scompaiono anche dalla vista coordinatore e non tornano al refresh.
 - [ ] **K-057 · profili-ruoli** — Visualizzare contatto del Coordinatore.
   Sorgente: `globale:T-1196`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
 - [ ] **K-058 · persistenza** — Preferiti salvati nel database.
@@ -134,8 +134,8 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-1432`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
 - [ ] **K-060 · mappe-posizione** — Verificare posizione allegata soltanto con consenso.
   Sorgente: `globale:T-1194`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-061 · mappe-posizione** — Ogni posizione deve essere collegata a un profilo esistente.
-  Sorgente: `globale:T-1018`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
+- [x] **K-061 · mappe-posizione** — Ogni posizione deve essere collegata a un profilo esistente.
+  Sorgente: `globale:T-1018`. migration-safety 8/8 + P1_LOCATION_PROFILE_INTEGRITY 1/1: trigger D1 rifiuta posizioni verso profili inesistenti e pulisce la posizione quando il profilo viene eliminato.
 - [ ] **K-062 · mappe-posizione** — Verificare che la posizione venga indicata come dichiarata dal dispositivo.
   Sorgente: `globale:T-1452`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
 - [ ] **K-063 · sync-rete** — Aprire il dominio senza cache.
@@ -150,10 +150,10 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-0866`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
 - [ ] **K-068 · documenti** — Caricare un PDF multipagina.
   Sorgente: `globale:T-0993`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
-- [ ] **K-069 · documenti** — Controllare PDF corrotti o pericolosi.
-  Sorgente: `globale:T-0166`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
-- [ ] **K-070 · mappe-posizione** — Una sola posizione dopo dieci retry.
-  Sorgente: `globale:T-0143`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
+- [x] **K-069 · documenti** — Controllare PDF corrotti o pericolosi.
+  Sorgente: `globale:T-0166`. file-validation L1 + P0_DOCUMENT_CONCURRENCY 28/28: PDF corrotto o con firma non valida riceve 400 e non sostituisce il documento valido precedente.
+- [x] **K-070 · mappe-posizione** — Una sola posizione dopo dieci retry.
+  Sorgente: `globale:T-0143`. P0_LOCATION 22/22: dieci aggiornamenti concorrenti dello stesso dispositivo restituiscono successo ma lasciano una sola posizione per il profilo.
 - [ ] **K-071 · media-upload** — Media pubblici con cache controllata.
   Sorgente: `globale:T-1475`. Foto, audio e video reali devono caricarsi, riaprirsi e riprendere dopo un errore.
 - [ ] **K-072 · sync-rete** — Verificare gestione della revoca al ritorno della rete.
@@ -211,16 +211,16 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-0546`. Foto, audio e video reali devono caricarsi, riaprirsi e riprendere dopo un errore.
 - [ ] **K-097 · media-upload** — Pubblicazione fotografia con posizione.
   Sorgente: `globale:T-1229`. Foto, audio e video reali devono caricarsi, riaprirsi e riprendere dopo un errore.
-- [ ] **K-098 · media-upload** — Verificare che il post compaia sul telefono B senza ricaricamento manuale.
-  Sorgente: `globale:T-0713`. Foto, audio e video reali devono caricarsi, riaprirsi e riprendere dopo un errore.
+- [x] **K-098 · media-upload** — Verificare che il post compaia sul telefono B senza ricaricamento manuale.
+  Sorgente: `globale:T-0713`. P0_ROLES 20/20: nome, cognome, avatar e profile_id sono derivati dalla sessione server; valori falsificati dal client vengono ignorati.
 - [ ] **K-099 · social** — Notifica con apertura del commento preciso.
   Sorgente: `globale:T-0082`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
 - [ ] **K-100 · social** — Notifica per reazione, se scelta dall’utente.
   Sorgente: `globale:T-0088`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
 - [ ] **K-101 · social** — Notifica per risposta a un commento.
   Sorgente: `globale:T-0089`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-102 · social** — Verificare che una notifica relativa a un post Gruppo non venga inviata ai familiari pubblici.
-  Sorgente: `globale:T-0877`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
+- [x] **K-102 · social** — Verificare che una notifica relativa a un post Gruppo non venga inviata ai familiari pubblici.
+  Sorgente: `globale:T-0877`. push-audience 5/5: un contenuto Gruppo raggiunge soltanto profili autenticati e non viene inviato a familiari/visitatori pubblici.
 - [ ] **K-103 · mappe-posizione** — A cancella posizione, B vede scomparsa.
   Sorgente: `usabilita:U0561`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
 - [ ] **K-104 · mappe-posizione** — A condivide posizione, B vede marker.
@@ -255,5 +255,5 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-0404`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
 - [ ] **K-119 · mappe-posizione** — Rimuovere la posizione prima dell’invio.
   Sorgente: `globale:T-0414`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-120 · mappe-posizione** — Tentare cancellazione di posizione altrui.
-  Sorgente: `usabilita:U0471`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
+- [x] **K-120 · mappe-posizione** — Tentare cancellazione di posizione altrui.
+  Sorgente: `usabilita:U0471`. P0_LOCATION 22/22: il tentativo touch/API di cancellare la posizione di un altro profilo riceve 403 e la posizione resta presente.
