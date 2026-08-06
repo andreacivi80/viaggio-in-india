@@ -17,15 +17,16 @@ const eq = (actual, expected, message) => { checks += 1; assert.equal(actual, ex
 const ok = (condition, message) => { checks += 1; assert.ok(condition, message); };
 const status = async (promise, expected, message) => eq((await promise).status, expected, message);
 const jsonHeaders = (headers = {}) => ({ ...headers, "content-type": "application/json" });
+const guestDeviceKey = "4".repeat(64);
 
 const guestResponse = await request("/api/auth/guest", {
   method: "POST",
-  headers: { "content-type": "application/json" },
+  headers: { "content-type": "application/json", "x-device-key": guestDeviceKey },
   body: JSON.stringify({ display_name: "Familiare matrice locale" }),
 });
 eq(guestResponse.status, 201);
 const guestSession = await guestResponse.json();
-const guest = { "x-guest-token": guestSession.token };
+const guest = { "x-guest-token": guestSession.token, "x-device-key": guestDeviceKey };
 
 const createPost = async (headers, visibility, label) => {
   const form = new FormData();
@@ -56,6 +57,8 @@ const visibleMatrixPosts = async (headers = {}) => {
 
 eq((await visibleMatrixPosts()).length, 1, "il pubblico vede soltanto public");
 eq((await visibleMatrixPosts(guest)).length, 2, "il familiare vede public e family");
+eq((await visibleMatrixPosts({ "x-guest-token": guestSession.token })).length, 1, "senza chiave dispositivo la sessione familiare non viene accettata");
+eq((await visibleMatrixPosts({ "x-guest-token": guestSession.token, "x-device-key": "5".repeat(64) })).length, 1, "con chiave di un altro telefono la sessione familiare non viene accettata");
 eq((await visibleMatrixPosts(other)).length, 3, "un viaggiatore vede public, family e group");
 eq((await visibleMatrixPosts(owner)).length, 4, "il proprietario vede anche il proprio private");
 eq((await visibleMatrixPosts(coordinator)).length, 3, "il coordinatore non invade il private altrui");

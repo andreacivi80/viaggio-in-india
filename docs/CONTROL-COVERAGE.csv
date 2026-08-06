@@ -82,7 +82,7 @@ P0,accessi-privacy,pending,Creare un invito o procedura di trasferimento sicura.
 P0,accessi-privacy,pending,Creare un invito per ogni Viaggiatore.,globale:T-0777,
 P0,accessi-privacy,passed,creazione invito;,globale:T-0732;globale:T-1218;usabilita:U0656,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P0,accessi-privacy,passed,dati privati nella cache.,addendum:A0082,Public-cache unit + delayed-state Playwright 6/6; preview 63b53987; 2026-08-04
-P0,accessi-privacy,pending,deve ricevere una sessione Ospite sicura;,usabilita:U0024,
+P0,accessi-privacy,passed,deve ricevere una sessione Ospite sicura;,usabilita:U0024,guest-session-device-binding 2/2 + authorization-matrix 59/59: token familiare vincolato alla chiave del telefono
 P0,accessi-privacy,pending,diagramma degli stati di accesso;,addendum:A0466,
 P0,accessi-privacy,pending,dispositivo o sessione;,globale:T-1558,
 P0,accessi-privacy,pending,"Distinguere limiti per IP, sessione e profilo.",globale:T-1053,

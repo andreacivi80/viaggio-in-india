@@ -215,4 +215,5 @@
   ,{ "control": "Ruotare il token dopo operazioni sensibili.", "evidence": "session-token-rotation 2/2 + auth-lifecycle 61/61: auth/refresh sostituisce atomicamente l’hash e restituisce una nuova credenziale legata allo stesso dispositivo" }
   ,{ "control": "Verificare che il vecchio token non funzioni più.", "evidence": "auth-lifecycle 61/61: immediatamente dopo il rinnovo il token precedente restituisce HTTP 401 e quello nuovo HTTP 200" }
   ,{ "control": "Verificare che il vecchio token non funzioni.", "evidence": "auth-lifecycle 61/61: credenziale precedente respinta dal server dopo la rotazione atomica" }
+  ,{ "control": "deve ricevere una sessione Ospite sicura;", "evidence": "guest-session-device-binding 2/2 + authorization-matrix 59/59: token familiare vincolato alla chiave del telefono; chiave assente o differente vede soltanto contenuti pubblici" }
 ]

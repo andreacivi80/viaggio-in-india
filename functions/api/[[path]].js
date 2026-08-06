@@ -259,15 +259,32 @@ async function createSession(env, profileId, deviceName = "Dispositivo", deviceK
 async function guestFromRequest(request, env) {
   const token = String(request.headers.get("x-guest-token") || "").trim();
   if (!token) return null;
-  return (
-    (await env.DB.prepare(
-      `SELECT visitor_id,display_name,expires_at
+  const tokenDigest = await tokenHash(token);
+  const guest = await env.DB.prepare(
+      `SELECT visitor_id,display_name,device_key_hash,expires_at
        FROM guest_sessions
        WHERE token_hash=? AND revoked_at IS NULL AND expires_at>?`,
     )
-      .bind(await tokenHash(token), now())
-      .first()) || null
-  );
+      .bind(tokenDigest, now())
+      .first();
+  if (!guest) return null;
+  const deviceKey = deviceKeyFromRequest(request);
+  if (guest.device_key_hash) {
+    if (!deviceKey || (await tokenHash(deviceKey)) !== guest.device_key_hash) return null;
+  } else if (deviceKey) {
+    const boundHash = await tokenHash(deviceKey);
+    const bound = await env.DB.prepare(
+      "UPDATE guest_sessions SET device_key_hash=? WHERE token_hash=? AND device_key_hash IS NULL",
+    ).bind(boundHash, tokenDigest).run();
+    if (!bound.meta?.changes) {
+      const current = await env.DB.prepare(
+        "SELECT device_key_hash FROM guest_sessions WHERE token_hash=?",
+      ).bind(tokenDigest).first();
+      if (!current?.device_key_hash || current.device_key_hash !== boundHash) return null;
+    }
+    guest.device_key_hash = boundHash;
+  }
+  return guest;
 }
 async function rateLimit(env, request, scope, limit, windowSeconds, actor = "") {
   const ip = String(request.headers.get("cf-connecting-ip") || "unknown");
@@ -641,6 +658,13 @@ async function ensureSessionDeviceSchema(env) {
   catch (error) { if (!/duplicate column|already exists/i.test(String(error?.message || error))) throw error; }
   sessionDeviceSchemaReady = true;
 }
+let guestDeviceSchemaReady = false;
+async function ensureGuestDeviceSchema(env) {
+  if (guestDeviceSchemaReady) return;
+  try { await env.DB.prepare("ALTER TABLE guest_sessions ADD COLUMN device_key_hash TEXT").run(); }
+  catch (error) { if (!/duplicate column|already exists/i.test(String(error?.message || error))) throw error; }
+  guestDeviceSchemaReady = true;
+}
 async function silentMaintenance(env) {
   const markerKey = "system/last-silent-maintenance";
   const lastRun = Number(await env.MEDIA.get(markerKey, { type: "text" })) || 0;
@@ -824,6 +848,7 @@ export async function onRequest(context) {
   await ensureProfileGenderSchema(env);
   await ensureProfilePrivacySchema(env);
   await ensureSessionDeviceSchema(env);
+  await ensureGuestDeviceSchema(env);
   context.waitUntil?.(silentMaintenance(env).catch(() => {}));
   try {
     if (request.method === "POST" && path === "auth/bootstrap") {
@@ -963,13 +988,16 @@ export async function onRequest(context) {
       const displayName = String(body.display_name || "").trim();
       if (!displayName || displayName.length > 80)
         return json({ error: "Inserisci un nome valido" }, 400);
+      const guestDeviceKey = deviceKeyFromRequest(request);
+      if (!guestDeviceKey)
+        return json({ error: "Identità dispositivo non valida" }, 400);
       const token = secureToken();
       const visitorId = id();
       const expiresAt = futureIso(24 * 30);
       await env.DB.prepare(
-        "INSERT INTO guest_sessions(token_hash,visitor_id,display_name,created_at,expires_at,revoked_at) VALUES(?,?,?,?,?,NULL)",
+        "INSERT INTO guest_sessions(token_hash,visitor_id,display_name,device_key_hash,created_at,expires_at,revoked_at) VALUES(?,?,?,?,?,?,NULL)",
       )
-        .bind(await tokenHash(token), visitorId, displayName, now(), expiresAt)
+        .bind(await tokenHash(token), visitorId, displayName, await tokenHash(guestDeviceKey), now(), expiresAt)
         .run();
       return json(
         { token, visitor_id: visitorId, display_name: displayName, expires_at: expiresAt },

@@ -174,11 +174,11 @@ async function guestHeaders(displayName) {
     localStorage.setItem("india-guest-name", result.display_name);
     localStorage.setItem("india-visitor-id", result.visitor_id);
   }
-  return { "x-guest-token": token };
+  return { "x-guest-token": token, "x-device-key": deviceKey() };
 }
 const storedGuestHeaders = () => {
   const token = localStorage.getItem("india-guest-token") || "";
-  return token ? { "x-guest-token": token } : {};
+  return token ? { "x-guest-token": token, "x-device-key": deviceKey() } : {};
 };
 async function verifyGroupCode(code, setGroupCode) {
   const response = await fetch(`${API}/auth/group`, {

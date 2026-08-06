@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS guest_sessions (
   token_hash TEXT PRIMARY KEY,
   visitor_id TEXT NOT NULL UNIQUE,
   display_name TEXT NOT NULL,
+  device_key_hash TEXT,
   created_at TEXT NOT NULL,
   expires_at TEXT NOT NULL,
   revoked_at TEXT

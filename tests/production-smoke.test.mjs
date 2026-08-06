@@ -11,6 +11,13 @@ const canMutate = ["127.0.0.1", "localhost"].includes(targetUrl.hostname)
 const packageData = JSON.parse(await readFile(new URL("../package.json", import.meta.url)));
 const expectedVersion = process.env.TEST_EXPECTED_VERSION || "";
 const qaRunId = process.env.QA_RUN_ID || "locale";
+const guestDeviceKey = "6".repeat(64);
+const guestCreateHeaders = { "content-type": "application/json", "x-device-key": guestDeviceKey };
+const boundGuestHeaders = (token, additional = {}) => ({
+  ...additional,
+  "x-guest-token": token,
+  "x-device-key": guestDeviceKey,
+});
 
 async function request(path, options = {}) {
   let lastError;
@@ -138,7 +145,7 @@ test("commenti e reazioni richiedono un'identità server", async () => {
 test("identità ospite valida e richieste vuote sono gestite senza scritture", { skip: !canMutate }, async () => {
   const guestResponse = await request("/api/auth/guest", {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: guestCreateHeaders,
     body: JSON.stringify({ display_name: `Collaudo automatico ${qaRunId}` }),
   });
   assert.equal(guestResponse.status, 201);
@@ -149,7 +156,7 @@ test("identità ospite valida e richieste vuote sono gestite senza scritture", {
   empty.set("post_id", state.posts[0].id);
   const emptyResponse = await request("/api/comments", {
     method: "POST",
-    headers: { "x-guest-token": guest.token },
+    headers: boundGuestHeaders(guest.token),
     body: empty,
   });
   assert.equal(emptyResponse.status, 400);
@@ -158,7 +165,7 @@ test("identità ospite valida e richieste vuote sono gestite senza scritture", {
 test("lo stesso invio non crea due commenti né inverte due volte una reazione", { skip: !canMutate }, async () => {
   const guestResponse = await request("/api/auth/guest", {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: guestCreateHeaders,
     body: JSON.stringify({ display_name: `Collaudo idempotenza ${qaRunId}` }),
   });
   assert.equal(guestResponse.status, 201);
@@ -174,7 +181,7 @@ test("lo stesso invio non crea due commenti né inverte due volte una reazione",
     return request("/api/comments", {
       method: "POST",
       headers: {
-        "x-guest-token": guest.token,
+        ...boundGuestHeaders(guest.token),
         "x-idempotency-key": operationKey,
         "x-qa-silent": "true",
       },
@@ -190,7 +197,7 @@ test("lo stesso invio non crea due commenti né inverte due volte una reazione",
   const second = await secondResponse.json();
   assert.equal(first.id, second.id);
   const afterComments = await (await request("/api/state", {
-    headers: { "x-guest-token": guest.token },
+    headers: boundGuestHeaders(guest.token),
     cache: "no-store",
   })).json();
   const occurrences = afterComments.posts
@@ -202,8 +209,7 @@ test("lo stesso invio non crea due commenti né inverte due volte una reazione",
   const reactionRequest = () => request("/api/reactions", {
     method: "POST",
     headers: {
-      "content-type": "application/json",
-      "x-guest-token": guest.token,
+      ...boundGuestHeaders(guest.token, { "content-type": "application/json" }),
       "x-idempotency-key": reactionKey,
     },
     body: JSON.stringify({ post_id: postId, kind: "clap" }),
@@ -219,16 +225,14 @@ test("lo stesso invio non crea due commenti né inverte due volte una reazione",
   await request(`/api/comments/${encodeURIComponent(first.id)}`, {
     method: "DELETE",
     headers: {
-      "content-type": "application/json",
-      "x-guest-token": guest.token,
+      ...boundGuestHeaders(guest.token, { "content-type": "application/json" }),
     },
     body: "{}",
   });
   await request("/api/reactions", {
     method: "POST",
     headers: {
-      "content-type": "application/json",
-      "x-guest-token": guest.token,
+      ...boundGuestHeaders(guest.token, { "content-type": "application/json" }),
       "x-idempotency-key": crypto.randomUUID(),
     },
     body: JSON.stringify({ post_id: postId, kind: "clap" }),
@@ -461,12 +465,12 @@ test("visibilità, identità e proprietà resistono alle richieste falsificate",
 
   const guestResponse = await request("/api/auth/guest", {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: guestCreateHeaders,
     body: JSON.stringify({ display_name: `Ospite sicurezza ${qaRunId}` }),
   });
   assert.equal(guestResponse.status, 201);
   const guest = await guestResponse.json();
-  const guestState = await (await request("/api/state", { headers: { "x-guest-token": guest.token }, cache: "no-store" })).json();
+  const guestState = await (await request("/api/state", { headers: boundGuestHeaders(guest.token), cache: "no-store" })).json();
   assert.ok(guestState.posts.some((post) => post.id === posts.public.id));
   assert.ok(guestState.posts.some((post) => post.id === posts.family.id));
   assert.ok(!guestState.posts.some((post) => post.id === posts.group.id));
@@ -482,10 +486,10 @@ test("visibilità, identità e proprietà resistono alle richieste falsificate",
   forbiddenComment.set("post_id", posts.private.id);
   forbiddenComment.set("text", "Non devo entrare");
   forbiddenComment.set("visitor_id", "identita-falsificata");
-  assert.equal((await request("/api/comments", { method: "POST", headers: { "x-guest-token": guest.token }, body: forbiddenComment })).status, 403);
+  assert.equal((await request("/api/comments", { method: "POST", headers: boundGuestHeaders(guest.token), body: forbiddenComment })).status, 403);
   assert.equal((await request("/api/reactions", {
     method: "POST",
-    headers: { "content-type": "application/json", "x-guest-token": guest.token },
+    headers: boundGuestHeaders(guest.token, { "content-type": "application/json" }),
     body: JSON.stringify({ post_id: posts.private.id, kind: "heart", visitor_id: "identita-falsificata" }),
   })).status, 403);
 
@@ -589,7 +593,7 @@ test("limiti antispam bloccano raffiche di commenti e reazioni", {
   const post = await postResponse.json();
   const guestResponse = await request("/api/auth/guest", {
     method: "POST",
-    headers: { "content-type": "application/json" },
+    headers: guestCreateHeaders,
     body: JSON.stringify({ display_name: `Antispam ${qaRunId}` }),
   });
   assert.equal(guestResponse.status, 201);
@@ -601,7 +605,7 @@ test("limiti antispam bloccano raffiche di commenti e reazioni", {
     form.set("text", `Commento raffica ${index}`);
     const result = await request("/api/comments", {
       method: "POST",
-      headers: { "x-guest-token": guest.token, "x-idempotency-key": crypto.randomUUID(), "x-qa-silent": "true" },
+      headers: boundGuestHeaders(guest.token, { "x-idempotency-key": crypto.randomUUID(), "x-qa-silent": "true" }),
       body: form,
     });
     commentStatuses.push(result.status);
@@ -612,7 +616,7 @@ test("limiti antispam bloccano raffiche di commenti e reazioni", {
   for (let index = 0; index < 31; index += 1) {
     const result = await request("/api/reactions", {
       method: "POST",
-      headers: { "content-type": "application/json", "x-guest-token": guest.token, "x-idempotency-key": crypto.randomUUID() },
+      headers: boundGuestHeaders(guest.token, { "content-type": "application/json", "x-idempotency-key": crypto.randomUUID() }),
       body: JSON.stringify({ post_id: post.id, kind: index % 2 ? "heart" : "clap" }),
     });
     reactionStatuses.push(result.status);
