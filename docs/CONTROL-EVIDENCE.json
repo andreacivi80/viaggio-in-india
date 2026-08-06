@@ -290,4 +290,13 @@
   ,{ "control": "Toccare il pulsante Accesso.", "evidence": "ui-password-access touch 1/1: pulsante Accedi azionato sul pannello mobile e transizione al modulo Entra nel gruppo" }
   ,{ "control": "Verificare mantenimento dell’accesso, se previsto.", "evidence": "ui-password-access touch 1/1: refresh completo conserva la sessione personale e riapre la scheda del proprietario" }
   ,{ "control": "Verificare messaggio di accesso riuscito.", "evidence": "ui-password-access touch 1/1: messaggio Telefono collegato al nuovo profilo verificato dopo risposta 201" }
+  ,{ "control": "Familiare: nessun accesso.", "evidence": "resource-enumeration 17/17: sessione familiare riceve lo stesso diniego del pubblico su area e media private" }
+  ,{ "control": "Nessun accesso.", "evidence": "resource-enumeration 17/17: pubblico senza sessione non apre area privata e non distingue risorse esistenti" }
+  ,{ "control": "nessuna informazione sull’esistenza di risorse non autorizzate.", "evidence": "resource-enumeration 17/17: documento, invito e dispositivo reali producono lo stesso diniego delle rispettive risorse inesistenti" }
+  ,{ "control": "quali contenuti privati esistono.", "evidence": "resource-enumeration 17/17: pubblico, familiare e altro viaggiatore non distinguono una chiave documento reale da una casuale" }
+  ,{ "control": "quali inviti esistono;", "evidence": "resource-enumeration 17/17: viaggiatore riceve risposta identica tentando la revoca di un invito reale o inesistente" }
+  ,{ "control": "quali sessioni sono attive;", "evidence": "resource-enumeration 17/17: elenco dispositivi limitato al profilo corrente; dispositivo altrui e casuale sono indistinguibili" }
+  ,{ "control": "sessione A sulla risorsa B;", "evidence": "resource-enumeration 17/17: sessione A non legge documento né dispositivo di B e non revoca la sessione B" }
+  ,{ "control": "Viaggiatore non proprietario;", "evidence": "resource-enumeration 17/17: altro viaggiatore non vede metadati del documento e riceve diniego non enumerabile" }
+  ,{ "control": "Viaggiatore proprietario;", "evidence": "resource-enumeration 17/17: proprietario apre e cancella il proprio PDF, mentre gli altri ruoli restano esclusi" }
 ]

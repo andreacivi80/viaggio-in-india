@@ -75,3 +75,7 @@ Il test touch `ui-microphone-permissions.spec.mjs` usa un Galaxy S20 FE e conced
 ## Accesso iniziale e password
 
 Il test touch `ui-password-access.spec.mjs` riproduce l’intero primo accesso su Galaxy S20 FE. La password accetta soltanto spazi esterni accidentali, apre il modulo di registrazione ma non crea da sola una sessione e non abilita funzioni private. Soltanto la registrazione con consenso produce token e profilo server; dopo un refresh completo il telefono conserva l’accesso personale e mostra esclusivamente i comandi del proprietario. Profili, sessioni e password usati dal test esistono solo nel database locale temporaneo.
+
+## Non-enumerabilità delle risorse private
+
+Il test `extended-p0-resource-enumeration.mjs` confronta risorse reali e identificativi casuali. Pubblico, familiare e altro viaggiatore ricevono lo stesso diniego per documenti esistenti o inesistenti; l’elenco dispositivi contiene soltanto quelli del profilo corrente; dispositivi e inviti altrui non sono distinguibili da quelli inesistenti. I tentativi non revocano sessioni né alterano risorse altrui. Tutte le risorse vengono create e rimosse in D1 e storage locali temporanei.

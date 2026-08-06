@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("all", "authorization-matrix", "auth-lifecycle", "access-session-boundaries", "ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
+  [ValidateSet("all", "authorization-matrix", "resource-enumeration", "auth-lifecycle", "access-session-boundaries", "ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
   [string]$Suite = "document-concurrency"
 )
 
@@ -162,6 +162,7 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
   $env:QA_SESSION_TOKEN = $ownerToken
   $env:QA_SECOND_PROFILE_ID = $otherId
   $env:QA_SECOND_SESSION_TOKEN = $otherToken
+  $env:QA_SECOND_DEVICE_ID = "local-other-device"
   $env:QA_COORDINATOR_TOKEN = $coordinatorToken
   $env:QA_COORDINATOR_PROFILE_ID = $coordinatorId
   $env:QA_COORDINATOR_SECOND_TOKEN = $coordinatorSecondaryToken
@@ -181,6 +182,7 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
   $env:QA_UI_EXPIRED_SESSION_TOKEN = $expiredSessionToken
   $suiteFiles = @{
     "authorization-matrix" = "tests\extended-p0-authorization-matrix.mjs"
+    "resource-enumeration" = "tests\extended-p0-resource-enumeration.mjs"
     "auth-lifecycle" = "tests\extended-p0-auth-lifecycle.mjs"
     "access-session-boundaries" = "tests\extended-p0-access-session-boundaries.mjs"
     "profile-deletion" = "tests\extended-p0-profile-deletion.mjs"
@@ -195,7 +197,7 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
     "chunk-retry" = "tests\extended-p0-chunk-retry.mjs"
   }
   $selectedSuites = if ($Suite -eq "all") {
-    @("authorization-matrix", "document-concurrency", "documents", "location", "media", "social", "sync", "avatar", "chunk-retry", "roles", "profile-deletion", "auth-lifecycle", "access-session-boundaries")
+    @("authorization-matrix", "resource-enumeration", "document-concurrency", "documents", "location", "media", "social", "sync", "avatar", "chunk-retry", "roles", "profile-deletion", "auth-lifecycle", "access-session-boundaries")
   } else { @($Suite) }
   foreach ($selectedSuite in $selectedSuites) {
     Write-Host "P0_SUITE_START=$selectedSuite"
