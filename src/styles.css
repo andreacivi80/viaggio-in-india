@@ -4795,21 +4795,23 @@ mark.mention {
   white-space: nowrap;
 }
 .dayWeatherLine {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
   width: max-content;
-  max-width: calc(100% - 38px);
-  margin-top: 5px;
-  overflow: visible;
-  padding: 3px 7px;
+  max-width: 100%;
+  margin-top: 8px;
+  overflow: hidden;
+  padding: 3px 6px;
   border: 1px solid #ffffff42;
   border-radius: 999px;
   background: #0b2e28d9;
   color: #fff;
-  font-size: 9px;
+  font-size: clamp(7.4px, 2.2vw, 9px);
   font-weight: 800;
   line-height: 1.15;
   text-overflow: clip;
-  white-space: normal;
+  white-space: nowrap;
   text-shadow: 0 1px 4px #000;
 }
 .dayBirthdayRibbon {

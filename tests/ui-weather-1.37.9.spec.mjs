@@ -20,7 +20,7 @@ test("meteo IMD e ora India restano compatti nella prima giornata disponibile", 
 
   const firstDay = page.locator("#day-1");
   await expect(firstDay.locator(".dayWeatherLine")).toContainText("Ora India");
-  await expect(firstDay.locator(".dayWeatherLine")).toContainText(`${delhi.max}° / ${delhi.min}°`);
+  await expect(firstDay.locator(".dayWeatherLine")).toContainText(`${delhi.max}°/${delhi.min}°`);
   await expect(firstDay.locator(".dayWeatherLine")).toContainText(/Pioggia|Nuvoloso|Temporali|Sereno|Meteo IMD/);
   await expect(firstDay.locator(".dayWeatherLine")).toHaveAttribute("title", delhi.description);
 
@@ -41,6 +41,7 @@ test("meteo e ora non si sovrappongono sulle quattordici fotografie", async ({ p
     min: 24,
     max: 34,
     description: index % 2 ? "Generally cloudy sky with moderate rain" : "Partly cloudy sky with one or two spells of rain or thundershowers",
+    rain_probability: 84,
   }));
   await page.route("**/api/state", (route) => route.fulfill({
     status: 200,
@@ -89,6 +90,9 @@ test("meteo e ora non si sovrappongono sulle quattordici fotografie", async ({ p
         titleBottom: titleBox.bottom,
         titleClipped: title.scrollHeight > title.clientHeight + 1,
         weatherClipped: line.scrollHeight > line.clientHeight + 1,
+        weatherHorizontalClipped: line.scrollWidth > line.clientWidth + 1,
+        whiteSpace: getComputedStyle(line).whiteSpace,
+        text: line.textContent.replace(/\s+/g, " ").trim(),
         background: getComputedStyle(line).backgroundColor,
       };
     });
@@ -99,6 +103,10 @@ test("meteo e ora non si sovrappongono sulle quattordici fotografie", async ({ p
     expect(geometry.titleBottom).toBeLessThanOrEqual(geometry.heroBottom);
     expect(geometry.titleClipped).toBe(false);
     expect(geometry.weatherClipped).toBe(false);
+    expect(geometry.weatherHorizontalClipped, JSON.stringify(geometry)).toBe(false);
+    expect(geometry.whiteSpace).toBe("nowrap");
+    expect(geometry.text).toContain("84%");
+    expect(geometry.text).toContain("Ora India");
     expect(geometry.background).toMatch(/^rgba?\(/);
     expect(geometry.background).not.toBe("rgba(0, 0, 0, 0)");
   }

@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.41.0",
+const VERSION = "1.41.1",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -2676,7 +2676,7 @@ function App() {
                         {d.transport} · {d.km} km
                       </span>
                       <span className="dayWeatherLine" title={forecast?.description || "Ora locale India"}>
-                        {forecast ? `${forecast.max}° / ${forecast.min}° · ${conciseWeather(forecast.description)}${Number.isFinite(forecast.rain_probability) ? ` · Pioggia ${forecast.rain_probability}%` : ""} · ` : ""}
+                        {forecast ? `${forecast.max}°/${forecast.min}° · ${conciseWeather(forecast.description)}${Number.isFinite(forecast.rain_probability) ? ` ${forecast.rain_probability}%` : ""} · ` : ""}
                         Ora India {indiaTime}
                       </span>
                     </div>
