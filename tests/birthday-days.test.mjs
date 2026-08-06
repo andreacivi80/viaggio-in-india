@@ -27,5 +27,6 @@ test("la scena WEROAD ottimizzata resta leggera per la rete mobile", async () =>
   assert.ok(image.size > 150_000);
   assert.ok(image.size < 400_000);
   assert.match(styles, /\.birthdayPartyScene[^}]*aspect-ratio:\s*2\s*\/\s*1/s);
-  assert.match(styles, /\.heroWeRoadLogo[^}]*width:\s*70px/s);
+  assert.match(styles, /\.heroWeRoadWordmark[^}]*min-width:\s*48px/s);
+  assert.doesNotMatch(styles, /\.heroWeRoadLogo\s*\{/);
 });

@@ -104,6 +104,7 @@ test("promozione, retrocessione e revoca aggiornano subito un telefono già aper
       localStorage.setItem("india-role", "coordinator");
       localStorage.setItem("india-visitor-name", "Profilo locale obsoleto");
     });
+    await travelerContext.setOffline(true);
 
     const revokeStatus = await secondPage.evaluate(async (targetDeviceId) => {
       const authorization = `Bearer ${localStorage.getItem("india-session-token")}`;
@@ -115,6 +116,8 @@ test("promozione, retrocessione e revoca aggiornano subito un telefono già aper
       return response.status;
     }, travelerDeviceId);
     expect(revokeStatus).toBe(200);
+    expect(await travelerPage.evaluate(() => localStorage.getItem("india-session-token"))).toBe(soonRevokedToken);
+    await travelerContext.setOffline(false);
     const revokedSessionStatus = await travelerPage.evaluate(async () => {
       const response = await fetch("/api/auth/session", {
         headers: {

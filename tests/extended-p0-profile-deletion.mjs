@@ -44,6 +44,22 @@ assert.equal((await request(`/api/profiles/${disposableProfile.id}`, {
 })).status, 200);
 assert.ok(!(await (await request("/api/state")).json()).profiles.some((profile) => profile.id === disposableProfile.id));
 
+const concurrentProfileForm = new FormData();
+concurrentProfileForm.set("name", "Profilo eliminazione concorrente");
+const concurrentProfileResponse = await request("/api/profiles", {
+  method: "POST",
+  headers: coordinator,
+  body: concurrentProfileForm,
+});
+assert.equal(concurrentProfileResponse.status, 201);
+const concurrentProfile = await concurrentProfileResponse.json();
+const concurrentDeletes = await Promise.all([
+  request(`/api/profiles/${concurrentProfile.id}`, { method: "DELETE", headers: coordinator }),
+  request(`/api/profiles/${concurrentProfile.id}`, { method: "DELETE", headers: coordinator }),
+]);
+assert.deepEqual(concurrentDeletes.map((response) => response.status).sort(), [200, 404]);
+assert.ok(!(await (await request("/api/state")).json()).profiles.some((profile) => profile.id === concurrentProfile.id));
+
 const inviteResponse = await request("/api/auth/invites", {
   method: "POST",
   headers: jsonHeaders(coordinatorToken),
@@ -165,4 +181,4 @@ assert.equal((await request(post.media[0].media_url, { method: "HEAD" })).status
 assert.equal((await request(avatarUrl, { method: "HEAD" })).status, 404);
 assert.equal((await request(`/api/profiles/${profileId}`, { method: "DELETE", headers: coordinator })).status, 404);
 
-console.log("P0_PROFILE_DELETION=40/40");
+console.log("P0_PROFILE_DELETION=44/44");

@@ -49,4 +49,13 @@ for (let index = 0; index < 31; index += 1) {
 assert.deepEqual(ipStatuses.slice(0, 30), Array(30).fill(404));
 assert.equal(ipStatuses[30], 429, "profili diversi sullo stesso IP non devono aggirare il limite rete");
 
-console.log("P0_RATE_LIMIT_DIMENSIONS=6/6");
+const auditResponse = await request("/api/security/audit", {
+  headers: { authorization: `Bearer ${coordinatorToken}` },
+});
+assert.equal(auditResponse.status, 200, "il coordinatore deve poter leggere gli allarmi di abuso");
+const audit = await auditResponse.json();
+const alerts = audit.events.filter((event) => event.event_type === "rate_limit_reached");
+assert.ok(alerts.length >= 2, "gli abusi ripetuti devono produrre allarmi nel registro coordinatore");
+assert.ok(alerts.every((event) => event.result === "blocked" && event.created_at), "ogni allarme deve indicare blocco e ora server");
+
+console.log("P0_RATE_LIMIT_DIMENSIONS=10/10");

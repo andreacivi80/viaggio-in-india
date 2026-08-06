@@ -24,8 +24,9 @@ test("l’API inizializza la pubblicazione una sola volta senza toccare i dati e
   assert.match(api, /GET" && path === "state"[\s\S]*await ensureStaticPosts\(env\)/);
 });
 
-test("il logo ufficiale è solo nella testata della Bacheca e il diario cita il gruppo WEROAD", () => {
-  assert.match(source, /tab === "diary"[\s\S]*heroWeRoadLogo[\s\S]*weroad-logo\.png/);
+test("il marchio WEROAD è integrato nel riquadro viaggiatori e il diario cita il gruppo", () => {
+  assert.match(source, /heroTravelersMain[\s\S]*heroWeRoadWordmark[\s\S]*<i>WE<\/i><em>ROAD<\/em>/);
+  assert.doesNotMatch(source, /heroWeRoadLogo/);
   assert.doesNotMatch(source, /birthdayWeRoadLogo/);
   assert.match(source, /incontro con il gruppo WEROAD/);
 });

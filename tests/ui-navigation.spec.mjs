@@ -91,6 +91,23 @@ test("spunte e navigazione del diario restano coerenti dopo il ricaricamento", a
   await expect(page.locator(".day").first().locator('.checks input[type="checkbox"]').first()).toBeChecked();
 });
 
+test("il percorso torna alla stessa giornata e alla stessa posizione di scorrimento", async ({ page }) => {
+  await openApp(page);
+  await tapCenter(page, page.locator(".tabs").getByRole("button", { name: "Viaggio" }));
+  const dayIndex = 6;
+  await page.locator(".diaryDayPicker button").nth(dayIndex).tap();
+  const article = page.locator(".day").nth(dayIndex);
+  await expect(article).toHaveClass(/open/);
+  const routeButton = article.getByRole("button", { name: "Percorso", exact: true });
+  await routeButton.scrollIntoViewIfNeeded();
+  const originScroll = await page.evaluate(() => window.scrollY);
+  await routeButton.tap();
+  await expect(page.locator(".mapTrip")).toContainText("Giorno 7");
+  await page.getByRole("button", { name: /Torna alla Bacheca · Giorno 7/ }).tap();
+  await expect(article).toHaveClass(/open/);
+  await expect.poll(async () => Math.abs((await page.evaluate(() => window.scrollY)) - originScroll)).toBeLessThanOrEqual(2);
+});
+
 test("la mappa seleziona automaticamente tutte le tappe e torna alla bacheca", async ({ page }) => {
   test.slow();
   await openApp(page);

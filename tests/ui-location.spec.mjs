@@ -34,7 +34,11 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
     geolocation: { latitude: 28.6139, longitude: 77.2090 },
     permissions: ["geolocation"],
   });
-  const coordinatorContext = await browser.newContext({ ...devices["Galaxy S9+"] });
+  const coordinatorContext = await browser.newContext({
+    ...devices["Galaxy S9+"],
+    geolocation: { latitude: 28.6139, longitude: 77.2090 },
+    permissions: ["geolocation"],
+  });
   const publicContext = await browser.newContext({ ...devices["Galaxy S9+"] });
   const travelerPage = await travelerContext.newPage();
   const coordinatorPage = await coordinatorContext.newPage();
@@ -59,6 +63,8 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
     await mapToggle.tap();
     const travelerLocation = travelerPage.locator(".locationList article").filter({ hasText: travelerName });
     await expect(travelerLocation).toContainText("28.6139, 77.2090");
+    await expect(travelerLocation).toContainText("Posizione fornita dal dispositivo · non certificata");
+    await expect(travelerLocation).toContainText("Ultimo aggiornamento ·");
     await expect(travelerLocation.getByRole("link", { name: "Google Maps" })).toHaveAttribute(
       "href",
       /google\.com\/maps\/search\/\?api=1&query=28\.6139,77\.209/,
@@ -82,11 +88,26 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
     });
     await expect(coordinatorPage.locator(".accessPill")).toContainText(coordinatorName.split(" ")[0]);
     await openPersonalPanel(coordinatorPage);
+    const coordinatorLocationResponse = coordinatorPage.waitForResponse(
+      (response) => response.url().endsWith("/api/locations") && response.request().method() === "POST",
+    );
+    await coordinatorPage.getByRole("button", { name: "Condividi posizione" }).tap();
+    expect((await coordinatorLocationResponse).status()).toBe(200);
     await coordinatorPage.getByRole("button", { name: "Griglia coordinatore" }).tap();
     await coordinatorPage.getByRole("button", { name: /Apri mappa posizioni/ }).tap();
     const syncedLocation = coordinatorPage.locator(".locationList article").filter({ hasText: travelerName });
     await expect(syncedLocation).toContainText("28.6139, 77.2090", { timeout: 15_000 });
     await expect(syncedLocation.getByRole("button", { name: "Cancella posizione" })).toHaveCount(0);
+    const coordinatorLocation = coordinatorPage.locator(".locationList article").filter({ hasText: coordinatorName });
+    await expect(coordinatorLocation).toContainText("28.6139, 77.2090");
+    await expect(coordinatorPage.locator(".locationList article")).toHaveCount(2);
+    await expect(coordinatorPage.locator(".personMapMarker")).toHaveCount(2);
+    const coordinatorDeleteResponse = coordinatorPage.waitForResponse(
+      (response) => response.url().includes("/api/locations/") && response.request().method() === "DELETE",
+    );
+    await coordinatorLocation.getByRole("button", { name: "Cancella posizione" }).tap();
+    expect((await coordinatorDeleteResponse).status()).toBe(200);
+    await expect(coordinatorLocation).toHaveCount(0);
     await coordinatorPage.getByRole("button", { name: /Chiudi mappa posizioni/ }).tap();
     await expect(coordinatorPage.locator(".peopleLocationMap")).toHaveCount(0);
 

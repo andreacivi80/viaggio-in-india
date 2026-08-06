@@ -110,6 +110,10 @@ try {
   const restoredDocuments = JSON.parse(verifyOutput.match(/^DOCUMENTI (.+)$/m)?.[1] || "[]")
     .filter((document) => document.profile_id === profileId);
   const restoredPosts = JSON.parse(verifyOutput.match(/^POSTS (.+)$/m)?.[1] || "[]");
+  const restoredClientVersions = JSON.parse(verifyOutput.match(/^CLIENT_VERSIONS (.+)$/m)?.[1] || "[]");
+  assert.equal(restoredClientVersions.length, 2, "due dispositivi leggono la versione ripristinata");
+  assert.equal(restoredClientVersions[0], restoredClientVersions[1], "i dispositivi ricevono la stessa versione");
+  assert.ok(Number.isFinite(Number(restoredClientVersions[0])));
   assert.ok(restoredDocuments.length >= 4, `documenti nel backup: ${restoredDocuments.length}`);
 
   for (const document of restoredDocuments) {
@@ -129,7 +133,7 @@ try {
   assert.ok(backupSql.includes("CREATE TABLE"));
   assert.equal(restoredPosts.some((post) => post.text === deletedMarker), false);
   assert.equal(restoredPosts.some((post) => post.id === deletedPostId), false);
-  console.log(`P0_BACKUP_CONTENT=${restoredDocuments.length + 19}/${restoredDocuments.length + 19}`);
+  console.log(`P0_BACKUP_CONTENT=${restoredDocuments.length + 22}/${restoredDocuments.length + 22}`);
 } finally {
   for (const postId of createdPosts)
     await request(`/api/posts/${postId}`, { method: "DELETE", headers: { authorization } }).catch(() => {});

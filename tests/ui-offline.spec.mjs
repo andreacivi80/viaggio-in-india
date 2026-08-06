@@ -46,6 +46,13 @@ test("invio offline sopravvive alla chiusura e parte una sola volta al ritorno d
     await context.setOffline(false);
     page = await context.newPage();
     await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
+    expect(await page.evaluate(() => localStorage.getItem("india-session-token"))).toBe(sessionToken);
+    expect(await page.evaluate(() => localStorage.getItem("india-device-key"))).toBe(deviceKey);
+    const sessionCheck = await page.request.get(`${baseUrl}/api/auth/session`, {
+      headers: { authorization: `Bearer ${sessionToken}`, "x-device-key": deviceKey },
+    });
+    expect(sessionCheck.status()).toBe(200);
+    await expect.poll(() => offlineCount(page), { timeout: 25_000 }).toBe(0);
     const post = page.locator(".post").filter({ hasText: marker });
     await expect(post).toBeVisible({ timeout: 25_000 });
     await expect(post.locator("img")).toBeVisible();

@@ -27,7 +27,7 @@ with tempfile.TemporaryDirectory(prefix="india-backup-check-") as folder:
             row[0]
             for row in connection.execute("SELECT name FROM sqlite_schema WHERE type='table'")
         }
-        required = {"profiles", "posts", "comments", "reactions", "document_status", "locations"}
+        required = {"profiles", "posts", "comments", "reactions", "document_status", "locations", "sync_state"}
         missing = sorted(required - tables)
         if missing:
             raise SystemExit(f"Tabelle mancanti: {', '.join(missing)}")
@@ -44,6 +44,10 @@ with tempfile.TemporaryDirectory(prefix="india-backup-check-") as folder:
         restored_posts = [
             {"id": row[0], "text": row[1]}
             for row in connection.execute("SELECT id,text FROM posts ORDER BY id")
+        ]
+        client_versions = [
+            connection.execute("SELECT version FROM sync_state WHERE id=1").fetchone()[0]
+            for _ in range(2)
         ]
         orphan_comments = connection.execute(
             "SELECT COUNT(*) FROM comments c LEFT JOIN posts p ON p.id=c.post_id WHERE p.id IS NULL"
@@ -63,3 +67,4 @@ print(f"BACKUP_OK sha256={checksum} secondi={elapsed:.3f}")
 print("RIGHE " + " ".join(f"{name}={value}" for name, value in counts.items()))
 print("DOCUMENTI " + json.dumps(document_keys, ensure_ascii=False, separators=(",", ":")))
 print("POSTS " + json.dumps(restored_posts, ensure_ascii=False, separators=(",", ":")))
+print("CLIENT_VERSIONS " + json.dumps(client_versions, separators=(",", ":")))

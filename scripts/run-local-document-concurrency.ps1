@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("all", "authorization-matrix", "resource-enumeration", "auth-lifecycle", "access-session-boundaries", "rate-limit", "push-unsubscribe", "location-retention", "backup-content", "ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "ui-stale-password-session", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-multi-invite-copy", "ui-people", "ui-protected-pdf", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
+  [ValidateSet("all", "authorization-matrix", "resource-enumeration", "auth-lifecycle", "access-session-boundaries", "rate-limit", "push-unsubscribe", "location-retention", "backup-content", "ui-session-history", "ui-location-permissions", "ui-post-location", "ui-microphone-permissions", "ui-password-access", "ui-stale-password-session", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-multi-invite-copy", "ui-people", "ui-protected-pdf", "ui-offline", "ui-cache-recovery", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
   [string]$Suite = "document-concurrency"
 )
 
@@ -49,6 +49,10 @@ $expired = [DateTime]::UtcNow.AddHours(-1).ToString("o")
 
 try {
   New-Item -ItemType Directory -Path $persistRoot | Out-Null
+  if ($Suite -like "ui-*") {
+    & npm run build | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Build client UI locale non riuscita" }
+  }
   & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file db\schema.sql | Out-Null
   if ($LASTEXITCODE -ne 0) { throw "Schema D1 locale non riuscito" }
   & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file db\migrations\0014_realtime_sync_triggers.sql | Out-Null
@@ -154,7 +158,7 @@ INSERT INTO locations(profile_id,display_name,latitude,longitude,updated_at) VAL
   # I dati UI devono essere creati prima dell'avvio di Pages. Scrivere nello
   # stesso database locale con un secondo processo Wrangler mentre il browser
   # lo usa può interrompere Miniflare e produrre falsi errori di rete.
-  if ($Suite -in @("ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "ui-stale-password-session", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-multi-invite-copy", "ui-people", "ui-protected-pdf")) {
+  if ($Suite -in @("ui-session-history", "ui-location-permissions", "ui-post-location", "ui-microphone-permissions", "ui-password-access", "ui-stale-password-session", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-multi-invite-copy", "ui-people", "ui-protected-pdf", "ui-offline", "ui-cache-recovery")) {
     $uiSetupSql = @"
 INSERT INTO profiles(id,name,surname,role,created_at) VALUES
 ('$uiTravelerId','$uiTravelerName','','traveler','$created'),
@@ -263,10 +267,11 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
     Write-Host "P0_SUITE_START=$selectedSuite"
     $previousErrorActionPreference = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
-    if ($selectedSuite -in @("ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "ui-stale-password-session", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-multi-invite-copy", "ui-people", "ui-protected-pdf")) {
+    if ($selectedSuite -in @("ui-session-history", "ui-location-permissions", "ui-post-location", "ui-microphone-permissions", "ui-password-access", "ui-stale-password-session", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-multi-invite-copy", "ui-people", "ui-protected-pdf", "ui-offline", "ui-cache-recovery")) {
       $uiTestFile = switch ($selectedSuite) {
         "ui-session-history" { "tests/ui-role-live.spec.mjs" }
         "ui-location-permissions" { "tests/ui-location.spec.mjs" }
+        "ui-post-location" { "tests/ui-post-location.spec.mjs" }
         "ui-microphone-permissions" { "tests/ui-microphone-permissions.spec.mjs" }
         "ui-password-access" { "tests/ui-password-access.spec.mjs" }
         "ui-stale-password-session" { "tests/ui-stale-password-session.spec.mjs" }
@@ -276,6 +281,8 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
         "ui-multi-invite-copy" { "tests/ui-multi-invite-copy.spec.mjs" }
         "ui-people" { "tests/ui-people.spec.mjs" }
         "ui-protected-pdf" { "tests/ui-protected-pdf.spec.mjs" }
+        "ui-offline" { "tests/ui-offline.spec.mjs" }
+        "ui-cache-recovery" { "tests/ui-p0-cache-recovery.spec.mjs" }
       }
       $suiteOutput = & npx playwright test $uiTestFile --config playwright.release.config.mjs --project=Samsung-S20-FE 2>&1
     } else {

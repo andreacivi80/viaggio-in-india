@@ -7,7 +7,10 @@ Object.defineProperty(globalThis, "navigator", {
   configurable: true,
   value: { onLine: true },
 });
-const storage = new Map([["india-session-token", "sessione-tecnica"]]);
+const storage = new Map([
+  ["india-session-token", "sessione-tecnica"],
+  ["india-device-key", "chiave-dispositivo-tecnica"],
+]);
 globalThis.localStorage = {
   getItem: (key) => storage.get(key) || null,
   setItem: (key, value) => storage.set(key, String(value)),
@@ -50,6 +53,7 @@ test("la coda conserva allegati e ritenta con la stessa operazione senza duplica
   assert.equal(calls[0].options.headers["x-idempotency-key"], "operazione-offline-123456");
   assert.equal(calls[1].options.headers["x-idempotency-key"], "operazione-offline-123456");
   assert.equal(calls[1].options.headers.authorization, "Bearer sessione-tecnica");
+  assert.equal(calls[1].options.headers["x-device-key"], "chiave-dispositivo-tecnica");
   const retriedFile = calls[1].options.body.get("files");
   assert.equal(retriedFile.name, "foto.jpg");
   assert.equal(await retriedFile.text(), "foto-offline");
@@ -83,4 +87,36 @@ test("la coda conserva insieme foto, audio, video e PDF", async () => {
     fixtures.map(([name, type]) => [name, type]));
   assert.deepEqual(await Promise.all(uploaded.map((file) => file.text())),
     fixtures.map(([, , body]) => body));
+});
+
+test("la coda conserva più bozze e un commento come operazioni distinte", async () => {
+  const requests = [
+    ["bozza-uno", "/api/posts", "Prima bozza"],
+    ["bozza-due", "/api/posts", "Seconda bozza"],
+    ["commento-uno", "/api/comments", "Commento offline"],
+  ];
+  for (const [id, endpoint, text] of requests) {
+    const form = new FormData();
+    form.set("text", text);
+    if (endpoint.endsWith("comments")) form.set("post_id", "post-esistente");
+    await queueFormRequest({
+      id,
+      endpoint,
+      form,
+      authType: "session",
+      operationKey: `operazione-${id}-123456`,
+    });
+  }
+  assert.equal(await queuedRequestCount(), 3);
+  const sent = [];
+  globalThis.fetch = async (endpoint, options) => {
+    sent.push([endpoint, options.body.get("text"), options.headers["x-idempotency-key"]]);
+    return new Response("{}", { status: 201 });
+  };
+  assert.deepEqual(await flushOfflineQueue(), { sent: 3, pending: 0 });
+  assert.deepEqual(
+    sent.map(([endpoint, text]) => [endpoint, text]).sort((left, right) => left[1].localeCompare(right[1])),
+    requests.map(([, endpoint, text]) => [endpoint, text]).sort((left, right) => left[1].localeCompare(right[1])),
+  );
+  assert.equal(new Set(sent.map(([, , key]) => key)).size, 3);
 });

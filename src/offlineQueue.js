@@ -85,10 +85,14 @@ async function updateRequest(item) {
 async function authorizationHeaders(item) {
   if (item.authType === "session") {
     const token = localStorage.getItem("india-session-token") || "";
-    return token ? { authorization: `Bearer ${token}` } : null;
+    const deviceKey = localStorage.getItem("india-device-key") || "";
+    return token && deviceKey
+      ? { authorization: `Bearer ${token}`, "x-device-key": deviceKey }
+      : null;
   }
   if (item.authType === "guest") {
     let token = localStorage.getItem("india-guest-token") || "";
+    const deviceKey = localStorage.getItem("india-device-key") || "";
     if (!token && item.guestName) {
       const response = await fetch("/api/auth/guest", {
         method: "POST",
@@ -102,7 +106,9 @@ async function authorizationHeaders(item) {
       localStorage.setItem("india-guest-name", guest.display_name);
       localStorage.setItem("india-visitor-id", guest.visitor_id);
     }
-    return token ? { "x-guest-token": token } : null;
+    return token && deviceKey
+      ? { "x-guest-token": token, "x-device-key": deviceKey }
+      : null;
   }
   return {};
 }

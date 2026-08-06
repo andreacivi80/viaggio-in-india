@@ -5,6 +5,8 @@ $runId = [guid]::NewGuid().ToString("N")
 $root = Join-Path ([IO.Path]::GetTempPath()) "india-migrations-$runId"
 $legacyRoot = Join-Path $root "legacy"
 $schemaRoot = Join-Path $root "schema"
+$rollbackRoot = Join-Path $root "rollback"
+$rollbackSnapshotRoot = Join-Path $root "rollback-snapshot"
 $config = "wrangler.qa.jsonc"
 $database = "viaggio-in-india-qa-db"
 $node = (Get-Command node).Source
@@ -34,7 +36,7 @@ function Invoke-D1Command([string]$persistRoot, [string]$command) {
 }
 
 try {
-  New-Item -ItemType Directory -Path $legacyRoot, $schemaRoot | Out-Null
+  New-Item -ItemType Directory -Path $legacyRoot, $schemaRoot, $rollbackRoot | Out-Null
 
   $migrations = Get-ChildItem -LiteralPath "db\migrations" -Filter "*.sql" | Sort-Object Name
   if ($migrations[0].Name -ne "0001_initial.sql") { throw "Baseline 0001 mancante" }
@@ -64,6 +66,26 @@ INSERT INTO document_status(profile_id,doc_type,status,updated_at) VALUES('$sent
     throw "Schema finale incompleto dopo la catena storica"
   }
 
+  $lastMigration = $migrations[-1]
+  foreach ($migration in $migrations | Select-Object -SkipLast 1) {
+    Invoke-D1File $rollbackRoot $migration.FullName
+  }
+  $rollbackSentinel = "rollback-$runId"
+  Invoke-D1Command $rollbackRoot "INSERT INTO profiles(id,name,role,created_at) VALUES('$rollbackSentinel','Rollback preservato','traveler','$created');" | Out-Null
+  Copy-Item -LiteralPath $rollbackRoot -Destination $rollbackSnapshotRoot -Recurse
+  Invoke-D1File $rollbackRoot $lastMigration.FullName
+  $afterMigration = Invoke-D1Command $rollbackRoot "SELECT COUNT(*) AS trigger_ok FROM sqlite_master WHERE type='trigger' AND name='location_profile_insert_guard';"
+  if ([int](@($afterMigration)[0].results[0].trigger_ok) -ne 1) { throw "Ultima migrazione non applicata prima del rollback" }
+  Remove-Item -LiteralPath $rollbackRoot -Recurse -Force
+  Copy-Item -LiteralPath $rollbackSnapshotRoot -Destination $rollbackRoot -Recurse
+  $afterRollback = Invoke-D1Command $rollbackRoot "SELECT (SELECT COUNT(*) FROM profiles WHERE id='$rollbackSentinel') AS sentinel_ok,(SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name='location_profile_insert_guard') AS trigger_before;"
+  $rollbackRow = @($afterRollback)[0].results[0]
+  if ([int]$rollbackRow.sentinel_ok -ne 1 -or [int]$rollbackRow.trigger_before -ne 0) { throw "Rollback non ha ripristinato dati e schema precedenti" }
+  Invoke-D1File $rollbackRoot $lastMigration.FullName
+  $afterReapply = Invoke-D1Command $rollbackRoot "SELECT (SELECT COUNT(*) FROM profiles WHERE id='$rollbackSentinel') AS sentinel_ok,(SELECT COUNT(*) FROM sqlite_master WHERE type='trigger' AND name='location_profile_insert_guard') AS trigger_ok;"
+  $reapplyRow = @($afterReapply)[0].results[0]
+  if ([int]$reapplyRow.sentinel_ok -ne 1 -or [int]$reapplyRow.trigger_ok -ne 1) { throw "Riapplicazione dopo rollback non sicura" }
+
   Invoke-D1File $schemaRoot "db\schema.sql"
   Invoke-D1File $schemaRoot "db\schema.sql"
   $schemaCheck = Invoke-D1Command $schemaRoot "SELECT COUNT(*) AS tables_ok FROM sqlite_master WHERE type='table' AND name IN ('profiles','posts','post_media','comments','reactions','document_status','locations','auth_sessions','guest_sessions','push_subscriptions','upload_sessions','security_audit_log');"
@@ -72,6 +94,7 @@ INSERT INTO document_status(profile_id,doc_type,status,updated_at) VALUES('$sent
   Write-Output "P0_MIGRATION_CHAIN=$($migrations.Count)/$($migrations.Count)"
   Write-Output "P0_LEGACY_DATA_PRESERVATION=3/3"
   Write-Output "P0_FULL_SCHEMA_CREATE=2/2"
+  Write-Output "P0_MIGRATION_ROLLBACK=4/4"
 } finally {
   if (Test-Path -LiteralPath $root) { Remove-Item -LiteralPath $root -Recurse -Force }
 }

@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.43.0",
+const VERSION = "1.43.1",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -2358,7 +2358,13 @@ function App() {
               aria-label={`Apri elenco viaggiatori, ${people.length} persone`}
             >
               <img src={TRAVELER_ICON} alt="" aria-hidden="true" />
-              <span><b>Viaggiatori</b><small>{people.length}</small></span>
+              <span className="heroTravelerCopy">
+                <b>Viaggiatori</b>
+                <small aria-label={`${people.length} viaggiatori`}>{people.length}</small>
+              </span>
+              <span className="heroWeRoadWordmark" aria-label="WEROAD">
+                <i>WE</i><em>ROAD</em>
+              </span>
             </button>
             <button
               type="button"
@@ -2367,7 +2373,6 @@ function App() {
               aria-label="Apri la cartina di provenienza dei viaggiatori"
             >+</button>
           </div>
-          <img className="heroWeRoadLogo" src="/ui/weroad-logo.png" alt="WEROAD" />
           </>
         )}
         {notificationOpen && (
@@ -2632,6 +2637,18 @@ function App() {
                 <ChevronDown className="diaryArrow next" aria-hidden="true" />
               </button>
             </div>
+            <details className="offlineEmergencyCard">
+              <summary>
+                <span aria-hidden="true">SOS</span>
+                <div><b>Emergenza e dati offline</b><small>Numeri, tappe, hotel e coordinate disponibili senza rete</small></div>
+                <strong aria-hidden="true">+</strong>
+              </summary>
+              <div className="offlineEmergencyBody">
+                <a href="tel:112"><small>EMERGENZE IN INDIA</small><b>112</b><span>Polizia · ambulanza · vigili del fuoco</span></a>
+                <a href="tel:+919810158737"><small>AMBASCIATA D’ITALIA · REPERIBILITÀ</small><b>+91 98101 58737</b><span>Solo emergenze di cittadini italiani fuori orario</span></a>
+                <p>Le giornate conservano localmente tappe, pernottamenti e coordinate essenziali. La cartografia dettagliata può richiedere rete.</p>
+              </div>
+            </details>
             <div className="diaryDayPicker" aria-label="Seleziona la giornata">
               {days.map((day, index) => (
                 (() => {
@@ -5226,7 +5243,7 @@ function VaultOnline({
     });
     if (response.ok) {
       setLocationStatus("Posizione rimossa. Non è più visibile al gruppo.");
-      refresh();
+      await refresh();
     } else {
       const result = await response.json().catch(() => ({}));
       setLocationStatus(result.error || "Posizione non rimossa. Riprova.");
@@ -5617,6 +5634,7 @@ function VaultOnline({
                   <span>
                     {Number(x.latitude).toFixed(4)}, {Number(x.longitude).toFixed(4)}
                   </span>
+                  <small>Posizione fornita dal dispositivo · non certificata</small>
                   <small>
                     Ultimo aggiornamento · {new Date(x.updated_at).toLocaleString("it-IT")}
                   </small>

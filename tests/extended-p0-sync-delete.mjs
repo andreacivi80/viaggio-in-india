@@ -61,4 +61,10 @@ for (const snapshot of [publicAfter, ownerAfter, otherAfter])
 assert.ok(Number(ownerAfter.sync_version) > Number(before.sync_version));
 assert.equal((await request(`/api/posts/${created.id}`, { method: "DELETE", headers: owner })).status, 404);
 
-console.log("P0_SYNC_DELETE=12/12");
+const syncBurst = await Promise.all(Array.from({ length: 100 }, () => request("/api/sync/version", { headers: owner })));
+assert.ok(syncBurst.every((response) => response.status === 200), "100 richieste di sincronizzazione devono completare");
+const syncPayloads = await Promise.all(syncBurst.map((response) => response.json()));
+assert.ok(syncPayloads.every((payload) => Number.isFinite(Number(payload.version))), "ogni risposta espone una versione valida");
+assert.equal(new Set(syncPayloads.map((payload) => Number(payload.version))).size, 1, "la raffica di letture non altera la versione");
+
+console.log("P0_SYNC_DELETE=115/115");

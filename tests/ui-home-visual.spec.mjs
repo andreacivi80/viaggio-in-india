@@ -27,7 +27,6 @@ test("bacheca armonica: i comandi non coprono il Taj Mahal", async ({ browser },
       page.locator(".accessPill"),
       page.locator(".headerIcon"),
       page.locator(".heroTravelers"),
-      page.locator(".heroWeRoadLogo"),
     ];
     const controls = await Promise.all(controlLocators.map((locator) => locator.boundingBox()));
     expect(controls.every(Boolean)).toBe(true);
@@ -42,7 +41,14 @@ test("bacheca armonica: i comandi non coprono il Taj Mahal", async ({ browser },
         expect(intersects(controls[left], controls[right]), `${name}: comandi superiori sovrapposti`).toBe(false);
     expect(intersects(controls[4], controls[2]), `${name}: viaggiatori sopra accesso`).toBe(false);
     expect(intersects(controls[4], controls[3]), `${name}: viaggiatori sopra notifiche`).toBe(false);
-    expect(intersects(controls[4], controls[5]), `${name}: viaggiatori sopra logo WEROAD`).toBe(false);
+    const travelerParts = await Promise.all([
+      page.locator(".heroTravelerCopy").boundingBox(),
+      page.locator(".heroWeRoadWordmark").boundingBox(),
+      page.locator(".heroTravelersMapButton").boundingBox(),
+    ]);
+    expect(travelerParts.every(Boolean)).toBe(true);
+    expect(intersects(travelerParts[0], travelerParts[1]), `${name}: WEROAD sopra il conteggio`).toBe(false);
+    expect(intersects(travelerParts[1], travelerParts[2]), `${name}: WEROAD sopra il più`).toBe(false);
 
     const visualAreas = await Promise.all(controlLocators.map((locator) => locator.evaluate((element) => {
       const style = getComputedStyle(element);

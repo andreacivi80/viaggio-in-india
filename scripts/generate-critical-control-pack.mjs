@@ -102,8 +102,15 @@ function isActionable(row) {
   if (/Preferiti salvati nel database/i.test(control)) return false;
   if (/Misurare batteria con posizione attiva/i.test(control)) return false;
   if (/Posizione all’interno di un edificio/i.test(control)) return false;
+  if (/Salvataggio offline delle posizioni/i.test(control)) return false;
   if (/Centro [“\"]Pronto per l.offline/i.test(control)) return false;
   if (/Notifica (con apertura del commento preciso|per reazione|per risposta a un commento)/i.test(control)) return false;
+  if (/Visualizzare contatto del Coordinatore/i.test(control)) return false;
+  if (/Inviare notifica relativa a un contenuto successivamente eliminato/i.test(control)) return false;
+  if (/Ricerca offline sui dati disponibili/i.test(control)) return false;
+  if (/Eliminare i dati del browser/i.test(control)) return false;
+  if (/Pulsante per cancellare i dati offline/i.test(control)) return false;
+  if (/Permettere all’utente di eliminare elementi dalla coda/i.test(control)) return false;
   if (/Non compromettere documenti e funzioni essenziali|differenze tra itinerario, mappe e documenti/i.test(control)) return false;
   return true;
 }
