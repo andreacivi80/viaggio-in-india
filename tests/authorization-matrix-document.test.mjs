@@ -23,4 +23,7 @@ test("la matrice autorizzativa documenta tutti i ruoli e le risorse sensibili", 
   assert.match(matrix, /password[\s\S]*non crea da sola una sessione[\s\S]*refresh completo/i);
   assert.match(matrix, /extended-p0-resource-enumeration\.mjs/i);
   assert.match(matrix, /risorse reali[\s\S]*identificativi casuali[\s\S]*stesso diniego/i);
+  assert.match(matrix, /ui-coordinator-grid-access\.spec\.mjs[\s\S]*quattro browser Galaxy S20 FE/i);
+  assert.match(matrix, /falsificando[\s\S]*role[\s\S]*profile_id[\s\S]*identità restituita dal server/i);
+  assert.match(matrix, /non compaiano neppure temporaneamente/i);
 });

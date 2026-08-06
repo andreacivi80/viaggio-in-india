@@ -299,4 +299,9 @@
   ,{ "control": "sessione A sulla risorsa B;", "evidence": "resource-enumeration 17/17: sessione A non legge documento né dispositivo di B e non revoca la sessione B" }
   ,{ "control": "Viaggiatore non proprietario;", "evidence": "resource-enumeration 17/17: altro viaggiatore non vede metadati del documento e riceve diniego non enumerabile" }
   ,{ "control": "Viaggiatore proprietario;", "evidence": "resource-enumeration 17/17: proprietario apre e cancella il proprio PDF, mentre gli altri ruoli restano esclusi" }
+  ,{ "control": "Aprire la griglia del Coordinatore, se autorizzato.", "evidence": "ui-coordinator-grid touch 1/1 ripetuto due volte: soltanto la sessione coordinatore verificata apre la dashboard documenti" }
+  ,{ "control": "confonde password di gruppo e sessione personale;", "evidence": "ui-coordinator-grid touch 1/1: la sola password comune non crea token, non apre /api/private e non mostra la griglia" }
+  ,{ "control": "password di gruppo e sessione Coordinatore;", "evidence": "ui-coordinator-grid touch 1/1: password comune, sessione viaggiatore e sessione coordinatore verificate come tre stati distinti" }
+  ,{ "control": "nessuna visualizzazione momentanea di dati privati;", "evidence": "ui-coordinator-grid touch 1/1: MutationObserver registra zero apparizioni della griglia su pubblico, sola password e viaggiatore" }
+  ,{ "control": "utilizzo alternato di profile_id locale e profile_id della sessione.", "evidence": "ui-coordinator-grid touch 1/1: role e profile_id falsificati in localStorage vengono sostituiti dall’identità server senza privilegi coordinatore" }
 ]

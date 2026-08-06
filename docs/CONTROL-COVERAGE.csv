@@ -30,7 +30,7 @@ P0,accessi-privacy,passed,Aprire invito sul telefono A.,globale:T-0322,auth-life
 P0,accessi-privacy,passed,Aprire invito sul telefono corretto.,usabilita:U0404,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Aprire la Bacheca con password.,usabilita:U0095,"ui-password-access touch 1/1: dopo verifica della password la Bacheca resta apribile, ma il dispositivo resta Pubblico finché non viene creato il profilo"
 P0,accessi-privacy,passed,Aprire la Bacheca senza password.,usabilita:U0093,ui-critical produzione mobile: accesso Pubblico visibile e area privata assente
-P0,accessi-privacy,pending,"Aprire la griglia del Coordinatore, se autorizzato.",usabilita:U0072,
+P0,accessi-privacy,passed,"Aprire la griglia del Coordinatore, se autorizzato.",usabilita:U0072,ui-coordinator-grid touch 1/1 ripetuto due volte: soltanto la sessione coordinatore verificata apre la dashboard documenti
 P0,accessi-privacy,passed,Associare i commenti dei Viaggiatori alla sessione personale.,globale:T-0061,QA 1.31.0: commento del viaggiatore attribuito alla sessione e non ai campi del browser
 P0,accessi-privacy,passed,Attivazione sessione.,globale:T-1206,"ui-password-access touch 1/1: POST auth/register 201, token e profile-id creati dal server e riletti dopo ricaricamento"
 P0,accessi-privacy,passed,Aumento dei tentativi di accesso errati.,globale:T-1539,access-session-boundaries 17/17: dodici password errate attivano 429 senza creare profili
@@ -60,7 +60,7 @@ P0,accessi-privacy,pending,Condividere per errore l’invito del Viaggiatore A c
 P0,accessi-privacy,passed,condizione dopo accesso;,addendum:A0286,ui-role-live touch 2/2: invito attiva profilo e ruolo derivati dalla sessione server
 P0,accessi-privacy,passed,condizione quando la sessione è ancora in verifica.,addendum:A0292,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,conferma che nessuna autorizzazione dipenda esclusivamente dal frontend.,addendum:A0482,P0 locale ruoli/documenti/posizione: richieste API falsificate respinte 403 dal Worker
-P0,accessi-privacy,pending,confonde password di gruppo e sessione personale;,addendum:A0441,
+P0,accessi-privacy,passed,confonde password di gruppo e sessione personale;,addendum:A0441,"ui-coordinator-grid touch 1/1: la sola password comune non crea token, non apre /api/private e non mostra la griglia"
 P0,accessi-privacy,passed,confrontare tutti i tasti visibili al Coordinatore con gli endpoint accessibili al Coordinatore;,addendum:A0041,endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,passed,confrontare tutti i tasti visibili al Familiare con gli endpoint accessibili al Familiare;,addendum:A0039,endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,passed,confrontare tutti i tasti visibili al Viaggiatore con gli endpoint accessibili al Viaggiatore;,addendum:A0040,endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
@@ -152,7 +152,7 @@ P0,accessi-privacy,passed,nessuna informazione sull’esistenza di risorse non a
 P0,accessi-privacy,passed,Nessuna pagina privata incorporabile in siti esterni.,globale:T-1480,production-smoke live: X-Frame-Options SAMEORIGIN e CSP frame-ancestors self sul documento HTML
 P0,accessi-privacy,pending,nessuna password.,globale:T-1571,
 P0,accessi-privacy,passed,Nessuna sessione.,usabilita:U0478,ui-critical produzione mobile: senza sessione /api/private e /api/auth/devices rispondono 401
-P0,accessi-privacy,pending,nessuna visualizzazione momentanea di dati privati;,addendum:A0137,
+P0,accessi-privacy,passed,nessuna visualizzazione momentanea di dati privati;,addendum:A0137,"ui-coordinator-grid touch 1/1: MutationObserver registra zero apparizioni della griglia su pubblico, sola password e viaggiatore"
 P0,accessi-privacy,passed,Non accettare token impostati manualmente dal client.,addendum:A0344,Playwright false-token removal + remote session QA; preview a4b05356; 2026-08-04
 P0,accessi-privacy,passed,Non consentire alla password comune di impersonare un Viaggiatore esistente.,usabilita:U0005,authorization-matrix 55/55: auth/unlock con password corretta restituisce 403 e richiede l’invito personale monouso
 P0,accessi-privacy,passed,Non creare inviti.,usabilita:U0369,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
@@ -183,7 +183,7 @@ P0,accessi-privacy,passed,ogni richiesta non autorizzata viene rifiutata dal ser
 P0,accessi-privacy,passed,Ogni sessione deve essere collegata a un profilo esistente.,globale:T-1021,P0_DB_AUTH_INTEGRITY: D1 respinge sessioni senza profilo e le elimina a cascata | P0_DB_AUTH_INTEGRITY 3/3: trigger D1 respinge INSERT sessione con profile_id inesistente e pulisce le sessioni alla cancellazione del profilo
 P0,accessi-privacy,passed,ogni tasto autorizzato funziona realmente;,addendum:A0446,ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,passed,ogni tasto non autorizzato è nascosto o disabilitato;,addendum:A0447,ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
-P0,accessi-privacy,pending,password di gruppo e sessione Coordinatore;,addendum:A0054,
+P0,accessi-privacy,passed,password di gruppo e sessione Coordinatore;,addendum:A0054,"ui-coordinator-grid touch 1/1: password comune, sessione viaggiatore e sessione coordinatore verificate come tre stati distinti"
 P0,accessi-privacy,pending,password di gruppo e sessione scaduta;,addendum:A0055,
 P0,accessi-privacy,passed,password di gruppo e sessione Viaggiatore;,addendum:A0053,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,password errata;,usabilita:U0492,ui-critical produzione mobile: password errata non sblocca Gruppo né documenti
@@ -264,7 +264,7 @@ P0,accessi-privacy,passed,Utilizzare token revocato.,globale:T-0627;usabilita:U0
 P0,accessi-privacy,passed,Utilizzare token scaduto.,globale:T-0628;usabilita:U0577,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Utilizzare un invito già consumato.,globale:T-0781,extended-p0-auth-lifecycle 28/28: riuso dell’invito consumato negato
 P0,accessi-privacy,passed,Utilizzare un invito scaduto.,globale:T-0782,extended-p0-auth-lifecycle 28/28: invito oltre expires_at negato
-P0,accessi-privacy,pending,utilizzo alternato di profile_id locale e profile_id della sessione.,addendum:A0411,
+P0,accessi-privacy,passed,utilizzo alternato di profile_id locale e profile_id della sessione.,addendum:A0411,ui-coordinator-grid touch 1/1: role e profile_id falsificati in localStorage vengono sostituiti dall’identità server senza privilegi coordinatore
 P0,accessi-privacy,pending,Valutare cookie sicuro HttpOnly invece del token nel localStorage.,globale:T-0042,
 P0,accessi-privacy,pending,vecchie funzioni basate soltanto sulla password;,addendum:A0399,
 P0,accessi-privacy,passed,vecchio nome locale e nuova sessione;,addendum:A0057,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04

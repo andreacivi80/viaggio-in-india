@@ -79,3 +79,7 @@ Il test touch `ui-password-access.spec.mjs` riproduce l’intero primo accesso s
 ## Non-enumerabilità delle risorse private
 
 Il test `extended-p0-resource-enumeration.mjs` confronta risorse reali e identificativi casuali. Pubblico, familiare e altro viaggiatore ricevono lo stesso diniego per documenti esistenti o inesistenti; l’elenco dispositivi contiene soltanto quelli del profilo corrente; dispositivi e inviti altrui non sono distinguibili da quelli inesistenti. I tentativi non revocano sessioni né alterano risorse altrui. Tutte le risorse vengono create e rimosse in D1 e storage locali temporanei.
+
+## Griglia coordinatore e fonte autorevole
+
+Il collaudo touch `ui-coordinator-grid-access.spec.mjs` usa quattro browser Galaxy S20 FE isolati. Pubblico e dispositivo con la sola password comune non ricevono una sessione e non vedono mai la griglia; il viaggiatore autenticato vede soltanto i propri comandi. Anche falsificando `role` e `profile_id` nella memoria locale, il telefono ripristina l’identità restituita dal server e non mostra la griglia. Soltanto la sessione coordinatore, legata alla chiave del proprio dispositivo, apre la dashboard. Un osservatore DOM verifica inoltre che i contenuti del coordinatore non compaiano neppure temporaneamente nei tre stati non autorizzati. Profili, inviti e database del test sono esclusivamente locali e vengono eliminati a fine esecuzione.
