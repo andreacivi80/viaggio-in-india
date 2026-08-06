@@ -1,7 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
 Controlli selezionati: **120** tra 353 controlli P0–P2 ancora privi di evidenza conclusiva.
-Stato del pacchetto: **22 superati**, **98 pendenti**.
+Stato del pacchetto: **23 superati**, **97 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -15,8 +15,8 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-1722`. privacy-consent L1 + P0_AUTH_LIFECYCLE 68/68: registrazioni senza consenso o con consenso falso ricevono 400; solo il consenso esplicito crea profilo e sessione.
 - [x] **K-002 · documenti** — Eliminare un documento dal telefono B.
   Sorgente: `globale:T-0701`. P0_DOCUMENTS 12/12: un secondo viaggiatore riceve 403; il proprietario elimina e proprietario/coordinatore vedono subito l’assenza.
-- [ ] **K-003 · accessi-privacy** — Distinguere limiti per IP, sessione e profilo.
-  Sorgente: `globale:T-1053`. Accesso, consenso o segreto: un errore può esporre funzioni riservate.
+- [x] **K-003 · accessi-privacy** — Distinguere limiti per IP, sessione e profilo.
+  Sorgente: `globale:T-1053`. rate-limit-dimensions 2/2 + P0_RATE_LIMIT_DIMENSIONS 6/6: bucket distinti per IP, profilo/ospite e singola sessione; due sessioni o due profili non aggirano la soglia.
 - [ ] **K-004 · documenti** — Eseguire backup mentre vengono caricati documenti.
   Sorgente: `globale:T-1167`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
 - [ ] **K-005 · documenti** — Verificare apertura di ogni documento ripristinato.

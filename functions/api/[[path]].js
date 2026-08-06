@@ -322,35 +322,49 @@ async function guestFromRequest(request, env) {
   }
   return guest;
 }
-async function rateLimit(env, request, scope, limit, windowSeconds, actor = "") {
+export function rateLimitDimensions(request, actor = "") {
   const ip = String(request.headers.get("cf-connecting-ip") || "unknown");
-  const actorHash = await tokenHash(`${scope}:${actor || ip}`);
+  const authorization = String(request.headers.get("authorization") || "");
+  const sessionToken = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
+  const guestToken = String(request.headers.get("x-guest-token") || "").trim();
+  return [
+    `ip:${ip}`,
+    ...(actor ? [`actor:${actor}`] : []),
+    ...(sessionToken ? [`session:${sessionToken}`] : []),
+    ...(guestToken ? [`guest-session:${guestToken}`] : []),
+  ];
+}
+async function rateLimit(env, request, scope, limit, windowSeconds, actor = "") {
+  const dimensions = [...new Set(rateLimitDimensions(request, actor))];
+  const keys = await Promise.all(dimensions.map((dimension) => tokenHash(`${scope}:${dimension}`)));
   const bucket = Math.floor(Date.now() / (windowSeconds * 1000));
-  const key = actorHash;
   const checkedAt = now();
   const expiresAt = new Date(Date.now() + windowSeconds * 1000).toISOString();
-  await env.DB.prepare(
-    `INSERT INTO rate_limits(rate_key,scope,bucket,count,expires_at)
-     VALUES(?,?,?,?,?)
-     ON CONFLICT(rate_key) DO UPDATE SET
-       scope=excluded.scope,
-       bucket=CASE WHEN rate_limits.expires_at<=? THEN excluded.bucket ELSE rate_limits.bucket END,
-       count=CASE WHEN rate_limits.expires_at<=? THEN 1 ELSE rate_limits.count+1 END,
-       expires_at=CASE WHEN rate_limits.expires_at<=? THEN excluded.expires_at ELSE rate_limits.expires_at END`,
-  )
-    .bind(key, scope, bucket, 1, expiresAt, checkedAt, checkedAt, checkedAt)
-    .run();
-  const row = await env.DB.prepare(
-    "SELECT count FROM rate_limits WHERE rate_key=?",
-  )
-    .bind(key)
-    .first();
-  if (Number(row?.count || 0) <= limit) return null;
+  let blockedDimension = "";
+  for (let index = 0; index < keys.length; index += 1) {
+    const key = keys[index];
+    await env.DB.prepare(
+      `INSERT INTO rate_limits(rate_key,scope,bucket,count,expires_at)
+       VALUES(?,?,?,?,?)
+       ON CONFLICT(rate_key) DO UPDATE SET
+         scope=excluded.scope,
+         bucket=CASE WHEN rate_limits.expires_at<=? THEN excluded.bucket ELSE rate_limits.bucket END,
+         count=CASE WHEN rate_limits.expires_at<=? THEN 1 ELSE rate_limits.count+1 END,
+         expires_at=CASE WHEN rate_limits.expires_at<=? THEN excluded.expires_at ELSE rate_limits.expires_at END`,
+    )
+      .bind(key, scope, bucket, 1, expiresAt, checkedAt, checkedAt, checkedAt)
+      .run();
+    const row = await env.DB.prepare("SELECT count FROM rate_limits WHERE rate_key=?")
+      .bind(key)
+      .first();
+    if (!blockedDimension && Number(row?.count || 0) > limit) blockedDimension = dimensions[index].split(":", 1)[0];
+  }
+  if (!blockedDimension) return null;
   await writeSecurityAudit(env, {
     event_type: "rate_limit_reached",
     actor_profile_id: actor,
     resource_type: "endpoint_scope",
-    resource_id: scope,
+    resource_id: `${scope}:${blockedDimension}`,
     result: "blocked",
   });
   const retryAfter = Math.max(
