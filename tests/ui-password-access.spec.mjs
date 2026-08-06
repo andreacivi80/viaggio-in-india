@@ -54,6 +54,20 @@ test("password con spazi porta alla registrazione ma non concede privilegi senza
     await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
     await expect(page.getByRole("button", { name: "Documenti e posizione", exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Griglia coordinatore", exact: true })).toHaveCount(0);
+
+    await page.getByRole("button", { name: "Bacheca", exact: true }).tap();
+    await page.getByRole("button", { name: "Pubblica", exact: true }).tap();
+    const sheet = page.locator(".uploadSheet");
+    await expect(sheet.getByPlaceholder("Racconta questo momento…")).toBeVisible();
+    await expect(sheet.getByPlaceholder("Password")).toHaveCount(0);
+    const postText = `Pubblicazione accesso UI ${Date.now()}`;
+    await sheet.getByPlaceholder("Racconta questo momento…").fill(postText);
+    const publishResponse = page.waitForResponse(
+      (response) => response.url().endsWith("/api/posts") && response.request().method() === "POST",
+    );
+    await sheet.getByRole("button", { name: "Pubblica", exact: true }).tap();
+    expect((await publishResponse).status()).toBe(201);
+    await expect(page.locator(".post").filter({ hasText: postText })).toBeVisible();
   } finally {
     await context.close();
   }

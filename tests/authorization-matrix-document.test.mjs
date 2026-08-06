@@ -20,7 +20,7 @@ test("la matrice autorizzativa documenta tutti i ruoli e le risorse sensibili", 
   assert.match(matrix, /ui-microphone-permissions\.spec\.mjs[\s\S]*Galaxy S20 FE/i);
   assert.match(matrix, /MediaRecorder[\s\S]*allegato audio riproducibile/i);
   assert.match(matrix, /ui-password-access\.spec\.mjs[\s\S]*Galaxy S20 FE/i);
-  assert.match(matrix, /password[\s\S]*non crea da sola una sessione[\s\S]*refresh completo/i);
+  assert.match(matrix, /password[\s\S]*non crea da sola una sessione[\s\S]*refresh completo[\s\S]*risposta `201`/i);
   assert.match(matrix, /extended-p0-resource-enumeration\.mjs/i);
   assert.match(matrix, /risorse reali[\s\S]*identificativi casuali[\s\S]*stesso diniego/i);
   assert.match(matrix, /ui-coordinator-grid-access\.spec\.mjs[\s\S]*quattro browser Galaxy S20 FE/i);

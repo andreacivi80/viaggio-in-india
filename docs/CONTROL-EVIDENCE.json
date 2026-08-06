@@ -308,4 +308,8 @@
   ,{ "control": "non deve cancellare la sessione personale;", "evidence": "ui-invite-misdelivery touch 2/2: apertura di un invito altrui conserva token, profilo e ruolo della sessione valida" }
   ,{ "control": "Ricezione invito.", "evidence": "ui-invite-misdelivery touch 2/2: invito personale ricevuto su telefono nuovo crea la sessione del profilo previsto" }
   ,{ "control": "Verificare richiesta di nuovo accesso.", "evidence": "ui-invite-misdelivery touch 2/2: token realmente scaduto rimosso e nuovo invito valido collegato senza gara con la verifica precedente" }
+  ,{ "control": "la password risulta corretta ma Pubblica restituisce errore;", "evidence": "ui-password-access touch 1/1 ripetuto due volte: password, registrazione, refresh e POST pubblicazione 201 con post visibile" }
+  ,{ "control": "nuove funzioni basate sulla sessione;", "evidence": "ui-password-access touch 1/1: Pubblica usa la sessione personale verificata e non il codice comune" }
+  ,{ "control": "separato dall’accesso al gruppo;", "evidence": "ui-password-access touch 1/1: il codice comune apre solo la registrazione; la pubblicazione avviene dopo una sessione personale distinta" }
+  ,{ "control": "Utilizzare il codice comune soltanto come invito iniziale al gruppo.", "evidence": "ui-password-access touch 1/1: il codice non viene conservato e non viene richiesto al compositore dopo la creazione del profilo" }
 ]

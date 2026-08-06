@@ -132,7 +132,7 @@ P0,accessi-privacy,pending,la gestione dei contenuti sia separata dalla gestione
 P0,accessi-privacy,passed,la password comune non aumenta i privilegi di una sessione personale;,addendum:A0063,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,la password comune non permette impersonazioni;,addendum:A0449,"authorization-matrix 55/55 + roles 20/20: auth/unlock non crea sessioni; autore, profilo e ruolo derivano sempre dal token server"
 P0,accessi-privacy,passed,la password del gruppo non dia privilegi da Viaggiatore;,addendum:A0377,"authorization-matrix 55/55: la sola password riceve 401/403 su area privata, commenti, reazioni e notifica globale; serve una sessione personale"
-P0,accessi-privacy,pending,la password risulta corretta ma Pubblica restituisce errore;,usabilita:U0687,
+P0,accessi-privacy,passed,la password risulta corretta ma Pubblica restituisce errore;,usabilita:U0687,"ui-password-access touch 1/1 ripetuto due volte: password, registrazione, refresh e POST pubblicazione 201 con post visibile"
 P0,accessi-privacy,passed,Lasciare la sessione inattiva fino alla scadenza prevista.,globale:T-0761,QA 1.31.0: scadenza per inattivita simulata e verificata
 P0,accessi-privacy,passed,Limitazione dell’accesso alle persone autorizzate.,globale:T-0210,"authorization-matrix 55/55: matrice reale pubblico/ospite/viaggiatore/proprietario/coordinatore verificata su post, profili, documenti, posizioni e notifiche"
 P0,accessi-privacy,passed,Memorizzare un vecchio token prima dell’accesso.,addendum:A0336,"session-token-rotation 2/2 + auth-lifecycle 61/61: il test conserva il token precedente, rinnova la sessione e ne verifica separatamente lo stato"
@@ -176,7 +176,7 @@ P0,accessi-privacy,pending,Notifica per invito personale.,globale:T-0085,
 P0,accessi-privacy,pending,"Notifica per posizione condivisa, soltanto se autorizzata.",globale:T-0087,
 P0,accessi-privacy,passed,notifiche autorizzate correttamente;,globale:T-1793,push-audience 5/5: autorizzazione calcolata lato Worker prima di costruire ogni push
 P0,accessi-privacy,passed,Notifiche inviate soltanto agli utenti autorizzati a vedere il post.,globale:T-0070,"push-audience 5/5: matrice public/family/group/private verificata per pubblico, ospite e profilo"
-P0,accessi-privacy,pending,nuove funzioni basate sulla sessione;,addendum:A0400,
+P0,accessi-privacy,passed,nuove funzioni basate sulla sessione;,addendum:A0400,ui-password-access touch 1/1: Pubblica usa la sessione personale verificata e non il codice comune
 P0,accessi-privacy,passed,"offrire accesso o collegamento del profilo, se appropriato;",addendum:A0270,"TypeScript JSX inventory: 115 interactive elements, zero missing handlers/empty links; Playwright credential flow"
 P0,accessi-privacy,passed,Ogni invito deve essere collegato a un profilo esistente.,globale:T-1017,P0_DB_AUTH_INTEGRITY: D1 respinge inviti senza profilo e li elimina a cascata | P0_DB_AUTH_INTEGRITY 3/3: trigger D1 respinge INSERT invito con profile_id inesistente e pulisce gli inviti alla cancellazione del profilo
 P0,accessi-privacy,passed,ogni richiesta non autorizzata viene rifiutata dal server;,addendum:A0448,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
@@ -223,7 +223,7 @@ P0,accessi-privacy,passed,Ruotare il token dopo operazioni sensibili.,globale:T-
 P0,accessi-privacy,pending,"Se la password del gruppo deve permettere la pubblicazione, creare una sessione Ospite/Familiare valida e controllata.",usabilita:U0002,
 P0,accessi-privacy,pending,"Se può pubblicare, creare sessione Ospite.",usabilita:U0480,
 P0,accessi-privacy,passed,Separare profilo pubblico e profilo privato.,globale:T-0052,production-smoke: stato pubblico separato dall'area privata
-P0,accessi-privacy,pending,separato dall’accesso al gruppo;,addendum:A0360,
+P0,accessi-privacy,passed,separato dall’accesso al gruppo;,addendum:A0360,ui-password-access touch 1/1: il codice comune apre solo la registrazione; la pubblicazione avviene dopo una sessione personale distinta
 P0,accessi-privacy,passed,sessione A e dati locali del profilo B.,addendum:A0058,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,sessione A sulla risorsa A;,addendum:A0105,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,sessione A sulla risorsa B;,addendum:A0106,resource-enumeration 17/17: sessione A non legge documento né dispositivo di B e non revoca la sessione B
@@ -256,7 +256,7 @@ P0,accessi-privacy,passed,una revoca blocca immediatamente tutte le operazioni p
 P0,accessi-privacy,passed,una sessione scaduta durante l’anteprima non deve recuperare i privilegi;,addendum:A0282,ui-role-live touch 2/2: sessione realmente scaduta resta Pubblico e non mostra documenti o griglia
 P0,accessi-privacy,passed,una sessione scaduta non viene recuperata utilizzando silenziosamente un vecchio profilo locale;,addendum:A0064,ui-role-live touch 2/2: token profile-id ruolo e nome locali obsoleti vengono rimossi
 P0,accessi-privacy,passed,uno screenshot della vista pubblica non deve mostrare dati privati.,addendum:A0284,Public-cache unit + delayed-state Playwright 6/6; preview 63b53987; 2026-08-04
-P0,accessi-privacy,pending,Utilizzare il codice comune soltanto come invito iniziale al gruppo.,globale:T-0041,
+P0,accessi-privacy,passed,Utilizzare il codice comune soltanto come invito iniziale al gruppo.,globale:T-0041,ui-password-access touch 1/1: il codice non viene conservato e non viene richiesto al compositore dopo la creazione del profilo
 P0,accessi-privacy,passed,Utilizzare invito scaduto.,globale:T-0335;usabilita:U0412,extended-p0-auth-lifecycle 28/28: invito scaduto negato con HTTP 403
 P0,accessi-privacy,passed,Utilizzare soltanto password di gruppo contro endpoint personali.,usabilita:U0579,access-session-boundaries 17/17 + authorization-matrix 59/59: password comune non apre area privata
 P0,accessi-privacy,passed,Utilizzare token di un altro utente.,usabilita:U0576,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
