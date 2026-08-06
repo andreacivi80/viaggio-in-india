@@ -13,7 +13,8 @@ param(
   [switch]$ExtendedBackupComments,
   [switch]$ExtendedAvatar,
   [switch]$ExtendedChunkRetry,
-  [switch]$ExtendedProfileDeletion
+  [switch]$ExtendedProfileDeletion,
+  [switch]$PublishUi
 )
 
 $ErrorActionPreference = "Stop"
@@ -113,9 +114,16 @@ try {
   $env:QA_RUN_ID = $runId
   $env:QA_DELETE_PROFILE_ID = $deleteProfileId
   $env:QA_DELETE_PROFILE_TOKEN = $deleteProfileToken
+  $env:QA_UI_SESSION_TOKEN = $ownerToken
+  $env:QA_UI_PROFILE_ID = $ownerId
+  $env:QA_UI_PROFILE_NAME = "Proprietario QA"
+  $env:QA_UI_DEVICE_KEY = "device-owner-$runId"
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
-  if ($ExtendedProfileDeletion) {
+  if ($PublishUi) {
+    & npx playwright test "tests/ui-publish-complete.spec.mjs" --reporter=line
+  }
+  elseif ($ExtendedProfileDeletion) {
     & node tests\extended-p0-profile-deletion.mjs
   }
   elseif ($ExtendedDocumentConcurrency) {
