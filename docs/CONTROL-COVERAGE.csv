@@ -128,7 +128,7 @@ P0,accessi-privacy,passed,L’autore deve derivare dalla sessione personale.,usa
 P0,accessi-privacy,passed,l’identità della sessione prevale sui dati locali;,addendum:A0450,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,l’identità server della sessione prevale sempre sui dati modificabili del browser;,addendum:A0059,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,l’URL pubblico non deve contenere token;,addendum:A0283,invite-link-privacy 3/3: i nuovi link usano #invite e la query inviata al server non contiene il token
-P0,accessi-privacy,pending,la gestione dei contenuti sia separata dalla gestione delle sessioni;,addendum:A0382,
+P0,accessi-privacy,passed,la gestione dei contenuti sia separata dalla gestione delle sessioni;,addendum:A0382,"ui-people touch 1/1: creazione, modifica e apertura documenti altrui non sostituiscono più profile-id, nome o ruolo della sessione coordinatore"
 P0,accessi-privacy,passed,la password comune non aumenta i privilegi di una sessione personale;,addendum:A0063,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,la password comune non permette impersonazioni;,addendum:A0449,"authorization-matrix 55/55 + roles 20/20: auth/unlock non crea sessioni; autore, profilo e ruolo derivano sempre dal token server"
 P0,accessi-privacy,passed,la password del gruppo non dia privilegi da Viaggiatore;,addendum:A0377,"authorization-matrix 55/55: la sola password riceve 401/403 su area privata, commenti, reazioni e notifica globale; serve una sessione personale"

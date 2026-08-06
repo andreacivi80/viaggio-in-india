@@ -1,5 +1,7 @@
 import { test, expect, devices } from "@playwright/test";
 
+test.use({ serviceWorkers: "block" });
+
 const travelerName = process.env.QA_UI_PROFILE_NAME;
 const travelerInvite = process.env.QA_UI_INVITE_TOKEN;
 const coordinatorInvite = process.env.QA_UI_COORDINATOR_INVITE_TOKEN;
@@ -44,7 +46,13 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
   coordinatorContext = await browser.newContext({ ...devices["Galaxy S9+"] });
   const coordinatorPage = await coordinatorContext.newPage();
   try {
-    await coordinatorPage.goto(`${baseUrl}/#invite=${encodeURIComponent(coordinatorInvite)}`, { waitUntil: "networkidle" });
+    await coordinatorPage.goto(`${baseUrl}/#invite=${encodeURIComponent(coordinatorInvite)}`, { waitUntil: "domcontentloaded" });
+    await expect(coordinatorPage.locator(".accessPill")).toContainText("Coordinatore");
+    await expect.poll(
+      () => coordinatorPage.evaluate(() => localStorage.getItem("india-profile-id")),
+    ).not.toBeNull();
+    const coordinatorProfileId = await coordinatorPage.evaluate(() => localStorage.getItem("india-profile-id"));
+    expect(coordinatorProfileId).toBeTruthy();
     await tapBottom(coordinatorPage, "Gruppo");
     const form = coordinatorPage.locator(".profileForm");
     await expect(form).toBeVisible();
@@ -63,6 +71,7 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     await form.getByRole("button", { name: "Inserisci viaggiatore" }).tap();
     expect((await createResponse).status()).toBe(201);
     await expect(form.getByRole("status")).toContainText("Viaggiatore inserito correttamente.");
+    expect(await coordinatorPage.evaluate(() => localStorage.getItem("india-profile-id"))).toBe(coordinatorProfileId);
 
     let card = coordinatorPage.locator(".peopleGrid article").filter({ hasText: managedName });
     await expect(card).toContainText("Partecipante");
@@ -83,10 +92,17 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     await form.getByRole("button", { name: "Salva modifiche" }).tap();
     expect((await updateResponse).status()).toBe(200);
     await expect(form.getByRole("status")).toContainText("Profilo aggiornato correttamente.");
+    expect(await coordinatorPage.evaluate(() => localStorage.getItem("india-profile-id"))).toBe(coordinatorProfileId);
     card = coordinatorPage.locator(".peopleGrid article").filter({ hasText: managedName });
     await expect(card).toContainText("Coordinatore");
     await expect(card).toContainText("Bologna");
     await expect(card).toContainText("Profilo aggiornato e sincronizzato.");
+
+    await tapCenter(coordinatorPage, card.getByRole("button", { name: "Documenti e posizione" }));
+    expect(await coordinatorPage.evaluate(() => localStorage.getItem("india-profile-id"))).toBe(coordinatorProfileId);
+    await tapBottom(coordinatorPage, "Gruppo");
+    await expect(coordinatorPage.locator(".accessPill")).toContainText("Coordinatore");
+    card = coordinatorPage.locator(".peopleGrid article").filter({ hasText: managedName });
 
     const inviteResponse = coordinatorPage.waitForResponse(
       (response) => response.url().endsWith("/api/auth/invites") && response.request().method() === "POST",
@@ -102,7 +118,7 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     coordinatorContext = undefined;
     travelerContext = await browser.newContext({ ...devices["Galaxy S9+"] });
     const travelerPage = await travelerContext.newPage();
-    await travelerPage.goto(`${baseUrl}/#invite=${encodeURIComponent(travelerInvite)}`, { waitUntil: "networkidle" });
+    await travelerPage.goto(`${baseUrl}/#invite=${encodeURIComponent(travelerInvite)}`, { waitUntil: "domcontentloaded" });
     await tapBottom(travelerPage, "Gruppo");
     const travelerView = travelerPage.locator(".peopleGrid article").filter({ hasText: managedName });
     await expect(travelerView).toContainText("Coordinatore", { timeout: 15_000 });
@@ -113,7 +129,7 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     travelerContext = undefined;
     publicContext = await browser.newContext({ ...devices["Galaxy S9+"] });
     const publicPage = await publicContext.newPage();
-    await publicPage.goto(baseUrl, { waitUntil: "networkidle" });
+    await publicPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
     await tapBottom(publicPage, "Gruppo");
     await expect(publicPage.locator(".privateGroupGate")).toBeVisible();
     await expect(publicPage.locator(".quickProfilePanel").getByPlaceholder("Password")).toBeVisible();

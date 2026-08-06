@@ -316,4 +316,5 @@
   ,{ "control": "Verificare VAPID_PRIVATE_KEY.", "evidence": "vapid-secret-boundary + scan-client-secrets: chiave privata solo nel binding Worker, assente da endpoint config, client, Wrangler e bundle" }
   ,{ "control": "Modalità privata del browser.", "evidence": "ui-private-browser-session touch 1/1: sessione confinata al contesto privato; dopo la chiusura il nuovo contesto è Pubblico, senza credenziali e con area privata 401" }
   ,{ "control": "Verificare nessun URL permanente condivisibile senza sessione.", "evidence": "ui-private-browser-session touch 1/1: invito rimosso dall’URL; lo stesso URL ripulito aperto in un nuovo contesto non trasferisce token, profilo o accesso" }
+  ,{ "control": "la gestione dei contenuti sia separata dalla gestione delle sessioni;", "evidence": "ui-people touch 1/1: creazione, modifica e apertura documenti altrui non sostituiscono più profile-id, nome o ruolo della sessione coordinatore" }
 ]

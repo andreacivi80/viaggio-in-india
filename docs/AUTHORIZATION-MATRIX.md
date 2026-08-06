@@ -92,6 +92,10 @@ Il collaudo touch `ui-invite-misdelivery.spec.mjs` verifica su Galaxy S20 FE che
 
 Il collaudo touch `ui-private-browser-session.spec.mjs` usa un Galaxy S20 FE e un contesto browser privato isolato. L’invito viene rimosso immediatamente dall’URL e la sessione resta disponibile dopo un refresh soltanto finché quel contesto rimane aperto. Dopo la chiusura completa, un nuovo contesto privato che apre lo stesso URL ripulito torna Pubblico: non contiene token, profilo, ruolo, nome, password comune o invito pendente, non mostra documenti o griglia coordinatore e riceve `401` dall’area privata. La copia dell’URL ripulito non trasferisce quindi alcun accesso permanente.
 
+## Separazione tra identità e contenuti gestiti
+
+Il collaudo touch `ui-people.spec.mjs` conserva l’identificativo della sessione coordinatore prima e dopo tre operazioni su un’altra persona: creazione del profilo, modifica e apertura dei relativi documenti. L’identificativo locale e l’etichetta di accesso restano quelli del coordinatore; la persona selezionata serve soltanto a scegliere il contenuto visualizzato. Tornando al Gruppo il dispositivo è ancora collegato al profilo originario. In questo modo un contenuto gestito non può diventare accidentalmente l’identità attiva del telefono.
+
 ## PDF protetti da password
 
 Il collaudo touch `ui-protected-pdf.spec.mjs` carica un PDF AES-256 realmente cifrato dal telefono del proprietario. Il file viene conservato nell’area privata, compare nella griglia del coordinatore e resta scaricabile senza che l’app richieda o memorizzi la password. Il visualizzatore riconosce `PasswordException`, non mostra pagine vuote o contenuto parziale e propone esplicitamente il lettore PDF del telefono. Proprietario e coordinatore ricevono lo stesso comportamento controllato; il proprietario elimina infine il file. La fixture contiene soltanto dati fittizi ed è verificata con password corretta, password errata e rendering visivo prima del test.

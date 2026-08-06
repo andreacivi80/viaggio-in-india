@@ -4658,11 +4658,13 @@ function People({
       const result = await r.json();
       if (!r.ok) throw Error(result.error || "Salvataggio non riuscito");
       const currentId = editingId || result.id;
-      localStorage.setItem("india-profile-id", currentId);
-      localStorage.setItem(
-        "india-visitor-name",
-        `${form.name} ${form.surname}`.trim(),
-      );
+      if (editingId && currentId === sessionProfile?.id) {
+        localStorage.setItem("india-profile-id", currentId);
+        localStorage.setItem(
+          "india-visitor-name",
+          `${form.name} ${form.surname}`.trim(),
+        );
+      }
       setForm({
         name: "",
         surname: "",
@@ -4863,14 +4865,7 @@ function People({
                   Modifica profilo
                 </button>
                 <button
-                  onClick={() => {
-                    localStorage.setItem("india-profile-id", x.id);
-                    localStorage.setItem(
-                      "india-visitor-name",
-                      `${x.name} ${x.surname || ""}`.trim(),
-                    );
-                    onOpenPrivate(x.id);
-                  }}
+                  onClick={() => onOpenPrivate(x.id)}
                 >
                   <ShieldCheck /> Documenti e posizione
                 </button>
@@ -4977,7 +4972,6 @@ function VaultOnline({
     if (!sessionToken) return;
     if (preferredProfileId && people.some((p) => p.id === preferredProfileId)) {
       setProfileId(preferredProfileId);
-      localStorage.setItem("india-profile-id", preferredProfileId);
       return;
     }
     if (profileId || !people.length) return;
@@ -5295,18 +5289,7 @@ function VaultOnline({
           Chi sei?
           <select
             value={profileId}
-            onChange={(e) => {
-              setProfileId(e.target.value);
-              localStorage.setItem("india-profile-id", e.target.value);
-              const selectedPerson = people.find(
-                (person) => person.id === e.target.value,
-              );
-              if (selectedPerson)
-                localStorage.setItem(
-                  "india-visitor-name",
-                  `${selectedPerson.name} ${selectedPerson.surname || ""}`.trim(),
-                );
-            }}
+            onChange={(e) => setProfileId(e.target.value)}
           >
             <option value="">Seleziona il tuo profilo</option>
             {sortTravelers(people).map((p) => (
