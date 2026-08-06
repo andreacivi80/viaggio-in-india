@@ -9,7 +9,6 @@ export const publicationEntryState = ({
   groupCode = "",
   selectedDay = -1,
 } = {}) => ({
-  publicPreview: false,
   composeOpen: true,
   selectedDay,
   step: publicationAccessStep({ sessionToken, groupCode }),

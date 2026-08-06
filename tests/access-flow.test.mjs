@@ -12,7 +12,7 @@ test("Pubblica usa la sessione personale gia memorizzata senza chiedere la passw
     selectedDay: 3,
   });
 
-  assert.equal(state.publicPreview, false);
+  assert.equal("publicPreview" in state, false);
   assert.equal(state.composeOpen, true);
   assert.equal(state.selectedDay, 3);
   assert.equal(state.step, "composer");

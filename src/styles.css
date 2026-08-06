@@ -594,46 +594,6 @@ html.travelerDirectoryOpen body {
   grid-template-columns: 1fr 1fr;
   gap: 7px;
 }
-.accessModeSwitch {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-  margin-bottom: 9px;
-  padding: 4px;
-  border-radius: var(--radius-medium);
-  background: var(--color-surface-secondary);
-}
-.accessModeSwitch button {
-  min-height: 40px;
-  border: 0;
-  border-radius: var(--radius-small);
-  background: transparent;
-  color: var(--color-text-secondary);
-  font-size: 11px;
-  font-weight: 800;
-}
-.accessModeSwitch button.active {
-  background: var(--color-secondary);
-  color: #fff;
-  box-shadow: var(--shadow-small);
-}
-.accessModeSwitch button:disabled {
-  opacity: 0.45;
-}
-.publicAccessSummary {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 11px;
-  border-radius: var(--radius-medium);
-  background: var(--color-secondary-soft);
-  color: var(--color-secondary);
-}
-.publicAccessSummary span,
-.publicAccessSummary small {
-  color: var(--color-text-secondary);
-  line-height: 1.35;
-}
 .quickProfileActions button,
 .chooseProfileButton {
   min-height: 48px;
@@ -4722,12 +4682,6 @@ mark.mention {
     transform: scale(0.92);
     transform-origin: left top;
   }
-}
-
-.publicAccessSummary .groupAccessButton {
-  border-color: var(--orange);
-  background: var(--orange);
-  color: #fff;
 }
 
 .bootstrapCoordinator {

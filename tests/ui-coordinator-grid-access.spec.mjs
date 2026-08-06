@@ -49,6 +49,11 @@ test("la griglia è disponibile soltanto alla sessione coordinatore verificata",
     await publicPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
     await openGroup(publicPage);
     await expect(publicPage.getByText("Accesso privato", { exact: true })).toBeVisible();
+    await expect(publicPage.getByRole("button", { name: "Vista pubblica", exact: true })).toHaveCount(0);
+    await expect(publicPage.getByRole("button", { name: "Vista gruppo", exact: true })).toHaveCount(0);
+    await expect(publicPage.getByRole("button", { name: "Documenti e sicurezza", exact: true })).toHaveCount(0);
+    await expect(publicPage.getByRole("button", { name: "Condividi posizione", exact: true })).toHaveCount(0);
+    await expect(publicPage.getByRole("button", { name: "Cancella posizione", exact: true })).toHaveCount(0);
     await expect(publicPage.getByRole("button", { name: "Griglia coordinatore" })).toHaveCount(0);
     expect((await publicPage.request.get(`${baseUrl}/api/private`)).status()).toBe(401);
     expect(await publicPage.evaluate(() => window.__privateExposure)).toEqual([]);
@@ -88,11 +93,31 @@ test("la griglia è disponibile soltanto alla sessione coordinatore verificata",
     const coordinatorPage = await coordinatorContext.newPage();
     await coordinatorPage.goto(`${baseUrl}/#invite=${encodeURIComponent(coordinatorInvite)}`, { waitUntil: "domcontentloaded" });
     await expect(coordinatorPage.locator(".accessPill")).toContainText(coordinatorName.split(" ")[0]);
+    const coordinatorIdentity = await coordinatorPage.evaluate(() => ({
+      token: localStorage.getItem("india-session-token"),
+      profile: localStorage.getItem("india-profile-id"),
+      role: localStorage.getItem("india-role"),
+    }));
+    expect(coordinatorIdentity.token).toBeTruthy();
+    expect(coordinatorIdentity.role).toBe("coordinator");
     await openPersonalPanel(coordinatorPage);
+    await expect(coordinatorPage.getByRole("button", { name: "Vista pubblica", exact: true })).toHaveCount(0);
+    await expect(coordinatorPage.getByRole("button", { name: "Vista gruppo", exact: true })).toHaveCount(0);
     await expect(coordinatorPage.getByRole("button", { name: "Griglia coordinatore" })).toBeVisible();
     await coordinatorPage.getByRole("button", { name: "Griglia coordinatore" }).tap();
     await expect(coordinatorPage.locator(".coordinatorDashboard")).toBeVisible();
     await expect(coordinatorPage.getByRole("heading", { name: "Controllo documenti" })).toBeVisible();
+    expect(await coordinatorPage.evaluate(() => ({
+      token: localStorage.getItem("india-session-token"),
+      profile: localStorage.getItem("india-profile-id"),
+      role: localStorage.getItem("india-role"),
+    }))).toEqual(coordinatorIdentity);
+    expect((await coordinatorPage.request.get(`${baseUrl}/api/auth/session`, {
+      headers: {
+        authorization: `Bearer ${coordinatorIdentity.token}`,
+        "x-device-key": await coordinatorPage.evaluate(() => localStorage.getItem("india-device-key") || ""),
+      },
+    })).status()).toBe(200);
 
     await openGroup(travelerPage);
     await expect(travelerPage.locator(".coordinatorDashboard")).toHaveCount(0);

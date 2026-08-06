@@ -61,6 +61,12 @@ test("nessuna funzione privata residua accetta soltanto la password comune", () 
   assert.match(worker, /path === "auth\/unlock"[\s\S]{0,700}?return json\([\s\S]*?403/);
 });
 
+test("non esiste una finta anteprima pubblica che alteri solo i privilegi nel browser", () => {
+  assert.doesNotMatch(client, /publicPreview|setPublicPreview|Vista pubblica|Vista gruppo/);
+  assert.match(client, /const verifiedSessionToken = sessionProfile \? sessionToken : ""/);
+  assert.match(client, /const effectiveSessionToken = verifiedSessionToken/);
+});
+
 test("sessioni e inviti usano token casuali memorizzati soltanto come hash", () => {
   assert.match(worker, /crypto\.getRandomValues\(new Uint8Array\(32\)\)/);
   assert.match(worker, /crypto\.subtle\.digest\("SHA-256"/);

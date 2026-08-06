@@ -157,7 +157,7 @@ P0,accessi-privacy,passed,Non accettare token impostati manualmente dal client.,
 P0,accessi-privacy,passed,Non consentire alla password comune di impersonare un Viaggiatore esistente.,usabilita:U0005,authorization-matrix 55/55: auth/unlock con password corretta restituisce 403 e richiede l’invito personale monouso
 P0,accessi-privacy,passed,Non creare inviti.,usabilita:U0369,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P0,accessi-privacy,passed,non deve cancellare la sessione personale;,addendum:A0276,"ui-invite-misdelivery touch 2/2: apertura di un invito altrui conserva token, profilo e ruolo della sessione valida"
-P0,accessi-privacy,pending,non deve consentire operazioni private mentre è attiva;,addendum:A0278,
+P0,accessi-privacy,passed,non deve consentire operazioni private mentre è attiva;,addendum:A0278,security-surface 18/18 + ui-coordinator-grid touch: nessuna anteprima client attivabile; il contesto Pubblico riceve 401 dall’area privata
 P0,accessi-privacy,passed,non deve contenere password;,addendum:A0421,security-surface L1: codice gruppo assente dal bundle client e verificato solo contro il secret server
 P0,accessi-privacy,passed,non deve contenere token;,addendum:A0422,security-surface L1: token di sessione/invito non incorporati nel bundle client
 P0,accessi-privacy,passed,"non deve vedere posizioni, salvo autorizzazione esplicita;",usabilita:U0028,authorization-matrix 55/55 + location 10/10: area posizioni restituisce 401 a pubblico/ospite/password; una sessione gruppo vede e modifica soltanto la propria
@@ -390,7 +390,7 @@ P0,documenti,passed,Dashboard documenti.,usabilita:U0658,ui-documents QA: dashbo
 P0,documenti,pending,Deep link del documento.,globale:T-0241,
 P0,documenti,pending,Definire per quanto tempo vengono conservati i documenti.,globale:T-1343,
 P0,documenti,passed,Descrizione dello stato dei documenti.,globale:T-1065,"ui-documents QA: stati Non ancora caricato, Presente e conteggi 0/4–3/4 verificati"
-P0,documenti,pending,deve nascondere immediatamente documenti e posizioni;,addendum:A0279,
+P0,documenti,passed,deve nascondere immediatamente documenti e posizioni;,addendum:A0279,"ui-coordinator-grid touch ripetuto due volte: nel contesto Pubblico sono assenti Documenti, Condividi posizione e Cancella posizione; /api/private risponde 401"
 P0,documenti,pending,Documentare e applicare una regola unica.,globale:T-0700,
 P0,documenti,pending,Documentare procedura e tempo di rollback.,globale:T-1172,
 P0,documenti,passed,Documentare tempo necessario al ripristino.,globale:T-1165,verify-d1-backup: tempo di ripristino misurato automaticamente
@@ -1101,7 +1101,7 @@ P2,profili-ruoli,pending,Mostrare un messaggio preciso: “Per pubblicare devi p
 P2,profili-ruoli,passed,nessun utente può risultare contemporaneamente Viaggiatore A e Viaggiatore B.,addendum:A0065,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P2,profili-ruoli,pending,nomi differenti per lo stesso ruolo;,addendum:A0410,
 P2,profili-ruoli,pending,Non associare automaticamente un profilo scelto dal client.,usabilita:U0482,
-P2,profili-ruoli,pending,non deve modificare il ruolo reale;,addendum:A0277,
+P2,profili-ruoli,passed,non deve modificare il ruolo reale;,addendum:A0277,"ui-coordinator-grid touch ripetuto due volte: token, profile-id e ruolo coordinatore restano identici durante navigazione e riapertura della griglia; ruolo confermato da auth/session"
 P2,profili-ruoli,pending,non deve poter scegliere il profilo di un Viaggiatore;,usabilita:U0026,
 P2,profili-ruoli,pending,non esistono profili;,addendum:A0297,
 P2,profili-ruoli,passed,Non modificare profili altrui.,usabilita:U0373,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
@@ -1568,7 +1568,7 @@ P3,altro,pending,Deselezionare un’attività.,usabilita:U0330,
 P3,altro,pending,deve avere un nome verificabile;,usabilita:U0025,
 P3,altro,pending,deve collegare ogni errore al relativo ID TEST.,addendum:A0426,
 P3,altro,pending,deve consentire di ricostruire perché un tasto non ha funzionato;,addendum:A0425,
-P3,altro,pending,deve nascondere tasti amministrativi;,addendum:A0280,
+P3,altro,passed,deve nascondere tasti amministrativi;,addendum:A0280,ui-coordinator-grid touch ripetuto due volte: il Pubblico non monta Griglia coordinatore; soltanto la sessione coordinatore verificata la visualizza
 P3,altro,pending,Deve riuscire soltanto una richiesta.,usabilita:U0411,
 P3,altro,pending,Diario Mattina/Pomeriggio/Sera.,globale:T-0246,
 P3,altro,pending,Dieci allegati.,usabilita:U0150,
@@ -2770,7 +2770,7 @@ P3,social,pending,crede di essere collegato ma il server lo considera Pubblico;,
 P3,social,pending,è pubblicata realmente;,globale:T-0665,
 P3,social,passed,il Pubblico riceva soltanto privilegi pubblici;,addendum:A0376,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P3,social,pending,il pulsante Pubblica viene mostrato a chi non può utilizzarlo;,usabilita:U0688,
-P3,social,pending,la vista pubblica deve cambiare soltanto la visualizzazione;,addendum:A0275,
+P3,social,passed,la vista pubblica deve cambiare soltanto la visualizzazione;,addendum:A0275,security-surface 18/18 + ui-coordinator-grid touch ripetuto due volte: rimosso il vecchio toggle client; lo stato Pubblico deriva solo dall’assenza di una sessione personale verificata
 P3,social,passed,Messaggio “Pubblicazione in corso”.,usabilita:U0160,"Playwright mobile: loading held, disabled state, duplicate click, HTTP 201, confirmation; preview 9393a1aa"
 P3,social,passed,Messaggio “Pubblicazione riuscita”.,usabilita:U0161,"Playwright mobile: loading held, disabled state, duplicate click, HTTP 201, confirmation; preview 9393a1aa"
 P3,social,pending,Misurare pubblicazione post.,globale:T-0591,

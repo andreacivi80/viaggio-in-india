@@ -1567,7 +1567,6 @@ function App() {
       () => localStorage.getItem("india-session-token") || "",
     ),
     [sessionProfile, setSessionProfile] = useState(null),
-    [publicPreview, setPublicPreview] = useState(false),
     [lastActivityRead, setLastActivityRead] = useState(
       () => localStorage.getItem("india-activity-read") || "",
     ),
@@ -1648,10 +1647,10 @@ function App() {
     ? simulatedDate
     : indiaToday;
   const todayTripIndex = tripDateKeys.indexOf(activeDateKey);
-  const effectiveGroupCode = publicPreview ? "" : groupCode;
+  const effectiveGroupCode = groupCode;
   const verifiedSessionToken = sessionProfile ? sessionToken : "";
   const sessionCheckPending = Boolean(sessionToken && !sessionProfile);
-  const effectiveSessionToken = publicPreview ? "" : verifiedSessionToken;
+  const effectiveSessionToken = verifiedSessionToken;
   const sessionTokenRef = useRef(effectiveSessionToken);
   useEffect(() => {
     sessionTokenRef.current = effectiveSessionToken;
@@ -2038,7 +2037,6 @@ function App() {
       groupCode,
       selectedDay: dayIndex,
     });
-    setPublicPreview(entry.publicPreview);
     setTab("diary");
     setSelectedDay(entry.selectedDay);
     setComposeOpen(entry.composeOpen);
@@ -2296,7 +2294,7 @@ function App() {
             <CircleUserRound size={15} />
             {effectiveSessionToken
               ? currentProfile?.name || "Profilo"
-              : sessionCheckPending && !publicPreview
+              : sessionCheckPending
                 ? "Verifica…"
               : "Pubblico"}
           </button>
@@ -2397,19 +2395,7 @@ function App() {
                 ×
               </button>
             </div>
-            {publicPreview ? (
-              <div className="publicAccessSummary">
-                <b>Senza password</b>
-                <span>Puoi vedere la bacheca, commentare, reagire e condividere.</span>
-                <small>Documenti, posizioni e modifiche restano bloccati.</small>
-                <button
-                  className="groupAccessButton"
-                  onClick={() => setPublicPreview(false)}
-                >
-                  <LockKeyhole /> Accedi al gruppo
-                </button>
-              </div>
-            ) : sessionCheckPending ? (
+            {sessionCheckPending ? (
               <div className="personalAccessRequired" role="status">
                 <CircleUserRound />
                 <div>
@@ -2560,7 +2546,6 @@ function App() {
               } else {
                 if (id === "map") showMap(null);
                 else if (id === "people" && !verifiedSessionToken) {
-                  setPublicPreview(false);
                   setQuickProfileOpen(true);
                   setNotificationOpen(false);
                   setTab("people");
@@ -2950,7 +2935,6 @@ function App() {
               setComposeOpen(false);
             }}
             onGroupUnlocked={() => {
-              setPublicPreview(false);
               setComposeOpen(false);
               setQuickProfileOpen(true);
               setNotificationOpen(false);
@@ -2977,7 +2961,7 @@ function App() {
             people={people}
             groupCode={effectiveGroupCode}
             sessionToken={effectiveSessionToken}
-            sessionProfile={publicPreview ? null : sessionProfile}
+            sessionProfile={sessionProfile}
             setGroupCode={setGroupCode}
             refresh={refresh}
             onOpenPrivate={(profileId) => {
@@ -2994,7 +2978,6 @@ function App() {
             <button
               type="button"
               onClick={() => {
-                setPublicPreview(false);
                 setQuickProfileOpen(true);
               }}
             >
