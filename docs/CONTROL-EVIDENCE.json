@@ -322,4 +322,11 @@
   ,{ "control": "Creare un invito per ogni Viaggiatore.", "evidence": "ui-multi-invite-copy touch 1/1 ripetuto due volte: tre schede diverse producono tre inviti personali distinti" }
   ,{ "control": "Tutti i partecipanti aprono il proprio invito.", "evidence": "ui-multi-invite-copy touch 1/1 ripetuto due volte: tre telefoni nuovi aprono i tre link e ricevono tre profile-id differenti e corretti" }
   ,{ "control": "Verificare la regola prevista per il riutilizzo del token.", "evidence": "ui-multi-invite-copy touch + auth-lifecycle: ciascuno dei tre inviti crea una sola sessione; il riuso riceve 403/409 e resta Pubblico" }
+  ,{ "control": "diagramma degli stati di accesso;", "evidence": "CREDENTIAL-STATE-MACHINE 1.41.0 + access-state-documentation 2/2: diagramma Mermaid e precedenza sessione/ruolo/profilo verificati contro il client" }
+  ,{ "control": "elenco dei messaggi di autorizzazione negata;", "evidence": "ACCESS-DENIAL-MESSAGES + access-state-documentation 2/2: 17 dinieghi confrontati letteralmente col Worker e collegati al recupero UI" }
+  ,{ "control": "spiegare quale autorizzazione manca;", "evidence": "ACCESS-DENIAL-MESSAGES + access-state-documentation 2/2: ogni diniego indica sessione, ruolo, proprietà o identità ospite mancante" }
+  ,{ "control": "come deve ottenere l’autorizzazione mancante;", "evidence": "ACCESS-DENIAL-MESSAGES + access-state-documentation 2/2: recupero esplicito tramite invito, profilo con consenso, coordinatore o identità ospite" }
+  ,{ "control": "etichetta di accesso mostrata;", "evidence": "access-state-documentation 2/2 + ui-multi-invite-copy: Pubblico senza sessione e nome del profilo soltanto dopo conferma server" }
+  ,{ "control": "password di gruppo e sessione scaduta;", "evidence": "CREDENTIAL-STATE-MACHINE + ui-password-access + ui-role-live: password senza sessione resta Pubblico; sessione scaduta viene rimossa e richiede invito" }
+  ,{ "control": "non utilizzare la password comune per aggirare il rifiuto.", "evidence": "access-state-documentation + access-session-boundaries 17/17: password comune non ripete né autorizza endpoint privati dopo 401/403" }
 ]

@@ -100,6 +100,10 @@ Il collaudo touch `ui-people.spec.mjs` conserva l’identificativo della session
 
 Il collaudo touch `ui-multi-invite-copy.spec.mjs` crea dal telefono del coordinatore tre inviti personali per tre viaggiatori distinti. Per ciascuna scheda tocca `Crea invito personale`, tocca `Copia link` e legge realmente gli appunti del telefono: i tre URL sono differenti, non contengono query e conservano il segreto soltanto nel frammento. Tre contesti mobili nuovi aprono ciascuno il proprio link, ricevono tre profili differenti e mostrano l’etichetta di accesso corretta senza cambiare l’identità del coordinatore. Il successivo riutilizzo di ogni link viene respinto con `403` o `409` e non crea una sessione.
 
+## Stati e recupero dai dinieghi
+
+`CREDENTIAL-STATE-MACHINE.md` contiene il diagramma degli stati e la precedenza applicata dal server. `ACCESS-DENIAL-MESSAGES.md` collega i dinieghi effettivamente restituiti dall’API al recupero consentito all’utente. Il test `access-state-documentation.test.mjs` confronta automaticamente diagramma, tabella, messaggi server e istruzioni presenti nel client: fallisce se un messaggio documentato non esiste nel codice o se manca il corrispondente recupero visibile. La sola password lascia l’etichetta `Pubblico`, non crea una sessione e non può ripetere un’operazione privata rifiutata.
+
 ## PDF protetti da password
 
 Il collaudo touch `ui-protected-pdf.spec.mjs` carica un PDF AES-256 realmente cifrato dal telefono del proprietario. Il file viene conservato nell’area privata, compare nella griglia del coordinatore e resta scaricabile senza che l’app richieda o memorizzi la password. Il visualizzatore riconosce `PasswordException`, non mostra pagine vuote o contenuto parziale e propone esplicitamente il lettore PDF del telefono. Proprietario e coordinatore ricevono lo stesso comportamento controllato; il proprietario elimina infine il file. La fixture contiene soltanto dati fittizi ed è verificata con password corretta, password errata e rendering visivo prima del test.

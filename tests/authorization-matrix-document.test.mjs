@@ -37,6 +37,9 @@ test("la matrice autorizzativa documenta tutti i ruoli e le risorse sensibili", 
   assert.match(matrix, /ui-multi-invite-copy\.spec\.mjs[\s\S]*tre inviti personali[\s\S]*tre viaggiatori distinti/i);
   assert.match(matrix, /Copia link[\s\S]*appunti del telefono[\s\S]*URL sono differenti/i);
   assert.match(matrix, /riutilizzo di ogni link[\s\S]*`403` o `409`[\s\S]*non crea una sessione/i);
+  assert.match(matrix, /CREDENTIAL-STATE-MACHINE\.md[\s\S]*ACCESS-DENIAL-MESSAGES\.md/i);
+  assert.match(matrix, /access-state-documentation\.test\.mjs[\s\S]*messaggi server[\s\S]*recupero visibile/i);
+  assert.match(matrix, /sola password[\s\S]*etichetta `Pubblico`[\s\S]*non crea una sessione/i);
   assert.match(matrix, /ui-protected-pdf\.spec\.mjs[\s\S]*AES-256[\s\S]*PasswordException/i);
   assert.match(matrix, /non mostra pagine vuote[\s\S]*lettore PDF del telefono/i);
   assert.match(matrix, /vapid-secret-boundary\.test\.mjs[\s\S]*VAPID_PRIVATE_KEY[\s\S]*soltanto dal Worker/i);

@@ -53,7 +53,7 @@ P0,accessi-privacy,pending,chi può creare un invito non possa automaticamente l
 P0,accessi-privacy,passed,Chiudere automaticamente i dati privati già mostrati.,addendum:A0104,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P0,accessi-privacy,passed,collegamento di invito già utilizzato;,addendum:A0126,extended-p0-auth-lifecycle 28/28: riuso negato con 403/409
 P0,accessi-privacy,passed,Collegare il telefono A tramite invito personale.,globale:T-0696,QA 1.31.0: telefono tecnico collegato tramite invito personale
-P0,accessi-privacy,pending,come deve ottenere l’autorizzazione mancante;,addendum:A0433,
+P0,accessi-privacy,passed,come deve ottenere l’autorizzazione mancante;,addendum:A0433,"ACCESS-DENIAL-MESSAGES + access-state-documentation 2/2: recupero esplicito tramite invito, profilo con consenso, coordinatore o identità ospite"
 P0,accessi-privacy,pending,Commento con password.,usabilita:U0296,
 P0,accessi-privacy,passed,Commento senza password.,usabilita:U0295,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
 P0,accessi-privacy,passed,Condividere per errore l’invito del Viaggiatore A con il Viaggiatore B.,globale:T-0775,"ui-invite-misdelivery touch 2/2 ripetuto due volte: sessione B invariata, invito A non consumato e ancora utilizzabile dal destinatario"
@@ -83,7 +83,7 @@ P0,accessi-privacy,passed,Creare un invito per ogni Viaggiatore.,globale:T-0777,
 P0,accessi-privacy,passed,creazione invito;,globale:T-0732;globale:T-1218;usabilita:U0656,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P0,accessi-privacy,passed,dati privati nella cache.,addendum:A0082,Public-cache unit + delayed-state Playwright 6/6; preview 63b53987; 2026-08-04
 P0,accessi-privacy,passed,deve ricevere una sessione Ospite sicura;,usabilita:U0024,guest-session-device-binding 2/2 + authorization-matrix 59/59: token familiare vincolato alla chiave del telefono; chiave assente o differente vede soltanto contenuti pubblici
-P0,accessi-privacy,pending,diagramma degli stati di accesso;,addendum:A0466,
+P0,accessi-privacy,passed,diagramma degli stati di accesso;,addendum:A0466,CREDENTIAL-STATE-MACHINE 1.41.0 + access-state-documentation 2/2: diagramma Mermaid e precedenza sessione/ruolo/profilo verificati contro il client
 P0,accessi-privacy,pending,dispositivo o sessione;,globale:T-1558,
 P0,accessi-privacy,pending,"Distinguere limiti per IP, sessione e profilo.",globale:T-1053,
 P0,accessi-privacy,passed,Divieto di leggere un post privato modificando direttamente l’URL.,globale:T-0067,QA 1.31.0: ospite e altro viaggiatore non leggono ne interagiscono col post privato
@@ -92,7 +92,7 @@ P0,accessi-privacy,passed,documento non autorizzato;,usabilita:U0498,authorizati
 P0,accessi-privacy,passed,documento privato;,addendum:A0125,authorization-matrix 55/55: documento reale in storage temporaneo visibile soltanto a proprietario e coordinatore
 P0,accessi-privacy,passed,è nascosto o disabilitato per il ruolo non autorizzato;,usabilita:U0668,ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,passed,elenco dei controlli di proprietà;,addendum:A0469,API-AUTHORIZATION-INVENTORY: 38 rotte esatte e 5 rotte dinamiche classificate
-P0,accessi-privacy,pending,elenco dei messaggi di autorizzazione negata;,addendum:A0472,
+P0,accessi-privacy,passed,elenco dei messaggi di autorizzazione negata;,addendum:A0472,ACCESS-DENIAL-MESSAGES + access-state-documentation 2/2: 17 dinieghi confrontati letteralmente col Worker e collegati al recupero UI
 P0,accessi-privacy,passed,"Eliminando un profilo, gestire documenti, posizioni, sessioni e inviti.",globale:T-1011,"profile-deletion locale 40/40 + QA live 17/17: cascata reale verificata su documenti, posizione, sessione, invito e stato condiviso"
 P0,accessi-privacy,passed,Eliminare il profilo associato a una sessione attiva.,globale:T-0758,profile-deletion locale 40/40 + QA live 17/17: eliminazione dal dispositivo proprietario e sessione immediatamente respinta con 401
 P0,accessi-privacy,passed,Eliminare inviti scaduti.,globale:T-1347,"extended-p0-auth-lifecycle: invito scaduto inserito in D1 locale e rimosso da health | extended-p0-auth-lifecycle 44/44: invito scaduto inserito in D1 locale isolato, health rimuove almeno una riga, claim successivo 403"
@@ -102,7 +102,7 @@ P0,accessi-privacy,passed,endpoint autorizzati;,addendum:A0048,authorization-mat
 P0,accessi-privacy,passed,entrare con un invito;,globale:T-1774,auth-lifecycle 61/61: claim valido restituisce sessione e profilo corretto
 P0,accessi-privacy,passed,Eseguire logout e nuovo accesso.,addendum:A0340,auth-lifecycle 68/68: logout invalida il token e un nuovo invito emette una nuova sessione
 P0,accessi-privacy,passed,esiste una matrice autorizzativa approvata;,addendum:A0444,AUTHORIZATION-MATRIX + endpoint-authorization-inventory 2/2
-P0,accessi-privacy,pending,etichetta di accesso mostrata;,addendum:A0043,
+P0,accessi-privacy,passed,etichetta di accesso mostrata;,addendum:A0043,access-state-documentation 2/2 + ui-multi-invite-copy: Pubblico senza sessione e nome del profilo soltanto dopo conferma server
 P0,accessi-privacy,passed,Familiare: nessun accesso.,globale:T-0482,resource-enumeration 17/17: sessione familiare riceve lo stesso diniego del pubblico su area e media private
 P0,accessi-privacy,passed,gli URL diretti rispettano le autorizzazioni;,addendum:A0454,"ui-critical produzione: richieste dirette a private, devices, locations e documents negate senza sessione"
 P0,accessi-privacy,passed,i dati dei profili rispettano la privacy;,globale:T-0673,authorization-matrix 55/55 + security-surface: stato pubblico ridotto e metadati privacy_consent_at/version assenti anche nello stato autenticato
@@ -171,7 +171,7 @@ P0,accessi-privacy,passed,non riceve posizioni private;,addendum:A0144,Authentic
 P0,accessi-privacy,passed,non riceve sessioni o inviti altrui.,addendum:A0149,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,non riceve token o segreti;,addendum:A0155,"security-surface L1: bundle pubblico privo di codice gruppo, token di sessione e token Cloudflare"
 P0,accessi-privacy,passed,Non riutilizzare token già revocati.,addendum:A0345,Live revoke command 403 + authenticated remote QA 20/20; preview a4b05356; 2026-08-04
-P0,accessi-privacy,pending,non utilizzare la password comune per aggirare il rifiuto.,addendum:A0274,
+P0,accessi-privacy,passed,non utilizzare la password comune per aggirare il rifiuto.,addendum:A0274,access-state-documentation + access-session-boundaries 17/17: password comune non ripete né autorizza endpoint privati dopo 401/403
 P0,accessi-privacy,pending,Notifica per invito personale.,globale:T-0085,
 P0,accessi-privacy,pending,"Notifica per posizione condivisa, soltanto se autorizzata.",globale:T-0087,
 P0,accessi-privacy,passed,notifiche autorizzate correttamente;,globale:T-1793,push-audience 5/5: autorizzazione calcolata lato Worker prima di costruire ogni push
@@ -184,7 +184,7 @@ P0,accessi-privacy,passed,Ogni sessione deve essere collegata a un profilo esist
 P0,accessi-privacy,passed,ogni tasto autorizzato funziona realmente;,addendum:A0446,ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,passed,ogni tasto non autorizzato è nascosto o disabilitato;,addendum:A0447,ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,passed,password di gruppo e sessione Coordinatore;,addendum:A0054,"ui-coordinator-grid touch 1/1: password comune, sessione viaggiatore e sessione coordinatore verificate come tre stati distinti"
-P0,accessi-privacy,pending,password di gruppo e sessione scaduta;,addendum:A0055,
+P0,accessi-privacy,passed,password di gruppo e sessione scaduta;,addendum:A0055,CREDENTIAL-STATE-MACHINE + ui-password-access + ui-role-live: password senza sessione resta Pubblico; sessione scaduta viene rimossa e richiede invito
 P0,accessi-privacy,passed,password di gruppo e sessione Viaggiatore;,addendum:A0053,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,password errata;,usabilita:U0492,ui-critical produzione mobile: password errata non sblocca Gruppo né documenti
 P0,accessi-privacy,passed,permesso autorizzato;,globale:T-1381,ui-location touch 1/1: permesso riattivato consente nuovo invio e successiva cancellazione
@@ -232,7 +232,7 @@ P0,accessi-privacy,passed,sessione mancante;,usabilita:U0493,"Playwright mobile:
 P0,accessi-privacy,passed,sessione revocata.,addendum:A0135;addendum:A0214,extended-p0-auth-lifecycle 28/28: logout e logout-all revocano immediatamente la sessione
 P0,accessi-privacy,passed,sessione scaduta;,globale:T-1583;usabilita:U0494;addendum:A0134;addendum:A0166;addendum:A0213,QA 1.31.0: sessione inattiva respinta
 P0,accessi-privacy,passed,sessione valida/non valida;,addendum:A0415,access-session-boundaries 17/17: sessione legata al dispositivo 200; assente scaduta o alterata 401
-P0,accessi-privacy,pending,spiegare quale autorizzazione manca;,addendum:A0265,
+P0,accessi-privacy,passed,spiegare quale autorizzazione manca;,addendum:A0265,"ACCESS-DENIAL-MESSAGES + access-state-documentation 2/2: ogni diniego indica sessione, ruolo, proprietà o identità ospite mancante"
 P0,accessi-privacy,passed,Tentare accesso a documento altrui.,globale:T-0624,extended-p0-documents: media privata negata ad altro viaggiatore
 P0,accessi-privacy,passed,Tentare accesso diretto ai documenti.,usabilita:U0580,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Tentare di creare un invito.,usabilita:U0623,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
