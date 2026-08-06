@@ -1,7 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
 Controlli selezionati: **120** tra 353 controlli P0–P2 ancora privi di evidenza conclusiva.
-Stato del pacchetto: **26 superati**, **94 pendenti**.
+Stato del pacchetto: **30 superati**, **90 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -79,16 +79,16 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-1630`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
 - [ ] **K-034 · mappe-posizione** — Eliminare automaticamente le posizioni non più necessarie.
   Sorgente: `globale:T-1346`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-035 · persistenza** — Applicare le migrazioni una alla volta.
-  Sorgente: `globale:T-1026`. Aggiornamenti, guasti e retry non devono perdere o duplicare dati.
+- [x] **K-035 · persistenza** — Applicare le migrazioni una alla volta.
+  Sorgente: `globale:T-1026`. P0_MIGRATION_CHAIN 22/22: ogni migrazione viene applicata singolarmente in ordine su D1 locale e, dopo ciascun passaggio, profilo, post e documento sentinella restano presenti.
 - [ ] **K-036 · persistenza** — Backup delle chiavi Push.
   Sorgente: `globale:T-0636`. Aggiornamenti, guasti e retry non devono perdere o duplicare dati.
-- [ ] **K-037 · persistenza** — controlli eventuale modifica del database.
-  Sorgente: `addendum:A0208`. Aggiornamenti, guasti e retry non devono perdere o duplicare dati.
-- [ ] **K-038 · persistenza** — Creare un database dalla schema completa.
-  Sorgente: `globale:T-1027`. Aggiornamenti, guasti e retry non devono perdere o duplicare dati.
-- [ ] **K-039 · persistenza** — Creare un database partendo dalla prima versione.
-  Sorgente: `globale:T-1028`. Aggiornamenti, guasti e retry non devono perdere o duplicare dati.
+- [x] **K-037 · persistenza** — controlli eventuale modifica del database.
+  Sorgente: `addendum:A0208`. migration-safety 7/7 + P0_MIGRATION_CHAIN 22/22: ogni modifica database è additiva, ordinata e verificata con dati sentinella prima/dopo.
+- [x] **K-038 · persistenza** — Creare un database dalla schema completa.
+  Sorgente: `globale:T-1027`. P0_FULL_SCHEMA_CREATE 2/2: db/schema.sql crea da zero tutte le 12 tabelle critiche ed è riapplicabile senza errore o duplicazione.
+- [x] **K-039 · persistenza** — Creare un database partendo dalla prima versione.
+  Sorgente: `globale:T-1028`. P0_MIGRATION_CHAIN 22/22 + P0_LEGACY_DATA_PRESERVATION 3/3: la nuova baseline 0001 ricostruisce la prima versione e raggiunge lo schema attuale conservando i dati reali sentinella.
 - [ ] **K-040 · persistenza** — Eseguire backup mentre vengono creati post.
   Sorgente: `globale:T-1168`. Aggiornamenti, guasti e retry non devono perdere o duplicare dati.
 
