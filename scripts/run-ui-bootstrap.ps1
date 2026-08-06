@@ -3,6 +3,10 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$parsedBaseUrl = [Uri]$BaseUrl
+if ($parsedBaseUrl.Scheme -ne "https" -or $parsedBaseUrl.Host -notmatch '(^|\.)viaggio-in-india-2026-qa\.pages\.dev$') {
+  throw "Protezione dati: il bootstrap UI scrivente può essere eseguito soltanto sul progetto QA isolato."
+}
 $runId = [guid]::NewGuid().ToString("N")
 $coordinatorName = "Avvio$($runId.Substring(0, 8))"
 $postMarker = "QA bootstrap $runId"

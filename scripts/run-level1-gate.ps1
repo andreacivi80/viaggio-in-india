@@ -14,6 +14,11 @@ if ($SmokeOnly) {
   exit $LASTEXITCODE
 }
 
+$parsedBaseUrl = [Uri]$BaseUrl
+if ($parsedBaseUrl.Scheme -ne "https" -or $parsedBaseUrl.Host -notmatch '(^|\.)viaggio-in-india-2026-qa\.pages\.dev$') {
+  throw "Protezione dati: il gate completo con scritture può essere eseguito soltanto sul progetto QA isolato. Usare -SmokeOnly per la sola lettura ufficiale."
+}
+
 if ($DeployOnly) {
   & npx wrangler pages deploy dist --branch main --commit-dirty=true
   exit $LASTEXITCODE

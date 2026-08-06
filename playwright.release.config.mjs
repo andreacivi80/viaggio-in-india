@@ -1,6 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
+import { requireSafeMutationTarget } from "./tests/helpers/qa-mutation-target.mjs";
 
 const remoteBaseURL = process.env.TEST_BASE_URL || "";
+if (remoteBaseURL) requireSafeMutationTarget(remoteBaseURL);
 
 export default defineConfig({
   testDir: "./tests",

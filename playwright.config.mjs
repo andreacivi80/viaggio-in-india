@@ -1,4 +1,8 @@
 import { defineConfig, devices } from "@playwright/test";
+import { requireSafeMutationTarget } from "./tests/helpers/qa-mutation-target.mjs";
+
+const remoteBaseURL = process.env.TEST_BASE_URL || "";
+if (remoteBaseURL) requireSafeMutationTarget(remoteBaseURL);
 
 export default defineConfig({
   testDir: "./tests",
@@ -9,7 +13,7 @@ export default defineConfig({
   reporter: [["line"]],
   use: {
     actionTimeout: 15_000,
-    baseURL: process.env.TEST_BASE_URL || "http://127.0.0.1:4173",
+    baseURL: remoteBaseURL || "http://127.0.0.1:4173",
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
     video: "retain-on-failure",
