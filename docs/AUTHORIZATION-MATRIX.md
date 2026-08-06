@@ -61,3 +61,5 @@ La UI nasconde i comandi non pertinenti, ma la sicurezza non dipende dalla UI: u
 - Tentativi ripetuti con sessioni false non recuperano privilegi; i tentativi ripetuti con password errata attivano `429` senza creare profili.
 
 Evidenze automatiche: `extended-p0-auth-lifecycle.mjs` (68/68) e `extended-p0-access-session-boundaries.mjs` (17/17), eseguite soltanto su database e storage temporanei locali.
+
+Il collaudo touch `ui-role-live.spec.mjs` viene eseguito su un Galaxy S20 FE simulato e su profili locali temporanei. Verifica due flussi: aggiornamento immediato di ruolo/revoca con ritorno tramite cronologia e apertura del Gruppo; avvio con una sessione realmente scaduta e dati locali obsoleti. In entrambi i casi il server resta la fonte autorevole, il telefono cancella token/profilo/ruolo/nome obsoleti e non rimonta documenti o griglia coordinatore.

@@ -57,7 +57,7 @@ P0,accessi-privacy,pending,come deve ottenere l’autorizzazione mancante;,adden
 P0,accessi-privacy,pending,Commento con password.,usabilita:U0296,
 P0,accessi-privacy,passed,Commento senza password.,usabilita:U0295,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
 P0,accessi-privacy,pending,Condividere per errore l’invito del Viaggiatore A con il Viaggiatore B.,globale:T-0775,
-P0,accessi-privacy,pending,condizione dopo accesso;,addendum:A0286,
+P0,accessi-privacy,passed,condizione dopo accesso;,addendum:A0286,ui-role-live touch 2/2: invito attiva profilo e ruolo derivati dalla sessione server
 P0,accessi-privacy,passed,condizione quando la sessione è ancora in verifica.,addendum:A0292,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,conferma che nessuna autorizzazione dipenda esclusivamente dal frontend.,addendum:A0482,P0 locale ruoli/documenti/posizione: richieste API falsificate respinte 403 dal Worker
 P0,accessi-privacy,pending,confonde password di gruppo e sessione personale;,addendum:A0441,
@@ -200,7 +200,7 @@ P0,accessi-privacy,pending,quali inviti esistono;,addendum:A0357,
 P0,accessi-privacy,pending,quali sessioni sono attive;,addendum:A0358,
 P0,accessi-privacy,passed,"Registrare data, ora e ultimo utilizzo della sessione.",globale:T-0037,"auth-lifecycle 35/35: created_at, last_used_at ed expires_at sono registrati e mostrati nell’elenco dispositivi"
 P0,accessi-privacy,passed,registri nome accessibile;,addendum:A0201,"TypeScript JSX inventory: 115 interactive elements, zero missing handlers/empty links; Playwright credential flow"
-P0,accessi-privacy,pending,"regola di precedenza tra password, sessione e dati locali;",addendum:A0467,
+P0,accessi-privacy,passed,"regola di precedenza tra password, sessione e dati locali;",addendum:A0467,ui-role-live touch 2/2: il server prevale e cancella token profilo ruolo e nome locali obsoleti
 P0,accessi-privacy,passed,reinviarla con token differente;,addendum:A0326,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Revoca immediata di sessioni compromesse.,globale:T-0230,extended-p0-auth-lifecycle 28/28: revoca selettiva del secondo dispositivo e token respinto immediatamente con 401
 P0,accessi-privacy,passed,Revocare il dispositivo mentre è aperta una finestra privata.,addendum:A0101,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
@@ -247,14 +247,14 @@ P0,accessi-privacy,passed,token revocato sulla risorsa A;,addendum:A0111,Live re
 P0,accessi-privacy,passed,Token revocato: 401.,usabilita:U0442,extended-p0-auth-lifecycle 28/28: token del secondo telefono revocato restituisce HTTP 401
 P0,accessi-privacy,passed,token scaduto sulla risorsa A;,addendum:A0110,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Token scaduto: 401.,usabilita:U0441,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P0,accessi-privacy,pending,tornando alla vista gruppo deve ricontrollare la sessione sul server;,addendum:A0281,
+P0,accessi-privacy,passed,tornando alla vista gruppo deve ricontrollare la sessione sul server;,addendum:A0281,ui-role-live touch 2/2: dopo revoca il Gruppo torna al gate e non mostra comandi privati
 P0,accessi-privacy,pending,Tutti i partecipanti aprono il proprio invito.,globale:T-1735,
 P0,accessi-privacy,passed,un link privato è accessibile senza sessione;,usabilita:U0698,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,un tasto autorizzato riceve 401 o 403;,addendum:A0217,authorization-matrix 59/59: nessuna operazione consentita riceve 401/403
 P0,accessi-privacy,passed,un tasto non autorizzato riceve successo;,addendum:A0218,authorization-matrix 59/59: nessuna operazione vietata riceve successo
 P0,accessi-privacy,passed,una revoca blocca immediatamente tutte le operazioni private;,addendum:A0453,extended-p0-auth-lifecycle 28/28: auth/session passa da 200 a 401 dopo la revoca
-P0,accessi-privacy,pending,una sessione scaduta durante l’anteprima non deve recuperare i privilegi;,addendum:A0282,
-P0,accessi-privacy,pending,una sessione scaduta non viene recuperata utilizzando silenziosamente un vecchio profilo locale;,addendum:A0064,
+P0,accessi-privacy,passed,una sessione scaduta durante l’anteprima non deve recuperare i privilegi;,addendum:A0282,ui-role-live touch 2/2: sessione realmente scaduta resta Pubblico e non mostra documenti o griglia
+P0,accessi-privacy,passed,una sessione scaduta non viene recuperata utilizzando silenziosamente un vecchio profilo locale;,addendum:A0064,ui-role-live touch 2/2: token profile-id ruolo e nome locali obsoleti vengono rimossi
 P0,accessi-privacy,passed,uno screenshot della vista pubblica non deve mostrare dati privati.,addendum:A0284,Public-cache unit + delayed-state Playwright 6/6; preview 63b53987; 2026-08-04
 P0,accessi-privacy,pending,Utilizzare il codice comune soltanto come invito iniziale al gruppo.,globale:T-0041,
 P0,accessi-privacy,passed,Utilizzare invito scaduto.,globale:T-0335;usabilita:U0412,extended-p0-auth-lifecycle 28/28: invito scaduto negato con HTTP 403
@@ -274,7 +274,7 @@ P0,accessi-privacy,pending,Verificare accesso amministrativo con autenticazione 
 P0,accessi-privacy,passed,Verificare accesso negato immediato.,globale:T-0336,extended-p0-auth-lifecycle 28/28: la sessione revocata restituisce 401 senza ritardo
 P0,accessi-privacy,passed,Verificare accesso negato.,usabilita:U0414,access-session-boundaries 17/17: pubblico password comune token scaduto e token alterato sono negati
 P0,accessi-privacy,passed,Verificare aggiornamento della sessione.,addendum:A0091,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
-P0,accessi-privacy,pending,Verificare aggiornamento delle autorizzazioni.,addendum:A0343,
+P0,accessi-privacy,passed,Verificare aggiornamento delle autorizzazioni.,addendum:A0343,ui-role-live touch 2/2: promozione retrocessione e revoca aggiornano telefono e comandi
 P0,accessi-privacy,passed,Verificare assenza di “Elimina” per utenti non autorizzati.,usabilita:U0280,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
 P0,accessi-privacy,passed,Verificare autorizzazione server.,usabilita:U0424,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Verificare che ciascun invito sia collegato alla persona corretta.,globale:T-0783,invite-link-privacy 3/3 + auth-lifecycle 61/61: profilo restituito uguale al target
@@ -294,8 +294,8 @@ P0,accessi-privacy,passed,Verificare dati dopo revoca della sessione.,globale:T-
 P0,accessi-privacy,passed,Verificare eliminazione degli inviti.,globale:T-1331,auth-lifecycle 40/40: invito revocato rimosso dal database; viaggiatore non autorizzato riceve 403
 P0,accessi-privacy,passed,Verificare eliminazione delle sessioni.,globale:T-1335,extended-p0-auth-lifecycle 28/28: dispositivo revocato scompare dall’elenco delle sessioni attive
 P0,accessi-privacy,passed,Verificare emissione di un nuovo token.,addendum:A0338,auth-lifecycle 68/68: nuovo invito e refresh emettono token nuovi e differenti
-P0,accessi-privacy,pending,Verificare esecuzione dell’accesso.,usabilita:U0046,
-P0,accessi-privacy,pending,Verificare impossibilità di utilizzare la cronologia del browser per tornare nella dashboard autorizzata.,addendum:A0100,
+P0,accessi-privacy,passed,Verificare esecuzione dell’accesso.,usabilita:U0046,ui-role-live touch 2/2: tre inviti personali collegano due telefoni viaggiatore e uno coordinatore
+P0,accessi-privacy,passed,Verificare impossibilità di utilizzare la cronologia del browser per tornare nella dashboard autorizzata.,addendum:A0100,ui-role-live touch 2/2: indietro dopo revoca mantiene sessione nulla e gate privato
 P0,accessi-privacy,pending,Verificare informazioni autorizzate.,usabilita:U0366,
 P0,accessi-privacy,passed,"Verificare intestazione private, no-store.",globale:T-0488,access-session-boundaries 17/17: no-store verificato su dinieghi stato sessione e area privata autorizzata
 P0,accessi-privacy,pending,Verificare invalidazione dell’eventuale token temporaneo precedente.,addendum:A0339,

@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("all", "authorization-matrix", "auth-lifecycle", "access-session-boundaries", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
+  [ValidateSet("all", "authorization-matrix", "auth-lifecycle", "access-session-boundaries", "ui-session-history", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
   [string]$Suite = "document-concurrency"
 )
 
@@ -33,6 +33,13 @@ $coordinatorToken = New-QaToken
 $coordinatorSecondaryToken = New-QaToken
 $deleteProfileToken = New-QaToken
 $coordinatorSecondaryDeviceId = "local-coordinator-secondary-device"
+$uiTravelerId = "local-ui-traveler-$runId"
+$uiCoordinatorId = "local-ui-coordinator-$runId"
+$uiTravelerName = "Viaggiatore UI $($runId.Substring(0, 6))"
+$uiCoordinatorName = "Coordinatore UI $($runId.Substring(0, 6))"
+$uiTravelerInvite = New-QaToken
+$uiTravelerSecondInvite = New-QaToken
+$uiCoordinatorInvite = New-QaToken
 $expiredInviteToken = New-QaToken
 $expiredSessionToken = New-QaToken
 $created = [DateTime]::UtcNow.ToString("o")
@@ -146,6 +153,12 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
   $env:QA_GROUP_CODE = "qa-local-only"
   $env:QA_DELETE_PROFILE_ID = $deleteProfileId
   $env:QA_DELETE_PROFILE_TOKEN = $deleteProfileToken
+  $env:QA_UI_PROFILE_NAME = $uiTravelerName
+  $env:QA_UI_INVITE_TOKEN = $uiTravelerInvite
+  $env:QA_UI_SWITCH_INVITE_TOKEN = $uiTravelerSecondInvite
+  $env:QA_UI_COORDINATOR_NAME = $uiCoordinatorName
+  $env:QA_UI_COORDINATOR_INVITE_TOKEN = $uiCoordinatorInvite
+  $env:QA_UI_EXPIRED_SESSION_TOKEN = $expiredSessionToken
   $suiteFiles = @{
     "authorization-matrix" = "tests\extended-p0-authorization-matrix.mjs"
     "auth-lifecycle" = "tests\extended-p0-auth-lifecycle.mjs"
@@ -168,7 +181,24 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
     Write-Host "P0_SUITE_START=$selectedSuite"
     $previousErrorActionPreference = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
-    $suiteOutput = & node $suiteFiles[$selectedSuite] 2>&1
+    if ($selectedSuite -eq "ui-session-history") {
+      $uiSetupSql = @"
+INSERT INTO profiles(id,name,surname,role,created_at) VALUES
+('$uiTravelerId','$uiTravelerName','','traveler','$created'),
+('$uiCoordinatorId','$uiCoordinatorName','','coordinator','$created');
+INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at) VALUES
+('$(Get-TokenHash $uiTravelerInvite)','$uiTravelerId','$uiCoordinatorId','$created','$expires',NULL),
+('$(Get-TokenHash $uiTravelerSecondInvite)','$uiTravelerId','$uiCoordinatorId','$created','$expires',NULL),
+('$(Get-TokenHash $uiCoordinatorInvite)','$uiCoordinatorId','$uiCoordinatorId','$created','$expires',NULL);
+"@
+      $uiSetupFile = Join-Path $persistRoot "ui-session-history.sql"
+      [IO.File]::WriteAllText($uiSetupFile, $uiSetupSql, [Text.UTF8Encoding]::new($false))
+      & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file $uiSetupFile | Out-Null
+      if ($LASTEXITCODE -ne 0) { throw "Preparazione profili UI locali non riuscita" }
+      $suiteOutput = & npx playwright test tests/ui-role-live.spec.mjs --config playwright.release.config.mjs --project=Samsung-S20-FE 2>&1
+    } else {
+      $suiteOutput = & node $suiteFiles[$selectedSuite] 2>&1
+    }
     $suiteExit = $LASTEXITCODE
     $ErrorActionPreference = $previousErrorActionPreference
     $suiteOutput | ForEach-Object { Write-Host $_ }

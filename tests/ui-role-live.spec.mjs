@@ -3,13 +3,15 @@ import { test, expect, devices } from "@playwright/test";
 test.use({ serviceWorkers: "block" });
 
 const travelerName = process.env.QA_UI_PROFILE_NAME;
+const coordinatorName = process.env.QA_UI_COORDINATOR_NAME;
 const travelerInvite = process.env.QA_UI_INVITE_TOKEN;
 const secondTravelerInvite = process.env.QA_UI_SWITCH_INVITE_TOKEN;
 const coordinatorInvite = process.env.QA_UI_COORDINATOR_INVITE_TOKEN;
+const expiredSessionToken = process.env.QA_UI_EXPIRED_SESSION_TOKEN;
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 
 test.skip(
-  !travelerName || !travelerInvite || !secondTravelerInvite || !coordinatorInvite || !baseUrl,
+  !travelerName || !coordinatorName || !travelerInvite || !secondTravelerInvite || !coordinatorInvite || !baseUrl,
   "Profili QA, due inviti Viaggiatore e invito Coordinatore richiesti",
 );
 
@@ -42,9 +44,12 @@ test("promozione, retrocessione e revoca aggiornano subito un telefono già aper
   const secondPage = await secondContext.newPage();
   const coordinatorPage = await coordinatorContext.newPage();
   try {
-    await travelerPage.goto(`${baseUrl}/#invite=${encodeURIComponent(travelerInvite)}`, { waitUntil: "networkidle" });
-    await secondPage.goto(`${baseUrl}/#invite=${encodeURIComponent(secondTravelerInvite)}`, { waitUntil: "networkidle" });
-    await coordinatorPage.goto(`${baseUrl}/#invite=${encodeURIComponent(coordinatorInvite)}`, { waitUntil: "networkidle" });
+    await travelerPage.goto(`${baseUrl}/#invite=${encodeURIComponent(travelerInvite)}`, { waitUntil: "domcontentloaded" });
+    await secondPage.goto(`${baseUrl}/#invite=${encodeURIComponent(secondTravelerInvite)}`, { waitUntil: "domcontentloaded" });
+    await coordinatorPage.goto(`${baseUrl}/#invite=${encodeURIComponent(coordinatorInvite)}`, { waitUntil: "domcontentloaded" });
+    await expect(travelerPage.locator(".accessPill")).toContainText(travelerName.split(" ")[0]);
+    await expect(secondPage.locator(".accessPill")).toContainText(travelerName.split(" ")[0]);
+    await expect(coordinatorPage.locator(".accessPill")).toContainText(coordinatorName.split(" ")[0]);
     const profileId = await travelerPage.evaluate(() => localStorage.getItem("india-profile-id"));
     expect(profileId).toBeTruthy();
 
@@ -82,21 +87,44 @@ test("promozione, retrocessione e revoca aggiornano subito un telefono già aper
     await travelerPage.getByRole("button", { name: "Documenti e sicurezza" }).tap();
     await expect(travelerPage.getByText("Dispositivo sbloccato")).toBeVisible();
     const soonRevokedToken = await travelerPage.evaluate(() => localStorage.getItem("india-session-token"));
+    const travelerDeviceId = await travelerPage.evaluate(async () => {
+      const response = await fetch("/api/auth/devices", {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("india-session-token")}`,
+          "x-device-key": localStorage.getItem("india-device-key"),
+        },
+      });
+      const { devices } = await response.json();
+      return devices.find((device) => device.current)?.device_id || "";
+    });
+    expect(travelerDeviceId).toBeTruthy();
+    await travelerPage.evaluate(() => {
+      history.pushState({ authorizedPreview: true }, "", "?view=map&day=1");
+      localStorage.setItem("india-profile-id", localStorage.getItem("india-profile-id") || "profilo-obsoleto");
+      localStorage.setItem("india-role", "coordinator");
+      localStorage.setItem("india-visitor-name", "Profilo locale obsoleto");
+    });
 
-    const revokeStatus = await secondPage.evaluate(async () => {
+    const revokeStatus = await secondPage.evaluate(async (targetDeviceId) => {
       const authorization = `Bearer ${localStorage.getItem("india-session-token")}`;
       const deviceKey = localStorage.getItem("india-device-key");
-      const devicesResponse = await fetch("/api/auth/devices", { headers: { authorization, "x-device-key": deviceKey } });
-      const { devices } = await devicesResponse.json();
-      const target = devices.find((device) => !device.current);
-      if (!target) return 404;
-      const response = await fetch(`/api/auth/devices/${encodeURIComponent(target.device_id)}`, {
+      const response = await fetch(`/api/auth/devices/${encodeURIComponent(targetDeviceId)}`, {
         method: "DELETE",
         headers: { authorization, "x-device-key": deviceKey },
       });
       return response.status;
-    });
+    }, travelerDeviceId);
     expect(revokeStatus).toBe(200);
+    const revokedSessionStatus = await travelerPage.evaluate(async () => {
+      const response = await fetch("/api/auth/session", {
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("india-session-token")}`,
+          "x-device-key": localStorage.getItem("india-device-key"),
+        },
+      });
+      return response.status;
+    });
+    expect(revokedSessionStatus).toBe(401);
     const revokedCommandStatus = await travelerPage.evaluate(async ({ id, token }) => {
       const response = await fetch(`/api/locations/${encodeURIComponent(id)}`, {
         method: "DELETE",
@@ -112,9 +140,55 @@ test("promozione, retrocessione e revoca aggiornano subito un telefono già aper
       () => travelerPage.evaluate(() => localStorage.getItem("india-session-token")),
       { timeout: 12_000 },
     ).toBe(null);
+    await expect.poll(
+      () => travelerPage.evaluate(() => ({
+        profileId: localStorage.getItem("india-profile-id"),
+        role: localStorage.getItem("india-role"),
+        visitorName: localStorage.getItem("india-visitor-name"),
+      })),
+      { timeout: 12_000 },
+    ).toEqual({ profileId: null, role: null, visitorName: null });
     await expect(travelerPage.getByText("Questo dispositivo non è ancora autorizzato")).toBeVisible();
     await expect(travelerPage.getByText("Dispositivo sbloccato")).toHaveCount(0);
+
+    await travelerPage.goBack({ waitUntil: "domcontentloaded" });
+    await expect.poll(() => travelerPage.evaluate(() => localStorage.getItem("india-session-token"))).toBe(null);
+    await travelerPage.getByRole("button", { name: "Gruppo", exact: true }).tap();
+    await expect(travelerPage.getByText("Accesso privato", { exact: true })).toBeVisible();
+    await expect(travelerPage.getByRole("button", { name: "Documenti e sicurezza", exact: true })).toHaveCount(0);
+    await expect(travelerPage.getByRole("button", { name: "Griglia coordinatore", exact: true })).toHaveCount(0);
   } finally {
     await Promise.all([travelerContext.close(), secondContext.close(), coordinatorContext.close()]);
+  }
+});
+
+test("una sessione realmente scaduta non recupera profilo o privilegi dalla memoria del telefono", async ({ browser }) => {
+  test.skip(!expiredSessionToken || !baseUrl, "Sessione locale realmente scaduta richiesta");
+  const context = await browser.newContext({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
+  const page = await context.newPage();
+  try {
+    await page.addInitScript((token) => {
+      localStorage.setItem("india-session-token", token);
+      localStorage.setItem("india-profile-id", "profilo-locale-obsoleto");
+      localStorage.setItem("india-role", "coordinator");
+      localStorage.setItem("india-visitor-name", "Nome locale obsoleto");
+    }, expiredSessionToken);
+    await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
+    await expect.poll(
+      () => page.evaluate(() => ({
+        token: localStorage.getItem("india-session-token"),
+        profileId: localStorage.getItem("india-profile-id"),
+        role: localStorage.getItem("india-role"),
+        visitorName: localStorage.getItem("india-visitor-name"),
+      })),
+      { timeout: 12_000 },
+    ).toEqual({ token: null, profileId: null, role: null, visitorName: null });
+    await expect(page.locator(".accessPill")).toContainText("Pubblico");
+    await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
+    await expect(page.getByText("Accesso privato", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Documenti e sicurezza", exact: true })).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Griglia coordinatore", exact: true })).toHaveCount(0);
+  } finally {
+    await context.close();
   }
 });

@@ -262,4 +262,12 @@
   ,{ "control": "Verificare rimozione dell’accesso.", "evidence": "auth-lifecycle 68/68: logout revoca dispositivo e logout-all invalidano immediatamente le sessioni" }
   ,{ "control": "Verificare token differente.", "evidence": "auth-lifecycle 68/68: il nuovo accesso produce un token diverso dal precedente" }
   ,{ "control": "Visualizzazione contenuti autorizzati.", "evidence": "access-session-boundaries 17/17 + authorization-matrix 59/59: risposta privata contiene il viewer derivato dalla sessione" }
+  ,{ "control": "condizione dopo accesso;", "evidence": "ui-role-live touch 2/2: invito attiva profilo e ruolo derivati dalla sessione server" }
+  ,{ "control": "regola di precedenza tra password, sessione e dati locali;", "evidence": "ui-role-live touch 2/2: il server prevale e cancella token profilo ruolo e nome locali obsoleti" }
+  ,{ "control": "tornando alla vista gruppo deve ricontrollare la sessione sul server;", "evidence": "ui-role-live touch 2/2: dopo revoca il Gruppo torna al gate e non mostra comandi privati" }
+  ,{ "control": "una sessione scaduta durante l’anteprima non deve recuperare i privilegi;", "evidence": "ui-role-live touch 2/2: sessione realmente scaduta resta Pubblico e non mostra documenti o griglia" }
+  ,{ "control": "una sessione scaduta non viene recuperata utilizzando silenziosamente un vecchio profilo locale;", "evidence": "ui-role-live touch 2/2: token profile-id ruolo e nome locali obsoleti vengono rimossi" }
+  ,{ "control": "Verificare aggiornamento delle autorizzazioni.", "evidence": "ui-role-live touch 2/2: promozione retrocessione e revoca aggiornano telefono e comandi" }
+  ,{ "control": "Verificare esecuzione dell’accesso.", "evidence": "ui-role-live touch 2/2: tre inviti personali collegano due telefoni viaggiatore e uno coordinatore" }
+  ,{ "control": "Verificare impossibilità di utilizzare la cronologia del browser per tornare nella dashboard autorizzata.", "evidence": "ui-role-live touch 2/2: indietro dopo revoca mantiene sessione nulla e gate privato" }
 ]
