@@ -278,4 +278,16 @@
   ,{ "control": "permesso autorizzato;", "evidence": "ui-location touch 1/1: permesso riattivato consente nuovo invio e successiva cancellazione" }
   ,{ "control": "Riprovare dopo autorizzazione dalle impostazioni.", "evidence": "ui-location touch 1/1: dopo clear e nuovo grant la riprova invia e cancella la posizione" }
   ,{ "control": "Autorizzare il microfono.", "evidence": "ui-microphone-permissions touch 1/1: consenso microfono su Samsung S20 FE, avvio e arresto MediaRecorder e allegato audio riproducibile creato localmente" }
+  ,{ "control": "Accesso personale.", "evidence": "ui-password-access touch 1/1: registrazione locale autorizzata crea una sessione personale vincolata al telefono e la mantiene dopo refresh" }
+  ,{ "control": "accesso;", "evidence": "ui-password-access touch 1/1: ciclo pubblico, password, profilo personale e riapertura del Gruppo completato su Samsung S20 FE" }
+  ,{ "control": "Aprire la Bacheca con password.", "evidence": "ui-password-access touch 1/1: dopo verifica della password la Bacheca resta apribile, ma il dispositivo resta Pubblico finché non viene creato il profilo" }
+  ,{ "control": "Attivazione sessione.", "evidence": "ui-password-access touch 1/1: POST auth/register 201, token e profile-id creati dal server e riletti dopo ricaricamento" }
+  ,{ "control": "Inserire la password corretta.", "evidence": "ui-password-access touch 1/1: password QA corretta apre esclusivamente il modulo di registrazione" }
+  ,{ "control": "Inserire password corretta.", "evidence": "ui-password-access touch 1/1: password QA corretta verificata tramite gesto touch e risposta server" }
+  ,{ "control": "Inserire spazi prima e dopo la password.", "evidence": "ui-password-access touch 1/1: spazi esterni rimossi dal client, password verificata senza alterare il valore interno" }
+  ,{ "control": "test con password;", "evidence": "ui-password-access touch 1/1: password corretta non emette una sessione né abilita documenti prima della registrazione" }
+  ,{ "control": "test senza password;", "evidence": "ui-password-access touch 1/1: apertura pubblica senza password, area privata 401 e nessun comando documenti" }
+  ,{ "control": "Toccare il pulsante Accesso.", "evidence": "ui-password-access touch 1/1: pulsante Accedi azionato sul pannello mobile e transizione al modulo Entra nel gruppo" }
+  ,{ "control": "Verificare mantenimento dell’accesso, se previsto.", "evidence": "ui-password-access touch 1/1: refresh completo conserva la sessione personale e riapre la scheda del proprietario" }
+  ,{ "control": "Verificare messaggio di accesso riuscito.", "evidence": "ui-password-access touch 1/1: messaggio Telefono collegato al nuovo profilo verificato dopo risposta 201" }
 ]

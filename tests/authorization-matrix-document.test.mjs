@@ -19,4 +19,6 @@ test("la matrice autorizzativa documenta tutti i ruoli e le risorse sensibili", 
   assert.match(matrix, /diniego senza alcuna richiesta di scrittura[\s\S]*riattivato il permesso/i);
   assert.match(matrix, /ui-microphone-permissions\.spec\.mjs[\s\S]*Galaxy S20 FE/i);
   assert.match(matrix, /MediaRecorder[\s\S]*allegato audio riproducibile/i);
+  assert.match(matrix, /ui-password-access\.spec\.mjs[\s\S]*Galaxy S20 FE/i);
+  assert.match(matrix, /password[\s\S]*non crea da sola una sessione[\s\S]*refresh completo/i);
 });

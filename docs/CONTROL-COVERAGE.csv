@@ -8,13 +8,13 @@ P0,accessi-privacy,passed,Accedere tramite invito personale.,globale:T-0753;adde
 P0,accessi-privacy,passed,accesso completo;,globale:T-1366,"authorization-matrix 55/55: il proprietario autenticato vede public, family, group e il proprio private"
 P0,accessi-privacy,passed,accesso limitato ad alcune fotografie;,globale:T-1367,"authorization-matrix 55/55: familiare vede public+family, viaggiatore vede public+family+group, nessuno vede private altrui"
 P0,accessi-privacy,passed,accesso negato;,globale:T-1368,authorization-matrix 55/55: contenuti fuori visibilità e operazioni fuori ruolo restituiscono 401/403
-P0,accessi-privacy,pending,Accesso personale.,globale:T-1199;usabilita:U0652,
+P0,accessi-privacy,passed,Accesso personale.,globale:T-1199;usabilita:U0652,ui-password-access touch 1/1: registrazione locale autorizzata crea una sessione personale vincolata al telefono e la mantiene dopo refresh
 P0,accessi-privacy,passed,Accesso tramite eSIM.,globale:T-0649,"ui-network-india: eSIM 4G verificata sui tre profili mobile | ui-network-india 18/18: profilo eSIM indiana 4G su S20 FE, Samsung vecchio e iPhone piccolo"
 P0,accessi-privacy,passed,Accesso tramite invito.,usabilita:U0639,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P0,accessi-privacy,passed,Accesso tramite rete Wi-Fi indiana.,globale:T-0650,"ui-network-india: Wi-Fi indiana debole verificata sui tre profili mobile | ui-network-india 18/18: Wi-Fi debole ad alta latenza su S20 FE, Samsung vecchio e iPhone piccolo"
 P0,accessi-privacy,passed,Accesso tramite roaming italiano.,globale:T-0651,"ui-network-india: roaming congestionato verificato sui tre profili mobile | ui-network-india 18/18: roaming congestionato a 256/96 kbps su S20 FE, Samsung vecchio e iPhone piccolo"
 P0,accessi-privacy,passed,Accesso tramite SIM indiana.,globale:T-0652,"ui-network-india: SIM indiana 3G verificata sui tre profili mobile | ui-network-india 18/18: SIM indiana 3G su S20 FE, Samsung vecchio e iPhone piccolo"
-P0,accessi-privacy,pending,accesso;,globale:T-1555,
+P0,accessi-privacy,passed,accesso;,globale:T-1555,"ui-password-access touch 1/1: ciclo pubblico, password, profilo personale e riapertura del Gruppo completato su Samsung S20 FE"
 P0,accessi-privacy,passed,Aggiungere consenso privacy esplicito.,globale:T-0043,privacy-consent 2/2 + auth-lifecycle 49/49: checkbox inizialmente non selezionata; registrazioni senza consenso o con consenso falso respinte; consenso vero registrato dal server con data/versione; migrazione additiva senza riscrivere profili esistenti
 P0,accessi-privacy,passed,Aggiungere elenco dei dispositivi autorizzati.,globale:T-0030,production-smoke: elenco dispositivi include corrente e secondario
 P0,accessi-privacy,passed,Aggiungere rinnovo sicuro della sessione.,globale:T-0032,auth-lifecycle 35/35: solo un token ancora valido estende expires_at; token alterato o revocato riceve 401
@@ -28,11 +28,11 @@ P0,accessi-privacy,passed,Aprire due volte contemporaneamente lo stesso invito.,
 P0,accessi-privacy,passed,Aprire il link senza password.,usabilita:U0268,ui-critical produzione mobile: il dominio pubblico apre la Bacheca senza creare una sessione privata
 P0,accessi-privacy,passed,Aprire invito sul telefono A.,globale:T-0322,auth-lifecycle 61/61: telefono A e telefono B tentano il claim; uno solo riceve la sessione legata al dispositivo
 P0,accessi-privacy,passed,Aprire invito sul telefono corretto.,usabilita:U0404,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P0,accessi-privacy,pending,Aprire la Bacheca con password.,usabilita:U0095,
+P0,accessi-privacy,passed,Aprire la Bacheca con password.,usabilita:U0095,"ui-password-access touch 1/1: dopo verifica della password la Bacheca resta apribile, ma il dispositivo resta Pubblico finché non viene creato il profilo"
 P0,accessi-privacy,passed,Aprire la Bacheca senza password.,usabilita:U0093,ui-critical produzione mobile: accesso Pubblico visibile e area privata assente
 P0,accessi-privacy,pending,"Aprire la griglia del Coordinatore, se autorizzato.",usabilita:U0072,
 P0,accessi-privacy,passed,Associare i commenti dei Viaggiatori alla sessione personale.,globale:T-0061,QA 1.31.0: commento del viaggiatore attribuito alla sessione e non ai campi del browser
-P0,accessi-privacy,pending,Attivazione sessione.,globale:T-1206,
+P0,accessi-privacy,passed,Attivazione sessione.,globale:T-1206,"ui-password-access touch 1/1: POST auth/register 201, token e profile-id creati dal server e riletti dopo ricaricamento"
 P0,accessi-privacy,passed,Aumento dei tentativi di accesso errati.,globale:T-1539,access-session-boundaries 17/17: dodici password errate attivano 429 senza creare profili
 P0,accessi-privacy,passed,Autorizzare GPS.,usabilita:U0235,ui-location touch 1/1: consenso GPS e coordinate Delhi condivise dal profilo autorizzato
 P0,accessi-privacy,passed,Autorizzare il microfono.,globale:T-0445;usabilita:U0215,"ui-microphone-permissions touch 1/1: consenso microfono su Samsung S20 FE, avvio e arresto MediaRecorder e allegato audio riproducibile creato localmente"
@@ -115,10 +115,10 @@ P0,accessi-privacy,passed,impossibilità di aprire documenti prima della verific
 P0,accessi-privacy,passed,impossibilità di utilizzare il ruolo conservato localmente come autorizzazione;,addendum:A0319,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,Impossibilità di vedere documenti e posizioni private.,globale:T-1219,ui-critical produzione: pubblico senza sessione non vede UI privata e gli endpoint sono negati
 P0,accessi-privacy,passed,Individuare la sessione del telefono smarrito.,globale:T-1614,extended-p0-auth-lifecycle 28/28: elenco dispositivi identifica quello corrente e il secondo telefono tramite device_id
-P0,accessi-privacy,pending,Inserire la password corretta.,usabilita:U0009,
-P0,accessi-privacy,pending,Inserire password corretta.,usabilita:U0041;usabilita:U0625,
+P0,accessi-privacy,passed,Inserire la password corretta.,usabilita:U0009,ui-password-access touch 1/1: password QA corretta apre esclusivamente il modulo di registrazione
+P0,accessi-privacy,passed,Inserire password corretta.,usabilita:U0041;usabilita:U0625,ui-password-access touch 1/1: password QA corretta verificata tramite gesto touch e risposta server
 P0,accessi-privacy,passed,Inserire password errata.,usabilita:U0043,ui-critical produzione mobile: codice-sbagliato mostra Codice non corretto e resta Pubblico
-P0,accessi-privacy,pending,Inserire spazi prima e dopo la password.,usabilita:U0047,
+P0,accessi-privacy,passed,Inserire spazi prima e dopo la password.,usabilita:U0047,"ui-password-access touch 1/1: spazi esterni rimossi dal client, password verificata senza alterare il valore interno"
 P0,accessi-privacy,passed,Invio della notifica agli utenti autorizzati.,usabilita:U0165,"push-audience 5/5: family raggiunge ospiti/profili, group soltanto profili, private nessun non proprietario"
 P0,accessi-privacy,passed,invito creato;,globale:T-1566,"auth-lifecycle 61/61: creazione restituisce 201, identificativo hash e token casuale"
 P0,accessi-privacy,passed,invito già utilizzato.,usabilita:U0513,extended-p0-auth-lifecycle 28/28: riuso negato dal server
@@ -237,12 +237,12 @@ P0,accessi-privacy,passed,Tentare accesso a documento altrui.,globale:T-0624,ext
 P0,accessi-privacy,passed,Tentare accesso diretto ai documenti.,usabilita:U0580,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Tentare di creare un invito.,usabilita:U0623,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P0,accessi-privacy,passed,tentativo non autorizzato;,globale:T-1584,authorization-matrix 55/55: operazioni fuori ruolo ricevono 401/403 senza creare o modificare dati
-P0,accessi-privacy,pending,test con password;,usabilita:U0718,
+P0,accessi-privacy,passed,test con password;,usabilita:U0718,ui-password-access touch 1/1: password corretta non emette una sessione né abilita documenti prima della registrazione
 P0,accessi-privacy,passed,test con sessione scaduta;,usabilita:U0723,access-session-boundaries 17/17 + auth-lifecycle 68/68: sessione scaduta negata su stato e area privata
 P0,accessi-privacy,passed,test delle autorizzazioni;,globale:T-0017,endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,pending,test di accessibilità;,globale:T-0020,
-P0,accessi-privacy,pending,test senza password;,usabilita:U0719,
-P0,accessi-privacy,pending,Toccare il pulsante Accesso.,usabilita:U0039,
+P0,accessi-privacy,passed,test senza password;,usabilita:U0719,"ui-password-access touch 1/1: apertura pubblica senza password, area privata 401 e nessun comando documenti"
+P0,accessi-privacy,passed,Toccare il pulsante Accesso.,usabilita:U0039,ui-password-access touch 1/1: pulsante Accedi azionato sul pannello mobile e transizione al modulo Entra nel gruppo
 P0,accessi-privacy,passed,token revocato sulla risorsa A;,addendum:A0111,Live revoke command 403 + authenticated remote QA 20/20; preview a4b05356; 2026-08-04
 P0,accessi-privacy,passed,Token revocato: 401.,usabilita:U0442,extended-p0-auth-lifecycle 28/28: token del secondo telefono revocato restituisce HTTP 401
 P0,accessi-privacy,passed,token scaduto sulla risorsa A;,addendum:A0110,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
@@ -300,9 +300,9 @@ P0,accessi-privacy,pending,Verificare informazioni autorizzate.,usabilita:U0366,
 P0,accessi-privacy,passed,"Verificare intestazione private, no-store.",globale:T-0488,access-session-boundaries 17/17: no-store verificato su dinieghi stato sessione e area privata autorizzata
 P0,accessi-privacy,pending,Verificare invalidazione dell’eventuale token temporaneo precedente.,addendum:A0339,
 P0,accessi-privacy,pending,Verificare la regola prevista per il riutilizzo del token.,globale:T-0770,
-P0,accessi-privacy,pending,"Verificare mantenimento dell’accesso, se previsto.",usabilita:U0052,
+P0,accessi-privacy,passed,"Verificare mantenimento dell’accesso, se previsto.",usabilita:U0052,ui-password-access touch 1/1: refresh completo conserva la sessione personale e riapre la scheda del proprietario
 P0,accessi-privacy,passed,Verificare mantenimento della sessione.,globale:T-0318,auth-lifecycle 35/35: rinnovo mantiene lo stesso token valido sul dispositivo e aggiorna la scadenza oltre 29 giorni
-P0,accessi-privacy,pending,Verificare messaggio di accesso riuscito.,usabilita:U0042,
+P0,accessi-privacy,passed,Verificare messaggio di accesso riuscito.,usabilita:U0042,ui-password-access touch 1/1: messaggio Telefono collegato al nuovo profilo verificato dopo risposta 201
 P0,accessi-privacy,pending,Verificare nessun URL permanente condivisibile senza sessione.,globale:T-1006,
 P0,accessi-privacy,passed,Verificare privacy dei dati sul profilo pubblico.,globale:T-0359,production-smoke: nessun campo privato nei profili pubblici
 P0,accessi-privacy,passed,Verificare privacy del testo mostrato sul blocco schermo.,globale:T-0532,push-audience 5/5: testo group/private escluso dalle sottoscrizioni pubbliche o familiari non autorizzate

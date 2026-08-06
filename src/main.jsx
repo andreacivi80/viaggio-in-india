@@ -181,12 +181,13 @@ const storedGuestHeaders = () => {
   return token ? { "x-guest-token": token, "x-device-key": deviceKey() } : {};
 };
 async function verifyGroupCode(code, setGroupCode) {
+  const normalizedCode = String(code || "").trim();
   const response = await fetch(`${API}/auth/group`, {
     method: "POST",
-    headers: { "x-group-code": code },
+    headers: { "x-group-code": normalizedCode },
   });
   if (!response.ok) return false;
-  setGroupCode(code);
+  setGroupCode(normalizedCode);
   return true;
 }
 const cityImages = {
@@ -2511,6 +2512,7 @@ function App() {
           <button
             key={id}
             className={`${tab === id ? "active" : ""} ${id === "publish" ? "publishNav" : ""}`}
+            aria-current={tab === id && id !== "publish" ? "page" : undefined}
             onClick={() => {
               if (id === "publish") {
                 openComposer(todayTripIndex >= 0 ? todayTripIndex : -1);
