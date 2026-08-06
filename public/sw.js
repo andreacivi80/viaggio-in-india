@@ -1,4 +1,4 @@
-const CACHE = "india-insieme-v1.43.2";
+const CACHE = "india-insieme-v1.43.3";
 const PRECACHE = [
   "./",
   "./manifest.webmanifest",
@@ -51,9 +51,12 @@ self.addEventListener("fetch", (event) => {
   // L'app shell deve aprirsi anche quando il telefono perde la rete durante
   // una navigazione. La nuova revisione viene comunque installata in una
   // cache versionata e sostituisce automaticamente quella precedente.
-  event.respondWith(
-    cached.then((hit) => hit || network).catch(() => caches.match("./")),
-  );
+  if (event.request.mode === "navigate") {
+    // Online mostra subito la revisione più recente; offline usa la shell salvata.
+    event.respondWith(network.catch(() => cached.then((hit) => hit || caches.match("./"))));
+    return;
+  }
+  event.respondWith(cached.then((hit) => hit || network).catch(() => caches.match("./")));
   event.waitUntil(network.then(() => {}).catch(() => {}));
 });
 self.addEventListener("push", (event) => {

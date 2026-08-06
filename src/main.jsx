@@ -40,7 +40,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.43.2",
+const VERSION = "1.43.3",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
