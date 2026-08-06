@@ -30,6 +30,21 @@ test("password con spazi porta alla registrazione ma non concede privilegi senza
     await page.getByRole("button", { name: "Bacheca", exact: true }).tap();
     await expect(page.getByRole("button", { name: "Bacheca", exact: true })).toHaveAttribute("aria-current", "page");
     await expect(page.locator(".accessPill")).toContainText("Pubblico");
+    const guestName = `Familiare password ${Date.now()}`;
+    await page.locator(".visitorBar input").fill(guestName);
+    await page.locator(".visitorBar").getByRole("button", { name: "Salva", exact: true }).tap();
+    const firstPost = page.locator(".post").first();
+    const guestComment = `Commento dopo password ${Date.now()}`;
+    await firstPost.getByPlaceholder("Scrivi un commento…").fill(guestComment);
+    const guestCommentResponse = page.waitForResponse(
+      (response) => response.url().endsWith("/api/comments") && response.request().method() === "POST",
+    );
+    await firstPost.getByRole("button", { name: "Invia commento", exact: true }).tap();
+    expect((await guestCommentResponse).status()).toBe(201);
+    await expect(firstPost.getByText(guestComment, { exact: true })).toBeVisible();
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("india-guest-token"))).toBeTruthy();
+    expect(await page.evaluate(() => localStorage.getItem("india-session-token"))).toBeNull();
+
     await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
     await expect(page.getByText("Entra nel gruppo", { exact: true })).toBeVisible();
 
@@ -48,6 +63,9 @@ test("password con spazi porta alla registrazione ma non concede privilegi senza
     await expect.poll(() => page.evaluate(() => localStorage.getItem("india-session-token"))).toBeTruthy();
     await expect.poll(() => page.evaluate(() => localStorage.getItem("india-profile-id"))).toBeTruthy();
     expect(await page.evaluate(() => localStorage.getItem("india-group-code"))).toBeNull();
+    expect(await page.evaluate(() => localStorage.getItem("india-guest-token"))).toBeNull();
+    expect(await page.evaluate(() => localStorage.getItem("india-guest-name"))).toBeNull();
+    expect(await page.evaluate(() => localStorage.getItem("india-visitor-id"))).toBeNull();
 
     await page.reload({ waitUntil: "domcontentloaded" });
     await expect(page.locator(".accessPill")).toContainText("Accesso");

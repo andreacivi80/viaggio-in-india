@@ -2063,6 +2063,9 @@ function App() {
       if (!response.ok) throw Error(result.error || "Creazione non riuscita.");
       const displayName = `${result.profile.name} ${result.profile.surname || ""}`.trim();
       localStorage.setItem("india-session-token", result.token);
+      localStorage.removeItem("india-guest-token");
+      localStorage.removeItem("india-guest-name");
+      localStorage.removeItem("india-visitor-id");
       localStorage.setItem("india-profile-id", result.profile.id);
       localStorage.setItem("india-role", "coordinator");
       localStorage.setItem("india-visitor-name", displayName);
@@ -2104,6 +2107,9 @@ function App() {
       if (!response.ok) throw Error(result.error || "Registrazione non riuscita.");
       const displayName = `${result.profile.name} ${result.profile.surname || ""}`.trim();
       localStorage.setItem("india-session-token", result.token);
+      localStorage.removeItem("india-guest-token");
+      localStorage.removeItem("india-guest-name");
+      localStorage.removeItem("india-visitor-id");
       localStorage.setItem("india-profile-id", result.profile.id);
       localStorage.setItem("india-role", result.profile.role || "traveler");
       localStorage.setItem("india-visitor-name", displayName);
@@ -2541,6 +2547,8 @@ function App() {
             className={`${tab === id ? "active" : ""} ${id === "publish" ? "publishNav" : ""}`}
             aria-current={tab === id && id !== "publish" ? "page" : undefined}
             onClick={() => {
+              setQuickProfileOpen(false);
+              setNotificationOpen(false);
               if (id === "publish") {
                 openComposer(todayTripIndex >= 0 ? todayTripIndex : -1);
               } else {

@@ -123,6 +123,23 @@ await status(request("/api/documents", {
   headers: { ...owner, "x-idempotency-key": crypto.randomUUID() },
   body: ownerDocument,
 }), 200);
+
+const coordinatorBeforeInvite = await (await request("/api/auth/session", { headers: coordinator })).json();
+const inviteResponse = await request("/api/auth/invites", {
+  method: "POST",
+  headers: jsonHeaders(coordinator),
+  body: JSON.stringify({ profile_id: unclaimedId }),
+});
+eq(inviteResponse.status, 201, "il coordinatore crea un invito senza cambiare identità");
+const createdInvite = await inviteResponse.json();
+ok(createdInvite.invite_id && createdInvite.invite_token, "la risposta contiene soltanto i dati necessari all’invito");
+ok(!("documents" in createdInvite) && !("session_token" in createdInvite), "l’invito non trasferisce documenti né una sessione");
+await status(request("/api/private", {
+  headers: { authorization: `Bearer ${createdInvite.invite_token}` },
+}), 401, "il token invito non è una credenziale per i documenti");
+const coordinatorAfterInvite = await (await request("/api/auth/session", { headers: coordinator })).json();
+eq(coordinatorAfterInvite.profile.id, coordinatorBeforeInvite.profile.id, "creare l’invito non sostituisce il profilo coordinatore");
+eq(coordinatorAfterInvite.profile.role, coordinatorBeforeInvite.profile.role, "creare l’invito non modifica il ruolo coordinatore");
 const ownerPrivate = await (await request("/api/private", { headers: owner })).json();
 const otherPrivate = await (await request("/api/private", { headers: other })).json();
 const coordinatorPrivate = await (await request("/api/private", { headers: coordinator })).json();
@@ -187,6 +204,7 @@ await status(request("/api/reactions", {
   body: JSON.stringify({ post_id: posts.public.id, kind: "heart" }),
 }), 401, "la password comune non sostituisce l’identità della reazione");
 await status(request(`/api/comments/${familyCommentRow.id}`, { method: "DELETE", headers: guest }), 200);
+await status(request(`/api/auth/invites/${createdInvite.invite_id}`, { method: "DELETE", headers: coordinator }), 200);
 
 const createdProfileForm = new FormData();
 createdProfileForm.set("name", "Profilo matrice temporaneo");
