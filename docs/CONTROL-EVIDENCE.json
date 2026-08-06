@@ -314,4 +314,6 @@
   ,{ "control": "Utilizzare il codice comune soltanto come invito iniziale al gruppo.", "evidence": "ui-password-access touch 1/1: il codice non viene conservato e non viene richiesto al compositore dopo la creazione del profilo" }
   ,{ "control": "Caricare un PDF protetto da password.", "evidence": "ui-protected-pdf touch 1/1 ripetuto due volte: PDF AES-256 caricato, riconosciuto come protetto, scaricato, visto dal coordinatore ed eliminato" }
   ,{ "control": "Verificare VAPID_PRIVATE_KEY.", "evidence": "vapid-secret-boundary + scan-client-secrets: chiave privata solo nel binding Worker, assente da endpoint config, client, Wrangler e bundle" }
+  ,{ "control": "Modalità privata del browser.", "evidence": "ui-private-browser-session touch 1/1: sessione confinata al contesto privato; dopo la chiusura il nuovo contesto è Pubblico, senza credenziali e con area privata 401" }
+  ,{ "control": "Verificare nessun URL permanente condivisibile senza sessione.", "evidence": "ui-private-browser-session touch 1/1: invito rimosso dall’URL; lo stesso URL ripulito aperto in un nuovo contesto non trasferisce token, profilo o accesso" }
 ]

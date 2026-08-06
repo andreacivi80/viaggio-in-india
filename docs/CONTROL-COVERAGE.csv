@@ -136,7 +136,7 @@ P0,accessi-privacy,passed,la password risulta corretta ma Pubblica restituisce e
 P0,accessi-privacy,passed,Lasciare la sessione inattiva fino alla scadenza prevista.,globale:T-0761,QA 1.31.0: scadenza per inattivita simulata e verificata
 P0,accessi-privacy,passed,Limitazione dell’accesso alle persone autorizzate.,globale:T-0210,"authorization-matrix 55/55: matrice reale pubblico/ospite/viaggiatore/proprietario/coordinatore verificata su post, profili, documenti, posizioni e notifiche"
 P0,accessi-privacy,passed,Memorizzare un vecchio token prima dell’accesso.,addendum:A0336,"session-token-rotation 2/2 + auth-lifecycle 61/61: il test conserva il token precedente, rinnova la sessione e ne verifica separatamente lo stato"
-P0,accessi-privacy,pending,Modalità privata del browser.,globale:T-1094,
+P0,accessi-privacy,passed,Modalità privata del browser.,globale:T-1094,"ui-private-browser-session touch 1/1: sessione confinata al contesto privato; dopo la chiusura il nuovo contesto è Pubblico, senza credenziali e con area privata 401"
 P0,accessi-privacy,passed,Modificare token.,globale:T-0623,access-session-boundaries 17/17 + auth-lifecycle 68/68: token alterato restituisce 401
 P0,accessi-privacy,passed,Modificare un carattere dell’invito.,globale:T-0778,extended-p0-auth-lifecycle 28/28: invito alterato negato con HTTP 403
 P0,accessi-privacy,passed,Modificare un solo carattere del token.,globale:T-0762,extended-p0-auth-lifecycle 28/28: sessione alterata negata con HTTP 401
@@ -303,7 +303,7 @@ P0,accessi-privacy,pending,Verificare la regola prevista per il riutilizzo del t
 P0,accessi-privacy,passed,"Verificare mantenimento dell’accesso, se previsto.",usabilita:U0052,ui-password-access touch 1/1: refresh completo conserva la sessione personale e riapre la scheda del proprietario
 P0,accessi-privacy,passed,Verificare mantenimento della sessione.,globale:T-0318,auth-lifecycle 35/35: rinnovo mantiene lo stesso token valido sul dispositivo e aggiorna la scadenza oltre 29 giorni
 P0,accessi-privacy,passed,Verificare messaggio di accesso riuscito.,usabilita:U0042,ui-password-access touch 1/1: messaggio Telefono collegato al nuovo profilo verificato dopo risposta 201
-P0,accessi-privacy,pending,Verificare nessun URL permanente condivisibile senza sessione.,globale:T-1006,
+P0,accessi-privacy,passed,Verificare nessun URL permanente condivisibile senza sessione.,globale:T-1006,"ui-private-browser-session touch 1/1: invito rimosso dall’URL; lo stesso URL ripulito aperto in un nuovo contesto non trasferisce token, profilo o accesso"
 P0,accessi-privacy,passed,Verificare privacy dei dati sul profilo pubblico.,globale:T-0359,production-smoke: nessun campo privato nei profili pubblici
 P0,accessi-privacy,passed,Verificare privacy del testo mostrato sul blocco schermo.,globale:T-0532,push-audience 5/5: testo group/private escluso dalle sottoscrizioni pubbliche o familiari non autorizzate
 P0,accessi-privacy,passed,Verificare quale invito rimane valido.,globale:T-0789,auth-lifecycle 40/40: un invito revocato è invalido mentre il secondo invito dello stesso profilo resta utilizzabile una sola volta
