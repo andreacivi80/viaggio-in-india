@@ -1570,7 +1570,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1555 | 85 | accesso; | NON ESEGUITO | — |
 | T-1556 | 85 | commento eliminato; | NON ESEGUITO | — |
 | T-1557 | 85 | data e ora server; | NON ESEGUITO | — |
-| T-1558 | 85 | dispositivo o sessione; | NON ESEGUITO | — |
+| T-1558 | 85 | dispositivo o sessione; | SUPERATO | security-audit + authorization-matrix 86/86 ripetuta due volte: ogni evento personale registra il dispositivo della sessione |
 | T-1559 | 85 | dispositivo revocato; | NON ESEGUITO | — |
 | T-1560 | 85 | documento aperto; | NON ESEGUITO | — |
 | T-1561 | 85 | documento caricato; | NON ESEGUITO | — |
@@ -1581,9 +1581,9 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1566 | 85 | invito creato; | NON ESEGUITO | — |
 | T-1567 | 85 | invito utilizzato; | SUPERATO | QA 1.31.0: invito gia utilizzato non puo essere riutilizzato |
 | T-1568 | 85 | logout; | SUPERATO | QA 1.31.0: logout verificato end-to-end |
-| T-1569 | 85 | nessun contenuto completo del documento; | NON ESEGUITO | — |
-| T-1570 | 85 | nessun token; | NON ESEGUITO | — |
-| T-1571 | 85 | nessuna password. | NON ESEGUITO | — |
+| T-1569 | 85 | nessun contenuto completo del documento; | SUPERATO | security-audit 3/3 + authorization-matrix 86/86: contenuto e nome del PDF assenti da schema e risposta coordinatore |
+| T-1570 | 85 | nessun token; | SUPERATO | security-audit 3/3 + authorization-matrix 86/86: token sessione e invito assenti dal registro |
+| T-1571 | 85 | nessuna password. | SUPERATO | security-audit 3/3 + authorization-matrix 86/86: password del gruppo assente dal registro |
 | T-1572 | 85 | posizione cancellata; | NON ESEGUITO | — |
 | T-1573 | 85 | posizione condivisa; | NON ESEGUITO | — |
 | T-1574 | 85 | post eliminato; | NON ESEGUITO | — |

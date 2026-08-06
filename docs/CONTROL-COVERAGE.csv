@@ -84,7 +84,7 @@ P0,accessi-privacy,passed,creazione invito;,globale:T-0732;globale:T-1218;usabil
 P0,accessi-privacy,passed,dati privati nella cache.,addendum:A0082,Public-cache unit + delayed-state Playwright 6/6; preview 63b53987; 2026-08-04
 P0,accessi-privacy,passed,deve ricevere una sessione Ospite sicura;,usabilita:U0024,guest-session-device-binding 2/2 + authorization-matrix 59/59: token familiare vincolato alla chiave del telefono; chiave assente o differente vede soltanto contenuti pubblici
 P0,accessi-privacy,passed,diagramma degli stati di accesso;,addendum:A0466,CREDENTIAL-STATE-MACHINE 1.41.0 + access-state-documentation 2/2: diagramma Mermaid e precedenza sessione/ruolo/profilo verificati contro il client
-P0,accessi-privacy,pending,dispositivo o sessione;,globale:T-1558,
+P0,accessi-privacy,passed,dispositivo o sessione;,globale:T-1558,security-audit + authorization-matrix 86/86 ripetuta due volte: ogni evento personale registra il dispositivo della sessione | security-audit 3/3 + authorization-matrix 86/86 ripetuta due volte: accessi e operazioni personali registrano il device_id della sessione verificata
 P0,accessi-privacy,pending,"Distinguere limiti per IP, sessione e profilo.",globale:T-1053,
 P0,accessi-privacy,passed,Divieto di leggere un post privato modificando direttamente l’URL.,globale:T-0067,QA 1.31.0: ospite e altro viaggiatore non leggono ne interagiscono col post privato
 P0,accessi-privacy,passed,"Documenti privati con private, no-store.",globale:T-1473,"security-surface L1: risposte private impostano Cache-Control private, no-store"
@@ -145,12 +145,12 @@ P0,accessi-privacy,pending,Nessun documento privato inserito senza consenso.,glo
 P0,accessi-privacy,passed,Nessun documento privato nei risultati pubblici.,globale:T-1692,production-smoke: stato pubblico non espone documenti; /api/private senza sessione risponde 401
 P0,accessi-privacy,passed,nessun endpoint operativo sia privo di controllo delle autorizzazioni.,addendum:A0020,endpoint-authorization-inventory 2/2: 38 rotte esatte e 5 dinamiche classificate
 P0,accessi-privacy,passed,Nessun token negli URL.,globale:T-1479,invite-link-privacy 3/3: token confinato nel frammento e rimosso immediatamente con history.replaceState
-P0,accessi-privacy,pending,nessun token;,globale:T-1570,
+P0,accessi-privacy,passed,nessun token;,globale:T-1570,security-audit 3/3 + authorization-matrix 86/86: token sessione e invito assenti dal registro | security-audit 3/3 + authorization-matrix 86/86: token di sessione e invito non compaiono nel registro
 P0,accessi-privacy,passed,nessun utilizzo di autorizzazioni precedenti;,addendum:A0333,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,nessuna estensione automatica del pubblico autorizzato.,addendum:A0375,authorization-matrix 55/55: una sessione ospite aggiunge solo family; una sessione gruppo non aggiunge private altrui
 P0,accessi-privacy,passed,nessuna informazione sull’esistenza di risorse non autorizzate.,addendum:A0335,"resource-enumeration 17/17: documento, invito e dispositivo reali producono lo stesso diniego delle rispettive risorse inesistenti"
 P0,accessi-privacy,passed,Nessuna pagina privata incorporabile in siti esterni.,globale:T-1480,production-smoke live: X-Frame-Options SAMEORIGIN e CSP frame-ancestors self sul documento HTML
-P0,accessi-privacy,pending,nessuna password.,globale:T-1571,
+P0,accessi-privacy,passed,nessuna password.,globale:T-1571,security-audit 3/3 + authorization-matrix 86/86: password del gruppo assente dal registro | security-audit 3/3 + authorization-matrix 86/86: password del gruppo non compare nel registro
 P0,accessi-privacy,passed,Nessuna sessione.,usabilita:U0478,ui-critical produzione mobile: senza sessione /api/private e /api/auth/devices rispondono 401
 P0,accessi-privacy,passed,nessuna visualizzazione momentanea di dati privati;,addendum:A0137,"ui-coordinator-grid touch 1/1: MutationObserver registra zero apparizioni della griglia su pubblico, sola password e viaggiatore"
 P0,accessi-privacy,passed,Non accettare token impostati manualmente dal client.,addendum:A0344,Playwright false-token removal + remote session QA; preview a4b05356; 2026-08-04
@@ -416,7 +416,7 @@ P0,documenti,passed,Impossibilità di vedere documenti altrui.,usabilita:U0650,e
 P0,documenti,pending,la visualizzazione dei documenti sia separata dalla gestione dei ruoli;,addendum:A0381,
 P0,documenti,pending,Misurare caricamento documento.,globale:T-0586,
 P0,documenti,pending,Modificare document profile_id.,usabilita:U0574,
-P0,documenti,pending,nessun contenuto completo del documento;,globale:T-1569,
+P0,documenti,passed,nessun contenuto completo del documento;,globale:T-1569,security-audit 3/3 + authorization-matrix 86/86: contenuto e nome del PDF assenti da schema e risposta coordinatore | security-audit 3/3 + authorization-matrix 86/86: schema whitelist e risposta coordinatore escludono contenuto e nome del PDF
 P0,documenti,pending,nessuna funzione dichiarata nella documentazione sia assente dall’interfaccia;,addendum:A0019,
 P0,documenti,passed,Non cancellare documenti o bozze senza conferma.,globale:T-0845,ui-documents QA: Annulla mantiene il PDF; solo la successiva conferma esegue DELETE
 P0,documenti,pending,Non compromettere documenti e funzioni essenziali.,globale:T-1650,

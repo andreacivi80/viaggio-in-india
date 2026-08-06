@@ -71,6 +71,12 @@ DELETE FROM post_media WHERE post_id IN (SELECT id FROM posts WHERE profile_id I
 DELETE FROM posts WHERE profile_id IN ('$profileId','$coordinatorId');
 DELETE FROM document_status WHERE profile_id IN ('$profileId','$coordinatorId');
 DELETE FROM locations WHERE profile_id IN ('$profileId','$coordinatorId');
+DELETE FROM security_audit_log
+WHERE actor_profile_id IN ('$profileId','$coordinatorId')
+   OR actor_profile_id IN (SELECT id FROM profiles WHERE name='$managedProfileName')
+   OR resource_id IN ('$profileId','$coordinatorId')
+   OR resource_id LIKE '$profileId:%'
+   OR resource_id LIKE '$coordinatorId:%';
 DELETE FROM profile_invites WHERE profile_id IN ('$profileId','$coordinatorId') OR created_by IN ('$profileId','$coordinatorId');
 DELETE FROM auth_sessions WHERE profile_id IN ('$profileId','$coordinatorId');
 DELETE FROM profile_device_claims WHERE profile_id IN ('$profileId','$coordinatorId');

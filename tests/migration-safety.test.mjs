@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readdir, readFile } from "node:fs/promises";
 
 const migrationDirectory = new URL("../db/migrations/", import.meta.url);
-const coreTables = "profiles|posts|post_media|comments|reactions|document_status|locations";
+const coreTables = "profiles|posts|post_media|comments|reactions|document_status|locations|security_audit_log";
 
 test("le migrazioni sono numerate, additive e non cancellano dati reali", async () => {
   const names = (await readdir(migrationDirectory)).filter((name) => name.endsWith(".sql")).sort();

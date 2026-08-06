@@ -18,6 +18,7 @@ Questa matrice descrive i controlli applicati dal server. La grafica non concede
 | Vedere le posizioni del gruppo | No | No | Sì | Sì | Sì |
 | Aggiornare/eliminare posizione | No | No | Solo la propria | Sì | Solo la propria |
 | Inviare notifica globale di prova | No | No | No | No | Sì |
+| Consultare il registro di sicurezza | No | No | No | No | Sì |
 
 ## Regole non negoziabili
 
@@ -30,6 +31,7 @@ Questa matrice descrive i controlli applicati dal server. La grafica non concede
 - Il server ricava nome, profilo e ruolo dalla sessione: valori dichiarati dal browser non possono impersonare altri viaggiatori.
 - Il consenso privacy è esplicito nelle nuove registrazioni; data e versione del consenso non vengono esposte nello stato condiviso.
 - I test con scritture accettano soltanto localhost o il dominio QA e rifiutano sempre il dominio ufficiale.
+- Il registro di sicurezza conserva soltanto evento, profilo, ruolo, dispositivo, risorsa, esito e ora server: non accetta password, token, nomi file o contenuti dei documenti.
 
 Evidenza automatica principale: `extended-p0-authorization-matrix.mjs`, eseguita su un database D1 e uno storage temporanei con pulizia finale.
 
@@ -48,6 +50,7 @@ Il test `endpoint-authorization-inventory.test.mjs` confronta tutte le rotte dic
 | Crea profilo o invito | Coordinatore | `POST /profiles` e `POST /auth/invites`: ruolo coordinatore |
 | Modifica/elimina contenuto | Proprietario o coordinatore | campo `can_manage` derivato dal server e controllo ripetuto nell’endpoint |
 | Commenta/reagisce | Profilo o familiare identificato | sessione personale o ospite valida e autorizzata alla visibilità del post |
+| Consulta registro di sicurezza | Coordinatore | `GET /security/audit`: ruolo coordinatore; risposta limitata ai campi non sensibili |
 
 La UI nasconde i comandi non pertinenti, ma la sicurezza non dipende dalla UI: una richiesta forzata viene comunque respinta dal Worker.
 

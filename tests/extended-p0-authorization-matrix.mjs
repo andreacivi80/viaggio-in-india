@@ -18,11 +18,12 @@ const ok = (condition, message) => { checks += 1; assert.ok(condition, message);
 const status = async (promise, expected, message) => eq((await promise).status, expected, message);
 const jsonHeaders = (headers = {}) => ({ ...headers, "content-type": "application/json" });
 const guestDeviceKey = "4".repeat(64);
+const runId = process.env.QA_RUN_ID || crypto.randomUUID();
 
 const guestResponse = await request("/api/auth/guest", {
   method: "POST",
   headers: { "content-type": "application/json", "x-device-key": guestDeviceKey },
-  body: JSON.stringify({ display_name: "Familiare matrice locale" }),
+  body: JSON.stringify({ display_name: `Familiare matrice ${runId}` }),
 });
 eq(guestResponse.status, 201);
 const guestSession = await guestResponse.json();
@@ -96,6 +97,8 @@ await status(request("/api/push/test", {
 }), 403, "la password comune non invia notifiche operative");
 await status(request("/api/push/test", { method: "POST", headers: owner }), 403);
 await status(request("/api/push/test", { method: "POST", headers: coordinator }), 200);
+await status(request("/api/security/audit"), 403, "il pubblico non consulta il registro di sicurezza");
+await status(request("/api/security/audit", { headers: owner }), 403, "il viaggiatore non consulta il registro di sicurezza");
 
 const otherProfile = new FormData();
 otherProfile.set("name", "Secondo");
@@ -151,6 +154,7 @@ await status(request(`/api/media/${document.file_key}`, { method: "HEAD" }), 403
 await status(request(`/api/media/${document.file_key}`, { method: "HEAD", headers: other }), 403);
 await status(request(`/api/media/${document.file_key}`, { method: "HEAD", headers: owner }), 200);
 await status(request(`/api/media/${document.file_key}`, { method: "HEAD", headers: coordinator }), 200);
+await status(request(`/api/media/${document.file_key}`, { method: "GET", headers: owner }), 200, "l’apertura reale del documento viene registrata");
 
 const coordinatorReplacement = new FormData();
 coordinatorReplacement.set("profile_id", ownerId);
@@ -217,6 +221,28 @@ await status(request(`/api/profiles/${createdProfile.id}`, { method: "DELETE", h
 await status(request(`/api/documents/${ownerId}/passport`, { method: "DELETE", headers: owner }), 200);
 for (const post of Object.values(posts))
   await status(request(`/api/posts/${post.id}`, { method: "DELETE", headers: owner }), 200);
+
+const auditResponse = await request("/api/security/audit", { headers: coordinator });
+eq(auditResponse.status, 200, "solo il coordinatore consulta il registro di sicurezza");
+const auditPayload = await auditResponse.json();
+ok(Array.isArray(auditPayload.events) && auditPayload.events.length > 0, "il registro contiene eventi reali");
+const auditTypes = new Set(auditPayload.events.map((event) => event.event_type));
+for (const requiredEvent of [
+  "access", "document_uploaded", "document_opened", "document_deleted",
+  "invite_created", "comment_deleted", "profile_created", "profile_deleted", "post_deleted",
+]) ok(auditTypes.has(requiredEvent), `evento audit presente: ${requiredEvent}`);
+const serializedAudit = JSON.stringify(auditPayload);
+for (const forbidden of [
+  createdInvite.invite_token,
+  process.env.QA_COORDINATOR_TOKEN,
+  "matrice-passaporto.pdf",
+  "%PDF-1.4",
+  groupCode,
+]) ok(!serializedAudit.includes(String(forbidden)), `il registro non espone ${forbidden === groupCode ? "password" : "segreti o contenuti"}`);
+ok(auditPayload.events.every((event) => Object.keys(event).every((key) => [
+  "id", "event_type", "actor_profile_id", "actor_role", "device_id",
+  "resource_type", "resource_id", "result", "created_at",
+].includes(key))), "il registro restituisce soltanto campi autorizzati");
 
 console.log(`P0_AUTHORIZATION_MATRIX=${checks}/${checks}`);
 process.exit(0);

@@ -181,6 +181,42 @@ async function tokenHash(token) {
     byte.toString(16).padStart(2, "0"),
   ).join("");
 }
+const auditValue = (value, maxLength = 120) =>
+  String(value || "").replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, maxLength);
+export function buildSecurityAuditRecord(input = {}) {
+  return {
+    id: auditValue(input.id || id(), 80),
+    event_type: auditValue(input.event_type, 80),
+    actor_profile_id: auditValue(input.actor_profile_id, 80) || null,
+    actor_role: auditValue(input.actor_role, 24),
+    device_id: auditValue(input.device_id, 80),
+    resource_type: auditValue(input.resource_type, 40),
+    resource_id: auditValue(input.resource_id, 120),
+    result: auditValue(input.result || "success", 32),
+    created_at: auditValue(input.created_at || now(), 40),
+  };
+}
+async function writeSecurityAudit(env, input) {
+  const record = buildSecurityAuditRecord(input);
+  if (!record.event_type) throw new Error("Tipo evento audit mancante");
+  await env.DB.prepare(
+    `INSERT INTO security_audit_log(
+      id,event_type,actor_profile_id,actor_role,device_id,
+      resource_type,resource_id,result,created_at
+    ) VALUES(?,?,?,?,?,?,?,?,?)`,
+  ).bind(
+    record.id,
+    record.event_type,
+    record.actor_profile_id,
+    record.actor_role,
+    record.device_id,
+    record.resource_type,
+    record.resource_id,
+    record.result,
+    record.created_at,
+  ).run();
+  return record;
+}
 const deviceKeyFromRequest = (request) => {
   const key = String(request.headers.get("x-device-key") || "").trim().toLowerCase();
   return /^[a-f0-9]{64}$/.test(key) ? key : "";
@@ -310,6 +346,13 @@ async function rateLimit(env, request, scope, limit, windowSeconds, actor = "") 
     .bind(key)
     .first();
   if (Number(row?.count || 0) <= limit) return null;
+  await writeSecurityAudit(env, {
+    event_type: "rate_limit_reached",
+    actor_profile_id: actor,
+    resource_type: "endpoint_scope",
+    resource_id: scope,
+    result: "blocked",
+  });
   const retryAfter = Math.max(
     1,
     Math.ceil((Date.parse(expiresAt) - Date.now()) / 1000),
@@ -665,6 +708,25 @@ async function ensureGuestDeviceSchema(env) {
   catch (error) { if (!/duplicate column|already exists/i.test(String(error?.message || error))) throw error; }
   guestDeviceSchemaReady = true;
 }
+let securityAuditSchemaReady = false;
+async function ensureSecurityAuditSchema(env) {
+  if (securityAuditSchemaReady) return;
+  await env.DB.prepare(
+    `CREATE TABLE IF NOT EXISTS security_audit_log (
+      id TEXT PRIMARY KEY,event_type TEXT NOT NULL,actor_profile_id TEXT,
+      actor_role TEXT NOT NULL DEFAULT '',device_id TEXT NOT NULL DEFAULT '',
+      resource_type TEXT NOT NULL DEFAULT '',resource_id TEXT NOT NULL DEFAULT '',
+      result TEXT NOT NULL,created_at TEXT NOT NULL
+    )`,
+  ).run();
+  await env.DB.prepare(
+    "CREATE INDEX IF NOT EXISTS security_audit_created_idx ON security_audit_log(created_at DESC)",
+  ).run();
+  await env.DB.prepare(
+    "CREATE INDEX IF NOT EXISTS security_audit_actor_idx ON security_audit_log(actor_profile_id,created_at DESC)",
+  ).run();
+  securityAuditSchemaReady = true;
+}
 async function silentMaintenance(env) {
   const markerKey = "system/last-silent-maintenance";
   const lastRun = Number(await env.MEDIA.get(markerKey, { type: "text" })) || 0;
@@ -681,6 +743,8 @@ async function silentMaintenance(env) {
     env.DB.prepare("DELETE FROM guest_sessions WHERE expires_at<? OR revoked_at IS NOT NULL").bind(now()),
     env.DB.prepare("DELETE FROM auth_sessions WHERE expires_at<? OR (revoked_at IS NOT NULL AND revoked_at<?)")
       .bind(now(), new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
+    env.DB.prepare("DELETE FROM security_audit_log WHERE created_at<?")
+      .bind(new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString()),
   ]);
 }
 async function chunkedMedia(env, request, key, headers) {
@@ -849,6 +913,7 @@ export async function onRequest(context) {
   await ensureProfilePrivacySchema(env);
   await ensureSessionDeviceSchema(env);
   await ensureGuestDeviceSchema(env);
+  await ensureSecurityAuditSchema(env);
   context.waitUntil?.(silentMaintenance(env).catch(() => {}));
   try {
     if (request.method === "POST" && path === "auth/bootstrap") {
@@ -877,6 +942,15 @@ export async function onRequest(context) {
         return json({ error: "Il gruppo è già stato inizializzato" }, 409);
       try {
         const issued = await createSession(env, profileId, deviceNameFromRequest(request), deviceKeyFromRequest(request));
+        await writeSecurityAudit(env, {
+          event_type: "profile_created",
+          actor_profile_id: profileId,
+          actor_role: "coordinator",
+          device_id: issued.device_id,
+          resource_type: "profile",
+          resource_id: profileId,
+          result: "success",
+        });
         return json({
           ...issued,
           profile: { id: profileId, name, surname, origin_city: originCity, role: "coordinator" },
@@ -928,6 +1002,15 @@ export async function onRequest(context) {
       ).bind(profileId, name, surname, originCity, role, createdAt, PRIVACY_CONSENT_VERSION, createdAt, gender).run();
       try {
         const issued = await createSession(env, profileId, deviceNameFromRequest(request), deviceKeyFromRequest(request));
+        await writeSecurityAudit(env, {
+          event_type: "profile_created",
+          actor_profile_id: profileId,
+          actor_role: role,
+          device_id: issued.device_id,
+          resource_type: "profile",
+          resource_id: profileId,
+          result: "success",
+        });
         return json({
           ...issued,
           profile: { id: profileId, name, surname, origin_city: originCity, role, gender },
@@ -971,6 +1054,15 @@ export async function onRequest(context) {
           .run();
         throw error;
       }
+      await writeSecurityAudit(env, {
+        event_type: "invite_used",
+        actor_profile_id: invite.profile_id,
+        actor_role: invite.role,
+        device_id: issued.device_id,
+        resource_type: "profile",
+        resource_id: invite.profile_id,
+        result: "success",
+      });
       return json({
         ...issued,
         profile: {
@@ -1007,6 +1099,15 @@ export async function onRequest(context) {
     if (request.method === "GET" && path === "auth/session") {
       const session = await sessionFromRequest(request, env);
       if (!session) return json({ error: "Sessione non valida" }, 401);
+      await writeSecurityAudit(env, {
+        event_type: "access",
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "session",
+        resource_id: session.device_id,
+        result: "success",
+      });
       return json({
         profile: {
           id: session.profile_id,
@@ -1061,6 +1162,16 @@ export async function onRequest(context) {
         const results = await env.DB.batch(statements);
         disabledPushSubscriptions = Number(results[1]?.meta?.changes || 0);
       }
+      if (session)
+        await writeSecurityAudit(env, {
+          event_type: "logout",
+          actor_profile_id: session.profile_id,
+          actor_role: session.role,
+          device_id: session.device_id,
+          resource_type: "session",
+          resource_id: session.device_id,
+          result: "success",
+        });
       return json({ ok: true, push_subscriptions_revoked: disabledPushSubscriptions });
     }
     if (request.method === "GET" && path === "auth/devices") {
@@ -1094,6 +1205,15 @@ export async function onRequest(context) {
       const pushResult = await env.DB.prepare(
         "DELETE FROM push_subscriptions WHERE profile_id=?",
       ).bind(session.profile_id).run();
+      await writeSecurityAudit(env, {
+        event_type: "device_revoked",
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "device",
+        resource_id: deviceId,
+        result: "success",
+      });
       return json({
         ok: true,
         current_revoked: deviceId === session.device_id,
@@ -1140,6 +1260,15 @@ export async function onRequest(context) {
           expiresAt,
         )
         .run();
+      await writeSecurityAudit(env, {
+        event_type: "invite_created",
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "profile",
+        resource_id: profile.id,
+        result: "success",
+      });
       return json({
         invite_id: await tokenHash(token),
         invite_token: token,
@@ -1159,6 +1288,18 @@ export async function onRequest(context) {
       ).bind(inviteId.toLowerCase()).run();
       if (!revoked.meta?.changes) return json({ error: "Invito non trovato o già utilizzato" }, 404);
       return json({ ok: true, invite_id: inviteId.toLowerCase() });
+    }
+    if (request.method === "GET" && path === "security/audit") {
+      const session = await sessionFromRequest(request, env);
+      if (!session || session.role !== "coordinator")
+        return json({ error: "Solo il coordinatore può consultare il registro di sicurezza" }, 403);
+      const events = await env.DB.prepare(
+        `SELECT id,event_type,actor_profile_id,actor_role,device_id,
+                resource_type,resource_id,result,created_at
+         FROM security_audit_log
+         ORDER BY created_at DESC LIMIT 200`,
+      ).all();
+      return json({ events: events.results });
     }
     if (request.method === "GET" && path === "state") {
       await ensureStaticPosts(env);
@@ -1458,7 +1599,7 @@ export async function onRequest(context) {
         const session = await sessionFromRequest(request, env);
         if (!session) return json({ error: "Accesso negato" }, 403);
         const document = await env.DB.prepare(
-          "SELECT profile_id FROM document_status WHERE file_key=?",
+          "SELECT profile_id,doc_type FROM document_status WHERE file_key=?",
         )
           .bind(key)
           .first();
@@ -1468,6 +1609,16 @@ export async function onRequest(context) {
             document.profile_id !== session.profile_id)
         )
           return json({ error: "Documento non autorizzato" }, 403);
+        if (request.method === "GET")
+          await writeSecurityAudit(env, {
+            event_type: "document_opened",
+            actor_profile_id: session.profile_id,
+            actor_role: session.role,
+            device_id: session.device_id,
+            resource_type: "document",
+            resource_id: `${document.profile_id}:${document.doc_type}`,
+            result: "success",
+          });
       }
       if (key.startsWith("restricted/") || key.startsWith("chunked/restricted/")) {
         const session = await sessionFromRequest(request, env);
@@ -1572,6 +1723,15 @@ export async function onRequest(context) {
           row.gender,
         )
         .run();
+      await writeSecurityAudit(env, {
+        event_type: "profile_created",
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "profile",
+        resource_id: row.id,
+        result: "success",
+      });
       return json({ ...row, avatar_url: mediaUrl(row.avatar_key) }, 201);
     }
     if (request.method === "PUT" && path.startsWith("profiles/")) {
@@ -1629,6 +1789,15 @@ export async function onRequest(context) {
       }
       if (avatar?.key && current.avatar_key)
         await deleteStoredMedia(env, current.avatar_key);
+      await writeSecurityAudit(env, {
+        event_type: current.role === updatedRole ? "profile_updated" : "role_changed",
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "profile",
+        resource_id: profileId,
+        result: "success",
+      });
       return json({ ok: true, id: profileId, avatar_url: mediaUrl(avatarKey) });
     }
     if (request.method === "DELETE" && path.startsWith("profiles/")) {
@@ -1648,6 +1817,15 @@ export async function onRequest(context) {
       }
       const deleted = await deleteProfileData(env, profileId);
       if (!deleted) return json({ error: "Viaggiatore non trovato" }, 404);
+      await writeSecurityAudit(env, {
+        event_type: "profile_deleted",
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "profile",
+        resource_id: profileId,
+        result: "success",
+      });
       return json({
         ok: true,
         profile_id: profileId,
@@ -1831,6 +2009,15 @@ export async function onRequest(context) {
         env.DB.prepare("DELETE FROM reactions WHERE post_id=?").bind(postId),
         env.DB.prepare("DELETE FROM posts WHERE id=?").bind(postId),
       ]);
+      await writeSecurityAudit(env, {
+        event_type: "post_deleted",
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "post",
+        resource_id: postId,
+        result: "success",
+      });
       return json({ ok: true });
     }
     if (request.method === "POST" && path === "comments") {
@@ -1971,6 +2158,15 @@ export async function onRequest(context) {
         return json({ error: "Non puoi eliminare questo commento" }, 403);
       await env.DB.prepare("DELETE FROM comments WHERE id=?").bind(commentId).run();
       if (existing.media_key) await deleteStoredMedia(env, existing.media_key);
+      await writeSecurityAudit(env, {
+        event_type: "comment_deleted",
+        actor_profile_id: session?.profile_id || null,
+        actor_role: session?.role || "guest",
+        device_id: session?.device_id || "",
+        resource_type: "comment",
+        resource_id: commentId,
+        result: "success",
+      });
       return json({ ok: true });
     }
     if (request.method === "POST" && path === "reactions") {
@@ -2099,6 +2295,15 @@ export async function onRequest(context) {
           now(),
         )
         .run();
+      await writeSecurityAudit(env, {
+        event_type: "location_shared",
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "location",
+        resource_id: session.profile_id,
+        result: "success",
+      });
       return json({ ok: true });
     }
     if (path.startsWith("locations/") && request.method === "DELETE") {
@@ -2109,6 +2314,15 @@ export async function onRequest(context) {
       await env.DB.prepare("DELETE FROM locations WHERE profile_id=?")
         .bind(profileId)
         .run();
+      await writeSecurityAudit(env, {
+        event_type: "location_deleted",
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "location",
+        resource_id: profileId,
+        result: "success",
+      });
       return json({ ok: true });
     }
     if (path === "documents" && request.method === "POST") {
@@ -2193,6 +2407,17 @@ export async function onRequest(context) {
         await deleteStoredMedia(env, previous.file_key);
       const payload = { ok: true, profile_id: profileId, doc_type: type };
       await completeIdempotentOperation(env, operation.operationHash, payload);
+      await writeSecurityAudit(env, {
+        event_type: media?.key && previous?.file_key && previous.file_key !== media.key
+          ? "document_replaced"
+          : media?.key ? "document_uploaded" : "document_verified",
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "document",
+        resource_id: `${profileId}:${type}`,
+        result: "success",
+      });
       return json(payload);
     }
     if (path.startsWith("documents/") && request.method === "DELETE") {
@@ -2211,6 +2436,15 @@ export async function onRequest(context) {
       )
         .bind(profileId, type)
         .run();
+      await writeSecurityAudit(env, {
+        event_type: "document_deleted",
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "document",
+        resource_id: `${profileId}:${type}`,
+        result: "success",
+      });
       return json({ ok: true });
     }
     return json({ error: "Endpoint non trovato" }, 404);

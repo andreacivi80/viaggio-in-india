@@ -166,7 +166,11 @@ DELETE FROM locations WHERE profile_id IN ($quotedIds);
 DELETE FROM profile_invites WHERE profile_id IN ($quotedIds) OR created_by IN ($quotedIds);
 DELETE FROM auth_sessions WHERE profile_id IN ($quotedIds);
 DELETE FROM profile_device_claims WHERE profile_id IN ($quotedIds);
+DELETE FROM security_audit_log
+WHERE actor_profile_id IN ($quotedIds)
+   OR actor_profile_id IN (SELECT visitor_id FROM guest_sessions WHERE display_name LIKE '%$runId%');
 DELETE FROM guest_sessions WHERE display_name IN ('Collaudo automatico $runId','Collaudo idempotenza $runId','Ospite sicurezza $runId','Antispam $runId');
+DELETE FROM guest_sessions WHERE display_name='Familiare matrice $runId';
 DELETE FROM profiles WHERE id IN ($quotedIds);
 "@
   $cleanupFile = [IO.Path]::GetTempFileName()

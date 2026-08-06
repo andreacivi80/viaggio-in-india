@@ -79,7 +79,7 @@ Assert-LastExit "carico concorrente"
 Assert-LastExit "antispam e rate limit"
 
 Write-Host "[L1] Verifica pulizia database QA"
-$countsJson = & npx wrangler d1 execute viaggio-in-india-qa-db --remote --config wrangler.qa.jsonc --json --command "SELECT COUNT(*) AS profiles FROM profiles; SELECT COUNT(*) AS posts FROM posts; SELECT COUNT(*) AS comments FROM comments; SELECT COUNT(*) AS documents FROM document_status; SELECT COUNT(*) AS locations FROM locations; SELECT COUNT(*) AS sessions FROM auth_sessions;"
+$countsJson = & npx wrangler d1 execute viaggio-in-india-qa-db --remote --config wrangler.qa.jsonc --json --command "SELECT COUNT(*) AS profiles FROM profiles; SELECT COUNT(*) AS posts FROM posts; SELECT COUNT(*) AS comments FROM comments; SELECT COUNT(*) AS documents FROM document_status; SELECT COUNT(*) AS locations FROM locations; SELECT COUNT(*) AS sessions FROM auth_sessions; SELECT COUNT(*) AS audit_events FROM security_audit_log;"
 Assert-LastExit "lettura pulizia QA"
 $counts = $countsJson | ConvertFrom-Json
 $dirty = @()

@@ -338,4 +338,8 @@
   ,{ "control": "deve nascondere tasti amministrativi;", "evidence": "ui-coordinator-grid touch ripetuto due volte: il Pubblico non monta Griglia coordinatore; soltanto la sessione coordinatore verificata la visualizza" }
   ,{ "control": "chi può creare un invito non possa automaticamente leggere documenti non autorizzati;", "evidence": "authorization-matrix 66/66 ripetuta due volte: creare invito non cambia profilo o ruolo, non restituisce documenti/sessione e il token invito riceve 401 da /api/private" }
   ,{ "control": "Commento con password.", "evidence": "ui-password-access touch ripetuto due volte: dopo password verificata il Pubblico crea identità ospite server e commento 201; nessuna sessione personale viene concessa" }
+  ,{ "control": "dispositivo o sessione;", "evidence": "security-audit 3/3 + authorization-matrix 86/86 ripetuta due volte: accessi e operazioni personali registrano il device_id della sessione verificata" }
+  ,{ "control": "nessun contenuto completo del documento;", "evidence": "security-audit 3/3 + authorization-matrix 86/86: schema whitelist e risposta coordinatore escludono contenuto e nome del PDF" }
+  ,{ "control": "nessun token;", "evidence": "security-audit 3/3 + authorization-matrix 86/86: token di sessione e invito non compaiono nel registro" }
+  ,{ "control": "nessuna password.", "evidence": "security-audit 3/3 + authorization-matrix 86/86: password del gruppo non compare nel registro" }
 ]

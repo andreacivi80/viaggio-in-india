@@ -51,6 +51,7 @@ DELETE FROM post_media WHERE post_id IN (SELECT id FROM posts WHERE text='$postM
 DELETE FROM posts WHERE text='$postMarker';
 DELETE FROM document_status WHERE profile_id IN (SELECT id FROM profiles WHERE name='$coordinatorName');
 DELETE FROM locations WHERE profile_id IN (SELECT id FROM profiles WHERE name='$coordinatorName');
+DELETE FROM security_audit_log WHERE actor_profile_id IN (SELECT id FROM profiles WHERE name='$coordinatorName') OR resource_id IN (SELECT id FROM profiles WHERE name='$coordinatorName');
 DELETE FROM profile_invites WHERE profile_id IN (SELECT id FROM profiles WHERE name='$coordinatorName') OR created_by IN (SELECT id FROM profiles WHERE name='$coordinatorName');
 DELETE FROM auth_sessions WHERE profile_id IN (SELECT id FROM profiles WHERE name='$coordinatorName');
 DELETE FROM profile_device_claims WHERE profile_id IN (SELECT id FROM profiles WHERE name='$coordinatorName');
@@ -61,6 +62,7 @@ DELETE FROM post_media WHERE post_id IN (SELECT id FROM posts WHERE text IN ('$p
 DELETE FROM posts WHERE text IN ('$postMarker-Samsung-S20-FE','$postMarker-Samsung-vecchio','$postMarker-iPhone-piccolo');
 DELETE FROM document_status WHERE profile_id IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo'));
 DELETE FROM locations WHERE profile_id IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo'));
+DELETE FROM security_audit_log WHERE actor_profile_id IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo')) OR resource_id IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo'));
 DELETE FROM profile_invites WHERE profile_id IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo')) OR created_by IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo'));
 DELETE FROM auth_sessions WHERE profile_id IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo'));
 DELETE FROM profile_device_claims WHERE profile_id IN (SELECT id FROM profiles WHERE name IN ('$coordinatorName-Samsung-S20-FE','$coordinatorName-Samsung-vecchio','$coordinatorName-iPhone-piccolo'));

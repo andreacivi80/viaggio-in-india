@@ -73,6 +73,11 @@
     },
     {
       "method": "GET",
+      "path": "security/audit",
+      "access": "coordinator"
+    },
+    {
+      "method": "GET",
       "path": "state",
       "access": "public-filtered"
     },
