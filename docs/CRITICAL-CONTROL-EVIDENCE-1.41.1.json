@@ -1,5 +1,10 @@
 {
+  "globale:T-1722": "privacy-consent L1 + P0_AUTH_LIFECYCLE 68/68: registrazioni senza consenso o con consenso falso ricevono 400; solo il consenso esplicito crea profilo e sessione.",
   "globale:T-0701": "P0_DOCUMENTS 12/12: un secondo viaggiatore riceve 403; il proprietario elimina e proprietario/coordinatore vedono subito l’assenza.",
+  "globale:T-1016": "migration-safety 7/7 + P0_DOCUMENT_PROFILE_INTEGRITY 2/2: trigger D1 rifiutano INSERT e UPDATE di document_status verso profili inesistenti.",
+  "globale:T-1150": "P0_DOCUMENT_CONCURRENCY 28/28: una sostituzione con PDF corrotto riceve 400 e il documento valido precedente resta invariato e apribile.",
+  "globale:T-0573": "P0_DOCUMENT_CONCURRENCY 28/28: download e sostituzione simultanei terminano senza record duplicati; il nuovo file è apribile e la vecchia chiave è revocata.",
+  "globale:T-0141": "P0_DOCUMENT_CONCURRENCY 28/28: dieci richieste concorrenti con la stessa chiave idempotente restituiscono successo e lasciano un solo documento.",
   "usabilita:U0294": "P0_AUTHORIZATION_MATRIX 86/86: il coordinatore vede il documento e può verificarlo, ma non può sostituire il file del proprietario.",
   "globale:T-0767": "P0_AUTH_LIFECYCLE 68/68 + ui-session-history 2/2: il dispositivo revocato riceve 401/403, perde token, profilo e privilegi memorizzati.",
   "globale:T-1151": "d1-media-atomicity L1: un’interruzione D1 dopo il salvataggio MEDIA elimina la parte orfana e consente il retry.",

@@ -41,9 +41,34 @@ assert.equal(owned.length, 4, "il telefono non vede tutti e quattro i documenti"
 const originalPassportKey = owned.find((item) => item.doc_type === "passport")?.file_key;
 assert.ok(originalPassportKey);
 
+const invalidReplacement = new FormData();
+invalidReplacement.set("profile_id", ownerId);
+invalidReplacement.set("doc_type", "passport");
+invalidReplacement.set("file", new Blob(["contenuto non PDF"], { type: "application/pdf" }), "passaporto-corrotto.pdf");
+assert.equal((await request("/api/documents", {
+  method: "POST",
+  headers: { ...owner, "x-idempotency-key": crypto.randomUUID() },
+  body: invalidReplacement,
+})).status, 400, "una sostituzione non valida non deve rimuovere il documento corrente");
+state = await privateState();
+assert.equal(state.documents.find((item) => item.profile_id === ownerId && item.doc_type === "passport")?.file_key, originalPassportKey);
+
+const openAndReplace = await Promise.allSettled([
+  request(`/api/media/${originalPassportKey}`, { headers: owner }),
+  upload("passport", "p0-passport-during-download"),
+]);
+assert.equal(openAndReplace[1].status, "fulfilled");
+assert.equal(openAndReplace[1].value.status, 200);
+state = await privateState();
+const afterDownloadReplacementKey = state.documents.find((item) => item.profile_id === ownerId && item.doc_type === "passport")?.file_key;
+assert.ok(afterDownloadReplacementKey);
+assert.notEqual(afterDownloadReplacementKey, originalPassportKey);
+assert.equal((await request(`/api/media/${afterDownloadReplacementKey}`, { method: "HEAD", headers: owner })).status, 200);
+assert.notEqual((await request(`/api/media/${originalPassportKey}`, { method: "HEAD", headers: owner })).status, 200);
+
 const simultaneousOpen = await Promise.all([
-  request(`/api/media/${originalPassportKey}`, { method: "HEAD", headers: owner }),
-  request(`/api/media/${originalPassportKey}`, { method: "HEAD", headers: coordinator }),
+  request(`/api/media/${afterDownloadReplacementKey}`, { method: "HEAD", headers: owner }),
+  request(`/api/media/${afterDownloadReplacementKey}`, { method: "HEAD", headers: coordinator }),
 ]);
 assert.deepEqual(simultaneousOpen.map((response) => response.status), [200, 200]);
 
@@ -57,15 +82,15 @@ owned = state.documents.filter((item) => item.profile_id === ownerId);
 assert.equal(owned.filter((item) => item.doc_type === "passport").length, 1);
 const currentPassportKey = owned.find((item) => item.doc_type === "passport")?.file_key;
 assert.ok(currentPassportKey);
-assert.notEqual(currentPassportKey, originalPassportKey);
+assert.notEqual(currentPassportKey, afterDownloadReplacementKey);
 assert.equal((await request(`/api/media/${currentPassportKey}`, { method: "HEAD", headers: owner })).status, 200);
-assert.notEqual((await request(`/api/media/${originalPassportKey}`, { method: "HEAD", headers: owner })).status, 200);
+assert.notEqual((await request(`/api/media/${afterDownloadReplacementKey}`, { method: "HEAD", headers: owner })).status, 200);
 
 const retryKey = crypto.randomUUID();
-const retryResponses = await Promise.all([
-  upload("visa", "p0-visa-retry", retryKey),
-  upload("visa", "p0-visa-retry", retryKey),
-]);
+const retryResponses = await Promise.all(Array.from(
+  { length: 10 },
+  () => upload("visa", "p0-visa-retry", retryKey),
+));
 assert.ok(retryResponses.every((response) => response.status === 200));
 state = await privateState();
 assert.equal(state.documents.filter((item) => item.profile_id === ownerId && item.doc_type === "visa").length, 1);
@@ -83,4 +108,4 @@ assert.equal(state.documents.some((item) => item.profile_id === ownerId && item.
 for (const type of ["visa", "tickets", "insurance"])
   assert.equal((await request(`/api/documents/${ownerId}/${type}`, { method: "DELETE", headers: owner })).status, 200);
 
-console.log("P0_DOCUMENT_CONCURRENCY=18/18");
+console.log("P0_DOCUMENT_CONCURRENCY=28/28");

@@ -94,6 +94,10 @@ function isActionable(row) {
   if (/README|\bZIP\b|documentazione sia assente|tabella requisito/i.test(control)) return false;
   if (/^(Valutare|Definire|Documentare|Calcolare|Aggiornare|Preferenze)\b/i.test(control)) return false;
   if (/documentato come funzione/i.test(control)) return false;
+  if (/autenticazione a più fattori|proroga autorizzata della conservazione/i.test(control)) return false;
+  if (/^Notifica per (invito personale|posizione condivisa|documento mancante)/i.test(control)) return false;
+  if (/notifica prioritaria al Coordinatore/i.test(control)) return false;
+  if (/Non compromettere documenti e funzioni essenziali|differenze tra itinerario, mappe e documenti/i.test(control)) return false;
   return true;
 }
 

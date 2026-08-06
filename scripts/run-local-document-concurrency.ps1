@@ -55,6 +55,8 @@ try {
   if ($LASTEXITCODE -ne 0) { throw "Trigger sincronizzazione D1 locali non riusciti" }
   & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file db\migrations\0016_auth_profile_integrity.sql | Out-Null
   if ($LASTEXITCODE -ne 0) { throw "Vincoli profilo autenticazione D1 locali non riusciti" }
+  & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file db\migrations\0021_document_profile_integrity.sql | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw "Vincoli profilo documenti D1 locali non riusciti" }
 
   if ($Suite -in @("all", "auth-lifecycle")) {
     $invalidSessionSql = "INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES('invalid-session-$runId','missing-profile-$runId','invalid-device-$runId','Non valido','$created','$created','$expires',NULL);"
@@ -102,6 +104,30 @@ INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at
   [IO.File]::WriteAllText($setupFile, $sql, [Text.UTF8Encoding]::new($false))
   & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file $setupFile | Out-Null
   if ($LASTEXITCODE -ne 0) { throw "Preparazione D1 locale non riuscita" }
+
+  if ($Suite -in @("all", "documents", "document-concurrency")) {
+    $invalidDocumentSql = "INSERT INTO document_status(profile_id,doc_type,status,updated_at) VALUES('missing-profile-$runId','passport','missing','$created');"
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    $invalidDocumentOutput = & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --command $invalidDocumentSql 2>&1
+    $invalidDocumentExit = $LASTEXITCODE
+    $ErrorActionPreference = $previousErrorActionPreference
+    if ($invalidDocumentExit -eq 0) { throw "Il database ha accettato un documento senza profilo: $invalidDocumentOutput" }
+
+    $validDocumentSql = "INSERT INTO document_status(profile_id,doc_type,status,updated_at) VALUES('$ownerId','integrity-check','missing','$created');"
+    & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --command $validDocumentSql | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Documento di integrità locale non creato" }
+    $invalidUpdateSql = "UPDATE document_status SET profile_id='missing-profile-$runId' WHERE profile_id='$ownerId' AND doc_type='integrity-check';"
+    $previousErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    $invalidUpdateOutput = & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --command $invalidUpdateSql 2>&1
+    $invalidUpdateExit = $LASTEXITCODE
+    $ErrorActionPreference = $previousErrorActionPreference
+    if ($invalidUpdateExit -eq 0) { throw "Il database ha accettato lo spostamento del documento a un profilo inesistente: $invalidUpdateOutput" }
+    & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --command "DELETE FROM document_status WHERE profile_id='$ownerId' AND doc_type='integrity-check';" | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw "Pulizia documento di integrità locale non riuscita" }
+    Write-Output "P0_DOCUMENT_PROFILE_INTEGRITY=2/2"
+  }
 
   # I dati UI devono essere creati prima dell'avvio di Pages. Scrivere nello
   # stesso database locale con un secondo processo Wrangler mentre il browser
