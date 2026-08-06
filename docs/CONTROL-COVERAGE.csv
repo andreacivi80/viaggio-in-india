@@ -61,13 +61,13 @@ P0,accessi-privacy,pending,condizione dopo accesso;,addendum:A0286,
 P0,accessi-privacy,passed,condizione quando la sessione è ancora in verifica.,addendum:A0292,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,conferma che nessuna autorizzazione dipenda esclusivamente dal frontend.,addendum:A0482,P0 locale ruoli/documenti/posizione: richieste API falsificate respinte 403 dal Worker
 P0,accessi-privacy,pending,confonde password di gruppo e sessione personale;,addendum:A0441,
-P0,accessi-privacy,pending,confrontare tutti i tasti visibili al Coordinatore con gli endpoint accessibili al Coordinatore;,addendum:A0041,
-P0,accessi-privacy,pending,confrontare tutti i tasti visibili al Familiare con gli endpoint accessibili al Familiare;,addendum:A0039,
-P0,accessi-privacy,pending,confrontare tutti i tasti visibili al Viaggiatore con gli endpoint accessibili al Viaggiatore;,addendum:A0040,
-P0,accessi-privacy,pending,confrontare tutti i tasti visibili per il Pubblico con gli endpoint accessibili al Pubblico;,addendum:A0038,
+P0,accessi-privacy,passed,confrontare tutti i tasti visibili al Coordinatore con gli endpoint accessibili al Coordinatore;,addendum:A0041,endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
+P0,accessi-privacy,passed,confrontare tutti i tasti visibili al Familiare con gli endpoint accessibili al Familiare;,addendum:A0039,endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
+P0,accessi-privacy,passed,confrontare tutti i tasti visibili al Viaggiatore con gli endpoint accessibili al Viaggiatore;,addendum:A0040,endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
+P0,accessi-privacy,passed,confrontare tutti i tasti visibili per il Pubblico con gli endpoint accessibili al Pubblico;,addendum:A0038,endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,passed,Consentire creazione di un nuovo invito sicuro.,globale:T-1613,invite-link-privacy 3/3 + auth-lifecycle 61/61: token casuale hash scadenza e uso singolo
 P0,accessi-privacy,pending,Consentire proroga autorizzata della conservazione.,globale:T-1338,
-P0,accessi-privacy,pending,CONSENTITO SOLTANTO SE PROPRIETARIO;,addendum:A0023,
+P0,accessi-privacy,passed,CONSENTITO SOLTANTO SE PROPRIETARIO;,addendum:A0023,endpoint-authorization-inventory 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,passed,Coordinatore apre documenti autorizzati.,usabilita:U0440,P0 locale documenti: coordinatore apre la chiave privata del documento del viaggiatore
 P0,accessi-privacy,passed,"Coordinatore revoca A, A perde accesso immediatamente.",usabilita:U0564,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P0,accessi-privacy,passed,Coordinatore: documenti autorizzati del gruppo.,globale:T-0480,P0 locale documenti: stato privato coordinatore include il documento del gruppo e media accessibile
@@ -90,8 +90,8 @@ P0,accessi-privacy,passed,Divieto di leggere un post privato modificando diretta
 P0,accessi-privacy,passed,"Documenti privati con private, no-store.",globale:T-1473,"security-surface L1: risposte private impostano Cache-Control private, no-store"
 P0,accessi-privacy,passed,documento non autorizzato;,usabilita:U0498,authorization-matrix 55/55: HEAD del PDF privato restituisce 403 senza sessione e con sessione di altro viaggiatore
 P0,accessi-privacy,passed,documento privato;,addendum:A0125,authorization-matrix 55/55: documento reale in storage temporaneo visibile soltanto a proprietario e coordinatore
-P0,accessi-privacy,pending,è nascosto o disabilitato per il ruolo non autorizzato;,usabilita:U0668,
-P0,accessi-privacy,pending,elenco dei controlli di proprietà;,addendum:A0469,
+P0,accessi-privacy,passed,è nascosto o disabilitato per il ruolo non autorizzato;,usabilita:U0668,ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
+P0,accessi-privacy,passed,elenco dei controlli di proprietà;,addendum:A0469,API-AUTHORIZATION-INVENTORY 38 rotte esatte + 5 dinamiche
 P0,accessi-privacy,pending,elenco dei messaggi di autorizzazione negata;,addendum:A0472,
 P0,accessi-privacy,passed,"Eliminando un profilo, gestire documenti, posizioni, sessioni e inviti.",globale:T-1011,"profile-deletion locale 40/40 + QA live 17/17: cascata reale verificata su documenti, posizione, sessione, invito e stato condiviso"
 P0,accessi-privacy,passed,Eliminare il profilo associato a una sessione attiva.,globale:T-0758,profile-deletion locale 40/40 + QA live 17/17: eliminazione dal dispositivo proprietario e sessione immediatamente respinta con 401
@@ -101,7 +101,7 @@ P0,accessi-privacy,passed,Eliminare sessioni scadute.,globale:T-1348,"extended-p
 P0,accessi-privacy,passed,endpoint autorizzati;,addendum:A0048,authorization-matrix 55/55: richieste HTTP reali confermano i confini server per tutte le risorse sensibili della matrice
 P0,accessi-privacy,passed,entrare con un invito;,globale:T-1774,auth-lifecycle 61/61: claim valido restituisce sessione e profilo corretto
 P0,accessi-privacy,pending,Eseguire logout e nuovo accesso.,addendum:A0340,
-P0,accessi-privacy,pending,esiste una matrice autorizzativa approvata;,addendum:A0444,
+P0,accessi-privacy,passed,esiste una matrice autorizzativa approvata;,addendum:A0444,AUTHORIZATION-MATRIX + endpoint-authorization-inventory 2/2
 P0,accessi-privacy,pending,etichetta di accesso mostrata;,addendum:A0043,
 P0,accessi-privacy,pending,Familiare: nessun accesso.,globale:T-0482,
 P0,accessi-privacy,passed,gli URL diretti rispettano le autorizzazioni;,addendum:A0454,"ui-critical produzione: richieste dirette a private, devices, locations e documents negate senza sessione"
@@ -143,7 +143,7 @@ P0,accessi-privacy,passed,Modificare un solo carattere del token.,globale:T-0762
 P0,accessi-privacy,pending,Nessun accesso.,usabilita:U0476,
 P0,accessi-privacy,pending,Nessun documento privato inserito senza consenso.,globale:T-1722,
 P0,accessi-privacy,passed,Nessun documento privato nei risultati pubblici.,globale:T-1692,production-smoke: stato pubblico non espone documenti; /api/private senza sessione risponde 401
-P0,accessi-privacy,pending,nessun endpoint operativo sia privo di controllo delle autorizzazioni.,addendum:A0020,
+P0,accessi-privacy,passed,nessun endpoint operativo sia privo di controllo delle autorizzazioni.,addendum:A0020,endpoint-authorization-inventory 2/2: 38 rotte esatte + 5 dinamiche classificate
 P0,accessi-privacy,passed,Nessun token negli URL.,globale:T-1479,invite-link-privacy 3/3: frammento rimosso immediatamente con history.replaceState
 P0,accessi-privacy,pending,nessun token;,globale:T-1570,
 P0,accessi-privacy,passed,nessun utilizzo di autorizzazioni precedenti;,addendum:A0333,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
@@ -181,8 +181,8 @@ P0,accessi-privacy,passed,"offrire accesso o collegamento del profilo, se approp
 P0,accessi-privacy,passed,Ogni invito deve essere collegato a un profilo esistente.,globale:T-1017,P0_DB_AUTH_INTEGRITY: D1 respinge inviti senza profilo e li elimina a cascata | P0_DB_AUTH_INTEGRITY 3/3: trigger D1 respinge INSERT invito con profile_id inesistente e pulisce gli inviti alla cancellazione del profilo
 P0,accessi-privacy,passed,ogni richiesta non autorizzata viene rifiutata dal server;,addendum:A0448,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Ogni sessione deve essere collegata a un profilo esistente.,globale:T-1021,P0_DB_AUTH_INTEGRITY: D1 respinge sessioni senza profilo e le elimina a cascata | P0_DB_AUTH_INTEGRITY 3/3: trigger D1 respinge INSERT sessione con profile_id inesistente e pulisce le sessioni alla cancellazione del profilo
-P0,accessi-privacy,pending,ogni tasto autorizzato funziona realmente;,addendum:A0446,
-P0,accessi-privacy,pending,ogni tasto non autorizzato è nascosto o disabilitato;,addendum:A0447,
+P0,accessi-privacy,passed,ogni tasto autorizzato funziona realmente;,addendum:A0446,ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
+P0,accessi-privacy,passed,ogni tasto non autorizzato è nascosto o disabilitato;,addendum:A0447,ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,pending,password di gruppo e sessione Coordinatore;,addendum:A0054,
 P0,accessi-privacy,pending,password di gruppo e sessione scaduta;,addendum:A0055,
 P0,accessi-privacy,passed,password di gruppo e sessione Viaggiatore;,addendum:A0053,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
@@ -239,7 +239,7 @@ P0,accessi-privacy,passed,Tentare di creare un invito.,usabilita:U0623,Playwrigh
 P0,accessi-privacy,passed,tentativo non autorizzato;,globale:T-1584,authorization-matrix 55/55: operazioni fuori ruolo ricevono 401/403 senza creare o modificare dati
 P0,accessi-privacy,pending,test con password;,usabilita:U0718,
 P0,accessi-privacy,pending,test con sessione scaduta;,usabilita:U0723,
-P0,accessi-privacy,pending,test delle autorizzazioni;,globale:T-0017,
+P0,accessi-privacy,passed,test delle autorizzazioni;,globale:T-0017,endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,pending,test di accessibilità;,globale:T-0020,
 P0,accessi-privacy,pending,test senza password;,usabilita:U0719,
 P0,accessi-privacy,pending,Toccare il pulsante Accesso.,usabilita:U0039,
@@ -250,8 +250,8 @@ P0,accessi-privacy,passed,Token scaduto: 401.,usabilita:U0441,Authenticated remo
 P0,accessi-privacy,pending,tornando alla vista gruppo deve ricontrollare la sessione sul server;,addendum:A0281,
 P0,accessi-privacy,pending,Tutti i partecipanti aprono il proprio invito.,globale:T-1735,
 P0,accessi-privacy,passed,un link privato è accessibile senza sessione;,usabilita:U0698,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P0,accessi-privacy,pending,un tasto autorizzato riceve 401 o 403;,addendum:A0217,
-P0,accessi-privacy,pending,un tasto non autorizzato riceve successo;,addendum:A0218,
+P0,accessi-privacy,passed,un tasto autorizzato riceve 401 o 403;,addendum:A0217,authorization-matrix 59/59: nessuna operazione consentita riceve 401/403
+P0,accessi-privacy,passed,un tasto non autorizzato riceve successo;,addendum:A0218,authorization-matrix 59/59: nessuna operazione vietata riceve successo
 P0,accessi-privacy,passed,una revoca blocca immediatamente tutte le operazioni private;,addendum:A0453,extended-p0-auth-lifecycle 28/28: auth/session passa da 200 a 401 dopo la revoca
 P0,accessi-privacy,pending,una sessione scaduta durante l’anteprima non deve recuperare i privilegi;,addendum:A0282,
 P0,accessi-privacy,pending,una sessione scaduta non viene recuperata utilizzando silenziosamente un vecchio profilo locale;,addendum:A0064,

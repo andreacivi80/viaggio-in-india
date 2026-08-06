@@ -1,0 +1,233 @@
+{
+  "version": "2026-08-06",
+  "exact": [
+    {
+      "method": "POST",
+      "path": "auth/bootstrap",
+      "access": "group-code"
+    },
+    {
+      "method": "POST",
+      "path": "auth/group",
+      "access": "group-code"
+    },
+    {
+      "method": "POST",
+      "path": "auth/unlock",
+      "access": "disabled"
+    },
+    {
+      "method": "POST",
+      "path": "auth/register",
+      "access": "group-code"
+    },
+    {
+      "method": "POST",
+      "path": "auth/claim",
+      "access": "invite"
+    },
+    {
+      "method": "POST",
+      "path": "auth/guest",
+      "access": "guest-device"
+    },
+    {
+      "method": "GET",
+      "path": "auth/session",
+      "access": "profile"
+    },
+    {
+      "method": "POST",
+      "path": "auth/refresh",
+      "access": "profile"
+    },
+    {
+      "method": "POST",
+      "path": "auth/logout",
+      "access": "profile"
+    },
+    {
+      "method": "GET",
+      "path": "auth/devices",
+      "access": "profile"
+    },
+    {
+      "method": "DELETE",
+      "path": "auth/devices/*",
+      "access": "profile"
+    },
+    {
+      "method": "POST",
+      "path": "auth/logout-all",
+      "access": "profile"
+    },
+    {
+      "method": "POST",
+      "path": "auth/invites",
+      "access": "coordinator"
+    },
+    {
+      "method": "DELETE",
+      "path": "auth/invites/*",
+      "access": "coordinator"
+    },
+    {
+      "method": "GET",
+      "path": "state",
+      "access": "public-filtered"
+    },
+    {
+      "method": "GET",
+      "path": "sync/version",
+      "access": "public"
+    },
+    {
+      "method": "GET",
+      "path": "health",
+      "access": "public"
+    },
+    {
+      "method": "GET",
+      "path": "weather",
+      "access": "public"
+    },
+    {
+      "method": "GET",
+      "path": "places/search",
+      "access": "public"
+    },
+    {
+      "method": "GET",
+      "path": "places/reverse",
+      "access": "public"
+    },
+    {
+      "method": "GET",
+      "path": "push/config",
+      "access": "public"
+    },
+    {
+      "method": "POST",
+      "path": "push/subscribe",
+      "access": "public-filtered"
+    },
+    {
+      "method": "POST",
+      "path": "push/test",
+      "access": "coordinator"
+    },
+    {
+      "method": "POST",
+      "path": "uploads/init",
+      "access": "profile"
+    },
+    {
+      "method": "POST",
+      "path": "profiles",
+      "access": "coordinator"
+    },
+    {
+      "method": "PUT",
+      "path": "profiles/*",
+      "access": "owner-or-coordinator"
+    },
+    {
+      "method": "DELETE",
+      "path": "profiles/*",
+      "access": "owner-or-coordinator"
+    },
+    {
+      "method": "POST",
+      "path": "posts",
+      "access": "profile"
+    },
+    {
+      "method": "DELETE",
+      "path": "posts/*",
+      "access": "owner-or-coordinator"
+    },
+    {
+      "method": "POST",
+      "path": "comments",
+      "access": "profile-or-guest"
+    },
+    {
+      "method": "PUT",
+      "path": "comments/*",
+      "access": "owner-or-coordinator-or-guest-owner"
+    },
+    {
+      "method": "DELETE",
+      "path": "comments/*",
+      "access": "owner-or-coordinator-or-guest-owner"
+    },
+    {
+      "method": "POST",
+      "path": "reactions",
+      "access": "profile-or-guest"
+    },
+    {
+      "method": "GET",
+      "path": "private",
+      "access": "profile"
+    },
+    {
+      "method": "POST",
+      "path": "locations",
+      "access": "owner"
+    },
+    {
+      "method": "DELETE",
+      "path": "locations/*",
+      "access": "owner"
+    },
+    {
+      "method": "POST",
+      "path": "documents",
+      "access": "owner-or-coordinator-verify"
+    },
+    {
+      "method": "DELETE",
+      "path": "documents/*",
+      "access": "owner"
+    }
+  ],
+  "dynamic": [
+    {
+      "methods": [
+        "GET"
+      ],
+      "path": "uploads/:uploadId",
+      "access": "owner"
+    },
+    {
+      "methods": [
+        "PUT"
+      ],
+      "path": "uploads/:uploadId/parts/:partNumber",
+      "access": "owner"
+    },
+    {
+      "methods": [
+        "POST"
+      ],
+      "path": "uploads/:uploadId/complete",
+      "access": "owner"
+    },
+    {
+      "methods": [
+        "DELETE"
+      ],
+      "path": "uploads/:uploadId",
+      "access": "owner"
+    },
+    {
+      "methods": [
+        "GET",
+        "HEAD"
+      ],
+      "path": "media/:key",
+      "access": "conditional-media-visibility"
+    }
+  ]
+}

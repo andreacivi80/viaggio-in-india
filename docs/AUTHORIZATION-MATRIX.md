@@ -32,3 +32,21 @@ Questa matrice descrive i controlli applicati dal server. La grafica non concede
 - I test con scritture accettano soltanto localhost o il dominio QA e rifiutano sempre il dominio ufficiale.
 
 Evidenza automatica principale: `extended-p0-authorization-matrix.mjs`, eseguita su un database D1 e uno storage temporanei con pulizia finale.
+
+L’inventario machine-readable completo è in `docs/API-AUTHORIZATION-INVENTORY.json`.
+Il test `endpoint-authorization-inventory.test.mjs` confronta tutte le rotte dichiarate nel Worker e fallisce se una nuova rotta viene aggiunta senza una policy esplicita.
+
+## Allineamento comandi e API
+
+| Comando UI | Visibile a | Controllo server |
+|---|---|---|
+| Pubblica | Viaggiatore o coordinatore con sessione verificata | `POST /posts`: sessione personale |
+| Condividi/rimuovi posizione | Proprietario | `POST/DELETE /locations`: profilo della sessione uguale alla risorsa |
+| Apri documenti | Viaggiatore o coordinatore | `GET /private` e media privata: sessione personale |
+| Carica/elimina documento | Proprietario | `POST/DELETE /documents`: stesso profilo della sessione |
+| Verifica documenti del gruppo | Coordinatore | `POST /documents`: coordinatore senza sostituzione del file altrui |
+| Crea profilo o invito | Coordinatore | `POST /profiles` e `POST /auth/invites`: ruolo coordinatore |
+| Modifica/elimina contenuto | Proprietario o coordinatore | campo `can_manage` derivato dal server e controllo ripetuto nell’endpoint |
+| Commenta/reagisce | Profilo o familiare identificato | sessione personale o ospite valida e autorizzata alla visibilità del post |
+
+La UI nasconde i comandi non pertinenti, ma la sicurezza non dipende dalla UI: una richiesta forzata viene comunque respinta dal Worker.

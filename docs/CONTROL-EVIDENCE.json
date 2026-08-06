@@ -232,4 +232,18 @@
   ,{ "control": "Verificare che ciascun invito sia collegato alla persona corretta.", "evidence": "invite-link-privacy 3/3 + auth-lifecycle 61/61: profile_id letto dalla riga invito e confrontato col profilo restituito" }
   ,{ "control": "Verificare che il token non rimanga nella cronologia o nei log applicativi.", "evidence": "invite-link-privacy 3/3: barra ripulita prima del fetch e segreto mai inviato nella query" }
   ,{ "control": "Verificare che l’invito funzioni una sola volta.", "evidence": "auth-lifecycle 61/61: UPDATE atomico used_at consente un claim e respinge concorrenza e riuso" }
+  ,{ "control": "confrontare tutti i tasti visibili al Coordinatore con gli endpoint accessibili al Coordinatore;", "evidence": "endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59" }
+  ,{ "control": "confrontare tutti i tasti visibili al Familiare con gli endpoint accessibili al Familiare;", "evidence": "endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59" }
+  ,{ "control": "confrontare tutti i tasti visibili al Viaggiatore con gli endpoint accessibili al Viaggiatore;", "evidence": "endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59" }
+  ,{ "control": "confrontare tutti i tasti visibili per il Pubblico con gli endpoint accessibili al Pubblico;", "evidence": "endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59" }
+  ,{ "control": "CONSENTITO SOLTANTO SE PROPRIETARIO;", "evidence": "endpoint-authorization-inventory 2/2 + authorization-matrix 59/59" }
+  ,{ "control": "è nascosto o disabilitato per il ruolo non autorizzato;", "evidence": "ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59" }
+  ,{ "control": "elenco dei controlli di proprietà;", "evidence": "API-AUTHORIZATION-INVENTORY: 38 rotte esatte e 5 rotte dinamiche classificate" }
+  ,{ "control": "esiste una matrice autorizzativa approvata;", "evidence": "AUTHORIZATION-MATRIX + endpoint-authorization-inventory 2/2" }
+  ,{ "control": "nessun endpoint operativo sia privo di controllo delle autorizzazioni.", "evidence": "endpoint-authorization-inventory 2/2: 38 rotte esatte e 5 dinamiche classificate" }
+  ,{ "control": "ogni tasto autorizzato funziona realmente;", "evidence": "ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59" }
+  ,{ "control": "ogni tasto non autorizzato è nascosto o disabilitato;", "evidence": "ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59" }
+  ,{ "control": "test delle autorizzazioni;", "evidence": "endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59" }
+  ,{ "control": "un tasto autorizzato riceve 401 o 403;", "evidence": "authorization-matrix 59/59: nessuna operazione consentita riceve 401/403" }
+  ,{ "control": "un tasto non autorizzato riceve successo;", "evidence": "authorization-matrix 59/59: nessuna operazione vietata riceve successo" }
 ]
