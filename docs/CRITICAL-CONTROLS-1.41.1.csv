@@ -2,120 +2,120 @@ critical_id,band,priority,category,control,source_rows,risk_score,required_evide
 K-001,K0,P0,accessi-privacy,Nessun documento privato inserito senza consenso.,globale:T-1722,211,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
 K-002,K0,P0,documenti,Eliminare un documento dal telefono B.,globale:T-0701,210,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
 K-003,K0,P0,accessi-privacy,"Distinguere limiti per IP, sessione e profilo.",globale:T-1053,207,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
-K-004,K0,P0,documenti,Documentare procedura e tempo di rollback.,globale:T-1172,202,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-005,K0,P0,documenti,Eseguire backup mentre vengono caricati documenti.,globale:T-1167,202,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-006,K0,P0,documenti,Verificare apertura di ogni documento ripristinato.,globale:T-1170,202,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-007,K0,P0,accessi-privacy,Notifica per invito personale.,globale:T-0085,201,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
-K-008,K0,P0,accessi-privacy,"Notifica per posizione condivisa, soltanto se autorizzata.",globale:T-0087,201,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
-K-009,K0,P0,documenti,Bacheca → profilo → documenti → indietro.,globale:T-1411,200,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-010,K0,P0,documenti,Ogni documento deve essere collegato a un profilo esistente.,globale:T-1016,200,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-011,K0,P0,documenti,"Verificare che il Coordinatore possa moderare, se previsto.",usabilita:U0294,200,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-012,K0,P0,documenti,Verificare che il dispositivo revocato non possa più aprire documenti.,globale:T-0767,200,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-013,K0,P0,documenti,Errore durante sostituzione documento.,globale:T-1150,198,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-014,K0,P0,documenti,Sostituzione documento durante il download.,globale:T-0573,198,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-015,K0,P0,documenti,Un solo documento dopo dieci retry.,globale:T-0141,198,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-016,K0,P0,documenti,Non mostrare dati dei documenti nella notifica.,globale:T-1353,194,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-017,K0,P0,documenti,Notifica per documento mancante o aggiornato.,globale:T-0084,194,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-018,K0,P0,documenti,"Preferenze separate per post, commenti, reazioni, documenti e posizione.",globale:T-0090,194,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-019,K0,P0,documenti,Verificare impossibilità di aprire documenti già non disponibili offline.,globale:T-1620,194,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-020,K0,P0,persistenza,Eliminazione della subscription dal database quando l’utente le disattiva.,globale:T-0078,194,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-021,K0,P0,persistenza,Interruzione del database dopo salvataggio del file.,globale:T-1151,194,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-022,K0,P0,persistenza,Non devono esistere riferimenti nel database a file mancanti.,globale:T-1013,194,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-023,K0,P0,persistenza,un file esiste nell’archivio ma non nel database.,addendum:A0307,194,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-024,K0,P0,profili-ruoli,Controllare author_name e profile_id nel database.,usabilita:U0175,193,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
-K-025,K0,P0,profili-ruoli,Verificare profile_id corretto nel database.,globale:T-0422,193,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
-K-026,K0,P0,accessi-privacy,aggiunta successiva di fotografie autorizzate.,globale:T-1369,189,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
-K-027,K0,P0,accessi-privacy,Consentire proroga autorizzata della conservazione.,globale:T-1338,189,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
-K-028,K0,P0,accessi-privacy,Richiesta di nuovo accesso.,usabilita:U0488,189,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
-K-029,K0,P0,accessi-privacy,"Se la password del gruppo deve permettere la pubblicazione, creare una sessione Ospite/Familiare valida e controllata.",usabilita:U0002,189,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
-K-030,K0,P0,accessi-privacy,"Se può pubblicare, creare sessione Ospite.",usabilita:U0480,189,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
-K-031,K0,P0,accessi-privacy,Valutare cookie sicuro HttpOnly invece del token nel localStorage.,globale:T-0042,189,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
-K-032,K0,P0,accessi-privacy,Verificare accesso amministrativo con autenticazione a più fattori.,globale:T-1505,189,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
-K-033,K0,P0,profili-ruoli,Richiedere eliminazione del proprio profilo.,globale:T-1324,189,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
-K-034,K0,P0,profili-ruoli,Verificare notifica prioritaria al Coordinatore.,globale:T-1193,185,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
-K-035,K0,P0,documenti,Calcolare spazio necessario per documenti.,globale:T-1531,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-036,K0,P0,documenti,Caricare una fotografia del passaporto verticale.,globale:T-0995,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-037,K0,P0,documenti,Deep link del documento.,globale:T-0241,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-038,K0,P0,documenti,Definire per quanto tempo vengono conservati i documenti.,globale:T-1343,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-039,K0,P0,documenti,Documentare e applicare una regola unica.,globale:T-0700,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-040,K0,P0,documenti,documentato come funzione non completata.,addendum:A0197,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-041,K1,P0,documenti,Non compromettere documenti e funzioni essenziali.,globale:T-1650,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-042,K1,P0,documenti,Non mostrare numeri di passaporto.,globale:T-1354,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-043,K1,P0,documenti,Tentare di aprire documenti.,usabilita:U0620;usabilita:U0635,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-044,K1,P0,documenti,Verificare che i vecchi link ai documenti non funzionino.,globale:T-1326,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-045,K1,P0,documenti,"Verificare che non vi siano differenze tra itinerario, mappe e documenti.",globale:T-1269,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-046,K1,P0,documenti,Verificare documenti precedenti conservati.,globale:T-1032,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-047,K1,P0,documenti,Verificare nessun documento nella cache del browser.,globale:T-0491,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-048,K1,P0,documenti,Verificare quali documenti restano memorizzati.,globale:T-1630,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-049,K1,P0,mappe-posizione,Eliminare automaticamente le posizioni non più necessarie.,globale:T-1346,181,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
-K-050,K1,P0,persistenza,Applicare le migrazioni una alla volta.,globale:T-1026,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-051,K1,P0,persistenza,Backup delle chiavi Push.,globale:T-0636,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-052,K1,P0,persistenza,controlli eventuale modifica del database.,addendum:A0208,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-053,K1,P0,persistenza,Creare un database dalla schema completa.,globale:T-1027,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-054,K1,P0,persistenza,Creare un database partendo dalla prima versione.,globale:T-1028,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-055,K1,P0,persistenza,Eseguire backup mentre vengono creati post.,globale:T-1168,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-056,K1,P0,persistenza,nessun dato precedente ripristinato erroneamente.,usabilita:U0568,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-057,K1,P0,persistenza,Verificare backup e politica di conservazione.,globale:T-1325,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-058,K1,P0,persistenza,Verificare che i telefoni ricevano la versione ripristinata.,globale:T-1176,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-059,K1,P0,persistenza,Verificare comportamento con database temporaneamente non disponibile.,globale:T-1022,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-060,K1,P0,persistenza,Verificare consistenza temporale del backup.,globale:T-1171,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-061,K1,P0,persistenza,Verificare day_index nel database.,usabilita:U0178,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-062,K1,P0,persistenza,Verificare inserimento nel database.,usabilita:U0017,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-063,K1,P0,persistenza,Verificare rollback della migrazione.,globale:T-1040,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-064,K1,P0,persistenza,Verificare stabilità del database.,globale:T-0578,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-065,K1,P0,profili-ruoli,Aggiungere moderazione del Coordinatore.,globale:T-0056,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
-K-066,K1,P0,profili-ruoli,Aprire la Bacheca come Coordinatore.,usabilita:U0098,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
-K-067,K1,P0,profili-ruoli,Avvisare il Coordinatore in caso di abuso ripetuto.,globale:T-1052,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
-K-068,K1,P0,profili-ruoli,Il Coordinatore revoca un dispositivo di prova.,globale:T-1729,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
-K-069,K1,P0,profili-ruoli,Revocare il dispositivo dal Coordinatore.,globale:T-0763,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
-K-070,K1,P0,profili-ruoli,Tornare a vista Coordinatore.,usabilita:U0454,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
-K-071,K1,P0,profili-ruoli,Verificare che il Coordinatore visualizzi 4/4.,globale:T-0710,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
-K-072,K1,P0,profili-ruoli,Verificare che il profilo non compaia nella dashboard del Coordinatore.,globale:T-1328,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
-K-073,K1,P0,profili-ruoli,Visualizzare contatto del Coordinatore.,globale:T-1196,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
-K-074,K1,P0,persistenza,Preferiti salvati nel database.,globale:T-0266,166,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
-K-075,K1,P1,mappe-posizione,Non rendere pubblica la posizione EXIF senza consenso.,globale:T-1432,162,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
-K-076,K1,P1,mappe-posizione,Verificare posizione allegata soltanto con consenso.,globale:T-1194,162,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
-K-077,K1,P1,mappe-posizione,Ogni posizione deve essere collegata a un profilo esistente.,globale:T-1018,156,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
-K-078,K1,P1,mappe-posizione,Verificare che la posizione venga indicata come dichiarata dal dispositivo.,globale:T-1452,156,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
-K-079,K1,P1,sync-rete,Aprire il dominio senza cache.,globale:T-0305,156,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-080,K1,P1,sync-rete,Verificare che il Service Worker utilizzi la cache 1.21.5.,globale:T-0012,156,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-081,K1,P1,sync-rete,Verificare nessuna anteprima nella cache pubblica.,globale:T-1007,156,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-082,K1,P1,sync-rete,Verificare quali dati restano nella Cache API.,globale:T-1629,156,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-083,K1,P0,altro,Inviare notifica relativa a un contenuto successivamente eliminato.,globale:T-0866,155,azione reale + conferma UI + verifica database/storage/notifiche
-K-084,K1,P1,documenti,Caricare un PDF multipagina.,globale:T-0993,155,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-085,K1,P1,documenti,Controllare PDF corrotti o pericolosi.,globale:T-0166,155,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
-K-086,K1,P1,mappe-posizione,Una sola posizione dopo dieci retry.,globale:T-0143,154,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
-K-087,K1,P1,media-upload,Media pubblici con cache controllata.,globale:T-1475,153,file reale da telefono + interruzione/retry + riproduzione o apertura finale
-K-088,K1,P1,sync-rete,Verificare gestione della revoca al ritorno della rete.,globale:T-0769,152,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-089,K1,P1,media-upload,"Verificare che il post utilizzi automaticamente nome, cognome, fotografia e profile_id corretti.",globale:T-0714,149,file reale da telefono + interruzione/retry + riproduzione o apertura finale
-K-090,K1,P1,sync-rete,Centro “Pronto per l’offline”.,globale:T-0116,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-091,K2,P1,sync-rete,dati di emergenza disponibili offline.,globale:T-1752,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-092,K2,P1,sync-rete,Hotel e indirizzi offline.,globale:T-0119,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-093,K2,P1,sync-rete,Informazioni di emergenza offline.,globale:T-0122,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-094,K2,P1,sync-rete,Mappe e coordinate essenziali offline.,globale:T-0124,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-095,K2,P1,sync-rete,Preparare post testuale offline.,globale:T-0547,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-096,K2,P1,sync-rete,Pulsante per cancellare i dati offline.,globale:T-0126,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-097,K2,P1,sync-rete,Ricerca offline sui dati disponibili.,globale:T-1696,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-098,K2,P1,sync-rete,Salvare più bozze offline.,globale:T-0849,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-099,K2,P1,sync-rete,Salvataggio offline dei commenti.,globale:T-0129,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-100,K2,P1,sync-rete,Salvataggio offline delle posizioni.,globale:T-0132,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-101,K2,P1,sync-rete,Verificare aggiornamento con telefono offline.,globale:T-0832,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
-K-102,K2,P0,altro,Definire se i contenuti vengono eliminati o anonimizzati.,globale:T-1320,143,azione reale + conferma UI + verifica database/storage/notifiche
-K-103,K2,P0,altro,Eliminare i dati del browser.,globale:T-0859,143,azione reale + conferma UI + verifica database/storage/notifiche
-K-104,K2,P0,altro,Errore durante eliminazione multipla.,globale:T-1149,143,azione reale + conferma UI + verifica database/storage/notifiche
-K-105,K2,P0,altro,Mostrare chiaramente quali dati verranno eliminati.,globale:T-1321,143,azione reale + conferma UI + verifica database/storage/notifiche
-K-106,K2,P0,altro,Permettere all’utente di eliminare elementi dalla coda.,globale:T-0847,143,azione reale + conferma UI + verifica database/storage/notifiche
-K-107,K2,P0,altro,Verificare che la pulizia automatica non elimini dati ancora validi.,globale:T-1351,143,azione reale + conferma UI + verifica database/storage/notifiche
-K-108,K2,P0,altro,Verificare log di eliminazione.,globale:T-1004,143,azione reale + conferma UI + verifica database/storage/notifiche
-K-109,K2,P0,altro,Verificare se i metadati vengono conservati o eliminati.,globale:T-1439,143,azione reale + conferma UI + verifica database/storage/notifiche
-K-110,K2,P1,media-upload,Caricare fotografia contenente modello del telefono.,globale:T-1427,143,file reale da telefono + interruzione/retry + riproduzione o apertura finale
-K-111,K2,P1,media-upload,Preparare post con audio offline.,globale:T-0544,143,file reale da telefono + interruzione/retry + riproduzione o apertura finale
-K-112,K2,P1,media-upload,Preparare post con fotografia offline.,globale:T-0545,143,file reale da telefono + interruzione/retry + riproduzione o apertura finale
-K-113,K2,P1,media-upload,Preparare post con video offline.,globale:T-0546,143,file reale da telefono + interruzione/retry + riproduzione o apertura finale
-K-114,K2,P1,media-upload,Pubblicazione fotografia con posizione.,globale:T-1229,143,file reale da telefono + interruzione/retry + riproduzione o apertura finale
-K-115,K2,P1,media-upload,Verificare che il post compaia sul telefono B senza ricaricamento manuale.,globale:T-0713,143,file reale da telefono + interruzione/retry + riproduzione o apertura finale
-K-116,K2,P1,social,Notifica con apertura del commento preciso.,globale:T-0082,140,due identità reali + commento/reazione/eliminazione + propagazione immediata
-K-117,K2,P1,social,"Notifica per reazione, se scelta dall’utente.",globale:T-0088,140,due identità reali + commento/reazione/eliminazione + propagazione immediata
-K-118,K2,P1,social,Notifica per risposta a un commento.,globale:T-0089,140,due identità reali + commento/reazione/eliminazione + propagazione immediata
-K-119,K2,P1,social,Verificare che una notifica relativa a un post Gruppo non venga inviata ai familiari pubblici.,globale:T-0877,140,due identità reali + commento/reazione/eliminazione + propagazione immediata
-K-120,K2,P1,mappe-posizione,"A cancella posizione, B vede scomparsa.",usabilita:U0561,138,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-004,K0,P0,documenti,Eseguire backup mentre vengono caricati documenti.,globale:T-1167,202,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-005,K0,P0,documenti,Verificare apertura di ogni documento ripristinato.,globale:T-1170,202,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-006,K0,P0,accessi-privacy,Notifica per invito personale.,globale:T-0085,201,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
+K-007,K0,P0,accessi-privacy,"Notifica per posizione condivisa, soltanto se autorizzata.",globale:T-0087,201,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
+K-008,K0,P0,documenti,Bacheca → profilo → documenti → indietro.,globale:T-1411,200,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-009,K0,P0,documenti,Ogni documento deve essere collegato a un profilo esistente.,globale:T-1016,200,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-010,K0,P0,documenti,"Verificare che il Coordinatore possa moderare, se previsto.",usabilita:U0294,200,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-011,K0,P0,documenti,Verificare che il dispositivo revocato non possa più aprire documenti.,globale:T-0767,200,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-012,K0,P0,documenti,Errore durante sostituzione documento.,globale:T-1150,198,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-013,K0,P0,documenti,Sostituzione documento durante il download.,globale:T-0573,198,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-014,K0,P0,documenti,Un solo documento dopo dieci retry.,globale:T-0141,198,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-015,K0,P0,documenti,Non mostrare dati dei documenti nella notifica.,globale:T-1353,194,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-016,K0,P0,documenti,Notifica per documento mancante o aggiornato.,globale:T-0084,194,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-017,K0,P0,documenti,Verificare impossibilità di aprire documenti già non disponibili offline.,globale:T-1620,194,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-018,K0,P0,persistenza,Eliminazione della subscription dal database quando l’utente le disattiva.,globale:T-0078,194,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-019,K0,P0,persistenza,Interruzione del database dopo salvataggio del file.,globale:T-1151,194,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-020,K0,P0,persistenza,Non devono esistere riferimenti nel database a file mancanti.,globale:T-1013,194,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-021,K0,P0,persistenza,un file esiste nell’archivio ma non nel database.,addendum:A0307,194,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-022,K0,P0,profili-ruoli,Controllare author_name e profile_id nel database.,usabilita:U0175,193,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
+K-023,K0,P0,profili-ruoli,Verificare profile_id corretto nel database.,globale:T-0422,193,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
+K-024,K0,P0,accessi-privacy,aggiunta successiva di fotografie autorizzate.,globale:T-1369,189,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
+K-025,K0,P0,accessi-privacy,Consentire proroga autorizzata della conservazione.,globale:T-1338,189,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
+K-026,K0,P0,accessi-privacy,Richiesta di nuovo accesso.,usabilita:U0488,189,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
+K-027,K0,P0,accessi-privacy,"Se la password del gruppo deve permettere la pubblicazione, creare una sessione Ospite/Familiare valida e controllata.",usabilita:U0002,189,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
+K-028,K0,P0,accessi-privacy,"Se può pubblicare, creare sessione Ospite.",usabilita:U0480,189,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
+K-029,K0,P0,accessi-privacy,Verificare accesso amministrativo con autenticazione a più fattori.,globale:T-1505,189,API reale locale/QA + gesto touch + verifica diniego e assenza di scritture
+K-030,K0,P0,profili-ruoli,Richiedere eliminazione del proprio profilo.,globale:T-1324,189,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
+K-031,K0,P0,profili-ruoli,Verificare notifica prioritaria al Coordinatore.,globale:T-1193,185,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
+K-032,K0,P0,documenti,Caricare una fotografia del passaporto verticale.,globale:T-0995,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-033,K0,P0,documenti,Deep link del documento.,globale:T-0241,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-034,K0,P0,documenti,Non compromettere documenti e funzioni essenziali.,globale:T-1650,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-035,K0,P0,documenti,Non mostrare numeri di passaporto.,globale:T-1354,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-036,K0,P0,documenti,Tentare di aprire documenti.,usabilita:U0620;usabilita:U0635,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-037,K0,P0,documenti,Verificare che i vecchi link ai documenti non funzionino.,globale:T-1326,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-038,K0,P0,documenti,"Verificare che non vi siano differenze tra itinerario, mappe e documenti.",globale:T-1269,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-039,K0,P0,documenti,Verificare documenti precedenti conservati.,globale:T-1032,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-040,K0,P0,documenti,Verificare nessun documento nella cache del browser.,globale:T-0491,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-041,K1,P0,documenti,Verificare quali documenti restano memorizzati.,globale:T-1630,182,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-042,K1,P0,mappe-posizione,Eliminare automaticamente le posizioni non più necessarie.,globale:T-1346,181,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-043,K1,P0,persistenza,Applicare le migrazioni una alla volta.,globale:T-1026,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-044,K1,P0,persistenza,Backup delle chiavi Push.,globale:T-0636,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-045,K1,P0,persistenza,controlli eventuale modifica del database.,addendum:A0208,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-046,K1,P0,persistenza,Creare un database dalla schema completa.,globale:T-1027,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-047,K1,P0,persistenza,Creare un database partendo dalla prima versione.,globale:T-1028,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-048,K1,P0,persistenza,Eseguire backup mentre vengono creati post.,globale:T-1168,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-049,K1,P0,persistenza,nessun dato precedente ripristinato erroneamente.,usabilita:U0568,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-050,K1,P0,persistenza,Verificare backup e politica di conservazione.,globale:T-1325,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-051,K1,P0,persistenza,Verificare che i telefoni ricevano la versione ripristinata.,globale:T-1176,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-052,K1,P0,persistenza,Verificare comportamento con database temporaneamente non disponibile.,globale:T-1022,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-053,K1,P0,persistenza,Verificare consistenza temporale del backup.,globale:T-1171,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-054,K1,P0,persistenza,Verificare day_index nel database.,usabilita:U0178,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-055,K1,P0,persistenza,Verificare inserimento nel database.,usabilita:U0017,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-056,K1,P0,persistenza,Verificare rollback della migrazione.,globale:T-1040,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-057,K1,P0,persistenza,Verificare stabilità del database.,globale:T-0578,178,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-058,K1,P0,profili-ruoli,Aggiungere moderazione del Coordinatore.,globale:T-0056,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
+K-059,K1,P0,profili-ruoli,Aprire la Bacheca come Coordinatore.,usabilita:U0098,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
+K-060,K1,P0,profili-ruoli,Avvisare il Coordinatore in caso di abuso ripetuto.,globale:T-1052,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
+K-061,K1,P0,profili-ruoli,Il Coordinatore revoca un dispositivo di prova.,globale:T-1729,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
+K-062,K1,P0,profili-ruoli,Revocare il dispositivo dal Coordinatore.,globale:T-0763,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
+K-063,K1,P0,profili-ruoli,Tornare a vista Coordinatore.,usabilita:U0454,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
+K-064,K1,P0,profili-ruoli,Verificare che il Coordinatore visualizzi 4/4.,globale:T-0710,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
+K-065,K1,P0,profili-ruoli,Verificare che il profilo non compaia nella dashboard del Coordinatore.,globale:T-1328,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
+K-066,K1,P0,profili-ruoli,Visualizzare contatto del Coordinatore.,globale:T-1196,173,creazione/modifica profilo reale + cambio ruolo + verifica UI/API/database
+K-067,K1,P0,persistenza,Preferiti salvati nel database.,globale:T-0266,166,snapshot database prima/dopo + fault injection + retry + riapertura su secondo dispositivo
+K-068,K1,P1,mappe-posizione,Non rendere pubblica la posizione EXIF senza consenso.,globale:T-1432,162,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-069,K1,P1,mappe-posizione,Verificare posizione allegata soltanto con consenso.,globale:T-1194,162,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-070,K1,P1,mappe-posizione,Ogni posizione deve essere collegata a un profilo esistente.,globale:T-1018,156,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-071,K1,P1,mappe-posizione,Verificare che la posizione venga indicata come dichiarata dal dispositivo.,globale:T-1452,156,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-072,K1,P1,sync-rete,Aprire il dominio senza cache.,globale:T-0305,156,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-073,K1,P1,sync-rete,Verificare che il Service Worker utilizzi la cache 1.21.5.,globale:T-0012,156,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-074,K1,P1,sync-rete,Verificare nessuna anteprima nella cache pubblica.,globale:T-1007,156,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-075,K1,P1,sync-rete,Verificare quali dati restano nella Cache API.,globale:T-1629,156,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-076,K1,P0,altro,Inviare notifica relativa a un contenuto successivamente eliminato.,globale:T-0866,155,azione reale + conferma UI + verifica database/storage/notifiche
+K-077,K1,P1,documenti,Caricare un PDF multipagina.,globale:T-0993,155,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-078,K1,P1,documenti,Controllare PDF corrotti o pericolosi.,globale:T-0166,155,PDF/immagine reali + matrice proprietario/viaggiatore/coordinatore/pubblico + controllo storage
+K-079,K1,P1,mappe-posizione,Una sola posizione dopo dieci retry.,globale:T-0143,154,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-080,K1,P1,media-upload,Media pubblici con cache controllata.,globale:T-1475,153,file reale da telefono + interruzione/retry + riproduzione o apertura finale
+K-081,K1,P1,sync-rete,Verificare gestione della revoca al ritorno della rete.,globale:T-0769,152,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-082,K1,P1,media-upload,"Verificare che il post utilizzi automaticamente nome, cognome, fotografia e profile_id corretti.",globale:T-0714,149,file reale da telefono + interruzione/retry + riproduzione o apertura finale
+K-083,K1,P1,sync-rete,Centro “Pronto per l’offline”.,globale:T-0116,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-084,K1,P1,sync-rete,dati di emergenza disponibili offline.,globale:T-1752,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-085,K1,P1,sync-rete,Hotel e indirizzi offline.,globale:T-0119,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-086,K1,P1,sync-rete,Informazioni di emergenza offline.,globale:T-0122,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-087,K1,P1,sync-rete,Mappe e coordinate essenziali offline.,globale:T-0124,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-088,K1,P1,sync-rete,Preparare post testuale offline.,globale:T-0547,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-089,K1,P1,sync-rete,Pulsante per cancellare i dati offline.,globale:T-0126,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-090,K1,P1,sync-rete,Ricerca offline sui dati disponibili.,globale:T-1696,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-091,K2,P1,sync-rete,Salvare più bozze offline.,globale:T-0849,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-092,K2,P1,sync-rete,Salvataggio offline dei commenti.,globale:T-0129,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-093,K2,P1,sync-rete,Salvataggio offline delle posizioni.,globale:T-0132,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-094,K2,P1,sync-rete,Verificare aggiornamento con telefono offline.,globale:T-0832,146,due o più dispositivi + rete degradata/interrotta + confronto stato finale
+K-095,K2,P0,altro,Eliminare i dati del browser.,globale:T-0859,143,azione reale + conferma UI + verifica database/storage/notifiche
+K-096,K2,P0,altro,Errore durante eliminazione multipla.,globale:T-1149,143,azione reale + conferma UI + verifica database/storage/notifiche
+K-097,K2,P0,altro,Mostrare chiaramente quali dati verranno eliminati.,globale:T-1321,143,azione reale + conferma UI + verifica database/storage/notifiche
+K-098,K2,P0,altro,Permettere all’utente di eliminare elementi dalla coda.,globale:T-0847,143,azione reale + conferma UI + verifica database/storage/notifiche
+K-099,K2,P0,altro,Verificare che la pulizia automatica non elimini dati ancora validi.,globale:T-1351,143,azione reale + conferma UI + verifica database/storage/notifiche
+K-100,K2,P0,altro,Verificare log di eliminazione.,globale:T-1004,143,azione reale + conferma UI + verifica database/storage/notifiche
+K-101,K2,P0,altro,Verificare se i metadati vengono conservati o eliminati.,globale:T-1439,143,azione reale + conferma UI + verifica database/storage/notifiche
+K-102,K2,P1,media-upload,Caricare fotografia contenente modello del telefono.,globale:T-1427,143,file reale da telefono + interruzione/retry + riproduzione o apertura finale
+K-103,K2,P1,media-upload,Preparare post con audio offline.,globale:T-0544,143,file reale da telefono + interruzione/retry + riproduzione o apertura finale
+K-104,K2,P1,media-upload,Preparare post con fotografia offline.,globale:T-0545,143,file reale da telefono + interruzione/retry + riproduzione o apertura finale
+K-105,K2,P1,media-upload,Preparare post con video offline.,globale:T-0546,143,file reale da telefono + interruzione/retry + riproduzione o apertura finale
+K-106,K2,P1,media-upload,Pubblicazione fotografia con posizione.,globale:T-1229,143,file reale da telefono + interruzione/retry + riproduzione o apertura finale
+K-107,K2,P1,media-upload,Verificare che il post compaia sul telefono B senza ricaricamento manuale.,globale:T-0713,143,file reale da telefono + interruzione/retry + riproduzione o apertura finale
+K-108,K2,P1,social,Notifica con apertura del commento preciso.,globale:T-0082,140,due identità reali + commento/reazione/eliminazione + propagazione immediata
+K-109,K2,P1,social,"Notifica per reazione, se scelta dall’utente.",globale:T-0088,140,due identità reali + commento/reazione/eliminazione + propagazione immediata
+K-110,K2,P1,social,Notifica per risposta a un commento.,globale:T-0089,140,due identità reali + commento/reazione/eliminazione + propagazione immediata
+K-111,K2,P1,social,Verificare che una notifica relativa a un post Gruppo non venga inviata ai familiari pubblici.,globale:T-0877,140,due identità reali + commento/reazione/eliminazione + propagazione immediata
+K-112,K2,P1,mappe-posizione,"A cancella posizione, B vede scomparsa.",usabilita:U0561,138,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-113,K2,P1,mappe-posizione,"A condivide posizione, B vede marker.",usabilita:U0560,138,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-114,K2,P1,mappe-posizione,Aggiornamenti posizione durante la prova.,globale:T-1122,138,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-115,K2,P1,mappe-posizione,Aprire la posizione del post.,globale:T-0692,138,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-116,K2,P1,mappe-posizione,Cancellare la posizione dal telefono A.,globale:T-0694,138,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-117,K2,P1,mappe-posizione,Condividere la posizione dal telefono A.,globale:T-0697,138,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-118,K2,P1,mappe-posizione,Mappa con due posizioni identiche.,globale:T-0947,138,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-119,K2,P1,mappe-posizione,Mappa con nessuna posizione condivisa.,globale:T-0952,138,condivisione/rimozione reale + secondo dispositivo + diniego pubblico
+K-120,K2,P1,mappe-posizione,Mappa con una posizione.,globale:T-0954,138,condivisione/rimozione reale + secondo dispositivo + diniego pubblico

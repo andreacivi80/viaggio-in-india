@@ -91,6 +91,8 @@ function isActionable(row) {
   if (control.split(/\s+/).length < 4) return false;
   if (/;$/.test(control)) return false;
   if (/README|\bZIP\b|documentazione sia assente|tabella requisito/i.test(control)) return false;
+  if (/^(Valutare|Definire|Documentare|Calcolare|Aggiornare|Preferenze)\b/i.test(control)) return false;
+  if (/documentato come funzione/i.test(control)) return false;
   return true;
 }
 
@@ -155,7 +157,7 @@ const markdown = [
   ...["K0", "K1", "K2"].flatMap((band) => [
     `## ${band}`,
     "",
-    ...(grouped[band] || []).map((row) => `- [ ] **${row.id} · ${row.category}** — ${row.control}  \n  Sorgente: \`${row.source_rows}\`. ${rationale[row.category]}`),
+    ...(grouped[band] || []).map((row) => `- [ ] **${row.id} · ${row.category}** — ${row.control}\n  Sorgente: \`${row.source_rows}\`. ${rationale[row.category]}`),
     "",
   ]),
 ].join("\n");
