@@ -104,7 +104,7 @@ const swipeMediaLikeAFinger = async (page, carousel) => {
 test("foto, video con audio e messaggio audio si caricano e restano riproducibili", async ({ page }) => {
   test.slow();
   let createdPostId = "";
-  await page.goto(`${baseUrl}/?invite=${encodeURIComponent(inviteToken)}`, { waitUntil: "networkidle" });
+  await page.goto(`${baseUrl}/#invite=${encodeURIComponent(inviteToken)}`, { waitUntil: "networkidle" });
   await expect
     .poll(() => page.evaluate(() => localStorage.getItem("india-session-token")))
     .toBeTruthy();

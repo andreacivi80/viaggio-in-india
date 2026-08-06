@@ -12,7 +12,7 @@ test.skip(!inviteToken || !isSafeMutationTarget(baseUrl), "Invito QA e URL local
 test("commenti con audio e video reali vengono salvati e riprodotti", async ({ page }) => {
   test.slow();
   let createdPostId = "";
-  await page.goto(`${baseUrl}/?invite=${encodeURIComponent(inviteToken)}`, { waitUntil: "networkidle" });
+  await page.goto(`${baseUrl}/#invite=${encodeURIComponent(inviteToken)}`, { waitUntil: "networkidle" });
   const sessionToken = await page.evaluate(() => localStorage.getItem("india-session-token"));
   const deviceKey = await page.evaluate(() => localStorage.getItem("india-device-key"));
   expect(sessionToken).toBeTruthy();

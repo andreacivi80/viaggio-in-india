@@ -1848,10 +1848,16 @@ function App() {
     localStorage.removeItem("india-group-code");
   }, []);
   useEffect(() => {
+    const hashParams = new URLSearchParams(location.hash.replace(/^#/, ""));
     const inviteToken =
+      hashParams.get("invite") ||
       new URLSearchParams(location.search).get("invite") ||
       sessionStorage.getItem("india-pending-invite");
     if (!inviteToken) return;
+    const cleanUrl = new URL(location.href);
+    cleanUrl.searchParams.delete("invite");
+    cleanUrl.hash = "";
+    history.replaceState({}, "", cleanUrl);
     sessionStorage.setItem("india-auth-claiming", "1");
     sessionStorage.setItem("india-pending-invite", inviteToken);
     fetch(`${API}/auth/claim`, {
@@ -1876,9 +1882,6 @@ function App() {
         setSessionProfile(result.profile);
         setVaultProfileId(result.profile.id);
         setQuickStatus(`Accesso personale attivato per ${result.profile.name}.`);
-        const cleanUrl = new URL(location.href);
-        cleanUrl.searchParams.delete("invite");
-        history.replaceState({}, "", cleanUrl);
         sessionStorage.removeItem("india-pending-invite");
       })
       .catch((error) => setQuickStatus(error.message))
@@ -4574,7 +4577,7 @@ function People({
       return;
     }
     const inviteUrl = new URL(location.origin);
-    inviteUrl.searchParams.set("invite", result.invite_token);
+    inviteUrl.hash = new URLSearchParams({ invite: result.invite_token }).toString();
     setInviteLinks((current) => ({ ...current, [person.id]: inviteUrl.href }));
     setInviteStatus(`Invito pronto per ${person.name}. Vale 48 ore e si usa una volta.`);
   };

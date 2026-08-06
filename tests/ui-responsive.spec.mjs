@@ -52,7 +52,7 @@ test("pubblicazione e commenti restano usabili senza zoom involontario su iPhone
     const context = await browser.newContext({ ...device });
     const page = await context.newPage();
     await test.step(name, async () => {
-      await page.goto(`${baseUrl}/?invite=${encodeURIComponent(deviceInviteToken)}`, {
+      await page.goto(`${baseUrl}/#invite=${encodeURIComponent(deviceInviteToken)}`, {
         waitUntil: "networkidle",
       });
       await page.getByRole("button", { name: "Pubblica" }).tap();

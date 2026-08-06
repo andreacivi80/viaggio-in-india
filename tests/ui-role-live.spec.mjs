@@ -42,9 +42,9 @@ test("promozione, retrocessione e revoca aggiornano subito un telefono già aper
   const secondPage = await secondContext.newPage();
   const coordinatorPage = await coordinatorContext.newPage();
   try {
-    await travelerPage.goto(`${baseUrl}/?invite=${encodeURIComponent(travelerInvite)}`, { waitUntil: "networkidle" });
-    await secondPage.goto(`${baseUrl}/?invite=${encodeURIComponent(secondTravelerInvite)}`, { waitUntil: "networkidle" });
-    await coordinatorPage.goto(`${baseUrl}/?invite=${encodeURIComponent(coordinatorInvite)}`, { waitUntil: "networkidle" });
+    await travelerPage.goto(`${baseUrl}/#invite=${encodeURIComponent(travelerInvite)}`, { waitUntil: "networkidle" });
+    await secondPage.goto(`${baseUrl}/#invite=${encodeURIComponent(secondTravelerInvite)}`, { waitUntil: "networkidle" });
+    await coordinatorPage.goto(`${baseUrl}/#invite=${encodeURIComponent(coordinatorInvite)}`, { waitUntil: "networkidle" });
     const profileId = await travelerPage.evaluate(() => localStorage.getItem("india-profile-id"));
     expect(profileId).toBeTruthy();
 

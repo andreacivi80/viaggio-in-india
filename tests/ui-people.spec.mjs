@@ -44,7 +44,7 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
   coordinatorContext = await browser.newContext({ ...devices["Galaxy S9+"] });
   const coordinatorPage = await coordinatorContext.newPage();
   try {
-    await coordinatorPage.goto(`${baseUrl}/?invite=${encodeURIComponent(coordinatorInvite)}`, { waitUntil: "networkidle" });
+    await coordinatorPage.goto(`${baseUrl}/#invite=${encodeURIComponent(coordinatorInvite)}`, { waitUntil: "networkidle" });
     await tapBottom(coordinatorPage, "Gruppo");
     const form = coordinatorPage.locator(".profileForm");
     await expect(form).toBeVisible();
@@ -102,7 +102,7 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     coordinatorContext = undefined;
     travelerContext = await browser.newContext({ ...devices["Galaxy S9+"] });
     const travelerPage = await travelerContext.newPage();
-    await travelerPage.goto(`${baseUrl}/?invite=${encodeURIComponent(travelerInvite)}`, { waitUntil: "networkidle" });
+    await travelerPage.goto(`${baseUrl}/#invite=${encodeURIComponent(travelerInvite)}`, { waitUntil: "networkidle" });
     await tapBottom(travelerPage, "Gruppo");
     const travelerView = travelerPage.locator(".peopleGrid article").filter({ hasText: managedName });
     await expect(travelerView).toContainText("Coordinatore", { timeout: 15_000 });

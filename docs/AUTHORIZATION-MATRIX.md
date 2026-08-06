@@ -23,6 +23,7 @@ Questa matrice descrive i controlli applicati dal server. La grafica non concede
 
 - La password comune verifica soltanto l’ingresso al flusso di registrazione: non identifica una persona e non autorizza operazioni private.
 - Un profilo esistente si collega con un invito personale monouso; l’endpoint storico di sblocco non crea sessioni.
+- I nuovi inviti tengono il token nel frammento `#invite=` (mai inviato al server) e l’app lo rimuove subito dalla barra prima del claim; i vecchi link `?invite=` restano leggibili soltanto per compatibilità.
 - La sessione personale è legata a una chiave casuale del dispositivo: copiare il solo token in un altro browser o telefono restituisce 401.
 - Anche la sessione familiare è legata alla chiave del dispositivo: se il token viene copiato, il server ignora l’identità ospite e mostra soltanto il contenuto pubblico.
 - Il rinnovo ruota atomicamente il token: il telefono conserva solo quello nuovo e quello precedente viene respinto immediatamente.

@@ -21,7 +21,7 @@ test("visitatore e viaggiatore interagiscono senza ereditare comandi non autoriz
   let coordinatorPostId = "";
   let coordinatorToken = "";
   try {
-    await travelerPage.goto(`${baseUrl}/?invite=${encodeURIComponent(inviteToken)}`, {
+    await travelerPage.goto(`${baseUrl}/#invite=${encodeURIComponent(inviteToken)}`, {
       waitUntil: "networkidle",
     });
     await expect(travelerPage.locator(".accessPill")).toContainText(profileName.split(" ")[0]);
@@ -46,7 +46,7 @@ test("visitatore e viaggiatore interagiscono senza ereditare comandi non autoriz
     expect(createResponse.status()).toBe(201);
     createdPostId = (await createResponse.json()).id;
 
-    await coordinatorPage.goto(`${baseUrl}/?invite=${encodeURIComponent(coordinatorInviteToken)}`, {
+    await coordinatorPage.goto(`${baseUrl}/#invite=${encodeURIComponent(coordinatorInviteToken)}`, {
       waitUntil: "networkidle",
     });
     coordinatorToken = await coordinatorPage.evaluate(() => localStorage.getItem("india-session-token"));

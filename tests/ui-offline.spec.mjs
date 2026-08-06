@@ -26,7 +26,7 @@ test("invio offline sopravvive alla chiusura e parte una sola volta al ritorno d
   const context = await browser.newContext({ ...devices["Galaxy S9+"] });
   let page = await context.newPage();
   let createdPostId = "";
-  await page.goto(`${baseUrl}/?invite=${encodeURIComponent(inviteToken)}`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${baseUrl}/#invite=${encodeURIComponent(inviteToken)}`, { waitUntil: "domcontentloaded" });
   await expect(page.locator(".accessPill")).toContainText(profileName.split(" ")[0]);
   const sessionToken = await page.evaluate(() => localStorage.getItem("india-session-token"));
   const deviceKey = await page.evaluate(() => localStorage.getItem("india-device-key"));

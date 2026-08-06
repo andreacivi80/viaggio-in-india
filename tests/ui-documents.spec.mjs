@@ -47,7 +47,7 @@ test("viaggiatore gestisce 10 PDF reali e il coordinatore vede e apre l'ultimo",
   const travelerPage = await travelerContext.newPage();
   const coordinatorPage = await coordinatorContext.newPage();
   try {
-    await travelerPage.goto(`${baseUrl}/?invite=${encodeURIComponent(travelerInvite)}`, {
+    await travelerPage.goto(`${baseUrl}/#invite=${encodeURIComponent(travelerInvite)}`, {
       waitUntil: "networkidle",
     });
     await tapBottom(travelerPage, "Gruppo");
@@ -92,7 +92,7 @@ test("viaggiatore gestisce 10 PDF reali e il coordinatore vede e apre l'ultimo",
     const download = await downloadPromise;
     expect(download.suggestedFilename()).toBe("documento-reale-10.pdf");
 
-    await coordinatorPage.goto(`${baseUrl}/?invite=${encodeURIComponent(coordinatorInvite)}`, {
+    await coordinatorPage.goto(`${baseUrl}/#invite=${encodeURIComponent(coordinatorInvite)}`, {
       waitUntil: "networkidle",
     });
     await tapBottom(coordinatorPage, "Gruppo");

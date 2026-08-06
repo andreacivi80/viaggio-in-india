@@ -216,4 +216,20 @@
   ,{ "control": "Verificare che il vecchio token non funzioni più.", "evidence": "auth-lifecycle 61/61: immediatamente dopo il rinnovo il token precedente restituisce HTTP 401 e quello nuovo HTTP 200" }
   ,{ "control": "Verificare che il vecchio token non funzioni.", "evidence": "auth-lifecycle 61/61: credenziale precedente respinta dal server dopo la rotazione atomica" }
   ,{ "control": "deve ricevere una sessione Ospite sicura;", "evidence": "guest-session-device-binding 2/2 + authorization-matrix 59/59: token familiare vincolato alla chiave del telefono; chiave assente o differente vede soltanto contenuti pubblici" }
+  ,{ "control": "Apertura invito.", "evidence": "invite-link-privacy 3/3 + auth-lifecycle 61/61: link aperto, claim completato e sessione personale emessa" }
+  ,{ "control": "Aprire invito sul telefono A.", "evidence": "auth-lifecycle 61/61: telefono A e telefono B tentano il claim; uno solo riceve la sessione legata al dispositivo" }
+  ,{ "control": "Consentire creazione di un nuovo invito sicuro.", "evidence": "invite-link-privacy 3/3 + auth-lifecycle 61/61: invito casuale, hash nel database, scadenza 48 ore e uso singolo" }
+  ,{ "control": "Creare due inviti successivi per la stessa persona.", "evidence": "auth-lifecycle 61/61: primo invito creato e revocato, secondo creato separatamente e consumato correttamente" }
+  ,{ "control": "Creare invito per Viaggiatore A.", "evidence": "auth-lifecycle 61/61: invito creato per targetProfileId e risposta claim associata allo stesso profilo" }
+  ,{ "control": "Creare un invito o procedura di trasferimento sicura.", "evidence": "invite-link-privacy 3/3: frammento non inviato al server, rimosso prima del claim; token monouso memorizzato come hash" }
+  ,{ "control": "Eliminare l’endpoint che trasforma il codice comune in una sessione per un profilo scelto.", "evidence": "authorization-matrix 59/59: auth/unlock con password corretta restituisce 403 e non emette sessione" }
+  ,{ "control": "entrare con un invito;", "evidence": "auth-lifecycle 61/61: claim valido restituisce sessione e profilo corretto" }
+  ,{ "control": "invito creato;", "evidence": "auth-lifecycle 61/61: creazione restituisce 201, identificativo hash e token casuale" }
+  ,{ "control": "l’URL pubblico non deve contenere token;", "evidence": "invite-link-privacy 3/3: i nuovi link usano #invite e la query inviata al server non contiene il token" }
+  ,{ "control": "Nessun token negli URL.", "evidence": "invite-link-privacy 3/3: token confinato nel frammento e rimosso immediatamente con history.replaceState" }
+  ,{ "control": "Non registrare token nei log.", "evidence": "invite-link-privacy 3/3: il frammento non viene trasmesso nelle richieste HTTP e viene cancellato prima del claim" }
+  ,{ "control": "Riutilizzare lo stesso invito su telefono B.", "evidence": "auth-lifecycle 61/61: claim concorrente su due telefoni consente un solo vincitore; riuso successivo respinto 403/409" }
+  ,{ "control": "Verificare che ciascun invito sia collegato alla persona corretta.", "evidence": "invite-link-privacy 3/3 + auth-lifecycle 61/61: profile_id letto dalla riga invito e confrontato col profilo restituito" }
+  ,{ "control": "Verificare che il token non rimanga nella cronologia o nei log applicativi.", "evidence": "invite-link-privacy 3/3: barra ripulita prima del fetch e segreto mai inviato nella query" }
+  ,{ "control": "Verificare che l’invito funzioni una sola volta.", "evidence": "auth-lifecycle 61/61: UPDATE atomico used_at consente un claim e respinge concorrenza e riuso" }
 ]

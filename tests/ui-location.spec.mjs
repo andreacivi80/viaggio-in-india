@@ -40,7 +40,7 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
   const coordinatorPage = await coordinatorContext.newPage();
   const publicPage = await publicContext.newPage();
   try {
-    await travelerPage.goto(`${baseUrl}/?invite=${encodeURIComponent(travelerInvite)}`, {
+    await travelerPage.goto(`${baseUrl}/#invite=${encodeURIComponent(travelerInvite)}`, {
       waitUntil: "networkidle",
     });
     await openPersonalPanel(travelerPage);
@@ -76,7 +76,7 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
     await travelerPage.getByRole("button", { name: /Chiudi mappa posizioni/ }).tap();
     await expect(travelerPage.locator(".peopleLocationMap")).toHaveCount(0);
 
-    await coordinatorPage.goto(`${baseUrl}/?invite=${encodeURIComponent(coordinatorInvite)}`, {
+    await coordinatorPage.goto(`${baseUrl}/#invite=${encodeURIComponent(coordinatorInvite)}`, {
       waitUntil: "networkidle",
     });
     await openPersonalPanel(coordinatorPage);

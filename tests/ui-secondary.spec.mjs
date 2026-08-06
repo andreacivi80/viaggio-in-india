@@ -35,7 +35,7 @@ const makeWebm = () => Buffer.from([
 test("bozza, riselezione file e commento con foto restano utilizzabili", async ({ page }) => {
   test.slow();
   let createdPostId = "";
-  await page.goto(`${baseUrl}/?invite=${encodeURIComponent(inviteToken)}`, { waitUntil: "networkidle" });
+  await page.goto(`${baseUrl}/#invite=${encodeURIComponent(inviteToken)}`, { waitUntil: "networkidle" });
   await expect
     .poll(() => page.evaluate(() => localStorage.getItem("india-session-token")))
     .toBeTruthy();
