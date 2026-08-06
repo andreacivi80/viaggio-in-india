@@ -67,3 +67,7 @@ Il collaudo touch `ui-role-live.spec.mjs` viene eseguito su un Galaxy S20 FE sim
 ## Permesso posizione
 
 Il test touch `ui-location.spec.mjs` usa un Galaxy S20 FE e verifica il ciclo completo del GPS: consenso durante l’uso, coordinate restituite dal telefono, scrittura soltanto col profilo autorizzato, sincronizzazione al coordinatore, isolamento del pubblico, rimozione, diniego senza alcuna richiesta di scrittura e nuova condivisione dopo avere riattivato il permesso dalle impostazioni. Il test viene eseguito su profili e storage locali temporanei.
+
+## Permesso microfono
+
+Il test touch `ui-microphone-permissions.spec.mjs` usa un Galaxy S20 FE e concede il microfono soltanto al contesto mobile temporaneo. Verifica che Registra avvii realmente `MediaRecorder`, che Ferma chiuda la traccia e che venga creato un allegato audio riproducibile. Non pubblica contenuti e non usa profili ufficiali.

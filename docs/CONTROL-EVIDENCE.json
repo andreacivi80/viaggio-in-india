@@ -277,4 +277,5 @@
   ,{ "control": "autorizzazione negata;", "evidence": "ui-location touch 1/1: diniego mostra messaggio e produce zero richieste POST" }
   ,{ "control": "permesso autorizzato;", "evidence": "ui-location touch 1/1: permesso riattivato consente nuovo invio e successiva cancellazione" }
   ,{ "control": "Riprovare dopo autorizzazione dalle impostazioni.", "evidence": "ui-location touch 1/1: dopo clear e nuovo grant la riprova invia e cancella la posizione" }
+  ,{ "control": "Autorizzare il microfono.", "evidence": "ui-microphone-permissions touch 1/1: consenso microfono su Samsung S20 FE, avvio e arresto MediaRecorder e allegato audio riproducibile creato localmente" }
 ]

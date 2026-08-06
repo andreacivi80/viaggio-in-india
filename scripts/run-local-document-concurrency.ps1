@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("all", "authorization-matrix", "auth-lifecycle", "access-session-boundaries", "ui-session-history", "ui-location-permissions", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
+  [ValidateSet("all", "authorization-matrix", "auth-lifecycle", "access-session-boundaries", "ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
   [string]$Suite = "document-concurrency"
 )
 
@@ -105,7 +105,7 @@ INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at
   # I dati UI devono essere creati prima dell'avvio di Pages. Scrivere nello
   # stesso database locale con un secondo processo Wrangler mentre il browser
   # lo usa può interrompere Miniflare e produrre falsi errori di rete.
-  if ($Suite -in @("ui-session-history", "ui-location-permissions")) {
+  if ($Suite -in @("ui-session-history", "ui-location-permissions", "ui-microphone-permissions")) {
     $uiSetupSql = @"
 INSERT INTO profiles(id,name,surname,role,created_at) VALUES
 ('$uiTravelerId','$uiTravelerName','','traveler','$created'),
@@ -200,8 +200,12 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
     Write-Host "P0_SUITE_START=$selectedSuite"
     $previousErrorActionPreference = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
-    if ($selectedSuite -in @("ui-session-history", "ui-location-permissions")) {
-      $uiTestFile = if ($selectedSuite -eq "ui-session-history") { "tests/ui-role-live.spec.mjs" } else { "tests/ui-location.spec.mjs" }
+    if ($selectedSuite -in @("ui-session-history", "ui-location-permissions", "ui-microphone-permissions")) {
+      $uiTestFile = switch ($selectedSuite) {
+        "ui-session-history" { "tests/ui-role-live.spec.mjs" }
+        "ui-location-permissions" { "tests/ui-location.spec.mjs" }
+        "ui-microphone-permissions" { "tests/ui-microphone-permissions.spec.mjs" }
+      }
       $suiteOutput = & npx playwright test $uiTestFile --config playwright.release.config.mjs --project=Samsung-S20-FE 2>&1
     } else {
       $suiteOutput = & node $suiteFiles[$selectedSuite] 2>&1
