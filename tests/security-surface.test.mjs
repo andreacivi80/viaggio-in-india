@@ -42,6 +42,25 @@ test("la password comune viene verificata solo contro il segreto del server", ()
     assert.match(worker, new RegExp(`path === ["']${route.replace("/", "\\/")}["'][\\s\\S]{0,900}?groupOk\\(request, env\\)`));
 });
 
+test("nessuna funzione privata residua accetta soltanto la password comune", () => {
+  const groupChecks = [...worker.matchAll(/groupOk\(request, env\)/g)];
+  assert.equal(groupChecks.length, 4, "la password deve comparire soltanto nei quattro endpoint iniziali censiti");
+
+  const allowedRoutes = new Set(["auth/bootstrap", "auth/group", "auth/unlock", "auth/register"]);
+  for (const match of groupChecks) {
+    const precedingRoute = worker
+      .slice(Math.max(0, match.index - 1_200), match.index)
+      .match(/path === "([^"]+)"(?![\s\S]*path === ")/);
+    assert.ok(precedingRoute, `endpoint non identificato vicino a groupOk all'indice ${match.index}`);
+    assert.ok(allowedRoutes.has(precedingRoute[1]), `${precedingRoute[1]} non può usare la password comune`);
+  }
+
+  const groupHeaderCalls = [...client.matchAll(/"x-group-code":\s*groupCode/g)];
+  assert.equal(groupHeaderCalls.length, 2, "il client invia la password soltanto per bootstrap o registrazione");
+  assert.doesNotMatch(client, /fetch\(`\$\{API\}\/auth\/unlock`/);
+  assert.match(worker, /path === "auth\/unlock"[\s\S]{0,700}?return json\([\s\S]*?403/);
+});
+
 test("sessioni e inviti usano token casuali memorizzati soltanto come hash", () => {
   assert.match(worker, /crypto\.getRandomValues\(new Uint8Array\(32\)\)/);
   assert.match(worker, /crypto\.subtle\.digest\("SHA-256"/);

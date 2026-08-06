@@ -266,7 +266,7 @@ P0,accessi-privacy,passed,Utilizzare un invito già consumato.,globale:T-0781,ex
 P0,accessi-privacy,passed,Utilizzare un invito scaduto.,globale:T-0782,extended-p0-auth-lifecycle 28/28: invito oltre expires_at negato
 P0,accessi-privacy,passed,utilizzo alternato di profile_id locale e profile_id della sessione.,addendum:A0411,ui-coordinator-grid touch 1/1: role e profile_id falsificati in localStorage vengono sostituiti dall’identità server senza privilegi coordinatore
 P0,accessi-privacy,pending,Valutare cookie sicuro HttpOnly invece del token nel localStorage.,globale:T-0042,
-P0,accessi-privacy,pending,vecchie funzioni basate soltanto sulla password;,addendum:A0399,
+P0,accessi-privacy,passed,vecchie funzioni basate soltanto sulla password;,addendum:A0399,security-surface 17/17: inventario sorgente prova che groupOk compare solo nei quattro endpoint iniziali; auth/unlock è disabilitato e il client non lo richiama
 P0,accessi-privacy,passed,vecchio nome locale e nuova sessione;,addendum:A0057,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,vecchio profile_id e nuova sessione;,addendum:A0056,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,Verificare “Elimina” soltanto per proprietario o Coordinatore.,usabilita:U0279,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
@@ -298,7 +298,7 @@ P0,accessi-privacy,passed,Verificare esecuzione dell’accesso.,usabilita:U0046,
 P0,accessi-privacy,passed,Verificare impossibilità di utilizzare la cronologia del browser per tornare nella dashboard autorizzata.,addendum:A0100,ui-role-live touch 2/2: indietro dopo revoca mantiene sessione nulla e gate privato
 P0,accessi-privacy,pending,Verificare informazioni autorizzate.,usabilita:U0366,
 P0,accessi-privacy,passed,"Verificare intestazione private, no-store.",globale:T-0488,access-session-boundaries 17/17: no-store verificato su dinieghi stato sessione e area privata autorizzata
-P0,accessi-privacy,pending,Verificare invalidazione dell’eventuale token temporaneo precedente.,addendum:A0339,
+P0,accessi-privacy,passed,Verificare invalidazione dell’eventuale token temporaneo precedente.,addendum:A0339,"ui-stale-password-session touch 1/1 ripetuto due volte: token scaduto e identità locale fittizia rimossi prima della password; registrazione emette token e profilo nuovi, separati e persistenti al refresh"
 P0,accessi-privacy,passed,Verificare la regola prevista per il riutilizzo del token.,globale:T-0770,ui-multi-invite-copy touch + auth-lifecycle: ciascuno dei tre inviti crea una sola sessione; il riuso riceve 403/409 e resta Pubblico
 P0,accessi-privacy,passed,"Verificare mantenimento dell’accesso, se previsto.",usabilita:U0052,ui-password-access touch 1/1: refresh completo conserva la sessione personale e riapre la scheda del proprietario
 P0,accessi-privacy,passed,Verificare mantenimento della sessione.,globale:T-0318,auth-lifecycle 35/35: rinnovo mantiene lo stesso token valido sul dispositivo e aggiorna la scadenza oltre 29 giorni

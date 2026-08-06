@@ -329,4 +329,6 @@
   ,{ "control": "etichetta di accesso mostrata;", "evidence": "access-state-documentation 2/2 + ui-multi-invite-copy: Pubblico senza sessione e nome del profilo soltanto dopo conferma server" }
   ,{ "control": "password di gruppo e sessione scaduta;", "evidence": "CREDENTIAL-STATE-MACHINE + ui-password-access + ui-role-live: password senza sessione resta Pubblico; sessione scaduta viene rimossa e richiede invito" }
   ,{ "control": "non utilizzare la password comune per aggirare il rifiuto.", "evidence": "access-state-documentation + access-session-boundaries 17/17: password comune non ripete né autorizza endpoint privati dopo 401/403" }
+  ,{ "control": "vecchie funzioni basate soltanto sulla password;", "evidence": "security-surface 17/17: inventario sorgente prova che groupOk compare solo nei quattro endpoint iniziali; auth/unlock è disabilitato e il client non lo richiama" }
+  ,{ "control": "Verificare invalidazione dell’eventuale token temporaneo precedente.", "evidence": "ui-stale-password-session touch 1/1 ripetuto due volte: token scaduto e identità locale fittizia rimossi prima della password; registrazione emette token e profilo nuovi, separati e persistenti al refresh" }
 ]
