@@ -3832,8 +3832,13 @@ function PdfDocumentViewer({ url, bytes, name }) {
           }).promise;
         }
         if (!cancelled) setStatus("");
-      } catch {
-        if (!cancelled) setStatus("Impossibile visualizzare il PDF in questa finestra.");
+      } catch (error) {
+        if (!cancelled)
+          setStatus(
+            error?.name === "PasswordException"
+              ? "PDF protetto da password. Aprilo nel lettore PDF del telefono."
+              : "Impossibile visualizzare il PDF in questa finestra.",
+          );
       }
     })();
     return () => {
@@ -3845,7 +3850,7 @@ function PdfDocumentViewer({ url, bytes, name }) {
     <div className="pdfDocumentViewer">
       {status && <p role="status">{status}</p>}
       <div ref={pagesRef} className="pdfPages" />
-      {status === "Impossibile visualizzare il PDF in questa finestra." && (
+      {["Impossibile visualizzare il PDF in questa finestra.", "PDF protetto da password. Aprilo nel lettore PDF del telefono."].includes(status) && (
         <a className="pdfNativeFallback" href={url} target="_blank" rel="noreferrer">
           Apri nel lettore PDF del telefono
         </a>

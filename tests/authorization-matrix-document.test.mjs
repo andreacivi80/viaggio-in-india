@@ -29,4 +29,6 @@ test("la matrice autorizzativa documenta tutti i ruoli e le risorse sensibili", 
   assert.match(matrix, /ui-invite-misdelivery\.spec\.mjs[\s\S]*sessione personale valida/i);
   assert.match(matrix, /invito non viene consumato[\s\S]*destinatario corretto/i);
   assert.match(matrix, /token[\s\S]*realmente scaduto[\s\S]*nuova sessione/i);
+  assert.match(matrix, /ui-protected-pdf\.spec\.mjs[\s\S]*AES-256[\s\S]*PasswordException/i);
+  assert.match(matrix, /non mostra pagine vuote[\s\S]*lettore PDF del telefono/i);
 });

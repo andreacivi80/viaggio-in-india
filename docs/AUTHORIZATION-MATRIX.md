@@ -87,3 +87,7 @@ Il collaudo touch `ui-coordinator-grid-access.spec.mjs` usa quattro browser Gala
 ## Invito ricevuto dalla persona sbagliata
 
 Il collaudo touch `ui-invite-misdelivery.spec.mjs` verifica su Galaxy S20 FE che un telefono con una sessione personale valida non venga mai ricollegato automaticamente quando apre per errore l’invito di un altro profilo. Il token, il profilo e il ruolo correnti restano invariati, l’invito non viene consumato e il destinatario corretto può ancora usarlo da un altro telefono. Per cambiare volontariamente profilo occorre prima bloccare l’accesso corrente. Se invece il token presente sul telefono è realmente scaduto, viene eliminato e il nuovo invito valido crea la nuova sessione. Durante il claim il controllo periodico della vecchia sessione resta sospeso, così non può cancellare il nuovo accesso per una condizione di gara.
+
+## PDF protetti da password
+
+Il collaudo touch `ui-protected-pdf.spec.mjs` carica un PDF AES-256 realmente cifrato dal telefono del proprietario. Il file viene conservato nell’area privata, compare nella griglia del coordinatore e resta scaricabile senza che l’app richieda o memorizzi la password. Il visualizzatore riconosce `PasswordException`, non mostra pagine vuote o contenuto parziale e propone esplicitamente il lettore PDF del telefono. Proprietario e coordinatore ricevono lo stesso comportamento controllato; il proprietario elimina infine il file. La fixture contiene soltanto dati fittizi ed è verificata con password corretta, password errata e rendering visivo prima del test.

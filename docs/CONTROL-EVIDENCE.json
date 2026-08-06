@@ -312,4 +312,5 @@
   ,{ "control": "nuove funzioni basate sulla sessione;", "evidence": "ui-password-access touch 1/1: Pubblica usa la sessione personale verificata e non il codice comune" }
   ,{ "control": "separato dall’accesso al gruppo;", "evidence": "ui-password-access touch 1/1: il codice comune apre solo la registrazione; la pubblicazione avviene dopo una sessione personale distinta" }
   ,{ "control": "Utilizzare il codice comune soltanto come invito iniziale al gruppo.", "evidence": "ui-password-access touch 1/1: il codice non viene conservato e non viene richiesto al compositore dopo la creazione del profilo" }
+  ,{ "control": "Caricare un PDF protetto da password.", "evidence": "ui-protected-pdf touch 1/1 ripetuto due volte: PDF AES-256 caricato, riconosciuto come protetto, scaricato, visto dal coordinatore ed eliminato" }
 ]
