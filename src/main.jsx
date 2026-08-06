@@ -1533,6 +1533,7 @@ function App() {
   // L’apertura normale resta sulla bacheca; i soli link espliciti di anteprima
   // possono aprire direttamente la cartina completa o una giornata precisa.
   const startsOnMap = initialParams.get("view") === "map";
+  const startsOnDocument = initialParams.has("document_profile") && initialParams.has("document_type");
   const initialMapDay = startsOnMap && initialParams.has("day") ? initialDay : null;
   const navigationOriginRef = useRef(
     (() => {
@@ -1544,7 +1545,7 @@ function App() {
     })(),
   );
   const syncVersionRef = useRef(0);
-  const [tab, setTab] = useState(startsOnMap ? "map" : "diary"),
+  const [tab, setTab] = useState(startsOnDocument ? "vault" : startsOnMap ? "map" : "diary"),
     [done, setDone] = useState(() => load("india-done", {})),
     [posts, setPosts] = useState(() => sanitizePostsForPublicCache(load("india-posts", []))),
     [people, setPeople] = useState(() => sanitizeProfilesForPublicCache(load("india-people", []))),
@@ -3034,6 +3035,7 @@ function App() {
             setSessionToken={setSessionToken}
             setGroupCode={setGroupCode}
             onOpenGroup={() => setTab("people")}
+            onBackHome={() => setTab("diary")}
             preferredProfileId={vaultProfileId}
           />
         )}
@@ -4927,6 +4929,7 @@ function VaultOnline({
   setSessionToken,
   setGroupCode,
   onOpenGroup,
+  onBackHome,
   preferredProfileId,
 }) {
   const documentOperationRef = useRef({});
@@ -5093,17 +5096,29 @@ function VaultOnline({
       refresh();
     } else setDocumentStatus("Eliminazione del documento non riuscita.");
   };
-  const openDocument = async (doc, download = false) => {
+  const openDocument = async (doc, download = false, updateUrl = true) => {
     setDocumentStatus("Apertura del documento…");
-    const response = await fetch(
-      `${API}/media/${encodeURIComponent(doc.file_key)}`,
-      { headers: sessionHeaders(sessionToken) },
-    );
+    let response;
+    try {
+      response = await fetch(
+        `${API}/media/${encodeURIComponent(doc.file_key)}`,
+        { headers: sessionHeaders(sessionToken), cache: "no-store" },
+      );
+    } catch {
+      setDocumentStatus("Documento non disponibile. Tocca Riprova.");
+      return;
+    }
     if (!response.ok) {
       setDocumentStatus("Documento non disponibile. Tocca Riprova.");
       return;
     }
-    const documentBlob = await response.blob();
+    let documentBlob;
+    try {
+      documentBlob = await response.blob();
+    } catch {
+      setDocumentStatus("Documento non disponibile. Tocca Riprova.");
+      return;
+    }
     const responseType = documentBlob.type || response.headers.get("content-type") || "";
     const isPdf = responseType.toLowerCase().includes("application/pdf") ||
       String(doc.file_name || "").toLowerCase().endsWith(".pdf");
@@ -5122,6 +5137,12 @@ function VaultOnline({
       setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
     } else {
       if (documentPreview?.url) URL.revokeObjectURL(documentPreview.url);
+      if (updateUrl) {
+        const url = new URL(location.href);
+        url.searchParams.set("document_profile", String(doc.profile_id || profileId));
+        url.searchParams.set("document_type", String(doc.doc_type || ""));
+        history.replaceState({ view: "document" }, "", url);
+      }
       setDocumentPreview({
         url: blobUrl,
         bytes: await previewBlob.arrayBuffer(),
@@ -5134,7 +5155,27 @@ function VaultOnline({
   const closeDocumentPreview = () => {
     if (documentPreview?.url) URL.revokeObjectURL(documentPreview.url);
     setDocumentPreview(null);
+    const url = new URL(location.href);
+    url.searchParams.delete("document_profile");
+    url.searchParams.delete("document_type");
+    history.replaceState({}, "", url);
   };
+  useEffect(() => {
+    if (!sessionToken || !privateData.documents?.length || documentPreview) return;
+    const params = new URLSearchParams(location.search);
+    const linkedProfileId = params.get("document_profile") || "";
+    const linkedType = params.get("document_type") || "";
+    if (!linkedProfileId || !linkedType) return;
+    const linkedDocument = privateData.documents.find(
+      (document) => document.profile_id === linkedProfileId && document.doc_type === linkedType,
+    );
+    if (!linkedDocument) {
+      setDocumentStatus("Documento non disponibile o non autorizzato.");
+      return;
+    }
+    setProfileId(linkedProfileId);
+    openDocument(linkedDocument, false, false);
+  }, [sessionToken, privateData.documents]);
   const locate = () => {
     const viewerProfileId = privateData.viewer?.profile_id || "";
     if (!viewerProfileId) {
@@ -5252,6 +5293,9 @@ function VaultOnline({
   const isCoordinator = viewerIsCoordinator && viewMode === "coordinator";
   return (
     <section>
+      <button type="button" className="vaultBackButton" onClick={onBackHome}>
+        ← Torna alla bacheca
+      </button>
       <span className="eyebrow">AREA RISERVATA</span>
       <h2>Documenti e sicurezza</h2>
       <div className="privateTop">

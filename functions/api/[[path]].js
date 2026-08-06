@@ -783,6 +783,8 @@ async function silentMaintenance(env) {
       .bind(now(), new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()),
     env.DB.prepare("DELETE FROM security_audit_log WHERE created_at<?")
       .bind(new Date(Date.now() - 180 * 24 * 60 * 60 * 1000).toISOString()),
+    env.DB.prepare("DELETE FROM locations WHERE updated_at<?")
+      .bind(new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()),
   ]);
 }
 async function chunkedMedia(env, request, key, headers) {
@@ -1362,6 +1364,7 @@ export async function onRequest(context) {
         .bind(now())
         .run();
       const cutoff = now();
+      const staleLocationCutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
       const cleanupResults = await env.DB.batch([
         env.DB.prepare("DELETE FROM auth_sessions WHERE expires_at<=?").bind(cutoff),
         env.DB.prepare("DELETE FROM guest_sessions WHERE expires_at<=?").bind(cutoff),
@@ -1370,6 +1373,7 @@ export async function onRequest(context) {
         env.DB.prepare(
           "DELETE FROM profile_invites WHERE expires_at<=? OR used_at IS NOT NULL",
         ).bind(cutoff),
+        env.DB.prepare("DELETE FROM locations WHERE updated_at<?").bind(staleLocationCutoff),
       ]);
       const removed = (index) => Number(cleanupResults[index]?.meta?.changes || 0);
       const state = await env.DB.prepare(
@@ -1385,6 +1389,7 @@ export async function onRequest(context) {
           rate_limits_removed: removed(2),
           idempotency_operations_removed: removed(3),
           profile_invites_removed: removed(4),
+          stale_locations_removed: removed(5),
         },
       });
     }

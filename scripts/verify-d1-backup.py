@@ -1,5 +1,6 @@
 import argparse
 import hashlib
+import json
 import sqlite3
 import tempfile
 import time
@@ -34,6 +35,16 @@ with tempfile.TemporaryDirectory(prefix="india-backup-check-") as folder:
             table: connection.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0]
             for table in sorted(required)
         }
+        document_keys = [
+            {"profile_id": row[0], "doc_type": row[1], "file_key": row[2], "file_name": row[3]}
+            for row in connection.execute(
+                "SELECT profile_id,doc_type,file_key,file_name FROM document_status WHERE file_key IS NOT NULL ORDER BY profile_id,doc_type"
+            )
+        ]
+        restored_posts = [
+            {"id": row[0], "text": row[1]}
+            for row in connection.execute("SELECT id,text FROM posts ORDER BY id")
+        ]
         orphan_comments = connection.execute(
             "SELECT COUNT(*) FROM comments c LEFT JOIN posts p ON p.id=c.post_id WHERE p.id IS NULL"
         ).fetchone()[0]
@@ -50,3 +61,5 @@ with tempfile.TemporaryDirectory(prefix="india-backup-check-") as folder:
 elapsed = time.perf_counter() - started
 print(f"BACKUP_OK sha256={checksum} secondi={elapsed:.3f}")
 print("RIGHE " + " ".join(f"{name}={value}" for name, value in counts.items()))
+print("DOCUMENTI " + json.dumps(document_keys, ensure_ascii=False, separators=(",", ":")))
+print("POSTS " + json.dumps(restored_posts, ensure_ascii=False, separators=(",", ":")))

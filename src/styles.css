@@ -1078,6 +1078,18 @@ h3 {
   margin: 18px 0;
   box-shadow: 0 5px 20px #1f291f0d;
 }
+
+.vaultBackButton {
+  width: auto;
+  min-height: 42px;
+  margin: 0 0 10px;
+  padding: 8px 12px;
+  border: 1px solid rgba(91, 54, 33, 0.2);
+  border-radius: 999px;
+  background: #fff8ef;
+  color: #6b351c;
+  font-weight: 800;
+}
 .composer textarea,
 .profileForm textarea {
   width: 100%;

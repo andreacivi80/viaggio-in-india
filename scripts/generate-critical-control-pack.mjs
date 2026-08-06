@@ -97,6 +97,7 @@ function isActionable(row) {
   if (/autenticazione a più fattori|proroga autorizzata della conservazione/i.test(control)) return false;
   if (/^Notifica per (invito personale|posizione condivisa|documento mancante)/i.test(control)) return false;
   if (/notifica prioritaria al Coordinatore/i.test(control)) return false;
+  if (/Backup delle chiavi Push/i.test(control)) return false;
   if (/Non compromettere documenti e funzioni essenziali|differenze tra itinerario, mappe e documenti/i.test(control)) return false;
   return true;
 }

@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("all", "authorization-matrix", "resource-enumeration", "auth-lifecycle", "access-session-boundaries", "rate-limit", "push-unsubscribe", "ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "ui-stale-password-session", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-multi-invite-copy", "ui-people", "ui-protected-pdf", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
+  [ValidateSet("all", "authorization-matrix", "resource-enumeration", "auth-lifecycle", "access-session-boundaries", "rate-limit", "push-unsubscribe", "location-retention", "backup-content", "ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "ui-stale-password-session", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-multi-invite-copy", "ui-people", "ui-protected-pdf", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
   [string]$Suite = "document-concurrency"
 )
 
@@ -100,6 +100,15 @@ INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at
 ('$(Get-TokenHash $coordinatorSecondaryToken)','$coordinatorId','$coordinatorSecondaryDeviceId','Secondo telefono coordinatore locale','$created','$created','$expires',NULL),
 ('$(Get-TokenHash $deleteProfileToken)','$deleteProfileId','local-delete-device','Telefono profilo da eliminare','$created','$created','$expires',NULL);
 "@
+  if ($Suite -in @("all", "location-retention")) {
+    $staleLocationAt = [DateTime]::UtcNow.AddHours(-25).ToString("o")
+    $freshLocationAt = [DateTime]::UtcNow.AddMinutes(-5).ToString("o")
+    $sql += @"
+INSERT INTO locations(profile_id,display_name,latitude,longitude,updated_at) VALUES
+('$ownerId','Posizione scaduta',28.6139,77.2090,'$staleLocationAt'),
+('$otherId','Posizione recente',26.9124,75.7873,'$freshLocationAt');
+"@
+  }
   $setupFile = Join-Path $persistRoot "setup.sql"
   [IO.File]::WriteAllText($setupFile, $sql, [Text.UTF8Encoding]::new($false))
   & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file $setupFile | Out-Null
@@ -208,6 +217,12 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
   $env:QA_UI_COORDINATOR_INVITE_TOKEN = $uiCoordinatorInvite
   $env:QA_UI_MANAGED_PROFILE_NAME = $uiManagedProfileName
   $env:QA_UI_EXPIRED_SESSION_TOKEN = $expiredSessionToken
+  $env:QA_LOCAL_PERSIST_ROOT = $persistRoot
+  $env:QA_PYTHON_EXE = "C:\Users\utente38\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\python.exe"
+  $env:QA_WRANGLER_PATH = (Get-ChildItem -LiteralPath (Join-Path $env:LOCALAPPDATA "npm-cache\_npx") -Recurse -Filter "package.json" -ErrorAction SilentlyContinue |
+    Where-Object { $_.Directory.Name -eq "wrangler" } |
+    ForEach-Object { try { $package = Get-Content -LiteralPath $_.FullName -Raw | ConvertFrom-Json; if ($package.version -eq "4.118.0") { Join-Path $_.Directory.FullName "bin\wrangler.js" } } catch {} } |
+    Select-Object -First 1)
   $suiteFiles = @{
     "authorization-matrix" = "tests\extended-p0-authorization-matrix.mjs"
     "resource-enumeration" = "tests\extended-p0-resource-enumeration.mjs"
@@ -225,9 +240,11 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
     "chunk-retry" = "tests\extended-p0-chunk-retry.mjs"
     "rate-limit" = "tests\extended-p0-rate-limit-dimensions.mjs"
     "push-unsubscribe" = "tests\extended-p0-push-unsubscribe.mjs"
+    "location-retention" = "tests\extended-p0-location-retention.mjs"
+    "backup-content" = "tests\extended-p0-backup-content.mjs"
   }
   $selectedSuites = if ($Suite -eq "all") {
-    @("authorization-matrix", "resource-enumeration", "document-concurrency", "documents", "location", "media", "social", "sync", "avatar", "chunk-retry", "roles", "profile-deletion", "auth-lifecycle", "access-session-boundaries", "rate-limit", "push-unsubscribe")
+    @("authorization-matrix", "resource-enumeration", "document-concurrency", "documents", "location", "media", "social", "sync", "avatar", "chunk-retry", "roles", "profile-deletion", "auth-lifecycle", "access-session-boundaries", "rate-limit", "push-unsubscribe", "location-retention", "backup-content")
   } else { @($Suite) }
   foreach ($selectedSuite in $selectedSuites) {
     Write-Host "P0_SUITE_START=$selectedSuite"
