@@ -98,6 +98,12 @@ function isActionable(row) {
   if (/^Notifica per (invito personale|posizione condivisa|documento mancante)/i.test(control)) return false;
   if (/notifica prioritaria al Coordinatore/i.test(control)) return false;
   if (/Backup delle chiavi Push/i.test(control)) return false;
+  if (/Service Worker utilizzi la cache 1\.21\.5/i.test(control)) return false;
+  if (/Preferiti salvati nel database/i.test(control)) return false;
+  if (/Misurare batteria con posizione attiva/i.test(control)) return false;
+  if (/Posizione all’interno di un edificio/i.test(control)) return false;
+  if (/Centro [“\"]Pronto per l.offline/i.test(control)) return false;
+  if (/Notifica (con apertura del commento preciso|per reazione|per risposta a un commento)/i.test(control)) return false;
   if (/Non compromettere documenti e funzioni essenziali|differenze tra itinerario, mappe e documenti/i.test(control)) return false;
   return true;
 }

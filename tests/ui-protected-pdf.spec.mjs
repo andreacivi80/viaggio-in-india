@@ -21,6 +21,30 @@ const verticalPassportPath = fileURLToPath(new URL("../public/cities/jaipur.jpg"
 const verticalPassport = await readFile(verticalPassportPath);
 const phone = { ...devices["Galaxy S9+"], viewport: { width: 412, height: 915 } };
 
+const makeTwoPagePdf = () => {
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "<< /Type /Pages /Kids [3 0 R 4 0 R] /Count 2 >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 5 0 R >>",
+    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Contents 6 0 R >>",
+    "<< /Length 0 >>\nstream\n\nendstream",
+    "<< /Length 0 >>\nstream\n\nendstream",
+  ];
+  let source = "%PDF-1.4\n";
+  const offsets = [0];
+  objects.forEach((object, index) => {
+    offsets.push(Buffer.byteLength(source));
+    source += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  });
+  const xref = Buffer.byteLength(source);
+  source += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  source += offsets.slice(1).map((offset) => `${String(offset).padStart(10, "0")} 00000 n \n`).join("");
+  source += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`;
+  return Buffer.from(source);
+};
+
+const twoPagePdf = makeTwoPagePdf();
+
 const openGroup = async (page) => {
   await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
 };
@@ -89,6 +113,24 @@ test("PDF protetto resta privato, scaricabile e non blocca il visualizzatore mob
     expect((await deleteResponse).status()).toBe(200);
     await expect(passport).toContainText("Non ancora caricato");
 
+    const multipageUpload = travelerPage.waitForResponse(
+      (response) => response.url().includes("/api/documents") && response.request().method() === "POST",
+    );
+    await passport.locator('input[type="file"]').setInputFiles({
+      name: "passaporto-due-pagine.pdf",
+      mimeType: "application/pdf",
+      buffer: twoPagePdf,
+    });
+    expect((await multipageUpload).status()).toBe(200);
+    await passport.getByRole("button", { name: "Apri" }).tap();
+    viewer = travelerPage.locator(".documentPreviewOverlay");
+    await expect(viewer.locator(".pdfPageCanvas")).toHaveCount(2, { timeout: 20_000 });
+    await viewer.getByRole("button", { name: "Chiudi documento" }).tap();
+    await passport.getByRole("button", { name: "Elimina" }).tap();
+    const multipageConfirm = travelerPage.locator(".confirmCard").filter({ hasText: "Eliminare questo documento?" });
+    await multipageConfirm.getByRole("button", { name: "Elimina" }).tap();
+    await expect(passport).toContainText("Non ancora caricato");
+
     const verticalUpload = travelerPage.waitForResponse(
       (response) => response.url().includes("/api/documents") && response.request().method() === "POST",
     );
@@ -144,6 +186,41 @@ test("PDF protetto resta privato, scaricabile e non blocca il visualizzatore mob
     const verticalConfirm = travelerPage.locator(".confirmCard").filter({ hasText: "Eliminare questo documento?" });
     await verticalConfirm.getByRole("button", { name: "Elimina" }).tap();
     await expect(passport).toContainText("Non ancora caricato");
+
+    for (const [label, filename] of [
+      ["Passaporto", "passaporto.pdf"],
+      ["Visto India", "visto.pdf"],
+      ["Biglietti", "biglietti.pdf"],
+      ["Assicurazione", "assicurazione.pdf"],
+    ]) {
+      const card = travelerPage.locator(".document").filter({ hasText: label });
+      const responsePromise = travelerPage.waitForResponse(
+        (response) => response.url().includes("/api/documents") && response.request().method() === "POST",
+      );
+      await card.locator('input[type="file"]').setInputFiles({
+        name: filename,
+        mimeType: "application/pdf",
+        buffer: twoPagePdf,
+      });
+      expect((await responsePromise).status()).toBe(200);
+      await expect(card).toContainText("✓ Presente");
+    }
+
+    await coordinatorPage.reload({ waitUntil: "domcontentloaded" });
+    await openGroup(coordinatorPage);
+    const refreshedCoordinatorCard = coordinatorPage.locator(".peopleGrid article").filter({ hasText: coordinatorName });
+    await refreshedCoordinatorCard.getByRole("button", { name: "Documenti e posizione" }).tap();
+    await expect(
+      coordinatorPage.locator(".documentPersonCard").filter({ hasText: travelerName }),
+    ).toContainText("4/4");
+
+    for (const label of ["Passaporto", "Visto India", "Biglietti", "Assicurazione"]) {
+      const card = travelerPage.locator(".document").filter({ hasText: label });
+      await card.getByRole("button", { name: "Elimina" }).tap();
+      const cleanupConfirm = travelerPage.locator(".confirmCard").filter({ hasText: "Eliminare questo documento?" });
+      await cleanupConfirm.getByRole("button", { name: "Elimina" }).tap();
+      await expect(card).toContainText("Non ancora caricato");
+    }
   } finally {
     await Promise.all([travelerContext.close(), coordinatorContext.close()]);
   }

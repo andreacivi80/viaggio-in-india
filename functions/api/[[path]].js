@@ -949,13 +949,13 @@ export async function onRequest(context) {
       ? params.path.join("/")
       : String(params.path || "")
   ).replace(/^\/+|\/+$/g, "");
-  await ensureProfileGenderSchema(env);
-  await ensureProfilePrivacySchema(env);
-  await ensureSessionDeviceSchema(env);
-  await ensureGuestDeviceSchema(env);
-  await ensureSecurityAuditSchema(env);
-  context.waitUntil?.(silentMaintenance(env).catch(() => {}));
   try {
+    await ensureProfileGenderSchema(env);
+    await ensureProfilePrivacySchema(env);
+    await ensureSessionDeviceSchema(env);
+    await ensureGuestDeviceSchema(env);
+    await ensureSecurityAuditSchema(env);
+    context.waitUntil?.(silentMaintenance(env).catch(() => {}));
     if (request.method === "POST" && path === "auth/bootstrap") {
       const limited = await rateLimit(env, request, "auth-bootstrap", 5, 300);
       if (limited) return limited;
@@ -2510,6 +2510,18 @@ export async function onRequest(context) {
     }
     return json({ error: "Endpoint non trovato" }, 404);
   } catch (error) {
-    return json({ error: error.message || "Errore server" }, error.status || 500);
+    const explicitStatus = Number(error?.status);
+    const unavailable = /\b(?:D1|database|storage|temporar|unavailable)\b/i.test(String(error?.message || error));
+    const status = Number.isInteger(explicitStatus) && explicitStatus >= 400
+      ? explicitStatus
+      : unavailable ? 503 : 500;
+    const publicMessage = status >= 500
+      ? "Servizio temporaneamente non disponibile. Riprova."
+      : error?.message || "Richiesta non completata";
+    return json(
+      { error: publicMessage },
+      status,
+      status === 503 ? { "retry-after": "3" } : {},
+    );
   }
 }

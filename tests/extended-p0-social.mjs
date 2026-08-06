@@ -66,6 +66,7 @@ assert.equal((await request(`/api/comments/${otherComment.id}`, { method: "DELET
 const finalState = await (await request("/api/state", { headers: owner })).json();
 const finalPost = finalState.posts.find((item) => item.id === post.id);
 assert.ok(finalPost);
+assert.equal(Number(finalPost.day_index), -1);
 assert.equal(finalPost.comments.length, 0);
 assert.equal((await request(`/api/posts/${post.id}`, { method: "DELETE", headers: owner })).status, 200);
 
