@@ -842,7 +842,7 @@ async function readState(env, session = null, guest = null) {
     env.DB.prepare("SELECT * FROM posts ORDER BY created_at DESC").all(),
     env.DB.prepare("SELECT * FROM comments ORDER BY created_at").all(),
     env.DB.prepare(
-      "SELECT post_id, kind, author_name, COUNT(*) AS total FROM reactions GROUP BY post_id, kind, author_name",
+      "SELECT post_id, kind, author_name, COUNT(*) AS total, MAX(created_at) AS created_at FROM reactions GROUP BY post_id, kind, author_name",
     ).all(),
     env.DB.prepare("SELECT * FROM post_media ORDER BY position").all(),
     env.DB.prepare("SELECT version,updated_at FROM sync_state WHERE id=1").first(),

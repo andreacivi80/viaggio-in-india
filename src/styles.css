@@ -521,37 +521,19 @@ html.travelerDirectoryOpen body {
   color: var(--color-text-primary);
   box-shadow: var(--shadow-medium);
 }
-.notificationPanel > div {
+.notificationPanel > .notificationHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 3px 4px 8px;
 }
-.notificationPanel > div button {
+.notificationPanel > .notificationHeader button {
   width: 40px;
   height: 40px;
   border: 0;
   border-radius: 50%;
   background: var(--color-surface-secondary);
   font-size: 22px;
-}
-.notificationPanel > button {
-  width: 100%;
-  min-height: 58px;
-  display: grid;
-  grid-template-columns: 38px 1fr;
-  align-items: center;
-  gap: 9px;
-  padding: 8px 5px;
-  border: 0;
-  border-top: 1px solid var(--color-divider);
-  background: transparent;
-  color: inherit;
-  text-align: left;
-}
-.notificationPanel > button span:last-child {
-  display: flex;
-  flex-direction: column;
 }
 .notificationPanel small {
   color: var(--color-text-secondary);
@@ -561,6 +543,93 @@ html.travelerDirectoryOpen body {
   padding: 5px 4px 9px;
   font-size: 10px;
 }
+.notificationPanel > .notificationSummary {
+  padding: 2px 4px 7px;
+}
+.notificationSummary > button {
+  width: auto !important;
+  height: auto !important;
+  padding: 6px 9px;
+  border: 0;
+  border-radius: 999px;
+  background: #f3e8dc !important;
+  color: #8f321f;
+  font-size: 11px !important;
+  font-weight: 850;
+}
+.notificationPanel > .notificationList {
+  display: block;
+  max-height: min(58vh, 460px);
+  overflow-y: auto;
+  padding: 0;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+.notificationPanel > .notificationChannels {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto;
+  gap: 6px;
+  padding: 7px 4px 9px;
+  border-top: 1px solid var(--color-divider);
+}
+.notificationChannels span { display: flex; min-width: 0; flex-direction: column; }
+.notificationChannels b { font-size: 10px; }
+.notificationChannels small { font-size: 9px; }
+.notificationChannels button {
+  min-height: 34px;
+  align-self: center;
+  border: 0;
+  border-radius: 999px;
+  padding: 0 9px;
+  background: #173d2e;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 850;
+}
+.notificationItem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 38px;
+  align-items: center;
+  border-top: 1px solid var(--color-divider);
+}
+.notificationOpenItem {
+  min-width: 0;
+  min-height: 62px;
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  padding: 8px 5px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+}
+.notificationOpenItem > span:last-child { display: flex; min-width: 0; flex-direction: column; }
+.notificationOpenItem small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.notificationOpenItem em {
+  width: fit-content;
+  margin-top: 3px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #e8f4ee;
+  color: #176449;
+  font-size: 9px;
+  font-style: normal;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+.notificationDismiss {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #7f5e55;
+}
+.notificationDismiss svg { width: 17px; height: 17px; }
 .quickProfilePanel {
   position: absolute;
   z-index: 85;
@@ -5378,6 +5447,56 @@ mark.mention {
   .citySheetBody dl { grid-template-columns: 1fr; }
   .citySheet header h2 { font-size: 32px; }
 }
+
+.spotifyComposer {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  gap: 8px 10px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #b9e4c8;
+  border-radius: 16px;
+  background: #edf9f1;
+  color: #173d2e;
+}
+.spotifyComposer > svg { color: #1db954; }
+.spotifyComposer > div { display: flex; min-width: 0; flex-direction: column; }
+.spotifyComposer > div small { color: #577164; }
+.spotifyComposer > input {
+  grid-column: 1 / -1;
+  min-height: 44px;
+  width: 100%;
+  border: 1px solid #9fcbb0;
+  border-radius: 12px;
+  padding: 0 11px;
+  background: #fff;
+  color: #173d2e;
+}
+.spotifyError { grid-column: 1 / -1; color: #a33025 !important; font-weight: 800; }
+.spotifyCard {
+  margin: 10px 12px;
+  overflow: hidden;
+  border-radius: 14px;
+  background: #121212;
+}
+.spotifyCard iframe {
+  display: block;
+  width: 100%;
+  height: 152px;
+  border: 0;
+}
+.spotifyCard a {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 850;
+  text-decoration: none;
+}
+.spotifyCard a svg { width: 16px; height: 16px; color: #1db954; }
 
 .flightBaggageCard {
   margin: 10px 0 12px;

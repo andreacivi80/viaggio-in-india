@@ -27,4 +27,5 @@ export {
   Send,
   Link,
   X,
+  Music2,
 } from "lucide-react";

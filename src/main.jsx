@@ -28,6 +28,7 @@ import {
   Send,
   Link,
   X,
+  Music2,
 } from "./icons.jsx";
 import "./styles.css";
 import { publicationAccessStep, publicationEntryState } from "./accessFlow.js";
@@ -38,9 +39,10 @@ import {
   sanitizeProfilesForPublicCache,
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
+import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.43.3",
+const VERSION = "1.44.0",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -1577,6 +1579,10 @@ function App() {
     [vaultProfileId, setVaultProfileId] = useState(""),
     [composeOpen, setComposeOpen] = useState(false),
     [notificationOpen, setNotificationOpen] = useState(false),
+    [dismissedActivityIds, setDismissedActivityIds] = useState(
+      () => load("india-activity-dismissed", []),
+    ),
+    [activitySeenBeforeOpen, setActivitySeenBeforeOpen] = useState(""),
     [pushEnabled, setPushEnabled] = useState(
       () => localStorage.getItem("india-push-enabled") === "true",
     ),
@@ -2311,17 +2317,31 @@ function App() {
             createdAt: post.created_at,
             dayIndex: Number(post.day_index) || 0,
           },
-          ...(post.comments || []).map((comment) => ({
-            id: `comment-${comment.id}`,
-            kind: "comment",
-            author: comment.author_name,
-            text: `Nuovo commento · ${comment.text || "Allegato"}`,
-            createdAt: comment.created_at,
+          ...(post.comments || []).map((comment) => {
+            const handle = currentProfile ? `@${mentionHandle(currentProfile)}` : "";
+            const mentioned = Boolean(handle && String(comment.text || "").toLowerCase().includes(handle.toLowerCase()));
+            return {
+              id: `comment-${comment.id}`,
+              kind: mentioned ? "mention" : "comment",
+              author: comment.author_name,
+              text: mentioned ? "Ti ha menzionato in un commento" : `Nuovo commento · ${comment.text || "Allegato"}`,
+              createdAt: comment.created_at,
+              dayIndex: Number(post.day_index) || 0,
+            };
+          }),
+          ...(post.reactions || []).map((reaction) => ({
+            id: `reaction-${post.id}-${reaction.kind}-${reaction.author_name}-${reaction.created_at}`,
+            kind: "reaction",
+            author: reaction.author_name,
+            text: reaction.kind === "heart" ? "Ha messo Mi piace a un ricordo" : "Ha reagito a un ricordo",
+            createdAt: reaction.created_at,
             dayIndex: Number(post.day_index) || 0,
           })),
         ])
+        .filter((item) => !dismissedActivityIds.includes(item.id))
+        .filter((item) => Date.now() - new Date(item.createdAt).getTime() < 30 * 86400000)
         .sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))),
-    [posts],
+    [posts, dismissedActivityIds, currentProfile?.id],
   );
   const unreadActivityCount = activityItems.filter(
     (item) => !lastActivityRead || item.createdAt > lastActivityRead,
@@ -2331,10 +2351,25 @@ function App() {
     setNotificationOpen(opening);
     setQuickProfileOpen(false);
     if (opening) {
+      setActivitySeenBeforeOpen(lastActivityRead);
       const readAt = new Date().toISOString();
       setLastActivityRead(readAt);
       localStorage.setItem("india-activity-read", readAt);
     }
+  };
+  const dismissActivity = (id) => {
+    setDismissedActivityIds((current) => {
+      const next = [...new Set([id, ...current])].slice(0, 200);
+      localStorage.setItem("india-activity-dismissed", JSON.stringify(next));
+      return next;
+    });
+  };
+  const clearActivity = () => {
+    setDismissedActivityIds((current) => {
+      const next = [...new Set([...activityItems.map((item) => item.id), ...current])].slice(0, 200);
+      localStorage.setItem("india-activity-dismissed", JSON.stringify(next));
+      return next;
+    });
   };
   return (
     <div className="app">
@@ -2399,7 +2434,7 @@ function App() {
         )}
         {notificationOpen && (
           <div className="notificationPanel">
-            <div>
+            <div className="notificationHeader">
               <b>Attività recenti</b>
               <button
                 aria-label="Chiudi notifiche"
@@ -2408,25 +2443,43 @@ function App() {
                 ×
               </button>
             </div>
-            <small className="notificationKind">Avvisi nell’app</small>
-            {activityItems.slice(0, 6).map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setSelectedDay(item.dayIndex);
-                  setTab("diary");
-                  setNotificationOpen(false);
-                }}
-              >
-                <span className="avatar">
-                  {item.author?.[0]?.toUpperCase() || "I"}
-                </span>
-                <span>
-                  <b>{item.author}</b>
-                  <small>{item.text}</small>
-                </span>
-              </button>
+            <div className="notificationSummary">
+              <small className="notificationKind">Avvisi degli ultimi 30 giorni</small>
+              {activityItems.length > 0 && <button onClick={clearActivity}>Cancella tutte</button>}
+            </div>
+            <div className="notificationChannels">
+              <span><b>Nell’app</b><small>Sempre attivi</small></span>
+              <span><b>Sul telefono</b><small>{pushEnabled ? "Attive" : "Non attive"}</small></span>
+              {currentProfile && verifiedSessionToken && (
+                <button onClick={pushEnabled ? disableNotifications : enableNotifications}>
+                  {pushEnabled ? "Disattiva" : "Attiva"}
+                </button>
+              )}
+            </div>
+            <div className="notificationList">
+            {activityItems.slice(0, 12).map((item) => (
+              <div className="notificationItem" key={item.id}>
+                <button
+                  className="notificationOpenItem"
+                  onClick={() => {
+                    setSelectedDay(item.dayIndex);
+                    setTab("diary");
+                    setNotificationOpen(false);
+                  }}
+                >
+                  <span className="avatar">{item.author?.[0]?.toUpperCase() || "I"}</span>
+                  <span>
+                    <b>{item.author}</b>
+                    <small>{item.text}</small>
+                    <em>{!activitySeenBeforeOpen || item.createdAt > activitySeenBeforeOpen ? "Nuova" : "Già vista"}</em>
+                  </span>
+                </button>
+                <button className="notificationDismiss" aria-label={`Elimina notifica di ${item.author || "India Insieme"}`} onClick={() => dismissActivity(item.id)}>
+                  <Trash2 aria-hidden="true" />
+                </button>
+              </div>
             ))}
+            </div>
             {!activityItems.length && <small>Nessuna nuova attività.</small>}
           </div>
         )}
@@ -3231,7 +3284,8 @@ function Diary({
     [postCoordinates, setPostCoordinates] = useState(null),
     [locatingPost, setLocatingPost] = useState(false),
     [placeResults, setPlaceResults] = useState([]),
-    [placeSearching, setPlaceSearching] = useState(false);
+    [placeSearching, setPlaceSearching] = useState(false),
+    [spotifyUrl, setSpotifyUrl] = useState("");
   const [postVisibility, setPostVisibility] = useState("public");
   const publicationStep = publicationAccessStep({ sessionToken, groupCode });
   const [editingName, setEditingName] = useState(
@@ -3326,7 +3380,8 @@ function Diary({
     return mediaTypes.some((type) => type.startsWith(feedFilter));
   });
   const add = async () => {
-    if (!sessionToken || (!text.trim() && !files.length)) return;
+    const spotify = spotifyLink(spotifyUrl);
+    if (!sessionToken || (!text.trim() && !files.length && !spotify)) return;
     setBusy(true);
     setFileStatus("Pubblicazione in corso…");
     let pendingForm;
@@ -3335,7 +3390,7 @@ function Diary({
       f.set("author_name", author || "Viaggiatore");
       f.set("profile_id", deviceProfileId || "");
       f.set("day_index", selectedDay);
-      f.set("text", text);
+      f.set("text", [text.trim(), spotify?.url].filter(Boolean).join("\n\n"));
       f.set("visibility", postVisibility);
       f.set("place_name", placeName);
       if (postCoordinates) {
@@ -3388,6 +3443,7 @@ function Diary({
       setPostCoordinates(null);
       setPlaceResults([]);
       setPostVisibility("public");
+      setSpotifyUrl("");
       postOperationRef.current = "";
       setFileStatus("");
       await refresh();
@@ -3407,6 +3463,7 @@ function Diary({
           setFiles([]);
           setPlaceName("");
           setPostCoordinates(null);
+          setSpotifyUrl("");
           const offlineMessage = "Salvato nel telefono. Sarà pubblicato automaticamente quando torna la rete.";
           setFileStatus(offlineMessage);
           setPublishNotice(offlineMessage);
@@ -3594,6 +3651,21 @@ function Diary({
                   onChange={(e) => setText(e.target.value)}
                   placeholder="Racconta questo momento…"
                 />
+                <div className="spotifyComposer">
+                  <Music2 aria-hidden="true" />
+                  <div>
+                    <b>Aggiungi una canzone da Spotify</b>
+                    <small>In Spotify: Condividi → Copia link, poi incollalo qui.</small>
+                  </div>
+                  <input
+                    type="url"
+                    value={spotifyUrl}
+                    onChange={(event) => setSpotifyUrl(event.target.value)}
+                    placeholder="https://open.spotify.com/track/…"
+                    aria-label="Link Spotify"
+                  />
+                  {spotifyUrl && !spotifyLink(spotifyUrl) && <small className="spotifyError">Incolla un link Spotify valido.</small>}
+                </div>
                 <label className="visibilityPicker">
                   <span>Chi può vederlo</span>
                   <select
@@ -3704,7 +3776,7 @@ function Diary({
                     />
                   </label>
                   <button
-                    disabled={busy || (!text.trim() && !files.length)}
+                    disabled={busy || (!text.trim() && !files.length && !spotifyLink(spotifyUrl))}
                     onClick={add}
                   >
                     <Plus /> {busy ? "Invio…" : "Pubblica"}
@@ -4334,6 +4406,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
   const visibleComments = (p.comments || []).filter(
     (commentItem) => !hiddenCommentIds.includes(commentItem.id),
   );
+  const postContent = splitSpotifyCaption(p.text || "");
   const mentionMatch = comment.match(/(^|\s)@([^\s@]*)$/);
   const mentionQuery = (mentionMatch?.[2] || "").toLowerCase();
   const mentionSuggestions = mentionMatch
@@ -4422,7 +4495,18 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
               : []
         }
       />
-      {p.text && <p className="postCaption">{p.text}</p>}
+      {postContent.caption && <p className="postCaption">{postContent.caption}</p>}
+      {postContent.spotify && (
+        <div className="spotifyCard">
+          <iframe
+            src={postContent.spotify.embedUrl}
+            title="Canzone condivisa da Spotify"
+            loading="lazy"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          />
+          <a href={postContent.spotify.url} target="_blank" rel="noreferrer"><Music2 /> Apri in Spotify</a>
+        </div>
+      )}
       <div className="postActions">
         <button onClick={() => react("heart")} aria-label="Mi piace">
           <Heart /> <span>Mi piace</span>
