@@ -91,3 +91,7 @@ Il collaudo touch `ui-invite-misdelivery.spec.mjs` verifica su Galaxy S20 FE che
 ## PDF protetti da password
 
 Il collaudo touch `ui-protected-pdf.spec.mjs` carica un PDF AES-256 realmente cifrato dal telefono del proprietario. Il file viene conservato nell’area privata, compare nella griglia del coordinatore e resta scaricabile senza che l’app richieda o memorizzi la password. Il visualizzatore riconosce `PasswordException`, non mostra pagine vuote o contenuto parziale e propone esplicitamente il lettore PDF del telefono. Proprietario e coordinatore ricevono lo stesso comportamento controllato; il proprietario elimina infine il file. La fixture contiene soltanto dati fittizi ed è verificata con password corretta, password errata e rendering visivo prima del test.
+
+## Confine della chiave VAPID
+
+Il test `vapid-secret-boundary.test.mjs` verifica che `VAPID_PRIVATE_KEY` sia letta soltanto dal Worker come binding segreto. L’endpoint pubblico `/api/push/config` restituisce esclusivamente `VAPID_PUBLIC_KEY`; client e configurazioni Wrangler versionate non contengono la chiave privata. Dopo ogni build, `scan-client-secrets.mjs` esamina inoltre tutti i file destinati al browser e blocca il rilascio se trova il nome o un valore assimilabile alla chiave privata.

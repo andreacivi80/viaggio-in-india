@@ -31,4 +31,6 @@ test("la matrice autorizzativa documenta tutti i ruoli e le risorse sensibili", 
   assert.match(matrix, /token[\s\S]*realmente scaduto[\s\S]*nuova sessione/i);
   assert.match(matrix, /ui-protected-pdf\.spec\.mjs[\s\S]*AES-256[\s\S]*PasswordException/i);
   assert.match(matrix, /non mostra pagine vuote[\s\S]*lettore PDF del telefono/i);
+  assert.match(matrix, /vapid-secret-boundary\.test\.mjs[\s\S]*VAPID_PRIVATE_KEY[\s\S]*soltanto dal Worker/i);
+  assert.match(matrix, /push\/config[\s\S]*esclusivamente `VAPID_PUBLIC_KEY`/i);
 });

@@ -313,7 +313,7 @@ P0,accessi-privacy,passed,Verificare rimozione del token dall’URL.,usabilita:U
 P0,accessi-privacy,passed,Verificare rimozione dell’accesso.,usabilita:U0054,auth-lifecycle 68/68: logout revoca dispositivo e logout-all invalidano immediatamente le sessioni
 P0,accessi-privacy,passed,Verificare sessioni precedenti.,globale:T-1041,"extended-p0-auth-lifecycle 28/28: due sessioni iniziali rilevate, una revocata selettivamente e la restante chiusa con logout-all"
 P0,accessi-privacy,passed,Verificare token differente.,addendum:A0341,auth-lifecycle 68/68: il nuovo accesso produce un token diverso dal precedente
-P0,accessi-privacy,pending,Verificare VAPID_PRIVATE_KEY.,globale:T-1520,
+P0,accessi-privacy,passed,Verificare VAPID_PRIVATE_KEY.,globale:T-1520,"vapid-secret-boundary + scan-client-secrets: chiave privata solo nel binding Worker, assente da endpoint config, client, Wrangler e bundle"
 P0,accessi-privacy,passed,Viaggiatore non proprietario;,addendum:A0132,resource-enumeration 17/17: altro viaggiatore non vede metadati del documento e riceve diniego non enumerabile
 P0,accessi-privacy,passed,Viaggiatore proprietario;,addendum:A0131,"resource-enumeration 17/17: proprietario apre e cancella il proprio PDF, mentre gli altri ruoli restano esclusi"
 P0,accessi-privacy,passed,Visualizzazione contenuti autorizzati.,globale:T-1239,access-session-boundaries 17/17 + authorization-matrix 59/59: risposta privata contiene il viewer derivato dalla sessione
