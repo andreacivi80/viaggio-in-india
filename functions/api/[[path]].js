@@ -475,6 +475,29 @@ export function canNotifySubscriber(subscription, payload) {
     return subscription.profile_id === payload.author_profile_id;
   return false;
 }
+export function sanitizePushPayload(payload = {}) {
+  const tag = String(payload.tag || "activity").slice(0, 96);
+  const kind = tag.startsWith("comment-")
+    ? "comment"
+    : tag.startsWith("post-")
+      ? "post"
+      : "system";
+  const body = kind === "comment"
+    ? "È stato aggiunto un nuovo commento."
+    : kind === "post"
+      ? "È stato pubblicato un nuovo ricordo del viaggio."
+      : "C'è un nuovo aggiornamento nell'app.";
+  const requestedUrl = String(payload.url || "/");
+  const url = /^\/(?:\?[a-z0-9_=&%.-]*)?$/i.test(requestedUrl)
+    ? requestedUrl
+    : "/";
+  return {
+    title: "India Insieme",
+    body,
+    url,
+    tag,
+  };
+}
 async function notifySubscribers(env, payload) {
   if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY)
     return { configured: false, sent: 0, failed: 0, errors: ["Chiavi push mancanti"] };
@@ -488,6 +511,7 @@ async function notifySubscribers(env, payload) {
   ).all();
   const authorizedSubscriptions = subscriptions.results.filter((subscription) =>
     canNotifySubscriber(subscription, payload));
+  const safePayload = sanitizePushPayload(payload);
   const deliveries = await Promise.all(
     authorizedSubscriptions.map(async (subscription) => {
       try {
@@ -497,7 +521,7 @@ async function notifySubscribers(env, payload) {
           keys: { p256dh: subscription.p256dh, auth: subscription.auth },
         };
         const request = await buildPushPayload(
-          { data: JSON.stringify(payload), options: { ttl: 3600 } },
+          { data: JSON.stringify(safePayload), options: { ttl: 3600 } },
           target,
           vapid,
         );
@@ -1496,6 +1520,24 @@ export async function onRequest(context) {
         )
         .run();
       return json({ ok: true });
+    }
+    if (request.method === "DELETE" && path === "push/subscribe") {
+      const session = await sessionFromRequest(request, env);
+      const guest = session ? null : await guestFromRequest(request, env);
+      if (!session && !guest) return json({ error: "Identità richiesta" }, 401);
+      const body = await request.json().catch(() => ({}));
+      const endpoint = String(body.endpoint || "");
+      if (!endpoint.startsWith("https://") || endpoint.length > 2048)
+        return json({ error: "Iscrizione notifiche non valida" }, 400);
+      const subscriptionId = await tokenHash(endpoint);
+      const result = session
+        ? await env.DB.prepare(
+          "DELETE FROM push_subscriptions WHERE id=? AND profile_id=?",
+        ).bind(subscriptionId, session.profile_id).run()
+        : await env.DB.prepare(
+          "DELETE FROM push_subscriptions WHERE id=? AND guest_visitor_id=?",
+        ).bind(subscriptionId, guest.visitor_id).run();
+      return json({ ok: true, removed: Number(result.meta?.changes || 0) });
     }
     if (request.method === "POST" && path === "push/test") {
       const session = await sessionFromRequest(request, env);

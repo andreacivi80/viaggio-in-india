@@ -1,5 +1,5 @@
 param(
-  [ValidateSet("all", "authorization-matrix", "resource-enumeration", "auth-lifecycle", "access-session-boundaries", "rate-limit", "ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "ui-stale-password-session", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-multi-invite-copy", "ui-people", "ui-protected-pdf", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
+  [ValidateSet("all", "authorization-matrix", "resource-enumeration", "auth-lifecycle", "access-session-boundaries", "rate-limit", "push-unsubscribe", "ui-session-history", "ui-location-permissions", "ui-microphone-permissions", "ui-password-access", "ui-stale-password-session", "ui-coordinator-grid", "ui-invite-misdelivery", "ui-private-browser-session", "ui-multi-invite-copy", "ui-people", "ui-protected-pdf", "profile-deletion", "document-concurrency", "documents", "roles", "location", "media", "social", "sync", "avatar", "chunk-retry")]
   [string]$Suite = "document-concurrency"
 )
 
@@ -224,9 +224,10 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
     "avatar" = "tests\extended-p0-avatar-replacement.mjs"
     "chunk-retry" = "tests\extended-p0-chunk-retry.mjs"
     "rate-limit" = "tests\extended-p0-rate-limit-dimensions.mjs"
+    "push-unsubscribe" = "tests\extended-p0-push-unsubscribe.mjs"
   }
   $selectedSuites = if ($Suite -eq "all") {
-    @("authorization-matrix", "resource-enumeration", "document-concurrency", "documents", "location", "media", "social", "sync", "avatar", "chunk-retry", "roles", "profile-deletion", "auth-lifecycle", "access-session-boundaries", "rate-limit")
+    @("authorization-matrix", "resource-enumeration", "document-concurrency", "documents", "location", "media", "social", "sync", "avatar", "chunk-retry", "roles", "profile-deletion", "auth-lifecycle", "access-session-boundaries", "rate-limit", "push-unsubscribe")
   } else { @($Suite) }
   foreach ($selectedSuite in $selectedSuites) {
     Write-Host "P0_SUITE_START=$selectedSuite"

@@ -33,7 +33,7 @@ test("le rotte dinamiche e i controlli server critici restano esplicitamente cla
     read("docs/API-AUTHORIZATION-INVENTORY.json"),
   ]);
   const inventory = JSON.parse(rawInventory);
-  assert.equal(inventory.exact.length, 39);
+  assert.equal(inventory.exact.length, 40);
   assert.equal(inventory.dynamic.length, 5);
   for (const entry of [...inventory.exact, ...inventory.dynamic])
     assert.ok(entry.access && entry.access !== "unknown", `policy mancante per ${entry.path}`);

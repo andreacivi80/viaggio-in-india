@@ -1,7 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
 Controlli selezionati: **120** tra 353 controlli P0–P2 ancora privi di evidenza conclusiva.
-Stato del pacchetto: **23 superati**, **97 pendenti**.
+Stato del pacchetto: **26 superati**, **94 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -35,12 +35,12 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-0573`. P0_DOCUMENT_CONCURRENCY 28/28: download e sostituzione simultanei terminano senza record duplicati; il nuovo file è apribile e la vecchia chiave è revocata.
 - [x] **K-012 · documenti** — Un solo documento dopo dieci retry.
   Sorgente: `globale:T-0141`. P0_DOCUMENT_CONCURRENCY 28/28: dieci richieste concorrenti con la stessa chiave idempotente restituiscono successo e lasciano un solo documento.
-- [ ] **K-013 · documenti** — Non mostrare dati dei documenti nella notifica.
-  Sorgente: `globale:T-1353`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
+- [x] **K-013 · documenti** — Non mostrare dati dei documenti nella notifica.
+  Sorgente: `globale:T-1353`. push-payload-privacy 3/3 + push-audience 5/5: il push contiene soltanto titolo generico, messaggio generico, URL interno e tag; contenuto e metadati dei documenti sono esclusi.
 - [ ] **K-014 · documenti** — Verificare impossibilità di aprire documenti già non disponibili offline.
   Sorgente: `globale:T-1620`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
-- [ ] **K-015 · persistenza** — Eliminazione della subscription dal database quando l’utente le disattiva.
-  Sorgente: `globale:T-0078`. Aggiornamenti, guasti e retry non devono perdere o duplicare dati.
+- [x] **K-015 · persistenza** — Eliminazione della subscription dal database quando l’utente le disattiva.
+  Sorgente: `globale:T-0078`. P0_PUSH_UNSUBSCRIBE 8/8: il comando Disattiva notifiche elimina la subscription associata; un altro profilo non può rimuoverla e il retry è idempotente.
 - [x] **K-016 · persistenza** — Interruzione del database dopo salvataggio del file.
   Sorgente: `globale:T-1151`. d1-media-atomicity L1: un’interruzione D1 dopo il salvataggio MEDIA elimina la parte orfana e consente il retry.
 - [x] **K-017 · persistenza** — Non devono esistere riferimenti nel database a file mancanti.
@@ -65,8 +65,8 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-0995`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
 - [ ] **K-027 · documenti** — Deep link del documento.
   Sorgente: `globale:T-0241`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
-- [ ] **K-028 · documenti** — Non mostrare numeri di passaporto.
-  Sorgente: `globale:T-1354`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
+- [x] **K-028 · documenti** — Non mostrare numeri di passaporto.
+  Sorgente: `globale:T-1354`. push-payload-privacy 3/3: numero di passaporto, nome del titolare, nome file, identificativo profilo e contenuto non entrano nel payload della notifica.
 - [x] **K-029 · documenti** — Tentare di aprire documenti.
   Sorgente: `usabilita:U0620;usabilita:U0635`. P0_DOCUMENTS 12/12 + P0_RESOURCE_ENUMERATION 17/17 + ui-protected-pdf 1/1: apertura reale consentita solo a proprietario/coordinatore.
 - [x] **K-030 · documenti** — Verificare che i vecchi link ai documenti non funzionino.

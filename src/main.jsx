@@ -39,7 +39,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.42.0",
+const VERSION = "1.43.0",
   API = "/api";
 const deviceName = () => {
   const userAgent = navigator.userAgent || "";
@@ -1554,6 +1554,9 @@ function App() {
     [vaultProfileId, setVaultProfileId] = useState(""),
     [composeOpen, setComposeOpen] = useState(false),
     [notificationOpen, setNotificationOpen] = useState(false),
+    [pushEnabled, setPushEnabled] = useState(
+      () => localStorage.getItem("india-push-enabled") === "true",
+    ),
     [quickProfileOpen, setQuickProfileOpen] = useState(false),
     [travelersOpen, setTravelersOpen] = useState(false),
     [travelerOriginsOpen, setTravelerOriginsOpen] = useState(false),
@@ -2206,10 +2209,37 @@ function App() {
       });
       if (!response.ok) throw new Error("Iscrizione non riuscita");
       localStorage.setItem("india-push-enabled", "true");
+      setPushEnabled(true);
       setQuickStatus("Notifiche sul telefono attive.");
     } catch (error) {
       console.error("india-push", error);
       setQuickStatus("Notifiche non attivate. Riprova.");
+    }
+  };
+  const disableNotifications = async () => {
+    if (!("serviceWorker" in navigator)) return;
+    try {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager?.getSubscription();
+      if (subscription) {
+        const response = await fetch(`${API}/push/subscribe`, {
+          method: "DELETE",
+          headers: {
+            "content-type": "application/json",
+            ...sessionHeaders(sessionToken),
+            ...(!sessionToken ? storedGuestHeaders() : {}),
+          },
+          body: JSON.stringify({ endpoint: subscription.endpoint }),
+        });
+        if (!response.ok) throw new Error("Disattivazione non riuscita");
+        await subscription.unsubscribe();
+      }
+      localStorage.removeItem("india-push-enabled");
+      setPushEnabled(false);
+      setQuickStatus("Notifiche sul telefono disattivate.");
+    } catch (error) {
+      console.error("india-push-disable", error);
+      setQuickStatus("Notifiche non disattivate. Riprova.");
     }
   };
   const showMap = (i) => {
@@ -2484,6 +2514,9 @@ function App() {
                   <MapPin /> Condividi posizione
                 </button>
                 <button onClick={quickRemoveLocation}>Cancella posizione</button>
+                <button onClick={pushEnabled ? disableNotifications : enableNotifications}>
+                  <Bell /> {pushEnabled ? "Disattiva notifiche" : "Attiva notifiche"}
+                </button>
                 <button
                   onClick={() => {
                     setVaultProfileId(currentProfile.id);

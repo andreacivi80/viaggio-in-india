@@ -22,4 +22,7 @@
   "globale:T-1326": "P0_DOCUMENT_CONCURRENCY 18/18: dopo sostituzione o eliminazione la vecchia chiave media non restituisce più 200.",
   "globale:T-1032": "migration-safety L1: le migrazioni sono additive e preservano profili, post, documenti e sessioni esistenti.",
   "globale:T-0491": "service-worker-offline L1: documenti e API private non entrano nella Cache API o nella precache pubblica."
+  ,"globale:T-1353": "push-payload-privacy 3/3 + push-audience 5/5: il push contiene soltanto titolo generico, messaggio generico, URL interno e tag; contenuto e metadati dei documenti sono esclusi."
+  ,"globale:T-1354": "push-payload-privacy 3/3: numero di passaporto, nome del titolare, nome file, identificativo profilo e contenuto non entrano nel payload della notifica."
+  ,"globale:T-0078": "P0_PUSH_UNSUBSCRIBE 8/8: il comando Disattiva notifiche elimina la subscription associata; un altro profilo non può rimuoverla e il retry è idempotente."
 }

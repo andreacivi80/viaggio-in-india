@@ -117,6 +117,11 @@
       "access": "public-filtered"
     },
     {
+      "method": "DELETE",
+      "path": "push/subscribe",
+      "access": "profile-or-guest-owner"
+    },
+    {
       "method": "POST",
       "path": "push/test",
       "access": "coordinator"
