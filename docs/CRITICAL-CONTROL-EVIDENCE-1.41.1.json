@@ -1,0 +1,19 @@
+{
+  "globale:T-0701": "P0_DOCUMENTS 12/12: un secondo viaggiatore riceve 403; il proprietario elimina e proprietario/coordinatore vedono subito l’assenza.",
+  "usabilita:U0294": "P0_AUTHORIZATION_MATRIX 86/86: il coordinatore vede il documento e può verificarlo, ma non può sostituire il file del proprietario.",
+  "globale:T-0767": "P0_AUTH_LIFECYCLE 68/68 + ui-session-history 2/2: il dispositivo revocato riceve 401/403, perde token, profilo e privilegi memorizzati.",
+  "globale:T-1151": "d1-media-atomicity L1: un’interruzione D1 dopo il salvataggio MEDIA elimina la parte orfana e consente il retry.",
+  "globale:T-1013": "P0_DOCUMENT_CONCURRENCY 18/18 + d1-media-atomicity: sostituzione ed eliminazione rimuovono chiave e riferimento, senza record verso file mancanti.",
+  "addendum:A0307": "d1-media-atomicity L1: un file scritto prima del fallimento D1 viene eliminato e non resta orfano nello storage.",
+  "usabilita:U0175": "P0_ROLES 20/20: author_name e profile_id falsificati vengono ignorati e derivati dalla sessione server.",
+  "globale:T-0422": "P0_ROLES 20/20: il post conserva il profile_id della sessione anche quando il client invia un’identità diversa.",
+  "globale:T-1369": "P0_AUTHORIZATION_MATRIX 86/86 + P0_MEDIA_DELETE 14/14: aggiunta media consentita solo con sessione e proprietà valide.",
+  "usabilita:U0488": "P0_AUTH_LIFECYCLE 68/68: nuova registrazione/invito, scadenza, rinnovo e nuovo accesso verificati con token reali.",
+  "usabilita:U0002": "P0_ACCESS_SESSION_BOUNDARIES 17/17: la password comune non apre il gruppo; la pubblicazione familiare usa una sessione ospite legata al dispositivo.",
+  "usabilita:U0480": "P0_AUTHORIZATION_MATRIX 86/86: commento e reazione familiari richiedono identità ospite valida; il solo codice riceve 401.",
+  "globale:T-1324": "P0_PROFILE_DELETION 40/40: richiesta ed eliminazione del profilo rimuovono sessioni, inviti, documenti, posizione e contenuti collegati.",
+  "usabilita:U0620;usabilita:U0635": "P0_DOCUMENTS 12/12 + P0_RESOURCE_ENUMERATION 17/17 + ui-protected-pdf 1/1: apertura reale consentita solo a proprietario/coordinatore.",
+  "globale:T-1326": "P0_DOCUMENT_CONCURRENCY 18/18: dopo sostituzione o eliminazione la vecchia chiave media non restituisce più 200.",
+  "globale:T-1032": "migration-safety L1: le migrazioni sono additive e preservano profili, post, documenti e sessioni esistenti.",
+  "globale:T-0491": "service-worker-offline L1: documenti e API private non entrano nella Cache API o nella precache pubblica."
+}

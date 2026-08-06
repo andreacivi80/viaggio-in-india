@@ -36,6 +36,7 @@ function parseCsv(text) {
 test("il pacchetto ristretto contiene 120 controlli critici unici e ancora pendenti", () => {
   const pack = parseCsv(fs.readFileSync(path.join(root, "docs", "CRITICAL-CONTROLS-1.41.1.csv"), "utf8"));
   const coverage = parseCsv(fs.readFileSync(path.join(root, "docs", "CONTROL-COVERAGE.csv"), "utf8"));
+  const evidence = JSON.parse(fs.readFileSync(path.join(root, "docs", "CRITICAL-CONTROL-EVIDENCE-1.41.1.json"), "utf8"));
   const sourceStatus = new Map(coverage.map((row) => [`${row.source_rows}|${row.control}`, row.status]));
 
   assert.equal(pack.length, 120);
@@ -50,5 +51,7 @@ test("il pacchetto ristretto contiene 120 controlli critici unici e ancora pende
     assert.ok(["P0", "P1"].includes(row.priority));
     assert.notEqual(sourceStatus.get(`${row.source_rows}|${row.control}`), "passed");
     assert.ok(row.required_evidence.length > 20);
+    assert.equal(row.execution_status, evidence[row.source_rows] ? "passed" : "pending");
+    assert.equal(Boolean(row.evidence), Boolean(evidence[row.source_rows]));
   }
 });

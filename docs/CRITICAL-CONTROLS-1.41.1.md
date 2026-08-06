@@ -1,6 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
 Controlli selezionati: **120** tra 361 controlli P0–P2 ancora privi di evidenza conclusiva.
+Stato del pacchetto: **17 superati**, **103 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -12,8 +13,8 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
 
 - [ ] **K-001 · accessi-privacy** — Nessun documento privato inserito senza consenso.
   Sorgente: `globale:T-1722`. Accesso, consenso o segreto: un errore può esporre funzioni riservate.
-- [ ] **K-002 · documenti** — Eliminare un documento dal telefono B.
-  Sorgente: `globale:T-0701`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
+- [x] **K-002 · documenti** — Eliminare un documento dal telefono B.
+  Sorgente: `globale:T-0701`. P0_DOCUMENTS 12/12: un secondo viaggiatore riceve 403; il proprietario elimina e proprietario/coordinatore vedono subito l’assenza.
 - [ ] **K-003 · accessi-privacy** — Distinguere limiti per IP, sessione e profilo.
   Sorgente: `globale:T-1053`. Accesso, consenso o segreto: un errore può esporre funzioni riservate.
 - [ ] **K-004 · documenti** — Eseguire backup mentre vengono caricati documenti.
@@ -28,10 +29,10 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-1411`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
 - [ ] **K-009 · documenti** — Ogni documento deve essere collegato a un profilo esistente.
   Sorgente: `globale:T-1016`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
-- [ ] **K-010 · documenti** — Verificare che il Coordinatore possa moderare, se previsto.
-  Sorgente: `usabilita:U0294`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
-- [ ] **K-011 · documenti** — Verificare che il dispositivo revocato non possa più aprire documenti.
-  Sorgente: `globale:T-0767`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
+- [x] **K-010 · documenti** — Verificare che il Coordinatore possa moderare, se previsto.
+  Sorgente: `usabilita:U0294`. P0_AUTHORIZATION_MATRIX 86/86: il coordinatore vede il documento e può verificarlo, ma non può sostituire il file del proprietario.
+- [x] **K-011 · documenti** — Verificare che il dispositivo revocato non possa più aprire documenti.
+  Sorgente: `globale:T-0767`. P0_AUTH_LIFECYCLE 68/68 + ui-session-history 2/2: il dispositivo revocato riceve 401/403, perde token, profilo e privilegi memorizzati.
 - [ ] **K-012 · documenti** — Errore durante sostituzione documento.
   Sorgente: `globale:T-1150`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
 - [ ] **K-013 · documenti** — Sostituzione documento durante il download.
@@ -46,30 +47,30 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-1620`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
 - [ ] **K-018 · persistenza** — Eliminazione della subscription dal database quando l’utente le disattiva.
   Sorgente: `globale:T-0078`. Aggiornamenti, guasti e retry non devono perdere o duplicare dati.
-- [ ] **K-019 · persistenza** — Interruzione del database dopo salvataggio del file.
-  Sorgente: `globale:T-1151`. Aggiornamenti, guasti e retry non devono perdere o duplicare dati.
-- [ ] **K-020 · persistenza** — Non devono esistere riferimenti nel database a file mancanti.
-  Sorgente: `globale:T-1013`. Aggiornamenti, guasti e retry non devono perdere o duplicare dati.
-- [ ] **K-021 · persistenza** — un file esiste nell’archivio ma non nel database.
-  Sorgente: `addendum:A0307`. Aggiornamenti, guasti e retry non devono perdere o duplicare dati.
-- [ ] **K-022 · profili-ruoli** — Controllare author_name e profile_id nel database.
-  Sorgente: `usabilita:U0175`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-023 · profili-ruoli** — Verificare profile_id corretto nel database.
-  Sorgente: `globale:T-0422`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-024 · accessi-privacy** — aggiunta successiva di fotografie autorizzate.
-  Sorgente: `globale:T-1369`. Accesso, consenso o segreto: un errore può esporre funzioni riservate.
+- [x] **K-019 · persistenza** — Interruzione del database dopo salvataggio del file.
+  Sorgente: `globale:T-1151`. d1-media-atomicity L1: un’interruzione D1 dopo il salvataggio MEDIA elimina la parte orfana e consente il retry.
+- [x] **K-020 · persistenza** — Non devono esistere riferimenti nel database a file mancanti.
+  Sorgente: `globale:T-1013`. P0_DOCUMENT_CONCURRENCY 18/18 + d1-media-atomicity: sostituzione ed eliminazione rimuovono chiave e riferimento, senza record verso file mancanti.
+- [x] **K-021 · persistenza** — un file esiste nell’archivio ma non nel database.
+  Sorgente: `addendum:A0307`. d1-media-atomicity L1: un file scritto prima del fallimento D1 viene eliminato e non resta orfano nello storage.
+- [x] **K-022 · profili-ruoli** — Controllare author_name e profile_id nel database.
+  Sorgente: `usabilita:U0175`. P0_ROLES 20/20: author_name e profile_id falsificati vengono ignorati e derivati dalla sessione server.
+- [x] **K-023 · profili-ruoli** — Verificare profile_id corretto nel database.
+  Sorgente: `globale:T-0422`. P0_ROLES 20/20: il post conserva il profile_id della sessione anche quando il client invia un’identità diversa.
+- [x] **K-024 · accessi-privacy** — aggiunta successiva di fotografie autorizzate.
+  Sorgente: `globale:T-1369`. P0_AUTHORIZATION_MATRIX 86/86 + P0_MEDIA_DELETE 14/14: aggiunta media consentita solo con sessione e proprietà valide.
 - [ ] **K-025 · accessi-privacy** — Consentire proroga autorizzata della conservazione.
   Sorgente: `globale:T-1338`. Accesso, consenso o segreto: un errore può esporre funzioni riservate.
-- [ ] **K-026 · accessi-privacy** — Richiesta di nuovo accesso.
-  Sorgente: `usabilita:U0488`. Accesso, consenso o segreto: un errore può esporre funzioni riservate.
-- [ ] **K-027 · accessi-privacy** — Se la password del gruppo deve permettere la pubblicazione, creare una sessione Ospite/Familiare valida e controllata.
-  Sorgente: `usabilita:U0002`. Accesso, consenso o segreto: un errore può esporre funzioni riservate.
-- [ ] **K-028 · accessi-privacy** — Se può pubblicare, creare sessione Ospite.
-  Sorgente: `usabilita:U0480`. Accesso, consenso o segreto: un errore può esporre funzioni riservate.
+- [x] **K-026 · accessi-privacy** — Richiesta di nuovo accesso.
+  Sorgente: `usabilita:U0488`. P0_AUTH_LIFECYCLE 68/68: nuova registrazione/invito, scadenza, rinnovo e nuovo accesso verificati con token reali.
+- [x] **K-027 · accessi-privacy** — Se la password del gruppo deve permettere la pubblicazione, creare una sessione Ospite/Familiare valida e controllata.
+  Sorgente: `usabilita:U0002`. P0_ACCESS_SESSION_BOUNDARIES 17/17: la password comune non apre il gruppo; la pubblicazione familiare usa una sessione ospite legata al dispositivo.
+- [x] **K-028 · accessi-privacy** — Se può pubblicare, creare sessione Ospite.
+  Sorgente: `usabilita:U0480`. P0_AUTHORIZATION_MATRIX 86/86: commento e reazione familiari richiedono identità ospite valida; il solo codice riceve 401.
 - [ ] **K-029 · accessi-privacy** — Verificare accesso amministrativo con autenticazione a più fattori.
   Sorgente: `globale:T-1505`. Accesso, consenso o segreto: un errore può esporre funzioni riservate.
-- [ ] **K-030 · profili-ruoli** — Richiedere eliminazione del proprio profilo.
-  Sorgente: `globale:T-1324`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
+- [x] **K-030 · profili-ruoli** — Richiedere eliminazione del proprio profilo.
+  Sorgente: `globale:T-1324`. P0_PROFILE_DELETION 40/40: richiesta ed eliminazione del profilo rimuovono sessioni, inviti, documenti, posizione e contenuti collegati.
 - [ ] **K-031 · profili-ruoli** — Verificare notifica prioritaria al Coordinatore.
   Sorgente: `globale:T-1193`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
 - [ ] **K-032 · documenti** — Caricare una fotografia del passaporto verticale.
@@ -80,16 +81,16 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-1650`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
 - [ ] **K-035 · documenti** — Non mostrare numeri di passaporto.
   Sorgente: `globale:T-1354`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
-- [ ] **K-036 · documenti** — Tentare di aprire documenti.
-  Sorgente: `usabilita:U0620;usabilita:U0635`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
-- [ ] **K-037 · documenti** — Verificare che i vecchi link ai documenti non funzionino.
-  Sorgente: `globale:T-1326`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
+- [x] **K-036 · documenti** — Tentare di aprire documenti.
+  Sorgente: `usabilita:U0620;usabilita:U0635`. P0_DOCUMENTS 12/12 + P0_RESOURCE_ENUMERATION 17/17 + ui-protected-pdf 1/1: apertura reale consentita solo a proprietario/coordinatore.
+- [x] **K-037 · documenti** — Verificare che i vecchi link ai documenti non funzionino.
+  Sorgente: `globale:T-1326`. P0_DOCUMENT_CONCURRENCY 18/18: dopo sostituzione o eliminazione la vecchia chiave media non restituisce più 200.
 - [ ] **K-038 · documenti** — Verificare che non vi siano differenze tra itinerario, mappe e documenti.
   Sorgente: `globale:T-1269`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
-- [ ] **K-039 · documenti** — Verificare documenti precedenti conservati.
-  Sorgente: `globale:T-1032`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
-- [ ] **K-040 · documenti** — Verificare nessun documento nella cache del browser.
-  Sorgente: `globale:T-0491`. Passaporti, visti e PDF richiedono isolamento, disponibilità e cancellazione corretti.
+- [x] **K-039 · documenti** — Verificare documenti precedenti conservati.
+  Sorgente: `globale:T-1032`. migration-safety L1: le migrazioni sono additive e preservano profili, post, documenti e sessioni esistenti.
+- [x] **K-040 · documenti** — Verificare nessun documento nella cache del browser.
+  Sorgente: `globale:T-0491`. service-worker-offline L1: documenti e API private non entrano nella Cache API o nella precache pubblica.
 
 ## K1
 

@@ -5,6 +5,7 @@ const root = path.resolve(import.meta.dirname, "..");
 const sourcePath = path.join(root, "docs", "CONTROL-COVERAGE.csv");
 const csvPath = path.join(root, "docs", "CRITICAL-CONTROLS-1.41.1.csv");
 const markdownPath = path.join(root, "docs", "CRITICAL-CONTROLS-1.41.1.md");
+const evidencePath = path.join(root, "docs", "CRITICAL-CONTROL-EVIDENCE-1.41.1.json");
 const LIMIT = 120;
 
 function parseCsv(text) {
@@ -109,6 +110,8 @@ const selected = candidates.slice(0, LIMIT).map((row, index) => ({
   band: index < 40 ? "K0" : index < 90 ? "K1" : "K2",
   ...row,
 }));
+const recordedEvidence = JSON.parse(fs.readFileSync(evidencePath, "utf8"));
+const passedCount = selected.filter((row) => recordedEvidence[row.source_rows]).length;
 
 const rationale = {
   "accessi-privacy": "Accesso, consenso o segreto: un errore può esporre funzioni riservate.",
@@ -136,10 +139,10 @@ const expectedEvidence = {
   altro: "azione reale + conferma UI + verifica database/storage/notifiche",
 };
 
-const csvHeaders = ["critical_id", "band", "priority", "category", "control", "source_rows", "risk_score", "required_evidence"];
+const csvHeaders = ["critical_id", "band", "priority", "category", "execution_status", "control", "source_rows", "risk_score", "required_evidence", "evidence"];
 const csv = [
   csvHeaders.join(","),
-  ...selected.map((row) => [row.id, row.band, row.priority, row.category, row.control, row.source_rows, row.riskScore, expectedEvidence[row.category]].map(quote).join(",")),
+  ...selected.map((row) => [row.id, row.band, row.priority, row.category, recordedEvidence[row.source_rows] ? "passed" : "pending", row.control, row.source_rows, row.riskScore, expectedEvidence[row.category], recordedEvidence[row.source_rows] || ""].map(quote).join(",")),
 ].join("\n") + "\n";
 
 const grouped = Object.groupBy(selected, (row) => row.band);
@@ -147,6 +150,7 @@ const markdown = [
   "# Pacchetto ristretto dei controlli critici — revisione 1.41.1",
   "",
   `Controlli selezionati: **${selected.length}** tra ${candidates.length} controlli P0–P2 ancora privi di evidenza conclusiva.`,
+  `Stato del pacchetto: **${passedCount} superati**, **${selected.length - passedCount} pendenti**.`,
   "",
   "Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.",
   "",
@@ -157,7 +161,7 @@ const markdown = [
   ...["K0", "K1", "K2"].flatMap((band) => [
     `## ${band}`,
     "",
-    ...(grouped[band] || []).map((row) => `- [ ] **${row.id} · ${row.category}** — ${row.control}\n  Sorgente: \`${row.source_rows}\`. ${rationale[row.category]}`),
+    ...(grouped[band] || []).map((row) => `${recordedEvidence[row.source_rows] ? "- [x]" : "- [ ]"} **${row.id} · ${row.category}** — ${row.control}\n  Sorgente: \`${row.source_rows}\`. ${recordedEvidence[row.source_rows] || rationale[row.category]}`),
     "",
   ]),
 ].join("\n");
@@ -166,4 +170,4 @@ fs.writeFileSync(csvPath, csv, "utf8");
 fs.writeFileSync(markdownPath, markdown, "utf8");
 
 const counts = Object.fromEntries(Object.entries(grouped).map(([band, rows]) => [band, rows.length]));
-console.log(JSON.stringify({ selected: selected.length, candidates: candidates.length, counts, csvPath, markdownPath }, null, 2));
+console.log(JSON.stringify({ selected: selected.length, passed: passedCount, pending: selected.length - passedCount, candidates: candidates.length, counts, csvPath, markdownPath }, null, 2));
