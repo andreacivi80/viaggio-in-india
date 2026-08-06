@@ -304,4 +304,8 @@
   ,{ "control": "password di gruppo e sessione Coordinatore;", "evidence": "ui-coordinator-grid touch 1/1: password comune, sessione viaggiatore e sessione coordinatore verificate come tre stati distinti" }
   ,{ "control": "nessuna visualizzazione momentanea di dati privati;", "evidence": "ui-coordinator-grid touch 1/1: MutationObserver registra zero apparizioni della griglia su pubblico, sola password e viaggiatore" }
   ,{ "control": "utilizzo alternato di profile_id locale e profile_id della sessione.", "evidence": "ui-coordinator-grid touch 1/1: role e profile_id falsificati in localStorage vengono sostituiti dall’identità server senza privilegi coordinatore" }
+  ,{ "control": "Condividere per errore l’invito del Viaggiatore A con il Viaggiatore B.", "evidence": "ui-invite-misdelivery touch 2/2 ripetuto due volte: sessione B invariata, invito A non consumato e ancora utilizzabile dal destinatario" }
+  ,{ "control": "non deve cancellare la sessione personale;", "evidence": "ui-invite-misdelivery touch 2/2: apertura di un invito altrui conserva token, profilo e ruolo della sessione valida" }
+  ,{ "control": "Ricezione invito.", "evidence": "ui-invite-misdelivery touch 2/2: invito personale ricevuto su telefono nuovo crea la sessione del profilo previsto" }
+  ,{ "control": "Verificare richiesta di nuovo accesso.", "evidence": "ui-invite-misdelivery touch 2/2: token realmente scaduto rimosso e nuovo invito valido collegato senza gara con la verifica precedente" }
 ]

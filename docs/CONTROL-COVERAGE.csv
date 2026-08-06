@@ -56,7 +56,7 @@ P0,accessi-privacy,passed,Collegare il telefono A tramite invito personale.,glob
 P0,accessi-privacy,pending,come deve ottenere l’autorizzazione mancante;,addendum:A0433,
 P0,accessi-privacy,pending,Commento con password.,usabilita:U0296,
 P0,accessi-privacy,passed,Commento senza password.,usabilita:U0295,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
-P0,accessi-privacy,pending,Condividere per errore l’invito del Viaggiatore A con il Viaggiatore B.,globale:T-0775,
+P0,accessi-privacy,passed,Condividere per errore l’invito del Viaggiatore A con il Viaggiatore B.,globale:T-0775,"ui-invite-misdelivery touch 2/2 ripetuto due volte: sessione B invariata, invito A non consumato e ancora utilizzabile dal destinatario"
 P0,accessi-privacy,passed,condizione dopo accesso;,addendum:A0286,ui-role-live touch 2/2: invito attiva profilo e ruolo derivati dalla sessione server
 P0,accessi-privacy,passed,condizione quando la sessione è ancora in verifica.,addendum:A0292,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,conferma che nessuna autorizzazione dipenda esclusivamente dal frontend.,addendum:A0482,P0 locale ruoli/documenti/posizione: richieste API falsificate respinte 403 dal Worker
@@ -156,7 +156,7 @@ P0,accessi-privacy,passed,nessuna visualizzazione momentanea di dati privati;,ad
 P0,accessi-privacy,passed,Non accettare token impostati manualmente dal client.,addendum:A0344,Playwright false-token removal + remote session QA; preview a4b05356; 2026-08-04
 P0,accessi-privacy,passed,Non consentire alla password comune di impersonare un Viaggiatore esistente.,usabilita:U0005,authorization-matrix 55/55: auth/unlock con password corretta restituisce 403 e richiede l’invito personale monouso
 P0,accessi-privacy,passed,Non creare inviti.,usabilita:U0369,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
-P0,accessi-privacy,pending,non deve cancellare la sessione personale;,addendum:A0276,
+P0,accessi-privacy,passed,non deve cancellare la sessione personale;,addendum:A0276,"ui-invite-misdelivery touch 2/2: apertura di un invito altrui conserva token, profilo e ruolo della sessione valida"
 P0,accessi-privacy,pending,non deve consentire operazioni private mentre è attiva;,addendum:A0278,
 P0,accessi-privacy,passed,non deve contenere password;,addendum:A0421,security-surface L1: codice gruppo assente dal bundle client e verificato solo contro il secret server
 P0,accessi-privacy,passed,non deve contenere token;,addendum:A0422,security-surface L1: token di sessione/invito non incorporati nel bundle client
@@ -207,7 +207,7 @@ P0,accessi-privacy,passed,Revocare il dispositivo mentre è aperta una finestra 
 P0,accessi-privacy,passed,"Revocare invito, se previsto.",usabilita:U0381,auth-lifecycle 40/40: il coordinatore revoca selettivamente un invito tramite identificativo non utilizzabile come token
 P0,accessi-privacy,passed,Revocare un invito non ancora utilizzato.,globale:T-0779,auth-lifecycle 40/40: DELETE dell’invito pendente restituisce 200 e il successivo claim viene respinto
 P0,accessi-privacy,passed,riceve soltanto contenuti autorizzati ai familiari;,addendum:A0146,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
-P0,accessi-privacy,pending,Ricezione invito.,globale:T-1233,
+P0,accessi-privacy,passed,Ricezione invito.,globale:T-1233,ui-invite-misdelivery touch 2/2: invito personale ricevuto su telefono nuovo crea la sessione del profilo previsto
 P0,accessi-privacy,pending,Richiedere invito personale.,usabilita:U0483,
 P0,accessi-privacy,passed,Richiedere l’invito personale per collegare un dispositivo a un profilo.,globale:T-0038,QA 1.31.0: nuovo dispositivo collegato tramite invito personale monouso
 P0,accessi-privacy,pending,Richiesta di nuovo accesso.,usabilita:U0488,
@@ -308,7 +308,7 @@ P0,accessi-privacy,passed,Verificare privacy dei dati sul profilo pubblico.,glob
 P0,accessi-privacy,passed,Verificare privacy del testo mostrato sul blocco schermo.,globale:T-0532,push-audience 5/5: testo group/private escluso dalle sottoscrizioni pubbliche o familiari non autorizzate
 P0,accessi-privacy,passed,Verificare quale invito rimane valido.,globale:T-0789,auth-lifecycle 40/40: un invito revocato è invalido mentre il secondo invito dello stesso profilo resta utilizzabile una sola volta
 P0,accessi-privacy,passed,Verificare revoca automatica di tutte le sessioni del profilo.,globale:T-0772,profile-deletion 40/40: tutte le auth_sessions del profilo eliminate nella stessa transazione D1
-P0,accessi-privacy,pending,Verificare richiesta di nuovo accesso.,globale:T-0773,
+P0,accessi-privacy,passed,Verificare richiesta di nuovo accesso.,globale:T-0773,ui-invite-misdelivery touch 2/2: token realmente scaduto rimosso e nuovo invito valido collegato senza gara con la verifica precedente
 P0,accessi-privacy,passed,Verificare rimozione del token dall’URL.,usabilita:U0407,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P0,accessi-privacy,passed,Verificare rimozione dell’accesso.,usabilita:U0054,auth-lifecycle 68/68: logout revoca dispositivo e logout-all invalidano immediatamente le sessioni
 P0,accessi-privacy,passed,Verificare sessioni precedenti.,globale:T-1041,"extended-p0-auth-lifecycle 28/28: due sessioni iniziali rilevate, una revocata selettivamente e la restante chiusa con logout-all"

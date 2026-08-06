@@ -1861,14 +1861,50 @@ function App() {
     history.replaceState({}, "", cleanUrl);
     sessionStorage.setItem("india-auth-claiming", "1");
     sessionStorage.setItem("india-pending-invite", inviteToken);
-    fetch(`${API}/auth/claim`, {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-device-name": deviceName(), "x-device-key": deviceKey() },
-      body: JSON.stringify({ invite_token: inviteToken }),
-    })
-      .then(async (response) => {
-        const result = await response.json();
-        if (!response.ok) throw Error(result.error || "Invito non valido");
+    const claimInvite = async () => {
+      const existingToken = localStorage.getItem("india-session-token") || "";
+      if (existingToken) {
+        const currentResponse = await fetch(`${API}/auth/session`, {
+          cache: "no-store",
+          headers: sessionHeaders(existingToken),
+        });
+        if (currentResponse.ok) {
+          const current = await currentResponse.json();
+          localStorage.setItem("india-profile-id", current.profile.id);
+          localStorage.setItem("india-role", current.profile.role || "traveler");
+          localStorage.setItem(
+            "india-visitor-name",
+            `${current.profile.name} ${current.profile.surname || ""}`.trim(),
+          );
+          setSessionToken(existingToken);
+          setSessionProfile(current.profile);
+          setVaultProfileId(current.profile.id);
+          setQuickProfileOpen(true);
+          setQuickStatus(
+            `Questo telefono è già collegato a ${current.profile.name}. Per usare un altro invito, blocca prima questo accesso.`,
+          );
+          sessionStorage.removeItem("india-pending-invite");
+          return;
+        }
+        if (![401, 403].includes(currentResponse.status))
+          throw Error("Verifica dell’accesso non riuscita. Riprova.");
+        localStorage.removeItem("india-session-token");
+        localStorage.removeItem("india-profile-id");
+        localStorage.removeItem("india-role");
+        localStorage.removeItem("india-visitor-name");
+      }
+      const response = await fetch(`${API}/auth/claim`, {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-device-name": deviceName(), "x-device-key": deviceKey() },
+        body: JSON.stringify({ invite_token: inviteToken }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw Error(result.error || "Invito non valido");
+      return result;
+    };
+    claimInvite()
+      .then((result) => {
+        if (!result) return;
         localStorage.setItem("india-session-token", result.token);
         localStorage.removeItem("india-guest-token");
         localStorage.removeItem("india-guest-name");
@@ -1893,7 +1929,12 @@ function App() {
     let active = true;
     let checking = false;
     const verifySession = async () => {
-      if (checking || document.hidden || !navigator.onLine) return;
+      if (
+        checking ||
+        document.hidden ||
+        !navigator.onLine ||
+        sessionStorage.getItem("india-auth-claiming") === "1"
+      ) return;
       checking = true;
       try {
         const response = await fetch(`${API}/auth/session`, {
