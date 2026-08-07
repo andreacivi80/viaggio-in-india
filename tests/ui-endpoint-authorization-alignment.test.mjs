@@ -12,7 +12,8 @@ test("i comandi sensibili della UI dipendono dalla sessione verificata e dal ruo
   assert.match(ui, /canManageGroup \|\| sessionProfile\?\.id === profileId/);
   assert.match(ui, /const viewerIsCoordinator = privateData\.viewer\?\.role === "coordinator"/);
   assert.match(ui, /\{p\.can_manage && \(/);
-  assert.match(ui, /\{x\.can_manage && x\.text && \(/);
+  assert.match(ui, /\{\(x\.can_manage \|\| x\.can_delete\) && x\.text && \(/);
+  assert.match(ui, /disabled=\{!verifiedSessionToken\}/);
 });
 
 test("la documentazione collega ogni comando sensibile al controllo API corrispondente", async () => {
@@ -23,7 +24,8 @@ test("la documentazione collega ogni comando sensibile al controllo API corrispo
     "Apri documenti",
     "Carica/elimina documento",
     "Crea profilo o invito",
-    "Modifica/elimina contenuto",
+    "Elimina contenuto condiviso",
+    "Spunta attività del diario",
     "Commenta/reagisce",
   ]) assert.match(matrix, new RegExp(command.replace("/", "\\/")));
   assert.match(matrix, /sicurezza non dipende dalla UI/i);

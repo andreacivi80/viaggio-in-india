@@ -50,8 +50,9 @@ test("password comune verificata: non resta salvata e non crea una sessione pers
     .toBe(null);
   await expect(page.locator(".accessPill")).toContainText("Pubblico");
   await expect(page.getByText("Entra nel gruppo", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Viaggiatore", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Coordinatore", exact: true })).toBeVisible();
+  await expect(page.locator(".roleChoice button")).toHaveCount(1);
+  await expect(page.locator(".roleChoice button")).toBeDisabled();
+  await expect(page.locator(".roleChoice button")).toHaveText(/Viaggiatore|Coordinatore/);
   await expect
     .poll(() => page.evaluate(() => localStorage.getItem("india-session-token")))
     .toBe(null);

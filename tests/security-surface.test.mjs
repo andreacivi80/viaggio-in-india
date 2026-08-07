@@ -142,7 +142,7 @@ test("la posizione può essere modificata e rimossa soltanto dal proprietario", 
 test("la cancellazione del profilo revoca accessi e rimuove tutti i dati collegati", () => {
   assert.match(worker, /request\.method === "DELETE" && path\.startsWith\("profiles\/"\)/);
   assert.match(worker, /session\.role !== "coordinator" && session\.profile_id !== profileId/);
-  assert.match(worker, /Prima assegna un altro coordinatore/);
+  assert.match(worker, /La coordinatrice assegnata non può essere eliminata/);
   for (const table of [
     "post_media", "comments", "reactions", "posts", "document_status", "locations",
     "push_subscriptions", "profile_invites", "auth_sessions", "profile_device_claims",
@@ -151,11 +151,10 @@ test("la cancellazione del profilo revoca accessi e rimuove tutti i dati collega
   assert.match(worker, /key\.startsWith\("public\/"\)[\s\S]*?if \(!referenced\) return new Response\("Not found", \{ status: 404 \}\)/);
 });
 
-test("il gruppo conserva sempre almeno un coordinatore", () => {
-  const guards = worker.match(/Prima assegna un altro coordinatore/g) || [];
-  assert.ok(guards.length >= 2, "retrocessione ed eliminazione devono proteggere l’ultimo coordinatore");
-  assert.match(worker, /current\.role === "coordinator" && updatedRole !== "coordinator"/);
-  assert.match(worker, /SELECT id FROM profiles WHERE role='coordinator' AND id<>\? LIMIT 1/);
+test("la coordinatrice assegnata resta unica e non sostituibile", () => {
+  assert.match(worker, /const updatedRole = current\.role/);
+  assert.match(worker, /La coordinatrice assegnata non può essere eliminata/);
+  assert.doesNotMatch(worker, /form\.get\("role"\) === "coordinator"/);
 });
 
 test("upload a parti e cancellazione verificano sempre il proprietario", () => {

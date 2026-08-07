@@ -12,13 +12,12 @@ test("la sessione familiare viene emessa e riutilizzata soltanto sul dispositivo
   ]);
   assert.match(worker, /INSERT INTO guest_sessions\(token_hash,visitor_id,display_name,device_key_hash/);
   assert.match(worker, /SELECT visitor_id,display_name,device_key_hash,expires_at/);
-  assert.match(worker, /UPDATE guest_sessions SET device_key_hash=\?/);
+  assert.match(worker, /!guest\.device_key_hash \|\| !deviceKey/);
   assert.match(ui, /"x-guest-token": token, "x-device-key": deviceKey\(\)/);
   assert.match(schema, /guest_sessions[\s\S]*?device_key_hash TEXT/);
 });
 
-test("la migrazione ospite è additiva e non modifica le sessioni esistenti", async () => {
-  const migration = await read("db/migrations/0019_guest_device_binding.sql");
-  assert.match(migration, /ALTER TABLE guest_sessions ADD COLUMN device_key_hash TEXT/);
-  assert.doesNotMatch(migration, /DELETE|UPDATE|DROP/i);
+test("le sessioni ospite storiche senza binding vengono revocate", async () => {
+  const migration = await read("db/migrations/0023_revoke_unbound_sessions.sql");
+  assert.match(migration, /UPDATE guest_sessions[\s\S]*?WHERE device_key_hash IS NULL/);
 });

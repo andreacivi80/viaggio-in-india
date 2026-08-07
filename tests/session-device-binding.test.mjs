@@ -19,8 +19,11 @@ test("ogni nuova sessione è legata a una chiave casuale del dispositivo", async
   assert.match(schema, /device_key_hash TEXT/);
 });
 
-test("la migrazione del binding non revoca né riscrive le sessioni esistenti", async () => {
-  const migration = await read("db/migrations/0018_session_device_binding.sql");
-  assert.match(migration, /ALTER TABLE auth_sessions ADD COLUMN device_key_hash TEXT/);
-  assert.doesNotMatch(migration, /DELETE|UPDATE|DROP/i);
+test("le sessioni storiche senza binding vengono revocate e falliscono in modo chiuso", async () => {
+  const [worker, migration] = await Promise.all([
+    read("functions/api/[[path]].js"),
+    read("db/migrations/0023_revoke_unbound_sessions.sql"),
+  ]);
+  assert.match(worker, /!session\.device_key_hash \|\| !deviceKey/);
+  assert.match(migration, /UPDATE auth_sessions[\s\S]*?WHERE device_key_hash IS NULL/);
 });

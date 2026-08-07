@@ -63,6 +63,13 @@ $coordinatorSecondaryToken = New-QaToken
 $expiredToken = New-QaToken
 $secondaryDeviceToken = New-QaToken
 $deleteProfileToken = New-QaToken
+$ownerDeviceKey = "1" * 64
+$otherDeviceKey = "2" * 64
+$coordinatorDeviceKey = "3" * 64
+$coordinatorSecondaryDeviceKey = "4" * 64
+$expiredDeviceKey = "5" * 64
+$secondaryDeviceKey = "6" * 64
+$deleteProfileDeviceKey = "7" * 64
 $secondaryDeviceId = "device-owner-secondary-$runId"
 $coordinatorSecondaryDeviceId = "device-coordinator-secondary-$runId"
 $created = [DateTime]::UtcNow.ToString("o")
@@ -79,14 +86,14 @@ INSERT OR IGNORE INTO profiles(id,name,surname,role,created_at) VALUES
 ('$coordinatorId','Coordinatore','QA','coordinator','$created'),
 ('$unclaimedId','Invitato','QA','traveler','$created'),
 ('$deleteProfileId','Da eliminare','QA','traveler','$created');
-INSERT OR IGNORE INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES
-('$(Get-TokenHash $ownerToken)','$ownerId','device-owner-$runId','Telefono proprietario QA','$created','$created','$expires',NULL),
-('$(Get-TokenHash $secondaryDeviceToken)','$ownerId','$secondaryDeviceId','Secondo telefono proprietario QA','$created','$created','$expires',NULL),
-('$(Get-TokenHash $otherToken)','$otherId','device-other-$runId','Secondo telefono QA','$created','$created','$expires',NULL),
-('$(Get-TokenHash $coordinatorToken)','$coordinatorId','device-coordinator-$runId','Telefono coordinatore QA','$created','$created','$expires',NULL),
-('$(Get-TokenHash $coordinatorSecondaryToken)','$coordinatorId','$coordinatorSecondaryDeviceId','Secondo telefono coordinatore QA','$created','$created','$expires',NULL),
-('$(Get-TokenHash $deleteProfileToken)','$deleteProfileId','device-delete-$runId','Telefono profilo da eliminare QA','$created','$created','$expires',NULL),
-('$(Get-TokenHash $expiredToken)','$ownerId','device-expired-$runId','Sessione inattiva QA','$oldLastUse','$oldLastUse','$expires',NULL);
+INSERT OR IGNORE INTO auth_sessions(token_hash,profile_id,device_id,device_name,device_key_hash,created_at,last_used_at,expires_at,revoked_at) VALUES
+('$(Get-TokenHash $ownerToken)','$ownerId','device-owner-$runId','Telefono proprietario QA','$(Get-TokenHash $ownerDeviceKey)','$created','$created','$expires',NULL),
+('$(Get-TokenHash $secondaryDeviceToken)','$ownerId','$secondaryDeviceId','Secondo telefono proprietario QA','$(Get-TokenHash $secondaryDeviceKey)','$created','$created','$expires',NULL),
+('$(Get-TokenHash $otherToken)','$otherId','device-other-$runId','Secondo telefono QA','$(Get-TokenHash $otherDeviceKey)','$created','$created','$expires',NULL),
+('$(Get-TokenHash $coordinatorToken)','$coordinatorId','device-coordinator-$runId','Telefono coordinatore QA','$(Get-TokenHash $coordinatorDeviceKey)','$created','$created','$expires',NULL),
+('$(Get-TokenHash $coordinatorSecondaryToken)','$coordinatorId','$coordinatorSecondaryDeviceId','Secondo telefono coordinatore QA','$(Get-TokenHash $coordinatorSecondaryDeviceKey)','$created','$created','$expires',NULL),
+('$(Get-TokenHash $deleteProfileToken)','$deleteProfileId','device-delete-$runId','Telefono profilo da eliminare QA','$(Get-TokenHash $deleteProfileDeviceKey)','$created','$created','$expires',NULL),
+('$(Get-TokenHash $expiredToken)','$ownerId','device-expired-$runId','Sessione inattiva QA','$(Get-TokenHash $expiredDeviceKey)','$oldLastUse','$oldLastUse','$expires',NULL);
 INSERT OR IGNORE INTO posts(id,author_name,profile_id,day_index,visibility,text,created_at)
 VALUES('$referencePostId','Proprietario QA','$ownerId',-1,'public','Pubblicazione di riferimento QA $runId','$created');
 "@
@@ -114,10 +121,17 @@ try {
   $env:QA_RUN_ID = $runId
   $env:QA_DELETE_PROFILE_ID = $deleteProfileId
   $env:QA_DELETE_PROFILE_TOKEN = $deleteProfileToken
+  $env:QA_OWNER_DEVICE_KEY = $ownerDeviceKey
+  $env:QA_OTHER_DEVICE_KEY = $otherDeviceKey
+  $env:QA_COORDINATOR_DEVICE_KEY = $coordinatorDeviceKey
+  $env:QA_COORDINATOR_SECOND_DEVICE_KEY = $coordinatorSecondaryDeviceKey
+  $env:QA_EXPIRED_DEVICE_KEY = $expiredDeviceKey
+  $env:QA_SECOND_DEVICE_KEY = $secondaryDeviceKey
+  $env:QA_DELETE_PROFILE_DEVICE_KEY = $deleteProfileDeviceKey
   $env:QA_UI_SESSION_TOKEN = $ownerToken
   $env:QA_UI_PROFILE_ID = $ownerId
   $env:QA_UI_PROFILE_NAME = "Proprietario QA"
-  $env:QA_UI_DEVICE_KEY = "device-owner-$runId"
+  $env:QA_UI_DEVICE_KEY = $ownerDeviceKey
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
   if ($PublishUi) {
@@ -167,6 +181,7 @@ finally {
   $cleanupSql = @"
 DELETE FROM comments WHERE profile_id IN ($quotedIds);
 DELETE FROM reactions WHERE visitor_id IN ($quotedIds);
+DELETE FROM trip_checks WHERE updated_by IN ($quotedIds);
 DELETE FROM post_media WHERE post_id IN (SELECT id FROM posts WHERE profile_id IN ($quotedIds));
 DELETE FROM posts WHERE profile_id IN ($quotedIds);
 DELETE FROM document_status WHERE profile_id IN ($quotedIds);

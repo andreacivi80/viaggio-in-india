@@ -154,7 +154,7 @@
     {
       "method": "DELETE",
       "path": "posts/*",
-      "access": "owner-or-coordinator"
+      "access": "authenticated-group-member"
     },
     {
       "method": "POST",
@@ -169,12 +169,17 @@
     {
       "method": "DELETE",
       "path": "comments/*",
-      "access": "owner-or-coordinator-or-guest-owner"
+      "access": "authenticated-group-member-or-guest-owner"
     },
     {
       "method": "POST",
       "path": "reactions",
       "access": "profile-or-guest"
+    },
+    {
+      "method": "PUT",
+      "path": "trip-checks/*",
+      "access": "authenticated-group-member"
     },
     {
       "method": "GET",

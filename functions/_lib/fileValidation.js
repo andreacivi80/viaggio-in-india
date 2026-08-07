@@ -17,6 +17,7 @@ export function validateFileBytes(input, contentType, fileName = "file", scope =
     [/^image\/png$/, () => starts(bytes, [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])],
     [/^image\/gif$/, () => ascii(bytes, 0, 4) === "GIF8"],
     [/^image\/webp$/, () => ascii(bytes, 0, 4) === "RIFF" && ascii(bytes, 8, 4) === "WEBP"],
+    [/^image\/(?:heic|heif)$/, () => ascii(bytes, 4, 4) === "ftyp" && /^(?:heic|heix|hevc|hevx|heim|heis|mif1|msf1)$/.test(ascii(bytes, 8, 4))],
     [/^application\/pdf$/, () => ascii(bytes, 0, 5) === "%PDF-"],
     [/^(?:video\/(?:mp4|quicktime)|audio\/(?:mp4|x-m4a))$/, () => ascii(bytes, 4, 4) === "ftyp"],
     [/^audio\/mpeg$/, () => ascii(bytes, 0, 3) === "ID3" || (bytes[0] === 0xff && (bytes[1] & 0xe0) === 0xe0)],

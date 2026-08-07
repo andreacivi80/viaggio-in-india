@@ -28,3 +28,11 @@ test("le icone della mappa generale sono ancorate a tratte reali", () => {
 test("la legenda dei mezzi non copre più la scala chilometrica", () => {
   assert.match(styles, /\.overviewRouteLegend\s*\{[^}]*top:\s*9px;[^}]*bottom:\s*auto;/s);
 });
+
+test("i nomi delle città non dipendono dalle etichette della cartografia esterna", () => {
+  assert.match(source, /className = "tripCityNameLabel"/);
+  assert.match(source, /node\.dataset\.cityName = name/);
+  for (const city of ["Delhi", "Udaipur", "Ranakpur", "Jodhpur", "Jaipur", "Agra", "Varanasi"])
+    assert.ok(source.includes(`${city}: [`), `offset etichetta mancante: ${city}`);
+  assert.match(source, /setTimeout\(markVisualReady, 1800\)/);
+});

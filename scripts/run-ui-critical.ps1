@@ -75,8 +75,8 @@ DELETE FROM security_audit_log
 WHERE actor_profile_id IN ('$profileId','$coordinatorId')
    OR actor_profile_id IN (SELECT id FROM profiles WHERE name='$managedProfileName')
    OR resource_id IN ('$profileId','$coordinatorId')
-   OR resource_id LIKE '$profileId:%'
-   OR resource_id LIKE '$coordinatorId:%';
+   OR instr(resource_id,'${profileId}:')=1
+   OR instr(resource_id,'${coordinatorId}:')=1;
 DELETE FROM profile_invites WHERE profile_id IN ('$profileId','$coordinatorId') OR created_by IN ('$profileId','$coordinatorId');
 DELETE FROM auth_sessions WHERE profile_id IN ('$profileId','$coordinatorId');
 DELETE FROM profile_device_claims WHERE profile_id IN ('$profileId','$coordinatorId');

@@ -12,9 +12,10 @@ test("il Gruppo non viene montato senza una sessione verificata", () => {
   assert.match(source, /Accesso privato richiesto/);
 });
 
-test("la scelta del ruolo comunica e mostra lo stato selezionato", () => {
-  assert.match(source, /aria-pressed=\{bootstrapForm\.role === "traveler"\}/);
-  assert.match(source, /aria-pressed=\{bootstrapForm\.role === "coordinator"\}/);
+test("il ruolo sicuro assegnato dal server viene mostrato senza auto-promozione", () => {
+  assert.match(source, /people\.length === 0 \? "Coordinatore" : "Viaggiatore"/);
+  assert.match(source, /aria-pressed="true"/);
+  assert.doesNotMatch(source, /setBootstrapForm\(\{ \.\.\.bootstrapForm, role: "coordinator"/);
   assert.match(styles, /\.roleChoice button\[aria-pressed="true"\]/);
 });
 

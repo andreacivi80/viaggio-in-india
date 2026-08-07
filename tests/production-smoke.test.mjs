@@ -20,10 +20,25 @@ const boundGuestHeaders = (token, additional = {}) => ({
 });
 
 async function request(path, options = {}) {
+  const headers = new Headers(options.headers || {});
+  const authorization = headers.get("authorization") || "";
+  if (authorization.startsWith("Bearer ") && !headers.has("x-device-key")) {
+    const token = authorization.slice(7);
+    const bindings = [
+      [process.env.QA_SESSION_TOKEN, process.env.QA_OWNER_DEVICE_KEY],
+      [process.env.QA_SECOND_SESSION_TOKEN, process.env.QA_OTHER_DEVICE_KEY],
+      [process.env.QA_COORDINATOR_TOKEN, process.env.QA_COORDINATOR_DEVICE_KEY],
+      [process.env.QA_COORDINATOR_SECOND_TOKEN, process.env.QA_COORDINATOR_SECOND_DEVICE_KEY],
+      [process.env.QA_EXPIRED_SESSION_TOKEN, process.env.QA_EXPIRED_DEVICE_KEY],
+      [process.env.QA_DELETE_PROFILE_TOKEN, process.env.QA_DELETE_PROFILE_DEVICE_KEY],
+    ];
+    const deviceKey = bindings.find(([candidate]) => candidate && candidate === token)?.[1];
+    if (deviceKey) headers.set("x-device-key", deviceKey);
+  }
   let lastError;
   for (let attempt = 0; attempt < 4; attempt += 1) {
     try {
-      return await fetch(`${base}${path}`, options);
+      return await fetch(`${base}${path}`, { ...options, headers });
     } catch (error) {
       lastError = error;
       await new Promise((resolve) => setTimeout(resolve, 500 * (attempt + 1)));

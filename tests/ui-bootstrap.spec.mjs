@@ -22,6 +22,7 @@ test("il tasto Gruppo porta subito alla password su un telefono nuovo", async ({
 });
 
 test("telefono nuovo: password, primo coordinatore, pubblicazione, riapertura e secondo telefono", async ({ browser }, testInfo) => {
+  test.skip(testInfo.project.name !== "Samsung-S20-FE", "Il primo coordinatore è un bootstrap unico; gli altri telefoni verificano l'accesso separatamente.");
   const runCoordinatorName = `${coordinatorName}-${testInfo.project.name}`;
   const runPostMarker = `${postMarker}-${testInfo.project.name}`;
   const device = deviceForProject(testInfo.project.name);
@@ -43,14 +44,14 @@ test("telefono nuovo: password, primo coordinatore, pubblicazione, riapertura e 
   expect((await groupResponse).status()).toBe(200);
 
   await expect(firstPage.getByText("Entra nel gruppo", { exact: true })).toBeVisible();
-  await firstPage.getByRole("button", { name: "Coordinatore", exact: true }).tap();
+  await expect(firstPage.getByRole("button", { name: "Coordinatore", exact: true })).toBeDisabled();
   await firstPage.getByPlaceholder("Nome *").fill(runCoordinatorName);
   await firstPage.getByPlaceholder("Cognome").fill("Collaudo");
   await firstPage.getByPlaceholder("Da dove vieni").fill("Roma");
   await expect(firstPage.getByRole("checkbox")).not.toBeChecked();
   await firstPage.getByRole("checkbox").check();
   const bootstrapResponse = firstPage.waitForResponse(
-    (response) => response.url().endsWith("/api/auth/register") && response.request().method() === "POST",
+    (response) => response.url().endsWith("/api/auth/bootstrap") && response.request().method() === "POST",
   );
   await firstPage.getByRole("button", { name: "Crea profilo e accedi" }).tap();
   expect((await bootstrapResponse).status()).toBe(201);

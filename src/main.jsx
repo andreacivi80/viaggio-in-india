@@ -42,7 +42,7 @@ import { validateMediaSelection } from "./mediaValidation.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.45.3",
+const VERSION = "1.46.1",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -1089,6 +1089,29 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         .addTo(map.current);
       markers.current.push(marker);
     });
+    const overviewCityLabelOffsets = {
+      Delhi: [0, -27],
+      Udaipur: [30, 20],
+      Ranakpur: [38, -18],
+      Jodhpur: [-8, -29],
+      Jaipur: [31, 21],
+      Agra: [0, -29],
+      Varanasi: [-28, -28],
+    };
+    [...new Set(visibleMarkerIndexes.map((index) => sequence[index]))].forEach((name) => {
+      const node = document.createElement("span");
+      node.className = "tripCityNameLabel";
+      node.textContent = name;
+      node.dataset.cityName = name;
+      node.setAttribute("aria-label", `Città: ${name}`);
+      const [lat, lng] = places[name];
+      const offset = selectedDay == null
+        ? overviewCityLabelOffsets[name] || [0, -27]
+        : [0, -34];
+      markers.current.push(new maplibregl.Marker({ element: node, anchor: "center", offset })
+        .setLngLat([lng, lat])
+        .addTo(map.current));
+    });
     const specialStops = selectedDay == null
       ? []
       : [
@@ -1254,10 +1277,21 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         essential: true,
       });
     }
-    map.current.once("idle", () => {
+    let visualReadyDone = false;
+    const markVisualReady = () => {
+      if (visualReadyDone) return;
+      visualReadyDone = true;
       setVisualReady(true);
       onReady?.();
-    });
+    };
+    map.current.once("render", markVisualReady);
+    map.current.once("idle", markVisualReady);
+    const visualReadyTimer = window.setTimeout(markVisualReady, 1800);
+    return () => {
+      window.clearTimeout(visualReadyTimer);
+      map.current?.off("render", markVisualReady);
+      map.current?.off("idle", markVisualReady);
+    };
   }, [selectedDay, ready, currentDayIndex]);
   return (
     <div className={`realMapWrap ${day ? "dayRouteMap" : "overviewRouteMap"}`}>
@@ -1793,6 +1827,7 @@ function App() {
       const d = await r.json();
       setPosts(d.posts || []);
       setPeople(d.profiles || []);
+      setDone(d.trip_checks || {});
       syncVersionRef.current = Number(d.sync_version || 0);
       localStorage.setItem(
         "india-posts",
@@ -1819,6 +1854,25 @@ function App() {
       console.error("india-sync", error);
     } finally {
       clearTimeout(timeout);
+    }
+  };
+  const updateTripCheck = async (checkKey, checked) => {
+    if (!verifiedSessionToken) {
+      setQuickStatus("Accedi come viaggiatore per aggiornare il diario.");
+      return;
+    }
+    const previous = Boolean(done[checkKey]);
+    setDone((current) => ({ ...current, [checkKey]: checked }));
+    try {
+      const response = await fetch(`${API}/trip-checks/${encodeURIComponent(checkKey)}`, {
+        method: "PUT",
+        headers: { ...sessionHeaders(verifiedSessionToken), "content-type": "application/json" },
+        body: JSON.stringify({ checked }),
+      });
+      if (!response.ok) throw Error((await response.json().catch(() => ({}))).error || "Aggiornamento non riuscito");
+    } catch (error) {
+      setDone((current) => ({ ...current, [checkKey]: previous }));
+      setQuickStatus(error.message || "Aggiornamento della spunta non riuscito.");
     }
   };
   useEffect(() => {
@@ -2612,26 +2666,19 @@ function App() {
               <div className="bootstrapCoordinator travelerRegistration">
                 <b>Entra nel gruppo</b>
                 <small>
-                  Inserisci i tuoi dati, scegli il ruolo e collega questo telefono.
+                  {people.length === 0
+                    ? "Crea il primo coordinatore e collega questo telefono."
+                    : "Inserisci i tuoi dati e collega questo telefono come viaggiatore."}
                 </small>
                 <div className="roleChoice" role="group" aria-label="Scegli il ruolo">
                   <button
                     type="button"
-                    className={bootstrapForm.role === "traveler" ? "active" : ""}
-                    aria-pressed={bootstrapForm.role === "traveler"}
-                    onClick={() => setBootstrapForm({ ...bootstrapForm, role: "traveler" })}
+                    className="active"
+                    aria-pressed="true"
+                    disabled
                   >
-                    <span>Viaggiatore</span>
-                    {bootstrapForm.role === "traveler" && <Check aria-hidden="true" />}
-                  </button>
-                  <button
-                    type="button"
-                    className={bootstrapForm.role === "coordinator" ? "active" : ""}
-                    aria-pressed={bootstrapForm.role === "coordinator"}
-                    onClick={() => setBootstrapForm({ ...bootstrapForm, role: "coordinator" })}
-                  >
-                    <span>Coordinatore</span>
-                    {bootstrapForm.role === "coordinator" && <Check aria-hidden="true" />}
+                    <span>{people.length === 0 ? "Coordinatore" : "Viaggiatore"}</span>
+                    <Check aria-hidden="true" />
                   </button>
                 </div>
                 <input
@@ -2665,8 +2712,11 @@ function App() {
                     Accetto l’uso dei miei dati per il viaggio. Documenti e posizione restano nell’area privata.
                   </span>
                 </label>
-                <button onClick={registerTraveler} disabled={travelerRegisterBusy}>
-                  <CircleUserRound /> {travelerRegisterBusy ? "Collegamento…" : "Crea profilo e accedi"}
+                <button
+                  onClick={people.length === 0 ? bootstrapCoordinator : registerTraveler}
+                  disabled={people.length === 0 ? bootstrapBusy : travelerRegisterBusy}
+                >
+                  <CircleUserRound /> {(people.length === 0 ? bootstrapBusy : travelerRegisterBusy) ? "Collegamento…" : "Crea profilo e accedi"}
                 </button>
                 <small>La scelta resta memorizzata su questo dispositivo.</small>
               </div>
@@ -3046,9 +3096,8 @@ function App() {
                               <input
                                 type="checkbox"
                                 checked={!!done[k]}
-                                onChange={(e) =>
-                                  setDone({ ...done, [k]: e.target.checked })
-                                }
+                                disabled={!verifiedSessionToken}
+                                onChange={(e) => updateTripCheck(k, e.target.checked)}
                               />
                               <span>{done[k] ? <Check /> : null}</span>
                               {x}
@@ -4671,19 +4720,23 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
               ) : (
                 <>
                   {x.text && <span>{renderCommentText(x.text)}</span>}
-                  {x.can_manage && x.text && (
+                  {(x.can_manage || x.can_delete) && x.text && (
                     <div className="commentCommands">
-                      <button
-                        onClick={() => {
-                          setEditingCommentId(x.id);
-                          setEditingCommentText(x.text || "");
-                        }}
-                      >
-                        Modifica
-                      </button>
-                      <button onClick={() => setDeletingCommentId(x.id)}>
-                        Elimina
-                      </button>
+                      {x.can_manage && (
+                        <button
+                          onClick={() => {
+                            setEditingCommentId(x.id);
+                            setEditingCommentText(x.text || "");
+                          }}
+                        >
+                          Modifica
+                        </button>
+                      )}
+                      {(x.can_delete ?? x.can_manage) && (
+                        <button onClick={() => setDeletingCommentId(x.id)}>
+                          Elimina
+                        </button>
+                      )}
                     </div>
                   )}
                 </>
@@ -5027,13 +5080,9 @@ function People({
           </label>
           <label className="roleSelect">
             Ruolo nel viaggio
-            <select
-              value={form.role}
-              onChange={(e) => setForm({ ...form, role: e.target.value })}
-            >
-              <option value="traveler">Viaggiatore</option>
-              {canManageGroup && <option value="coordinator">Coordinatore</option>}
-            </select>
+            <span className="roleReadOnly">
+              {form.role === "coordinator" ? "Coordinatrice assegnata" : "Viaggiatore"}
+            </span>
           </label>
           {formStatus.text && (
             <div className={`formStatus ${formStatus.type}`} role="status">

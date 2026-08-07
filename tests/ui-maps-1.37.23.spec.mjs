@@ -11,6 +11,9 @@ test("mappa generale: numeri piccoli, mezzi distinti e nessuna sovrapposizione",
   await page.goto("/?view=map", { waitUntil: "networkidle" });
   await waitForMap(page);
   await expect(page.locator(".overviewRouteMap .vectorMarker")).toHaveCount(8);
+  await expect(page.locator(".overviewRouteMap .tripCityNameLabel")).toHaveCount(7);
+  for (const city of ["Delhi", "Udaipur", "Ranakpur", "Jodhpur", "Jaipur", "Agra", "Varanasi"])
+    await expect(page.locator(`.tripCityNameLabel[data-city-name="${city}"]`)).toBeVisible();
   await expect(page.locator(".overviewModeMarker")).toHaveCount(5);
   await expect(page.locator('.overviewModeMarker[data-route-reference="DEL–UDR"]')).toHaveCount(1);
   await expect(page.locator('.overviewModeMarker[data-route-reference="Udaipur–Jodhpur"]')).toHaveCount(1);
@@ -82,3 +85,20 @@ for (const [day, expectedMode, expectedStops] of [
     await expect(page.locator(".routeMapSummary")).toBeVisible();
   });
 }
+
+test("tutte le quattordici mappe giornaliere mostrano cartografia e nomi delle città", async ({ page }) => {
+  const expectedCities = ["Delhi", "Delhi", "Udaipur", "Udaipur", "Jodhpur", "Jodhpur", "Jaipur", "Jaipur", "Agra", "Agra", "Varanasi", "Varanasi", "Varanasi", "Delhi"];
+  await page.goto("/?view=map", { waitUntil: "networkidle" });
+  await waitForMap(page);
+  const dayButtons = page.locator(".routeChips button");
+  await expect(dayButtons).toHaveCount(14);
+  for (let index = 0; index < 14; index += 1) {
+    await dayButtons.nth(index).tap();
+    await waitForMap(page);
+    await expect(page.locator(".dayRouteMap .tripCityNameLabel").filter({ hasText: expectedCities[index] })).toBeVisible();
+    await expect(page.locator(".routeMapSummary")).toBeVisible();
+    const canvas = await page.locator(".dayRouteMap canvas").evaluate((node) => ({ width: node.width, height: node.height }));
+    expect(canvas.width).toBeGreaterThan(300);
+    expect(canvas.height).toBeGreaterThan(300);
+  }
+});

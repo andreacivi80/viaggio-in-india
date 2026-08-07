@@ -10,6 +10,8 @@ Questa matrice descrive i controlli applicati dal server. La grafica non concede
 | Vedere un post privato | No | No | No | Solo il proprio | Solo se proprietario |
 | Commentare o reagire | Serve identità ospite/personale | Sì, se vede il post | Sì, se vede il post | Sì | Sì |
 | Pubblicare | No | No | Sì | Sì | Sì |
+| Eliminare pubblicazioni condivise | No | No | Sì | Sì | Sì |
+| Spuntare le attività del diario | No | No | Sì | Sì | Sì |
 | Modificare profilo | No | No | Solo il proprio | Sì | Tutti |
 | Creare profili e inviti | No | No | No | No | Sì |
 | Vedere documenti | No | No | Solo i propri | Sì | Tutti |
@@ -48,7 +50,8 @@ Il test `endpoint-authorization-inventory.test.mjs` confronta tutte le rotte dic
 | Carica/elimina documento | Proprietario | `POST/DELETE /documents`: stesso profilo della sessione |
 | Verifica documenti del gruppo | Coordinatore | `POST /documents`: coordinatore senza sostituzione del file altrui |
 | Crea profilo o invito | Coordinatore | `POST /profiles` e `POST /auth/invites`: ruolo coordinatore |
-| Modifica/elimina contenuto | Proprietario o coordinatore | campo `can_manage` derivato dal server e controllo ripetuto nell’endpoint |
+| Elimina contenuto condiviso | Tutti i viaggiatori e coordinatore | `DELETE /posts`: sessione personale verificata; pubblico e ospiti respinti |
+| Spunta attività del diario | Tutti i viaggiatori e coordinatore | `PUT /trip-checks/*`: sessione personale; stato condiviso tramite D1 |
 | Commenta/reagisce | Profilo o familiare identificato | sessione personale o ospite valida e autorizzata alla visibilità del post |
 | Consulta registro di sicurezza | Coordinatore | `GET /security/audit`: ruolo coordinatore; risposta limitata ai campi non sensibili |
 

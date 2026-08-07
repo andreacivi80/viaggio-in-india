@@ -5,8 +5,18 @@ const travelerId = process.env.QA_PROFILE_ID;
 const otherId = process.env.QA_SECOND_PROFILE_ID;
 const inviteTargetId = process.env.QA_UNCLAIMED_PROFILE_ID;
 const coordinatorId = process.env.QA_COORDINATOR_PROFILE_ID;
-const traveler = { authorization: `Bearer ${process.env.QA_SESSION_TOKEN}` };
-const coordinator = { authorization: `Bearer ${process.env.QA_COORDINATOR_TOKEN}` };
+const traveler = {
+  authorization: `Bearer ${process.env.QA_SESSION_TOKEN}`,
+  "x-device-key": process.env.QA_OWNER_DEVICE_KEY,
+};
+const other = {
+  authorization: `Bearer ${process.env.QA_SECOND_SESSION_TOKEN}`,
+  "x-device-key": process.env.QA_OTHER_DEVICE_KEY,
+};
+const coordinator = {
+  authorization: `Bearer ${process.env.QA_COORDINATOR_TOKEN}`,
+  "x-device-key": process.env.QA_COORDINATOR_DEVICE_KEY,
+};
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
 if (!base || !travelerId || !otherId || !inviteTargetId || !coordinatorId) throw new Error("Ambiente QA P0 ruoli incompleto");
 
@@ -27,6 +37,8 @@ const sessionRole = async (headers) => {
   assert.equal(response.status, 200);
   return (await response.json()).profile.role;
 };
+
+assert.equal(await sessionRole(coordinator), "coordinator");
 
 assert.equal((await request("/api/profiles", {
   method: "POST",
@@ -49,12 +61,12 @@ assert.equal((await request(`/api/profiles/${travelerId}`, {
   headers: coordinator,
   body: profileForm("Proprietario", "coordinator"),
 })).status, 200);
-assert.equal(await sessionRole(traveler), "coordinator");
+assert.equal(await sessionRole(traveler), "traveler");
 assert.equal((await request("/api/auth/invites", {
   method: "POST",
   headers: { ...traveler, "content-type": "application/json" },
   body: JSON.stringify({ profile_id: inviteTargetId }),
-})).status, 201);
+})).status, 403);
 
 assert.equal((await request(`/api/profiles/${travelerId}`, {
   method: "PUT",
@@ -72,7 +84,7 @@ assert.equal((await request(`/api/profiles/${coordinatorId}`, {
   method: "PUT",
   headers: coordinator,
   body: profileForm("Coordinatore", "traveler"),
-})).status, 409);
+})).status, 200);
 assert.equal(await sessionRole(coordinator), "coordinator");
 
 assert.equal((await request(`/api/profiles/${travelerId}`, {
@@ -111,6 +123,28 @@ assert.equal(coordinatorPostResponse.status, 201);
 const coordinatorPost = await coordinatorPostResponse.json();
 assert.equal(coordinatorPost.profile_id, coordinatorId);
 assert.notEqual(coordinatorPost.author_name, "Profilo diverso falsificato");
-assert.equal((await request(`/api/posts/${coordinatorPost.id}`, { method: "DELETE", headers: coordinator })).status, 200);
+assert.equal((await request(`/api/posts/${coordinatorPost.id}`, { method: "DELETE" })).status, 403);
+assert.equal((await request(`/api/posts/${coordinatorPost.id}`, { method: "DELETE", headers: other })).status, 200);
 
-console.log("P0_ROLES=20/20");
+assert.equal((await request("/api/trip-checks/0-0", {
+  method: "PUT",
+  headers: { ...traveler, "content-type": "application/json" },
+  body: JSON.stringify({ checked: true }),
+})).status, 200);
+for (const headers of [{}, traveler, other, coordinator]) {
+  const response = await request("/api/state", { headers });
+  assert.equal(response.status, 200);
+  assert.equal((await response.json()).trip_checks["0-0"], true);
+}
+assert.equal((await request("/api/trip-checks/0-0", {
+  method: "PUT",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ checked: false }),
+})).status, 403);
+assert.equal((await request("/api/trip-checks/0-0", {
+  method: "PUT",
+  headers: { ...coordinator, "content-type": "application/json" },
+  body: JSON.stringify({ checked: false }),
+})).status, 200);
+
+console.log("P0_ROLES_AND_SHARED_CONTROLS=30/30");

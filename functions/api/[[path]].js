@@ -242,22 +242,8 @@ async function sessionFromRequest(request, env) {
     .first();
   if (session) {
     const deviceKey = deviceKeyFromRequest(request);
-    if (session.device_key_hash) {
-      if (!deviceKey || (await tokenHash(deviceKey)) !== session.device_key_hash)
-        return null;
-    } else if (deviceKey) {
-      const boundHash = await tokenHash(deviceKey);
-      const bound = await env.DB.prepare(
-        "UPDATE auth_sessions SET device_key_hash=? WHERE token_hash=? AND device_key_hash IS NULL",
-      ).bind(boundHash, tokenDigest).run();
-      if (!bound.meta?.changes) {
-        const current = await env.DB.prepare(
-          "SELECT device_key_hash FROM auth_sessions WHERE token_hash=?",
-        ).bind(tokenDigest).first();
-        if (!current?.device_key_hash || current.device_key_hash !== boundHash) return null;
-      }
-      session.device_key_hash = boundHash;
-    }
+    if (!session.device_key_hash || !deviceKey ||
+        (await tokenHash(deviceKey)) !== session.device_key_hash) return null;
     const lastUsed = Date.parse(session.last_used_at || 0);
     if (!Number.isFinite(lastUsed) || Date.now() - lastUsed > 60 * 60 * 1000)
       await env.DB.prepare(
@@ -305,21 +291,8 @@ async function guestFromRequest(request, env) {
       .first();
   if (!guest) return null;
   const deviceKey = deviceKeyFromRequest(request);
-  if (guest.device_key_hash) {
-    if (!deviceKey || (await tokenHash(deviceKey)) !== guest.device_key_hash) return null;
-  } else if (deviceKey) {
-    const boundHash = await tokenHash(deviceKey);
-    const bound = await env.DB.prepare(
-      "UPDATE guest_sessions SET device_key_hash=? WHERE token_hash=? AND device_key_hash IS NULL",
-    ).bind(boundHash, tokenDigest).run();
-    if (!bound.meta?.changes) {
-      const current = await env.DB.prepare(
-        "SELECT device_key_hash FROM guest_sessions WHERE token_hash=?",
-      ).bind(tokenDigest).first();
-      if (!current?.device_key_hash || current.device_key_hash !== boundHash) return null;
-    }
-    guest.device_key_hash = boundHash;
-  }
+  if (!guest.device_key_hash || !deviceKey ||
+      (await tokenHash(deviceKey)) !== guest.device_key_hash) return null;
   return guest;
 }
 export function rateLimitDimensions(request, actor = "") {
@@ -512,8 +485,10 @@ async function notifySubscribers(env, payload) {
   const authorizedSubscriptions = subscriptions.results.filter((subscription) =>
     canNotifySubscriber(subscription, payload));
   const safePayload = sanitizePushPayload(payload);
-  const deliveries = await Promise.all(
-    authorizedSubscriptions.map(async (subscription) => {
+  const deliveries = [];
+  for (let offset = 0; offset < authorizedSubscriptions.length; offset += 20) {
+    const batch = await Promise.all(
+      authorizedSubscriptions.slice(offset, offset + 20).map(async (subscription) => {
       try {
         const target = {
           endpoint: subscription.endpoint,
@@ -543,8 +518,10 @@ async function notifySubscribers(env, payload) {
           message: String(error?.body || error?.message || "Invio non riuscito").slice(0, 180),
         };
       }
-    }),
-  );
+      }),
+    );
+    deliveries.push(...batch);
+  }
   const errors = deliveries.filter((delivery) => !delivery.ok);
   return {
     configured: true,
@@ -607,8 +584,8 @@ function validateUploadDescription({ contentType, fileName, fileSize, scope }) {
     throw Object.assign(new Error("Dimensione del file non consentita"), { status: 400 });
   if (scope === "post" && (!/^(image|video|audio)\//.test(contentType) || contentType === "image/svg+xml"))
     throw Object.assign(new Error("Per il diario usa foto, video o audio"), { status: 400 });
-  if (scope === "document" && /(?:html|javascript|svg|xml)/i.test(contentType))
-    throw Object.assign(new Error("Formato documento non consentito"), { status: 400 });
+  if (scope === "document" && !/^(?:application\/pdf|image\/(?:jpeg|jpg|png|webp|heic|heif))$/.test(contentType))
+    throw Object.assign(new Error("Per i documenti usa PDF, JPEG, PNG, WebP o HEIC"), { status: 400 });
   if (!String(fileName || "").trim()) throw Object.assign(new Error("Nome file mancante"), { status: 400 });
 }
 const chunkKey = (uploadId, partNumber) => `upload-chunks/${uploadId}/${partNumber}`;
@@ -837,7 +814,7 @@ async function chunkedMedia(env, request, key, headers) {
 }
 
 async function readState(env, session = null, guest = null) {
-  const [profiles, posts, comments, reactions, postMedia, syncState] = await Promise.all([
+  const [profiles, posts, comments, reactions, postMedia, tripChecks, syncState] = await Promise.all([
     env.DB.prepare("SELECT * FROM profiles ORDER BY created_at").all(),
     env.DB.prepare("SELECT * FROM posts ORDER BY created_at DESC").all(),
     env.DB.prepare("SELECT * FROM comments ORDER BY created_at").all(),
@@ -845,6 +822,7 @@ async function readState(env, session = null, guest = null) {
       "SELECT post_id, kind, author_name, COUNT(*) AS total, MAX(created_at) AS created_at FROM reactions GROUP BY post_id, kind, author_name",
     ).all(),
     env.DB.prepare("SELECT * FROM post_media ORDER BY position").all(),
+    env.DB.prepare("SELECT check_key,checked FROM trip_checks ORDER BY check_key").all(),
     env.DB.prepare("SELECT version,updated_at FROM sync_state WHERE id=1").first(),
   ]);
   const profileById = new Map(profiles.results.map((profile) => [profile.id, profile]));
@@ -858,6 +836,9 @@ async function readState(env, session = null, guest = null) {
   return {
     sync_version: Number(syncState?.version || 0),
     sync_updated_at: syncState?.updated_at || null,
+    trip_checks: Object.fromEntries(
+      tripChecks.results.map((item) => [item.check_key, Boolean(item.checked)]),
+    ),
     profiles: profiles.results.map((p) => {
       const {
         avatar_key: avatarKey,
@@ -886,10 +867,9 @@ async function readState(env, session = null, guest = null) {
       } = p;
       return {
       ...postFields,
-      can_manage: Boolean(
-        session &&
-          (session.role === "coordinator" || postProfileId === session.profile_id),
-      ),
+      // Every authenticated member of the travel group may remove shared
+      // posts. Public visitors never receive this capability.
+      can_manage: Boolean(session),
       author_name: publicName(postProfileId, p.author_name),
       media_url: mediaUrl(legacyMediaKey),
       media: [
@@ -931,6 +911,9 @@ async function readState(env, session = null, guest = null) {
               session
                 ? session.role === "coordinator" || commentProfileId === session.profile_id
                 : guest && commentVisitorId === guest.visitor_id,
+            ),
+            can_delete: Boolean(
+              session || (guest && commentVisitorId === guest.visitor_id),
             ),
             author_name: publicName(commentProfileId, c.author_name),
             media_url: mediaUrl(commentMediaKey),
@@ -1026,7 +1009,7 @@ export async function onRequest(context) {
       const name = String(body.name || "").trim();
       const surname = String(body.surname || "").trim();
       const originCity = String(body.origin_city || "").trim();
-      const role = body.role === "coordinator" ? "coordinator" : "traveler";
+      const role = "traveler";
       const knownGender = { andrea: "male", sara: "female", valentina: "female" }[name.toLowerCase()] || "";
       const gender = ["female", "male"].includes(body.gender) ? body.gender : knownGender;
       if (body.privacy_consent !== true)
@@ -1347,6 +1330,25 @@ export async function onRequest(context) {
       const guest = session ? null : await guestFromRequest(request, env);
       return json(await readState(env, session, guest));
     }
+    if (request.method === "PUT" && path.startsWith("trip-checks/")) {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 403);
+      const checkKey = decodeURIComponent(path.slice(12));
+      const match = checkKey.match(/^(\d{1,2})-(\d{1,2})$/);
+      if (!match || Number(match[1]) > 13 || Number(match[2]) > 9)
+        return json({ error: "Spunta non valida" }, 400);
+      const body = await request.json().catch(() => ({}));
+      if (typeof body.checked !== "boolean")
+        return json({ error: "Stato della spunta non valido" }, 400);
+      const updatedAt = now();
+      await env.DB.prepare(
+        `INSERT INTO trip_checks(check_key,checked,updated_by,updated_at)
+         VALUES(?,?,?,?)
+         ON CONFLICT(check_key) DO UPDATE SET
+           checked=excluded.checked,updated_by=excluded.updated_by,updated_at=excluded.updated_at`,
+      ).bind(checkKey, body.checked ? 1 : 0, session.profile_id, updatedAt).run();
+      return json({ ok: true, check_key: checkKey, checked: body.checked, updated_at: updatedAt });
+    }
     if (request.method === "GET" && path === "sync/version") {
       const state = await env.DB.prepare(
         "SELECT version,updated_at FROM sync_state WHERE id=1",
@@ -1494,6 +1496,12 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "push/subscribe") {
       const session = await sessionFromRequest(request, env);
       const guest = session ? null : await guestFromRequest(request, env);
+      if (!session && !guest) return json({ error: "Identità richiesta" }, 401);
+      const subscriptionLimit = await rateLimit(
+        env, request, "push-subscribe", 8, 3600,
+        session?.profile_id || guest?.visitor_id || "",
+      );
+      if (subscriptionLimit) return subscriptionLimit;
       const body = await request.json();
       const subscription = body.subscription || {};
       const endpoint = String(subscription.endpoint || "");
@@ -1561,14 +1569,21 @@ export async function onRequest(context) {
     if (request.method === "POST" && path === "uploads/init") {
       const session = await sessionFromRequest(request, env);
       if (!session) return json({ error: "Accesso personale richiesto" }, 403);
+      const initLimit = await rateLimit(env, request, "upload-init", 20, 600, session.profile_id);
+      if (initLimit) return initLimit;
       const body = await request.json();
       const scope = String(body.scope || "post");
       const visibility = scope === "post" && ["public", "family", "group", "private"].includes(body.visibility)
         ? body.visibility : "private";
-      const contentType = String(body.content_type || "application/octet-stream").toLowerCase();
       const fileName = String(body.file_name || "file").slice(0, 180);
+      const contentType = normalizeStoredContentType(body.content_type, fileName);
       const fileSize = Number(body.file_size);
       validateUploadDescription({ contentType, fileName, fileSize, scope });
+      const activeUploads = await env.DB.prepare(
+        "SELECT COUNT(*) AS total,COALESCE(SUM(file_size),0) AS bytes FROM upload_sessions WHERE profile_id=? AND status IN ('uploading','completed') AND consumed_at IS NULL AND expires_at>?",
+      ).bind(session.profile_id, now()).first();
+      if (Number(activeUploads?.total || 0) >= 6 || Number(activeUploads?.bytes || 0) + fileSize > 1024 * 1024 * 1024)
+        return json({ error: "Hai già troppi caricamenti in corso: completa o elimina quelli precedenti" }, 429);
       const uploadId = id();
       const accessPrefix = scope === "document" ? "private" : visibility === "public" ? "public" : "restricted";
       const objectKey = `chunked/${accessPrefix}/${uploadId}.${ext(fileName)}`;
@@ -1596,6 +1611,8 @@ export async function onRequest(context) {
     if (uploadPartMatch && request.method === "PUT") {
       const session = await sessionFromRequest(request, env);
       if (!session) return json({ error: "Accesso personale richiesto" }, 403);
+      const partLimit = await rateLimit(env, request, "upload-part", 300, 600, session.profile_id);
+      if (partLimit) return partLimit;
       const upload = await env.DB.prepare(
         "SELECT * FROM upload_sessions WHERE id=? AND status='uploading' AND expires_at>?",
       ).bind(uploadPartMatch[1], now()).first();
@@ -1762,7 +1779,9 @@ export async function onRequest(context) {
         job: String(form.get("job") || ""),
         origin_city: String(form.get("origin_city") || ""),
         bio: String(form.get("bio") || ""),
-        role: form.get("role") === "coordinator" ? "coordinator" : "traveler",
+        // The coordinator is assigned once during bootstrap. Every profile
+        // created afterwards is always a traveler.
+        role: "traveler",
         gender: ["female", "male"].includes(String(form.get("gender"))) ? String(form.get("gender")) : "",
         avatar_key: avatar?.key || null,
         created_at: now(),
@@ -1814,19 +1833,9 @@ export async function onRequest(context) {
       if (!name) return json({ error: "Nome richiesto" }, 400);
       const avatar = await saveMedia(env, form.get("avatar"), "public/avatars");
       const avatarKey = avatar?.key || current.avatar_key || null;
-      const updatedRole =
-        session.role === "coordinator"
-          ? form.get("role") === "coordinator"
-            ? "coordinator"
-            : "traveler"
-          : current.role;
-      if (current.role === "coordinator" && updatedRole !== "coordinator") {
-        const remainingCoordinator = await env.DB.prepare(
-          "SELECT id FROM profiles WHERE role='coordinator' AND id<>? LIMIT 1",
-        ).bind(profileId).first();
-        if (!remainingCoordinator)
-          return json({ error: "Prima assegna un altro coordinatore" }, 409);
-      }
+      // The assigned role is immutable: no traveler can be promoted and the
+      // existing coordinator cannot be replaced from profile management.
+      const updatedRole = current.role;
       try {
         await env.DB.prepare(
           "UPDATE profiles SET name=?,surname=?,age=?,job=?,origin_city=?,bio=?,role=?,avatar_key=?,gender=? WHERE id=?",
@@ -1869,13 +1878,8 @@ export async function onRequest(context) {
       const profile = await env.DB.prepare("SELECT id,role FROM profiles WHERE id=?")
         .bind(profileId).first();
       if (!profile) return json({ error: "Viaggiatore non trovato" }, 404);
-      if (profile.role === "coordinator") {
-        const remainingCoordinator = await env.DB.prepare(
-          "SELECT id FROM profiles WHERE role='coordinator' AND id<>? LIMIT 1",
-        ).bind(profileId).first();
-        if (!remainingCoordinator)
-          return json({ error: "Prima assegna un altro coordinatore" }, 409);
-      }
+      if (profile.role === "coordinator")
+        return json({ error: "La coordinatrice assegnata non può essere eliminata" }, 409);
       const deleted = await deleteProfileData(env, profileId);
       if (!deleted) return json({ error: "Viaggiatore non trovato" }, 404);
       await writeSecurityAudit(env, {
@@ -2047,8 +2051,6 @@ export async function onRequest(context) {
         .bind(postId)
         .first();
       if (!p) return json({ error: "Contenuto non trovato" }, 404);
-      if (session.role !== "coordinator" && p.profile_id !== session.profile_id)
-        return json({ error: "Non puoi eliminare questo contenuto" }, 403);
       if (p?.media_key) await deleteStoredMedia(env, p.media_key);
       const mediaRows = await env.DB.prepare(
         "SELECT media_key FROM post_media WHERE post_id=?",
@@ -2212,10 +2214,10 @@ export async function onRequest(context) {
         .bind(commentId)
         .first();
       if (!existing) return json({ error: "Commento non trovato" }, 404);
-      const ownsComment = session
-        ? session.role === "coordinator" || existing.profile_id === session.profile_id
-        : guest && existing.visitor_id === guest.visitor_id;
-      if (!ownsComment)
+      const canDeleteComment = Boolean(
+        session || (guest && existing.visitor_id === guest.visitor_id),
+      );
+      if (!canDeleteComment)
         return json({ error: "Non puoi eliminare questo commento" }, 403);
       await env.DB.prepare("DELETE FROM comments WHERE id=?").bind(commentId).run();
       if (existing.media_key) await deleteStoredMedia(env, existing.media_key);
@@ -2397,10 +2399,7 @@ export async function onRequest(context) {
       const ownsDocument = session?.profile_id === profileId;
       const coordinatorVerificationOnly =
         session?.role === "coordinator" && !requestsFileChange;
-      if (
-        !session ||
-        (!ownsDocument && !coordinatorVerificationOnly)
-      )
+      if (!session || (!coordinatorVerificationOnly && !(ownsDocument && requestsFileChange)))
         return json({ error: "Documento non autorizzato" }, 403);
       const type = String(form.get("doc_type"));
       if (!["passport", "visa", "tickets", "insurance"].includes(type) && !/^other-[a-f0-9-]{36}$/.test(type))
@@ -2427,9 +2426,13 @@ export async function onRequest(context) {
         await abandonIdempotentOperation(env, operation.operationHash);
         throw error;
       }
+      const requestedStatus = String(form.get("status") || "missing");
       const status = media
         ? "uploaded"
-        : String(form.get("status") || "missing");
+        : requestedStatus === "verified" ? "verified" : "missing";
+      const verifiedBy = status === "verified"
+        ? `${session.name} ${session.surname || ""}`.trim()
+        : "";
       let previous;
       try {
         // La lettura della versione precedente e la sostituzione devono stare
@@ -2448,7 +2451,7 @@ export async function onRequest(context) {
             media?.key || null,
             media?.name || null,
             status,
-            String(form.get("verified_by") || ""),
+            verifiedBy,
             now(),
           ),
         ];

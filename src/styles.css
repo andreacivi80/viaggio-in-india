@@ -1192,6 +1192,18 @@ h3 {
   color: var(--color-text-primary);
   font: inherit;
 }
+.roleReadOnly {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  padding: 9px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface-soft);
+  color: var(--color-text);
+  font-size: 14px;
+  font-weight: 800;
+}
 .composerActions {
   display: flex;
   gap: 7px;
@@ -5653,6 +5665,21 @@ mark.mention {
 .routeMapSummary em { padding: 4px 7px; border-radius: 999px; background: #15382f; color: #fff; font-size: 9px; font-style: normal; font-weight: 900; }
 .routeMapSummary span:last-child { text-align: right; }
 .overviewRouteMap .vectorMarker { width: 18px; height: 18px; border-width: 2px; font-size: 7px; }
+.tripCityNameLabel {
+  min-width: max-content;
+  padding: 3px 6px;
+  border: 1px solid #15382f4d;
+  border-radius: 999px;
+  background: #fffdf2f2;
+  color: #102f27;
+  box-shadow: 0 3px 10px #102d2538;
+  font-size: 9px;
+  font-weight: 950;
+  line-height: 1;
+  pointer-events: none;
+  white-space: nowrap;
+}
+.dayRouteMap .tripCityNameLabel { font-size: 10px; }
 .overviewModeMarker {
   min-width: 19px;
   height: 19px;
