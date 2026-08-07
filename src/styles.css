@@ -5351,15 +5351,16 @@ mark.mention {
   background: #07130ecc;
   backdrop-filter: blur(8px);
   overflow: hidden;
-  touch-action: none;
+  overscroll-behavior: none;
+  touch-action: pan-y;
 }
 .citySheet {
   width: min(100%, 700px);
   height: 100dvh;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: auto;
   overscroll-behavior: contain;
   background: #fffaf2;
   color: var(--ink);
@@ -5369,7 +5370,6 @@ mark.mention {
 }
 .citySheet header {
   position: relative;
-  flex: 0 0 min(36vh, 360px);
   height: 36vh;
   min-height: 230px;
   max-height: 360px;
@@ -5441,17 +5441,10 @@ mark.mention {
 .citySheet header small { font-size: 10px; font-weight: 900; letter-spacing: 1.5px; }
 .citySheet header h2 { margin: 3px 0 0; font: 800 38px "Playfair Display", serif; }
 .citySheetBody {
-  min-height: 0;
-  flex: 1 1 auto;
   display: grid;
   align-content: start;
   gap: 14px;
-  padding: 20px 18px calc(38px + env(safe-area-inset-bottom));
-  overflow-x: hidden;
-  overflow-y: auto;
-  overscroll-behavior-y: contain;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
+  padding: 20px 18px calc(118px + env(safe-area-inset-bottom));
 }
 .citySheetBody .cityLead { margin: 0; color: #28483f; font-size: 16px; line-height: 1.55; }
 .citySheetBody dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin: 0; }
