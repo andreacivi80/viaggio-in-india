@@ -14,6 +14,7 @@ param(
   [switch]$ExtendedAvatar,
   [switch]$ExtendedChunkRetry,
   [switch]$ExtendedProfileDeletion,
+  [switch]$DownloadArchiveUi,
   [switch]$PublishUi
 )
 
@@ -134,7 +135,10 @@ try {
   $env:QA_UI_DEVICE_KEY = $ownerDeviceKey
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
-  if ($PublishUi) {
+  if ($DownloadArchiveUi) {
+    & npx playwright test "tests/ui-download-archive.spec.mjs" --reporter=line
+  }
+  elseif ($PublishUi) {
     & npx playwright test "tests/ui-publish-complete.spec.mjs" --reporter=line
   }
   elseif ($ExtendedProfileDeletion) {

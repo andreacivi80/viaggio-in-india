@@ -28,4 +28,5 @@ export {
   Link,
   X,
   Music2,
+  Download,
 } from "lucide-react";

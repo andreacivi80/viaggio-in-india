@@ -139,6 +139,35 @@
   padding: 12px;
   font-weight: 800;
 }
+.groupArchive {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0 110px;
+  padding: 15px;
+  border: 1px solid #f1c9a5;
+  border-radius: 16px;
+  background: linear-gradient(145deg, #fffaf3, #fff2e2);
+  box-shadow: 0 8px 24px rgba(118, 65, 24, 0.08);
+}
+.groupArchive > div { display: grid; gap: 3px; }
+.groupArchive > div small,
+.groupArchiveCount { color: #79695d; }
+.groupArchive button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  border: 0;
+  border-radius: 12px;
+  background: #d85e16;
+  color: #fff;
+  font: inherit;
+  font-weight: 850;
+}
+.groupArchive button:disabled { opacity: 0.65; }
+.groupArchive button svg { width: 19px; height: 19px; }
+.groupArchive p { margin: 0; color: #5c4b3d; font-size: 13px; }
 .dataSaver {
   display: flex;
   gap: 9px;

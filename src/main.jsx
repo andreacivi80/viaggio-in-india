@@ -29,6 +29,7 @@ import {
   Link,
   X,
   Music2,
+  Download,
 } from "./icons.jsx";
 import "./styles.css";
 import { publicationAccessStep, publicationEntryState } from "./accessFlow.js";
@@ -41,8 +42,9 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
+import { createTravelArchive, visibleArchiveMedia } from "./travelArchive.js";
 
-const VERSION = "1.46.1",
+const VERSION = "1.47.0",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -3233,6 +3235,7 @@ function App() {
         {tab === "people" && verifiedSessionToken && (
           <People
             people={people}
+            posts={posts}
             groupCode={effectiveGroupCode}
             sessionToken={effectiveSessionToken}
             sessionProfile={sessionProfile}
@@ -4878,6 +4881,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
 
 function People({
   people,
+  posts,
   groupCode,
   sessionToken,
   sessionProfile,
@@ -4901,7 +4905,9 @@ function People({
     [formStatus, setFormStatus] = useState({ type: "", text: "" }),
     [editingId, setEditingId] = useState(""),
     [inviteLinks, setInviteLinks] = useState({}),
-    [inviteStatus, setInviteStatus] = useState("");
+    [inviteStatus, setInviteStatus] = useState(""),
+    [archiveBusy, setArchiveBusy] = useState(false),
+    [archiveStatus, setArchiveStatus] = useState("");
   const canManageGroup = sessionProfile?.role === "coordinator";
   const canEdit = (profileId) =>
     canManageGroup || sessionProfile?.id === profileId;
@@ -4927,6 +4933,33 @@ function People({
     if (!link) return;
     await navigator.clipboard.writeText(link);
     setInviteStatus(`Link di ${person.name} copiato.`);
+  };
+  const downloadArchive = async () => {
+    if (!sessionToken || archiveBusy) return;
+    setArchiveBusy(true);
+    setArchiveStatus("Preparo l’archivio…");
+    try {
+      const result = await createTravelArchive({
+        posts,
+        requestHeaders: sessionHeaders(sessionToken),
+        onProgress: ({ completed, total }) => setArchiveStatus(`Raccolgo i contenuti · ${completed}/${total}`),
+      });
+      const url = URL.createObjectURL(result.blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `viaggio-india-${new Date().toISOString().slice(0, 10)}.zip`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      setArchiveStatus(result.failed.length
+        ? `Archivio scaricato. ${result.failed.length} contenuti non erano disponibili.`
+        : `Archivio scaricato · ${result.total} contenuti multimediali.`);
+    } catch {
+      setArchiveStatus("Download non riuscito. Controlla la connessione e riprova.");
+    } finally {
+      setArchiveBusy(false);
+    }
   };
   const add = async () => {
     if (!form.name.trim()) {
@@ -5181,6 +5214,20 @@ function People({
           text="Inserisci il primo partecipante con la sua foto."
         />
       )}
+      <div className="groupArchive">
+        <div>
+          <b>Archivio del viaggio</b>
+          <small>Scarica pubblicazioni, foto, video e audio visibili sul tuo dispositivo.</small>
+        </div>
+        <button type="button" onClick={downloadArchive} disabled={archiveBusy}>
+          <Download aria-hidden="true" />
+          {archiveBusy ? "Preparazione…" : "Scarica dati"}
+        </button>
+        <small className="groupArchiveCount">
+          {visibleArchiveMedia(posts).length} contenuti multimediali disponibili
+        </small>
+        {archiveStatus && <p role="status">{archiveStatus}</p>}
+      </div>
     </section>
   );
 }
