@@ -5443,6 +5443,10 @@ mark.mention {
 .citySheetBody article { padding: 15px; border: 1px solid #eadbc5; border-radius: 16px; background: #fff; }
 .citySheetBody article small { color: var(--orange); font-size: 9px; font-weight: 950; letter-spacing: 1px; }
 .citySheetBody article p { margin: 7px 0 0; color: #354b44; line-height: 1.5; }
+.citySheetBody .healthDeclarationCard { border-color: #efcfa3; background: linear-gradient(145deg, #fff9ef, #fff3df); }
+.citySheetBody .healthDeclarationCard > small { display: block; margin-bottom: 10px; color: #a94a1b; }
+.citySheetBody .healthDeclarationCard dl { gap: 7px; }
+.citySheetBody .healthDeclarationCard dl div { padding: 10px 11px; border: 1px solid rgba(190, 111, 49, .12); background: rgba(255, 255, 255, .76); }
 @media (max-width: 370px) {
   .citySheetBody dl { grid-template-columns: 1fr; }
   .citySheet header h2 { font-size: 32px; }

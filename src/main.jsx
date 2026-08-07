@@ -42,7 +42,7 @@ import { validateMediaSelection } from "./mediaValidation.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.45.0",
+const VERSION = "1.45.1",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -245,6 +245,12 @@ const places = {
 };
 const cityFacts = {
   Delhi: {
+    healthDeclaration: {
+      state: "Delhi",
+      district: "South West Delhi",
+      mainCity: "New Delhi",
+      region: "India settentrionale · Territorio Nazionale della Capitale",
+    },
     population: "16,31 milioni", area: "1.484 km\u00b2", scope: "Territorio della Capitale \u00b7 Censimento 2011",
     description: "Capitale immensa e stratificata: quartieri moderni, citt\u00e0 moghul, mercati, moschee e monumenti raccontano molte Indie nello stesso luogo.",
     knownFor: "Forte Rosso, Jama Masjid, India Gate, Qutub Minar e i bazar di Old Delhi",
@@ -252,6 +258,12 @@ const cityFacts = {
     languages: "Hindi, inglese, punjabi e urdu", altitude: "circa 216 m",
   },
   Udaipur: {
+    healthDeclaration: {
+      state: "Rajasthan",
+      district: "Udaipur",
+      mainCity: "Udaipur",
+      region: "Mewar · Rajasthan meridionale",
+    },
     population: "451.100", area: "64 km\u00b2", scope: "Comune \u00b7 Censimento 2011",
     description: "La citt\u00e0 dei laghi del Rajasthan, celebre per il City Palace, le haveli e i riflessi dei palazzi sulle acque del Pichola.",
     knownFor: "Lago Pichola, City Palace, Jag Mandir e tramonti sulle colline Aravalli",
@@ -259,6 +271,12 @@ const cityFacts = {
     languages: "Hindi, mewari e inglese", altitude: "circa 598 m",
   },
   Ranakpur: {
+    healthDeclaration: {
+      state: "Rajasthan",
+      district: "Pali",
+      mainCity: "Ranakpur",
+      region: "Mewar · Monti Aravalli",
+    },
     population: "piccolo centro rurale", area: "area collinare degli Aravalli", scope: "Distretto di Pali \u00b7 Rajasthan",
     description: "Un'oasi verde tra Udaipur e Jodhpur, conosciuta per il grande complesso templare giainista in marmo chiaro.",
     knownFor: "Tempio di Adinath, 1.444 colonne scolpite e paesaggio degli Aravalli",
@@ -266,6 +284,12 @@ const cityFacts = {
     languages: "Hindi, marwari e mewari", altitude: "circa 486 m",
   },
   Jodhpur: {
+    healthDeclaration: {
+      state: "Rajasthan",
+      district: "Jodhpur",
+      mainCity: "Jodhpur",
+      region: "Marwar · Rajasthan occidentale",
+    },
     population: "1,03 milioni", area: "112 km\u00b2", scope: "Comune \u00b7 Censimento 2011",
     description: "La Citt\u00e0 Blu ai margini del Thar: case color indaco, bazar e il Forte Mehrangarh dominano un paesaggio luminoso e compatto.",
     knownFor: "Mehrangarh, Jaswant Thada, Clock Tower e quartieri dipinti di blu",
@@ -273,6 +297,12 @@ const cityFacts = {
     languages: "Hindi, marwari e inglese", altitude: "circa 231 m",
   },
   Jaipur: {
+    healthDeclaration: {
+      state: "Rajasthan",
+      district: "Jaipur",
+      mainCity: "Jaipur",
+      region: "Dhundhar · Rajasthan orientale",
+    },
     population: "3,05 milioni", area: "485 km\u00b2", scope: "Comune \u00b7 Censimento 2011",
     description: "La Citt\u00e0 Rosa, capitale del Rajasthan, unisce palazzi, osservatori astronomici, bazar artigiani e fortezze sulle colline.",
     knownFor: "Hawa Mahal, City Palace, Jantar Mantar, Amber Fort e artigianato",
@@ -280,6 +310,12 @@ const cityFacts = {
     languages: "Hindi, dhundhari, marwari e inglese", altitude: "circa 431 m",
   },
   Agra: {
+    healthDeclaration: {
+      state: "Uttar Pradesh",
+      district: "Agra",
+      mainCity: "Agra",
+      region: "Braj · Uttar Pradesh occidentale",
+    },
     population: "1,75 milioni", area: "circa 121 km\u00b2", scope: "Area urbana \u00b7 Censimento 2011",
     description: "Citt\u00e0 moghul sulle rive dello Yamuna, conosciuta nel mondo per il Taj Mahal ma ricca anche di fortezze, giardini e artigianato.",
     knownFor: "Taj Mahal, Forte di Agra, Itmad-ud-Daulah e lavorazione del marmo",
@@ -287,6 +323,12 @@ const cityFacts = {
     languages: "Hindi, urdu e braj bhasha", altitude: "circa 171 m",
   },
   Varanasi: {
+    healthDeclaration: {
+      state: "Uttar Pradesh",
+      district: "Varanasi",
+      mainCity: "Varanasi",
+      region: "Purvanchal · Uttar Pradesh orientale",
+    },
     population: "1,44 milioni", area: "circa 82 km\u00b2", scope: "Area urbana \u00b7 Censimento 2011",
     description: "Una delle citt\u00e0 sacre pi\u00f9 antiche dell'India: i ghat sul Gange, le barche all'alba e i rituali serali scandiscono la vita quotidiana.",
     knownFor: "Ghat del Gange, cerimonia Ganga Aarti, Sarnath, seta e musica classica",
@@ -3062,6 +3104,15 @@ function App() {
                     </header>
                     <div className="citySheetBody">
                       <p className="cityLead">{facts.description}</p>
+                      <article className="healthDeclarationCard" aria-label="Dati per dichiarazione di salute">
+                        <small>DATI PER LA DICHIARAZIONE DI SALUTE</small>
+                        <dl>
+                          <div><dt>Stato / territorio</dt><dd>{facts.healthDeclaration.state}</dd></div>
+                          <div><dt>Distretto</dt><dd>{facts.healthDeclaration.district}</dd></div>
+                          <div><dt>Città principale</dt><dd>{facts.healthDeclaration.mainCity}</dd></div>
+                          <div><dt>Regione</dt><dd>{facts.healthDeclaration.region}</dd></div>
+                        </dl>
+                      </article>
                       <dl>
                         <div><dt>Abitanti</dt><dd>{facts.population}</dd></div>
                         <div><dt>Superficie</dt><dd>{facts.area}</dd></div>

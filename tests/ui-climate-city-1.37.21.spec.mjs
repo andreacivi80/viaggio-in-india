@@ -1,6 +1,14 @@
 import { test, expect } from "@playwright/test";
 
 const cities = ["Delhi", "Delhi", "Udaipur", "Udaipur", "Jodhpur", "Jodhpur", "Jaipur", "Jaipur", "Agra", "Agra", "Varanasi", "Varanasi", "Varanasi", "Delhi"];
+const healthDeclarationByCity = {
+  Delhi: ["Delhi", "South West Delhi", "New Delhi", "India settentrionale"],
+  Udaipur: ["Rajasthan", "Udaipur", "Mewar", "Rajasthan meridionale"],
+  Jodhpur: ["Rajasthan", "Jodhpur", "Marwar", "Rajasthan occidentale"],
+  Jaipur: ["Rajasthan", "Jaipur", "Dhundhar", "Rajasthan orientale"],
+  Agra: ["Uttar Pradesh", "Agra", "Braj", "Uttar Pradesh occidentale"],
+  Varanasi: ["Uttar Pradesh", "Varanasi", "Purvanchal", "Uttar Pradesh orientale"],
+};
 
 test("giornate aperte mostrano clima, alba, tramonto e informazioni della città senza sovrapporsi", async ({ page }, testInfo) => {
   const forecasts = cities.map((city, index) => ({
@@ -49,6 +57,13 @@ test("giornate aperte mostrano clima, alba, tramonto e informazioni della città
     await expect(citySheet).toContainText("Altitudine");
     await expect(citySheet).toContainText("Lingue diffuse");
     await expect(citySheet).toContainText("COSA LA RENDE SPECIALE");
+    const healthCard = citySheet.getByRole("article", { name: "Dati per dichiarazione di salute" });
+    await expect(healthCard).toBeVisible();
+    await expect(healthCard).toContainText("Stato / territorio");
+    await expect(healthCard).toContainText("Distretto");
+    await expect(healthCard).toContainText("Città principale");
+    await expect(healthCard).toContainText("Regione");
+    for (const value of healthDeclarationByCity[cities[index]]) await expect(healthCard).toContainText(value);
     await expect(citySheet).not.toContainText("dati indicativi da fonti pubbliche indiane");
     await expect(citySheet).not.toContainText("Censimento 2011");
     expect(await citySheet.evaluate((node) => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
