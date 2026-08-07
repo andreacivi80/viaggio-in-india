@@ -67,6 +67,18 @@ test("giornate aperte mostrano clima, alba, tramonto e informazioni della città
     await expect(citySheet).not.toContainText("dati indicativi da fonti pubbliche indiane");
     await expect(citySheet).not.toContainText("Censimento 2011");
     expect(await citySheet.evaluate((node) => node.scrollWidth <= node.clientWidth + 1)).toBe(true);
+    const citySheetBody = citySheet.locator(".citySheetBody");
+    const scrollMetrics = await citySheetBody.evaluate((node) => ({
+      clientHeight: node.clientHeight,
+      scrollHeight: node.scrollHeight,
+      overflowY: getComputedStyle(node).overflowY,
+      touchAction: getComputedStyle(node).touchAction,
+    }));
+    expect(scrollMetrics.scrollHeight).toBeGreaterThan(scrollMetrics.clientHeight);
+    expect(scrollMetrics.overflowY).toBe("auto");
+    expect(scrollMetrics.touchAction).toBe("pan-y");
+    await citySheetBody.evaluate((node) => node.scrollTo({ top: node.scrollHeight, behavior: "instant" }));
+    await expect(citySheet.getByText("COSA LA RENDE SPECIALE")).toBeInViewport();
     const closeButton = citySheet.getByRole("button", { name: "Chiudi informazioni città" });
     await expect(closeButton.locator("svg")).toHaveCount(1);
     const closeSize = await closeButton.boundingBox();

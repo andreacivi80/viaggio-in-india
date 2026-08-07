@@ -42,7 +42,7 @@ import { validateMediaSelection } from "./mediaValidation.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.45.1",
+const VERSION = "1.45.2",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
