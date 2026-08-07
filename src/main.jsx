@@ -42,7 +42,7 @@ import { validateMediaSelection } from "./mediaValidation.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 
-const VERSION = "1.44.0",
+const VERSION = "1.45.0",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -1017,6 +1017,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       const node = document.createElement("button");
       node.className = `vectorMarker ${active ? "active" : ""} ${isCurrent ? "currentToday" : ""}`.trim();
       node.textContent = String(i + 1);
+      node.dataset.stageIndex = String(i + 1);
       node.setAttribute(
         "aria-label",
         `${isCurrent ? "Siamo qui oggi. " : ""}Tappa ${i + 1}: ${name}`,
@@ -1080,25 +1081,19 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         markers.current.push(marker);
       });
     if (selectedDay == null) {
-      const midpointLngLat = (start, finish) => [
-        (start[1] + finish[1]) / 2,
-        (start[0] + finish[0]) / 2,
-      ];
-      const roadReference = roadPaths["Udaipur-Jodhpur"][
-        Math.floor(roadPaths["Udaipur-Jodhpur"].length / 2)
-      ];
       [
-        ["✈️", "Volo interno DEL–UDR", "air", midpointLngLat(places["Aeroporto DEL"], places["Aeroporto UDR"]), [0, -28], "DEL–UDR"],
-        ["🚐", "Spostamenti su strada Udaipur–Jodhpur", "road", [roadReference[1], roadReference[0]], [30, 26], "Udaipur–Jodhpur"],
-        ["🚆", "Treno notturno Agra–Varanasi", "rail", midpointLngLat(places["Agra Cantt"], places["Varanasi Junction"]), [20, -22], "Agra–Varanasi"],
-        ["⛵", "Barca sul Gange a Varanasi", "boat", [83.009, 25.305], [34, 22], "Varanasi"],
-        ["👣", "Visite a piedi a Jodhpur", "walk", [places.Jodhpur[1], places.Jodhpur[0]], [-8, -25], "Jodhpur"],
-      ].forEach(([symbol, label, mode, coordinates, offset, reference]) => {
+        ["✈️", "Volo interno DEL–UDR", "air", [places.Udaipur[1], places.Udaipur[0]], [-40, -19], "DEL–UDR", "2"],
+        ["🚐", "Spostamenti su strada Udaipur–Jodhpur", "road", [places.Ranakpur[1], places.Ranakpur[0]], [27, 22], "Udaipur–Jodhpur", "3"],
+        ["🚆", "Treno notturno Agra–Varanasi", "rail", [places.Agra[1], places.Agra[0]], [27, -20], "Agra–Varanasi", "6"],
+        ["⛵", "Barca sul Gange a Varanasi", "boat", [places.Varanasi[1], places.Varanasi[0]], [27, 20], "Varanasi", "7"],
+        ["👣", "Visite a piedi a Jodhpur", "walk", [places.Jodhpur[1], places.Jodhpur[0]], [-29, -20], "Jodhpur", "4"],
+      ].forEach(([symbol, label, mode, coordinates, offset, reference, nearStage]) => {
         const node = document.createElement("span");
         node.className = `overviewModeMarker mode-${mode}`;
         node.textContent = symbol;
         node.setAttribute("aria-label", label);
         node.dataset.routeReference = reference;
+        node.dataset.nearStage = nearStage;
         markers.current.push(new maplibregl.Marker({ element: node, anchor: "center", offset })
           .setLngLat(coordinates)
           .setPopup(new maplibregl.Popup({ offset: 18 }).setText(label))
@@ -1613,6 +1608,50 @@ function App() {
   });
   const [bootstrapBusy, setBootstrapBusy] = useState(false);
   const [travelerRegisterBusy, setTravelerRegisterBusy] = useState(false);
+
+  const screenWakeLockRef = useRef(null);
+  useEffect(() => {
+    let disposed = false;
+    const releaseWakeLock = async () => {
+      const lock = screenWakeLockRef.current;
+      screenWakeLockRef.current = null;
+      try { await lock?.release(); } catch {}
+    };
+    const requestWakeLock = async () => {
+      if (
+        disposed ||
+        document.visibilityState !== "visible" ||
+        screenWakeLockRef.current ||
+        !navigator.wakeLock?.request
+      ) return;
+      try {
+        const lock = await navigator.wakeLock.request("screen");
+        if (disposed || document.visibilityState !== "visible") {
+          await lock.release();
+          return;
+        }
+        screenWakeLockRef.current = lock;
+        lock.addEventListener?.("release", () => {
+          if (screenWakeLockRef.current === lock) screenWakeLockRef.current = null;
+        });
+      } catch {}
+    };
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") requestWakeLock();
+      else releaseWakeLock();
+    };
+    requestWakeLock();
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("focus", requestWakeLock);
+    window.addEventListener("pointerdown", requestWakeLock, { passive: true });
+    return () => {
+      disposed = true;
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("focus", requestWakeLock);
+      window.removeEventListener("pointerdown", requestWakeLock);
+      releaseWakeLock();
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;

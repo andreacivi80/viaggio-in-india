@@ -5658,21 +5658,24 @@ mark.mention {
 .overviewRouteLegend {
   position: absolute;
   z-index: 510;
-  right: 9px;
-  bottom: 28px;
+  top: 9px;
+  right: auto;
+  bottom: auto;
   left: 9px;
   display: flex;
-  justify-content: center;
-  gap: 4px;
+  max-width: 142px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 3px;
   pointer-events: none;
 }
 .overviewRouteLegend span {
-  padding: 4px 6px;
+  padding: 3px 5px;
   border: 1px solid #ffffffb8;
   border-radius: 999px;
   background: #fffdf7e8;
   box-shadow: 0 3px 10px #102d2526;
-  font-size: 8px;
+  font-size: 7px;
   font-weight: 900;
   backdrop-filter: blur(6px);
 }

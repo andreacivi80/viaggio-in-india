@@ -23,17 +23,26 @@ test("mappa generale: numeri piccoli, mezzi distinti e nessuna sovrapposizione",
   const geometry = await page.evaluate(() => {
     const boxes = (selector) => [...document.querySelectorAll(selector)].map((el) => {
       const r = el.getBoundingClientRect();
-      return { name: el.dataset.routeReference || el.textContent, left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width };
+      return { name: el.dataset.routeReference || el.textContent, nearStage: el.dataset.nearStage || "", left: r.left, top: r.top, right: r.right, bottom: r.bottom, width: r.width };
     });
     const numbered = boxes(".overviewRouteMap .vectorMarker");
     const modes = boxes(".overviewModeMarker");
     const overlaps = modes.flatMap((mode) => numbered.filter((point) =>
       mode.left < point.right && mode.right > point.left && mode.top < point.bottom && mode.bottom > point.top,
     ).map((point) => `${mode.name}:${point.name}`));
-    return { numbered, overlaps };
+    const distances = modes.map((mode) => {
+      const target = numbered.find((point) => point.name === mode.nearStage);
+      return target ? Math.hypot((mode.left + mode.right - target.left - target.right) / 2, (mode.top + mode.bottom - target.top - target.bottom) / 2) : Infinity;
+    });
+    const legend = document.querySelector(".overviewRouteLegend")?.getBoundingClientRect();
+    const scale = document.querySelector(".maplibregl-ctrl-scale")?.getBoundingClientRect();
+    const legendScaleOverlap = Boolean(legend && scale && legend.left < scale.right && legend.right > scale.left && legend.top < scale.bottom && legend.bottom > scale.top);
+    return { numbered, overlaps, distances, legendScaleOverlap };
   });
   expect(geometry.numbered.every((box) => box.width <= 19)).toBe(true);
   expect(geometry.overlaps).toEqual([]);
+  expect(geometry.distances.every((distance) => distance <= 58)).toBe(true);
+  expect(geometry.legendScaleOverlap).toBe(false);
 });
 
 test("cartina provenienze: Mantova è riconosciuta e i gruppi restano compatti", async ({ page }) => {

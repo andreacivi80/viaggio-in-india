@@ -20,8 +20,11 @@ test("le icone della mappa generale sono ancorate a tratte reali", () => {
   for (const reference of ["DEL–UDR", "Udaipur–Jodhpur", "Agra–Varanasi", "Varanasi", "Jodhpur"])
     assert.ok(source.includes(`"${reference}"`), `riferimento mancante: ${reference}`);
   assert.match(source, /node\.dataset\.routeReference = reference/);
-  assert.match(source, /midpointLngLat\(places\["Aeroporto DEL"\], places\["Aeroporto UDR"\]\)/);
-  assert.match(source, /roadPaths\["Udaipur-Jodhpur"\]/);
-  assert.match(source, /midpointLngLat\(places\["Agra Cantt"\], places\["Varanasi Junction"\]\)/);
-  assert.match(source, /"Barca sul Gange a Varanasi", "boat", \[83\.009, 25\.305\], \[34, 22\]/);
+  for (const [reference, stage] of [["DEL–UDR", "2"], ["Udaipur–Jodhpur", "3"], ["Agra–Varanasi", "6"], ["Varanasi", "7"], ["Jodhpur", "4"]])
+    assert.ok(source.includes(`"${reference}", "${stage}"`), `${reference} non è vicino alla tappa ${stage}`);
+  assert.match(source, /node\.dataset\.nearStage = nearStage/);
+});
+
+test("la legenda dei mezzi non copre più la scala chilometrica", () => {
+  assert.match(styles, /\.overviewRouteLegend\s*\{[^}]*top:\s*9px;[^}]*bottom:\s*auto;/s);
 });
