@@ -189,7 +189,7 @@ test("PDF protetto resta privato, scaricabile e non blocca il visualizzatore mob
 
     for (const [label, filename] of [
       ["Passaporto", "passaporto.pdf"],
-      ["Visto India", "visto.pdf"],
+      ["Visto Thailandia", "visto.pdf"],
       ["Biglietti", "biglietti.pdf"],
       ["Assicurazione", "assicurazione.pdf"],
     ]) {
@@ -214,7 +214,7 @@ test("PDF protetto resta privato, scaricabile e non blocca il visualizzatore mob
       coordinatorPage.locator(".documentPersonCard").filter({ hasText: travelerName }),
     ).toContainText("4/4");
 
-    for (const label of ["Passaporto", "Visto India", "Biglietti", "Assicurazione"]) {
+    for (const label of ["Passaporto", "Visto Thailandia", "Biglietti", "Assicurazione"]) {
       const card = travelerPage.locator(".document").filter({ hasText: label });
       await card.getByRole("button", { name: "Elimina" }).tap();
       const cleanupConfirm = travelerPage.locator(".confirmCard").filter({ hasText: "Eliminare questo documento?" });

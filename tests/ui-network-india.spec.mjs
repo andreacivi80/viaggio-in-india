@@ -71,12 +71,12 @@ test("dopo la prima apertura la bacheca pubblica si riapre senza rete", async ({
     });
     await expect.poll(() => page.evaluate(async () => {
       const keys = await caches.keys();
-      const cache = await caches.open(keys.find((key) => key.startsWith("india-insieme-")) || "");
+      const cache = await caches.open(keys.find((key) => key.startsWith("thailandia-insieme-")) || "");
       const requests = await cache.keys();
       return requests.some((request) => /\/assets\/.*\.js$/.test(new URL(request.url).pathname));
     })).toBe(true);
     const cachedShell = await page.evaluate(async () => {
-      const key = (await caches.keys()).find((item) => item.startsWith("india-insieme-"));
+      const key = (await caches.keys()).find((item) => item.startsWith("thailandia-insieme-"));
       if (!key) return { root: false, script: false, style: false };
       const cache = await caches.open(key);
       const scriptUrl = Array.from(document.scripts).map((script) => script.src).find((url) => /\/assets\/.*\.js$/.test(url));

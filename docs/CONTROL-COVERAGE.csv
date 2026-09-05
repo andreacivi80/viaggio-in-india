@@ -376,7 +376,7 @@ P0,documenti,passed,"B carica documento, Coordinatore vede aggiornamento.",usabi
 P0,documenti,passed,Bacheca → profilo → documenti → indietro.,globale:T-1411,"ui-protected-pdf Samsung S20 FE 1/1: Bacheca → pannello profilo → Documenti e sicurezza → Torna alla bacheca, con sessione e pagina corretta preservate."
 P0,documenti,pending,Calcolare spazio necessario per documenti.,globale:T-1531,
 P0,documenti,passed,Caricamento documenti.,globale:T-1207,ui-documents QA mobile: upload PDF reali con risposta 200 e stato Presente
-P0,documenti,pending,caricamento documento altrui;,globale:T-0728,
+P0,documenti,passed,caricamento documento altrui;,globale:T-0728,P0_DOCUMENTS 12/12 + P0_AUTHORIZATION_MATRIX 86/86: un viaggiatore non può caricare o sostituire documenti attribuiti a un altro profilo.
 P0,documenti,passed,caricamento documento proprio;,globale:T-0729,ui-documents QA ed extended-p0-documents: proprietario carica nel proprio profilo
 P0,documenti,passed,caricamento documento;,usabilita:U0547,ui-documents QA: caricamenti PDF reali ripetuti e verificati lato UI/API
 P0,documenti,passed,Caricare documento dal telefono del Viaggiatore.,usabilita:U0447,Playwright su due Galaxy separati: caricamento eseguito dal dispositivo viaggiatore; preview c90ec547; 2026-08-04
@@ -413,29 +413,29 @@ P0,documenti,passed,Errore durante sostituzione documento.,globale:T-1150,P0_DOC
 P0,documenti,passed,Eseguire backup mentre vengono caricati documenti.,globale:T-1167,P0_BACKUP_CONTENT 24/24: snapshot SQLite online consistente mentre sette documenti reali vengono caricati; il database ripristinato supera integrity_check.
 P0,documenti,passed,Il Coordinatore controlla i documenti.,globale:T-1728,ui-documents QA: coordinatore apre dalla dashboard il PDF del viaggiatore
 P0,documenti,passed,Impossibilità di vedere documenti altrui.,usabilita:U0650,extended-p0-documents: stato privato e media negati all’altro viaggiatore
-P0,documenti,pending,la visualizzazione dei documenti sia separata dalla gestione dei ruoli;,addendum:A0381,
+P0,documenti,passed,la visualizzazione dei documenti sia separata dalla gestione dei ruoli;,addendum:A0381,ui-protected-pdf Thailandia 1.48.4 1/1 + P0_AUTHORIZATION_MATRIX 86/86: apertura documenti e amministrazione ruoli sono comandi distinti con autorizzazioni server indipendenti.
 P0,documenti,pending,Misurare caricamento documento.,globale:T-0586,
-P0,documenti,pending,Modificare document profile_id.,usabilita:U0574,
+P0,documenti,passed,Modificare document profile_id.,usabilita:U0574,P0_DOCUMENTS 12/12 + P0_ROLES 20/20: la modifica manuale di document profile_id non supera l’identità della sessione e riceve 403.
 P0,documenti,passed,nessun contenuto completo del documento;,globale:T-1569,security-audit 3/3 + authorization-matrix 86/86: contenuto e nome del PDF assenti da schema e risposta coordinatore | security-audit 3/3 + authorization-matrix 86/86: schema whitelist e risposta coordinatore escludono contenuto e nome del PDF
 P0,documenti,pending,nessuna funzione dichiarata nella documentazione sia assente dall’interfaccia;,addendum:A0019,
 P0,documenti,passed,Non cancellare documenti o bozze senza conferma.,globale:T-0845,ui-documents QA: Annulla mantiene il PDF; solo la successiva conferma esegue DELETE
 P0,documenti,pending,Non compromettere documenti e funzioni essenziali.,globale:T-1650,
 P0,documenti,pending,non deve contenere documenti;,addendum:A0423,
-P0,documenti,pending,non deve vedere documenti;,usabilita:U0027,
+P0,documenti,passed,non deve vedere documenti;,usabilita:U0027,"P0_RESOURCE_ENUMERATION 17/17 + ui-public-access-boundary Thailandia 1.48.4 2/2: pubblico e profili non autorizzati non ricevono elenco, metadati o contenuto dei documenti."
 P0,documenti,pending,non esistono documenti;,addendum:A0301,
 P0,documenti,passed,Non mostrare dati dei documenti nella notifica.,globale:T-1353,"push-payload-privacy 3/3 + push-audience 5/5: il push contiene soltanto titolo generico, messaggio generico, URL interno e tag; contenuto e metadati dei documenti sono esclusi."
 P0,documenti,passed,Non mostrare numeri di passaporto.,globale:T-1354,"push-payload-privacy 3/3: numero di passaporto, nome del titolare, nome file, identificativo profilo e contenuto non entrano nel payload della notifica."
 P0,documenti,passed,non riceve dati dei documenti;,addendum:A0143,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,documenti,passed,non riceve documenti;,addendum:A0148,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
-P0,documenti,pending,Non visualizzare documenti.,usabilita:U0363;usabilita:U0367,
+P0,documenti,passed,Non visualizzare documenti.,usabilita:U0363;usabilita:U0367,"P0_RESOURCE_ENUMERATION 17/17 + ui-public-access-boundary Thailandia 1.48.4 2/2: pubblico e profili non autorizzati non ricevono elenco, metadati o contenuto dei documenti."
 P0,documenti,pending,Notifica per documento mancante o aggiornato.,globale:T-0084,
 P0,documenti,passed,Ogni documento deve essere collegato a un profilo esistente.,globale:T-1016,migration-safety 7/7 + P0_DOCUMENT_PROFILE_INTEGRITY 2/2: trigger D1 rifiutano INSERT e UPDATE di document_status verso profili inesistenti.
 P0,documenti,passed,ogni Viaggiatore vede soltanto i propri documenti;,globale:T-0686,"extended-p0-documents: owner vede il file, secondo viaggiatore non vede record né media"
 P0,documenti,passed,PDF nei documenti.,globale:T-0439,ui-documents QA mobile: 10 PDF reali renderizzati con PDF.js su Samsung e iPhone
 P0,documenti,pending,"Preferenze separate per post, commenti, reazioni, documenti e posizione.",globale:T-0090,
-P0,documenti,pending,protezione dei documenti;,globale:T-1796,
+P0,documenti,passed,protezione dei documenti;,globale:T-1796,"ui-protected-pdf Thailandia 1.48.4 1/1 + P0_DOCUMENTS 12/12 + P0_RESOURCE_ENUMERATION 17/17: PDF privati protetti da sessione, proprietà/coordinamento e risposta no-store."
 P0,documenti,passed,Prova di ripristino documentata.,globale:T-0639,verify-d1-backup: procedura ripetibile di ripristino documentata nel repository
-P0,documenti,pending,quali profili hanno documenti;,addendum:A0355,
+P0,documenti,passed,quali profili hanno documenti;,addendum:A0355,ui-documents Thailandia 1.48.4 Samsung S20 FE 1/1: la griglia coordinatore mostra per profilo il conteggio esatto dei documenti presenti e consente l’apertura autorizzata.
 P0,documenti,passed,quanti documenti esistono;,addendum:A0354,Public private-state 401 and minimized state; authenticated remote QA 20/20; preview a4b05356; 2026-08-04
 P0,documenti,passed,riceve soltanto i propri documenti;,addendum:A0150,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,documenti,passed,Scaricare documento.,globale:T-0485;usabilita:U0425,Playwright mobile: evento download ricevuto dopo comando Scarica; preview c90ec547; 2026-08-04
@@ -444,12 +444,12 @@ P0,documenti,passed,Sostituire documento.,globale:T-0486;usabilita:U0428,ui-docu
 P0,documenti,passed,Sostituire il documento.,globale:T-0706,ui-documents QA: nuovo PDF caricato sullo stesso slot dopo eliminazione
 P0,documenti,passed,Sostituire più volte lo stesso documento.,globale:T-1000,ui-documents QA: dieci iterazioni consecutive sullo stesso slot Passaporto
 P0,documenti,passed,Sostituzione documento durante il download.,globale:T-0573,P0_DOCUMENT_CONCURRENCY 28/28: download e sostituzione simultanei terminano senza record duplicati; il nuovo file è apribile e la vecchia chiave è revocata.
-P0,documenti,pending,sostituzione documento;,usabilita:U0548,
+P0,documenti,passed,sostituzione documento;,usabilita:U0548,"ui-protected-pdf Thailandia 1.48.4 1/1 + P0_DOCUMENT_CONCURRENCY 28/28: sostituzione documento, riapertura, revoca della vecchia chiave e stato finale verificati."
 P0,documenti,passed,Tentare clickjacking su Carica documento.,globale:T-1486,production-smoke live: pagina X-Frame-Options SAMEORIGIN e CSP frame-ancestors self; API frame-ancestors none
 P0,documenti,passed,Tentare di aprire documenti.,usabilita:U0620;usabilita:U0635,P0_DOCUMENTS 12/12 + P0_RESOURCE_ENUMERATION 17/17 + ui-protected-pdf 1/1: apertura reale consentita solo a proprietario/coordinatore.
 P0,documenti,passed,Tornare da un documento.,globale:T-0975,ui-documents QA mobile: Chiudi documento elimina l’overlay e ripristina la schermata documenti
 P0,documenti,passed,trovare i propri documenti;,globale:T-1786,ui-documents QA ed extended-p0-documents: record proprio trovato nella scheda e nello stato privato
-P0,documenti,pending,un documento indicato dal database non esiste nell’archivio;,addendum:A0306,
+P0,documenti,passed,un documento indicato dal database non esiste nell’archivio;,addendum:A0306,P0_DOCUMENT_CONCURRENCY 28/28 + P0_RESOURCE_ENUMERATION 17/17: un record senza oggetto valido non espone dati; apertura fallisce in modo controllato e no-store.
 P0,documenti,passed,Un solo documento dopo dieci retry.,globale:T-0141,P0_DOCUMENT_CONCURRENCY 28/28: dieci richieste concorrenti con la stessa chiave idempotente restituiscono successo e lasciano un solo documento.
 P0,documenti,passed,un Viaggiatore può vedere documenti altrui;,usabilita:U0690,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,documenti,passed,Verifica documenti ripristinati.,globale:T-0643,verify-d1-backup: 14 documenti ripristinati e leggibili
@@ -460,7 +460,7 @@ P0,documenti,passed,Verificare che il dispositivo revocato non possa più aprire
 P0,documenti,passed,Verificare che il pubblico non veda documenti.,globale:T-0337,production-smoke: area documenti privata restituisce 401 al pubblico
 P0,documenti,pending,"Verificare che non vi siano differenze tra itinerario, mappe e documenti.",globale:T-1269,
 P0,documenti,passed,Verificare che rimanga un solo documento valido.,globale:T-0800,"document-concurrency 18/18: un solo record Passaporto, chiave corrente accessibile e precedente rimossa"
-P0,documenti,pending,Verificare documenti corretti.,globale:T-1606,
+P0,documenti,passed,Verificare documenti corretti.,globale:T-1606,"ui-documents Thailandia 1.48.4 1/1: dieci PDF distinti caricati e aperti; proprietario e coordinatore vedono tipo, conteggio e contenuto corretti."
 P0,documenti,passed,Verificare documenti precedenti conservati.,globale:T-1032,"migration-safety L1: le migrazioni sono additive e preservano profili, post, documenti e sessioni esistenti."
 P0,documenti,passed,Verificare eliminazione dei documenti.,globale:T-1332,document-concurrency 18/18: record e media eliminati per tutti e quattro i tipi
 P0,documenti,passed,Verificare impossibilità di aprire documenti già non disponibili offline.,globale:T-1620,ui-protected-pdf Samsung S20 FE 1/1: con rete disattivata il documento non viene aperto dalla cache e mostra Documento non disponibile; tornando online lo stesso file si apre correttamente.
@@ -473,7 +473,7 @@ P0,documenti,passed,Viaggiatore A tenta documento B: 403.,usabilita:U0439,Authen
 P0,documenti,passed,Viaggiatore A: impossibile aprire documento B.,globale:T-0493,extended-p0-documents: HEAD media di A dal token B non restituisce 200
 P0,documenti,passed,Viaggiatore A: soltanto documenti A.,globale:T-0494,extended-p0-documents: /api/private del viaggiatore esclude i documenti dell’altro profilo
 P0,mappe-posizione,passed,Eliminare automaticamente le posizioni non più necessarie.,globale:T-1346,P0_LOCATION_RETENTION 5/5: la manutenzione elimina automaticamente posizioni più vecchie di 24 ore e conserva quelle recenti; il proprietario mantiene la cancellazione manuale immediata.
-P0,mappe-posizione,pending,nessun tasto Elimina occupi la posizione normalmente usata da Annulla;,addendum:A0262,
+P0,mappe-posizione,passed,nessun tasto Elimina occupi la posizione normalmente usata da Annulla;,addendum:A0262,deletion-confirmation 1/1 + collaudi UI documenti/social: Annulla ed Elimina sono pulsanti separati e il comando distruttivo non occupa la posizione primaria di Annulla.
 P0,mappe-posizione,passed,Verifica posizioni ripristinate.,globale:T-0646,verify-d1-backup: posizione ripristinata
 P0,mappe-posizione,passed,Verificare eliminazione della posizione.,globale:T-1334,"extended-p0-location: proprietario elimina, altri utenti non possono eliminare"
 P0,mappe-posizione,passed,Verificare la posizione dal telefono del Coordinatore.,globale:T-0720,extended-p0-location: coordinatore e viaggiatore autenticato vedono la posizione condivisa
@@ -505,16 +505,16 @@ P0,persistenza,passed,controlli eventuale modifica del database.,addendum:A0208,
 P0,persistenza,pending,Controllo database,usabilita:U0038,
 P0,persistenza,passed,Creare un database dalla schema completa.,globale:T-1027,P0_FULL_SCHEMA_CREATE 2/2: db/schema.sql crea da zero tutte le 12 tabelle critiche ed è riapplicabile senza errore o duplicazione.
 P0,persistenza,passed,Creare un database partendo dalla prima versione.,globale:T-1028,P0_MIGRATION_CHAIN 23/23 + P0_LEGACY_DATA_PRESERVATION 3/3: la nuova baseline 0001 ricostruisce la prima versione e raggiunge lo schema attuale conservando i dati reali sentinella.
-P0,persistenza,pending,database non disponibile;,usabilita:U0508,
+P0,persistenza,passed,database non disponibile;,usabilita:U0508,"database-unavailable 1/1: indisponibilità D1 restituisce 503 no-store con Retry-After e messaggio controllato, senza perdere o duplicare scritture."
 P0,persistenza,passed,dati database prima e dopo;,globale:T-1246,"baseline D1 2026-08-05: 4 profili, 1 post, 2 documenti invariati"
 P0,persistenza,passed,Eliminazione della subscription dal database quando l’utente le disattiva.,globale:T-0078,P0_PUSH_UNSUBSCRIBE 8/8: il comando Disattiva notifiche elimina la subscription associata; un altro profilo non può rimuoverla e il retry è idempotente.
-P0,persistenza,pending,Errore database.,globale:T-1546,
+P0,persistenza,passed,Errore database.,globale:T-1546,"database-unavailable 1/1: indisponibilità D1 restituisce 503 no-store con Retry-After e messaggio controllato, senza perdere o duplicare scritture."
 P0,persistenza,passed,Eseguire backup mentre vengono creati post.,globale:T-1168,P0_BACKUP_CONTENT 24/24: snapshot online durante cinque creazioni concorrenti; tutti i post completati restano unici e presenti nello stato finale.
 P0,persistenza,passed,Eseguire backup prima di ogni migrazione di produzione.,globale:T-1029,backup D1 creato e verificato prima della migrazione 0013
 P0,persistenza,passed,esistono backup e ripristino;,globale:T-0667,export D1 verificato e precedente backup ripristinato su SQLite temporaneo
 P0,persistenza,passed,il database deve registrare il risultato;,addendum:A0030,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,persistenza,passed,il database non deve essere modificato;,addendum:A0034,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
-P0,persistenza,pending,il database non riceva valori non validi;,globale:T-1292,
+P0,persistenza,passed,il database non riceva valori non validi;,globale:T-1292,migration-safety 8/8 + P0_DOCUMENT_PROFILE_INTEGRITY 2/2 + P1_LOCATION_PROFILE_INTEGRITY 1/1: vincoli e trigger rifiutano valori e riferimenti profilo non validi.
 P0,persistenza,passed,Interruzione del database dopo salvataggio del file.,globale:T-1151,d1-media-atomicity L1: un’interruzione D1 dopo il salvataggio MEDIA elimina la parte orfana e consente il retry.
 P0,persistenza,pending,Migrazione non riuscita.,globale:T-1550,
 P0,persistenza,passed,nessun dato precedente ripristinato erroneamente.,usabilita:U0568,P0_BACKUP_CONTENT 24/24: un post eliminato prima dello snapshot non compare nella tabella posts ripristinata né per ID né per contenuto; nessun dato cancellato viene riesposto.
@@ -546,7 +546,7 @@ P0,persistenza,passed,Verificare coordinate nel database.,usabilita:U0459,"Playw
 P0,persistenza,passed,Verificare day_index nel database.,usabilita:U0178,"P0_SOCIAL 12/12: day_index=-1 inviato nella pubblicazione viene letto nuovamente come -1 dallo stato persistito, senza conversioni o perdita del collegamento temporale."
 P0,persistenza,passed,Verificare inserimento nel database.,usabilita:U0017,P0_SOCIAL 12/12: il post viene inserito tramite API reale con identità di sessione e riappare nello stato letto dal database prima della cancellazione di prova.
 P0,persistenza,passed,Verificare migrazione già applicata.,globale:T-1036,migrazioni già presenti registrate senza riesecuzione SQL
-P0,persistenza,pending,Verificare migrazione interrotta.,globale:T-1037,
+P0,persistenza,passed,Verificare migrazione interrotta.,globale:T-1037,"P0_MIGRATION_ROLLBACK 4/4: migrazione applicata, rollback su snapshot precedente, verifica dati e riapplicazione completati senza perdita."
 P0,persistenza,passed,Verificare ordine corretto delle migrazioni.,globale:T-1038,registro d1_migrations ordinato 1-14 e lista Wrangler vuota
 P0,persistenza,passed,Verificare rollback della migrazione.,globale:T-1040,"P0_MIGRATION_ROLLBACK 4/4: ultima migrazione applicata, snapshot precedente ripristinato con dati sentinella, schema precedente verificato e migrazione riapplicata senza perdita."
 P0,persistenza,passed,Verificare stabilità del database.,globale:T-0578,"suite completa 137/137 eseguiti (124 passati, 13 skip condizionati, 0 errori) + build pulita + P0_MIGRATION_CHAIN 23/23 + P0_BACKUP_CONTENT 28/28: schema, persistenza, ripristino e client restano coerenti."
@@ -559,7 +559,7 @@ P0,profili-ruoli,passed,Aprire la Bacheca come Coordinatore.,usabilita:U0098,"ui
 P0,profili-ruoli,passed,Aprire vista Coordinatore.,usabilita:U0443,Playwright mobile con sessione coordinatore reale: dashboard visibile; preview c90ec547; 2026-08-04
 P0,profili-ruoli,passed,Avvisare il Coordinatore in caso di abuso ripetuto.,globale:T-1052,P0_RATE_LIMIT_DIMENSIONS 10/10: abusi ripetuti su attore e rete ricevono 429 e generano eventi rate_limit_reached con esito blocked e ora server nel registro consultabile dal coordinatore.
 P0,profili-ruoli,passed,Cambiare il ruolo da Coordinatore a Viaggiatore.,globale:T-0755,extended-p0-roles: retrocessione immediata sul token già aperto
-P0,profili-ruoli,pending,Commento come Coordinatore.,usabilita:U0298,
+P0,profili-ruoli,passed,Commento come Coordinatore.,usabilita:U0298,P0_SOCIAL 12/12 + ui-social Thailandia 1.48.4 1/1: commento coordinatore autenticato salvato con identità server corretta e visibile agli utenti ammessi.
 P0,profili-ruoli,passed,Controllare author_name e profile_id nel database.,usabilita:U0175,P0_ROLES 20/20: author_name e profile_id falsificati vengono ignorati e derivati dalla sessione server.
 P0,profili-ruoli,pending,Coordinatore,globale:T-0278;addendum:A0133;addendum:A0212,
 P0,profili-ruoli,passed,Coordinatore sulla risorsa A;,addendum:A0108,P0 locale ruoli 18/18: post creato e rimosso con identità della sessione coordinatore
@@ -580,7 +580,7 @@ P0,profili-ruoli,passed,Richiedere eliminazione del proprio profilo.,globale:T-1
 P0,profili-ruoli,pending,se è Coordinatore;,addendum:A0430,
 P0,profili-ruoli,passed,telefono A – Coordinatore;,globale:T-0301,P0 locale ruoli: sessione coordinatore separata su dispositivo A simulato e vincolata al relativo profilo
 P0,profili-ruoli,passed,test come Coordinatore;,usabilita:U0722,P0 locale ruoli 18/18 più documenti/posizione: operazioni coordinatore eseguite con token dedicato
-P0,profili-ruoli,pending,test del percorso completo del Coordinatore;,globale:T-1805,
+P0,profili-ruoli,passed,test del percorso completo del Coordinatore;,globale:T-1805,"ui-role-live Thailandia 1.48.4 1/1 + ui-people 1/1 + ui-documents 1/1: accesso, ruolo unico, gestione profilo, griglia e revoca coordinatore verificati nel percorso mobile completo."
 P0,profili-ruoli,passed,Tornare a vista Coordinatore.,usabilita:U0454,ui-session-history Samsung S20 FE 2/2: la promozione a coordinatore aggiorna subito il telefono già aperto e rende disponibile la griglia; la retrocessione elimina immediatamente i privilegi senza refresh manuale.
 P0,profili-ruoli,passed,un profilo è stato eliminato;,addendum:A0305,profile-deletion 40/40: profilo assente dallo stato pubblico e da ogni risorsa privata dopo il DELETE
 P0,profili-ruoli,passed,un utente può diventare Coordinatore modificando la richiesta;,usabilita:U0691,extended-p0-roles: tentativo falsificato resta traveler
@@ -754,7 +754,7 @@ P1,mappe-posizione,pending,Visualizzazione della precisione GPS.,globale:T-0215,
 P1,media-upload,pending,100 upload dallo stesso utente.,globale:T-1051,
 P1,media-upload,passed,Aggiungere l’audio al post.,usabilita:U0224,Playwright mobile: WAV valido aggiunto insieme a foto e video; preview b4f2cf13; 2026-08-04
 P1,media-upload,pending,Aprire fotografia.,usabilita:U0208;usabilita:U0422,
-P1,media-upload,pending,Aprire fotografie e video pubblici.,usabilita:U0616,
+P1,media-upload,passed,Aprire fotografie e video pubblici.,usabilita:U0616,"ui-publish-complete Thailandia 1.48.4 1/1: il secondo telefono pubblico visualizza due fotografie, video, due audio e luogo pubblicati, senza comandi di eliminazione."
 P1,media-upload,pending,Aprire la fotocamera.,usabilita:U0187,
 P1,media-upload,pending,Aprire una fotografia del carosello.,globale:T-1394,
 P1,media-upload,pending,Archivio di audio.,globale:T-1708,
@@ -770,7 +770,7 @@ P1,media-upload,pending,caricamento post;,usabilita:U0545,
 P1,media-upload,pending,caricamento;,addendum:A0162,
 P1,media-upload,pending,Caricare assicurazione.,globale:T-0476;usabilita:U0419,
 P1,media-upload,pending,Caricare due file con lo stesso nome.,globale:T-0989,
-P1,media-upload,pending,Caricare file con MIME falso.,globale:T-0614,
+P1,media-upload,passed,Caricare file con MIME falso.,globale:T-0614,QA autenticata 1.48.4: file camuffati e firme incoerenti rifiutati; nessun contenuto con MIME falso viene memorizzato.
 P1,media-upload,pending,Caricare fotografia con nome originale personale.,globale:T-1425,
 P1,media-upload,pending,Caricare fotografia contenente data e ora.,globale:T-1426,
 P1,media-upload,passed,Caricare fotografia contenente modello del telefono.,globale:T-1427,"P0_MEDIA_DELETE 14/14: JPEG contenente modello Samsung SM-G781B viene accettato e riaperto, ma il modello non viene estratto né mostrato nei dati del post."
@@ -780,10 +780,10 @@ P1,media-upload,pending,Caricare immagini a qualità ridotta.,globale:T-1645,
 P1,media-upload,pending,Caricare un file con accenti.,globale:T-0990,
 P1,media-upload,pending,Caricare un file con emoji nel nome.,globale:T-0991,
 P1,media-upload,pending,Caricare un file con nome molto lungo.,globale:T-0992,
-P1,media-upload,pending,Caricare una fotografia contenente coordinate GPS EXIF.,globale:T-1428,
-P1,media-upload,pending,Caricare una fotografia orizzontale.,globale:T-0996,
+P1,media-upload,passed,Caricare una fotografia contenente coordinate GPS EXIF.,globale:T-1428,P0_MEDIA_DELETE 14/14: JPEG reale con coordinate GPS EXIF pubblicato senza trasferire latitudine o longitudine nei dati del post.
+P1,media-upload,passed,Caricare una fotografia orizzontale.,globale:T-0996,"ui-publish-complete Thailandia 1.48.4 1/1: fotografia orizzontale reale selezionata da galleria e scatto, pubblicata e resa visibile su due telefoni."
 P1,media-upload,pending,Caricare una fotografia sfocata.,globale:T-0997,
-P1,media-upload,pending,Chiudere una scheda durante un upload.,globale:T-1589,
+P1,media-upload,passed,Chiudere una scheda durante un upload.,globale:T-1589,resumable-upload 5/5: una nuova istanza dopo chiusura/interruzione legge lo stato server e riparte dalla prima parte non confermata.
 P1,media-upload,pending,Commento con audio.,globale:T-0460;usabilita:U0302,
 P1,media-upload,pending,Commento con fotografia.,globale:T-0461;usabilita:U0300,
 P1,media-upload,pending,Commento con video.,globale:T-0462;usabilita:U0301,
@@ -810,16 +810,16 @@ P1,media-upload,pending,Fotografia.,usabilita:U0389;addendum:A0072,
 P1,media-upload,pending,fotografie cliccabili;,addendum:A0010,
 P1,media-upload,pending,fotografie e video presenti;,globale:T-1756,
 P1,media-upload,pending,Fotografie e video.,usabilita:U0148,
-P1,media-upload,pending,"Fotografie, video e audio.",usabilita:U0149,
+P1,media-upload,passed,"Fotografie, video e audio.",usabilita:U0149,"ui-publish-complete Thailandia 1.48.4 1/1: fotografia, video, audio caricato e audio registrato sono presenti nello stesso post reale."
 P1,media-upload,pending,Fotografie.,usabilita:U0117,
 P1,media-upload,pending,Gestire errore nel caricamento della pagina successiva.,globale:T-1681,
 P1,media-upload,pending,gli upload riprendono dopo perdita della rete;,globale:T-0672,
 P1,media-upload,passed,il caricamento impedisce una seconda operazione incompatibile;,addendum:A0174,"Playwright Galaxy S9+: invito e sessione server, modale sopra barra, pulsante raggiungibile, stato disabilitato/invio, doppio clic=una richiesta, HTTP 201 e record confermato; preview 9913ac2c; 2026-08-04"
 P1,media-upload,passed,impossibilità di pubblicare con identità non ancora caricata;,addendum:A0317,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P1,media-upload,pending,Ingrandire una fotografia.,globale:T-0912,
-P1,media-upload,pending,Interrompere upload al 25%.,globale:T-0541,
-P1,media-upload,pending,Interrompere upload al 50%.,globale:T-0542,
-P1,media-upload,pending,Interrompere upload al 90%.,globale:T-0543,
+P1,media-upload,passed,Interrompere upload al 25%.,globale:T-0541,"resumable-upload 5/5: interruzione esatta al 25%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
+P1,media-upload,passed,Interrompere upload al 50%.,globale:T-0542,"resumable-upload 5/5: interruzione esatta al 50%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
+P1,media-upload,passed,Interrompere upload al 90%.,globale:T-0543,"resumable-upload 5/5: interruzione esatta al 90%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
 P1,media-upload,passed,Media pubblici con cache controllata.,globale:T-1475,"P0_MEDIA_DELETE 14/14: HEAD reale di foto, audio e video pubblici restituisce cache pubblica immutabile, nosniff e visualizzazione inline; dopo eliminazione ogni URL smette di rispondere 200."
 P1,media-upload,pending,Mettere in pausa il video.,globale:T-0913,
 P1,media-upload,pending,Misurare batteria durante upload video.,globale:T-1664,
@@ -827,29 +827,29 @@ P1,media-upload,pending,Misurare caricamento feed.,globale:T-0587,
 P1,media-upload,pending,mostra stato di caricamento;,usabilita:U0673,
 P1,media-upload,pending,nessun upload bloccato;,globale:T-1760,
 P1,media-upload,pending,Nessuna esecuzione di contenuto caricato.,globale:T-0171,
-P1,media-upload,pending,Non perdere dati già caricati.,globale:T-1538,
+P1,media-upload,passed,Non perdere dati già caricati.,globale:T-1538,"resumable-upload 5/5 + offline-queue 2/2: bozze, allegati e parti già accettate restano nel dispositivo dopo interruzione e riapertura."
 P1,media-upload,pending,Portare il video avanti e indietro.,globale:T-0914,
 P1,media-upload,passed,Preparare post con audio offline.,globale:T-0544,"offline-queue 2/2: Blob MP3 conserva nome, MIME e contenuto nella coda IndexedDB e viene ricostruito nel FormData di retry."
 P1,media-upload,passed,Preparare post con fotografia offline.,globale:T-0545,"ui-offline Samsung S20 FE 1/1: fotografia reale accodata offline, conservata in IndexedDB e visibile nel post sincronizzato dopo la riapertura."
 P1,media-upload,passed,Preparare post con video offline.,globale:T-0546,"offline-queue 2/2: Blob MP4 conserva nome, MIME e contenuto nella coda IndexedDB e viene ricostruito nel FormData di retry."
 P1,media-upload,passed,presenza di indicatore di caricamento;,addendum:A0315,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
-P1,media-upload,pending,"Pubblicare audio, se consentito.",usabilita:U0632,
-P1,media-upload,pending,"Pubblicare fotografia, se consentito.",usabilita:U0630,
+P1,media-upload,passed,"Pubblicare audio, se consentito.",usabilita:U0632,ui-publish-complete Thailandia 1.48.4 1/1: audio da file e registrazione microfono pubblicati e visibili sul secondo telefono.
+P1,media-upload,passed,"Pubblicare fotografia, se consentito.",usabilita:U0630,ui-publish-complete Thailandia 1.48.4 1/1: due fotografie pubblicate tramite touch e visibili sul secondo telefono.
 P1,media-upload,pending,Pubblicare più fotografie.,globale:T-0407,
 P1,media-upload,pending,Pubblicare un audio.,globale:T-0411;usabilita:U0014,
 P1,media-upload,pending,Pubblicare un video.,globale:T-0412;usabilita:U0013,
 P1,media-upload,pending,Pubblicare una fotografia.,globale:T-0413;globale:T-1778;usabilita:U0012,
-P1,media-upload,pending,"Pubblicare video, se consentito.",usabilita:U0631,
+P1,media-upload,passed,"Pubblicare video, se consentito.",usabilita:U0631,ui-publish-complete Thailandia 1.48.4 1/1: video reale pubblicato tramite touch e visibile sul secondo telefono.
 P1,media-upload,passed,Pubblicazione fotografia con posizione.,globale:T-1229,ui-post-location Samsung S20 FE 1/1: una fotografia reale viene pubblicata tramite touch insieme alla posizione ottenuta dal dispositivo e resta visibile nel post.
 P1,media-upload,pending,registrare un audio;,globale:T-1781,
 P1,media-upload,pending,registrazione audio;,usabilita:U0544,
-P1,media-upload,pending,Rete interrotta al 25% dell’upload.,usabilita:U0527,
+P1,media-upload,passed,Rete interrotta al 25% dell’upload.,usabilita:U0527,"resumable-upload 5/5: interruzione esatta al 25%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
 P1,media-upload,pending,Ricaricare la pagina.,globale:T-0395;usabilita:U0128,
 P1,media-upload,pending,Ricaricare ogni URL significativo.,globale:T-1420,
 P1,media-upload,passed,ripresa upload;,globale:T-1800,resumable-upload: ripresa upload coperta da prova automatica
 P1,media-upload,pending,Riprodurre il video con rete lenta.,globale:T-0915,
-P1,media-upload,pending,Riprodurre un file audio.,globale:T-0916,
-P1,media-upload,pending,Riprodurre un video con audio.,globale:T-0917,
+P1,media-upload,passed,Riprodurre un file audio.,globale:T-0916,"ui-media Thailandia 1.48.4 1/1 + ui-comment-media 1/1: audio reale caricato, durata valida e riproduzione avviata tramite touch."
+P1,media-upload,passed,Riprodurre un video con audio.,globale:T-0917,"ui-media Thailandia 1.48.4 1/1 + ui-comment-media 1/1: video con traccia multimediale caricato, salvato e riprodotto nel post/commento."
 P1,media-upload,pending,Riprodurre video.,usabilita:U0207,
 P1,media-upload,pending,rotazione e ritaglio fotografie;,globale:T-0161,
 P1,media-upload,pending,Salvare una bozza con dieci fotografie.,globale:T-0850,
@@ -861,7 +861,7 @@ P1,media-upload,passed,Salvataggio offline delle fotografie selezionate.,globale
 P1,media-upload,pending,Scaricamento soltanto delle modifiche.,globale:T-0112,
 P1,media-upload,pending,Scattare una fotografia.,usabilita:U0190,
 P1,media-upload,pending,Scorrere e caricare i successivi.,globale:T-1686,
-P1,media-upload,pending,Selezionare fotografie e video.,globale:T-0830,
+P1,media-upload,passed,Selezionare fotografie e video.,globale:T-0830,"ui-publish-complete Thailandia 1.48.4 1/1: selettori galleria, scatto e video presenti e utilizzati nello stesso flusso touch."
 P1,media-upload,passed,Selezionare più fotografie.,usabilita:U0196,Playwright mobile: selezione simultanea di 10 JPEG e conteggio esatto; preview b4f2cf13; 2026-08-04
 P1,media-upload,pending,Selezionare un video MOV.,usabilita:U0200,
 P1,media-upload,pending,Selezionare un video MP4.,usabilita:U0201,
@@ -901,15 +901,15 @@ P1,media-upload,passed,"Verificare che il post utilizzi automaticamente nome, co
 P1,media-upload,pending,Verificare che l’app non si ricarichi durante la registrazione audio.,globale:T-0835,
 P1,media-upload,pending,Verificare che l’app non si ricarichi durante la scrittura.,globale:T-0836,
 P1,media-upload,pending,Verificare che l’app non si ricarichi durante un upload.,globale:T-0837,
-P1,media-upload,pending,Verificare che l’audio non venga perso o corrotto.,globale:T-0458,
+P1,media-upload,passed,Verificare che l’audio non venga perso o corrotto.,globale:T-0458,"ui-media Thailandia 1.48.4 1/1 + ui-comment-media 1/1: Blob audio mantiene durata positiva dopo salvataggio, riapertura e riproduzione."
 P1,media-upload,pending,Verificare che la fotografia non venga mostrata ruotata.,globale:T-1433,
 P1,media-upload,passed,Verificare fotografia della città.,usabilita:U0319,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P1,media-upload,pending,Verificare fotografie HDR.,globale:T-1434,
 P1,media-upload,pending,Verificare fotografie.,usabilita:U0104,
-P1,media-upload,pending,Verificare funzionamento dopo ricaricamento della pagina.,globale:T-0983,
+P1,media-upload,passed,Verificare funzionamento dopo ricaricamento della pagina.,globale:T-0983,"ui-offline e ui-publish-complete Thailandia 1.48.4: dopo reload sessione, post, fotografia e assenza di duplicati restano coerenti."
 P1,media-upload,pending,Verificare quali fotografie restano memorizzate.,globale:T-1631,
 P1,media-upload,pending,"Verificare stesso post, stessi commenti e stessa fotografia.",globale:T-1408,
-P1,media-upload,pending,Verificare streaming senza caricare tutto il file in memoria.,globale:T-1008,
+P1,media-upload,passed,Verificare streaming senza caricare tutto il file in memoria.,globale:T-1008,"QA autenticata 1.48.4: upload grande a parti completato con streaming, commit finale e lettura del contenuto senza caricamento monolitico del file."
 P1,media-upload,pending,Verificare video.,usabilita:U0105,
 P1,media-upload,pending,Video,globale:T-0292;globale:T-1262;usabilita:U0035;usabilita:U0118,
 P1,media-upload,pending,video dei percorsi completi;,usabilita:U0713,
@@ -926,14 +926,14 @@ P1,sync-rete,passed,100 richieste di sincronizzazione in un minuto.,globale:T-10
 P1,sync-rete,pending,Aggiornare il Service Worker con due schede aperte.,globale:T-1587,
 P1,sync-rete,pending,Aggiungere alternativa offline.,globale:T-0181,
 P1,sync-rete,pending,Album HTML offline.,globale:T-0233,
-P1,sync-rete,pending,Aprire Emergenza senza rete.,globale:T-1183,
+P1,sync-rete,passed,Aprire Emergenza senza rete.,globale:T-1183,ui-p0-cache-recovery Thailandia 1.48.4 Samsung S20 FE 1/1: dopo eliminazione di cache vecchie/difettose l’app si riapre offline e rende disponibili numeri di emergenza thailandesi e tappe essenziali.
 P1,sync-rete,passed,Aprire il dominio senza cache.,globale:T-0305,"ui-cache-recovery Samsung S20 FE 1/1: dominio aperto senza cache valida, vecchia cache e cache difettosa eliminate; nuova shell caricata e riaperta realmente offline."
 P1,sync-rete,pending,Attivazione automatica su rete lenta.,globale:T-1644,
 P1,sync-rete,pending,Badge sincronizzato dei contenuti non letti.,globale:T-0076,
 P1,sync-rete,pending,Cache-Control corretto.,globale:T-1469,
 P1,sync-rete,pending,Centro “Pronto per l’offline”.,globale:T-0116,
 P1,sync-rete,pending,Centro sincronizzazione visibile.,globale:T-0098,
-P1,sync-rete,pending,Cercare segreti nel Service Worker.,globale:T-1500,
+P1,sync-rete,passed,Cercare segreti nel Service Worker.,globale:T-1500,"suite 1.48.4 163/163 eseguiti (150 passati, 13 skip condizionati, 0 errori): scansione sorgente e Service Worker senza password, token o segreti incorporati."
 P1,sync-rete,pending,coda offline vuota oppure correttamente registrata;,globale:T-1750,
 P1,sync-rete,pending,commenti sincronizzati;,globale:T-1751,
 P1,sync-rete,pending,continuazione dopo perdita della rete;,globale:T-0149,
@@ -943,14 +943,14 @@ P1,sync-rete,pending,è stata eseguita una prova dalla rete indiana;,globale:T-0
 P1,sync-rete,pending,Emergenza offline.,globale:T-0249,
 P1,sync-rete,pending,Errore Service Worker.,globale:T-1549,
 P1,sync-rete,pending,Eseguire logout senza rete.,globale:T-0760,
-P1,sync-rete,pending,Gestione delle modifiche concorrenti.,globale:T-0101,
+P1,sync-rete,passed,Gestione delle modifiche concorrenti.,globale:T-0101,QA autenticata 1.48.4: concorrenza su due dispositivi e carico con 10 pubblicazioni simultanee completati senza duplicazioni o perdita dello stato finale.
 P1,sync-rete,pending,gli allegati vengono persi offline;,usabilita:U0694,
 P1,sync-rete,passed,Hotel e indirizzi offline.,globale:T-0119,ui-cache-recovery Samsung S20 FE 1/1: dopo riapertura completamente offline il Diario mostra nome e indirizzo del Rockland Hotel di Delhi dalla shell locale aggiornata.
 P1,sync-rete,pending,HTML utilizzabile offline.,globale:T-1718,
 P1,sync-rete,passed,idempotenza;,globale:T-1792,production-smoke: idempotenza coperta su quattro tipi di scrittura
 P1,sync-rete,pending,Indicazione “Ultima sincronizzazione”.,globale:T-0105,
 P1,sync-rete,passed,Informazioni di emergenza offline.,globale:T-0122,ui-cache-recovery Samsung S20 FE 1/1: numeri e descrizioni di emergenza sono inclusi nella shell locale e restano leggibili dopo riapertura completamente offline.
-P1,sync-rete,pending,Invio automatico al ritorno della rete.,globale:T-0123,
+P1,sync-rete,passed,Invio automatico al ritorno della rete.,globale:T-0123,ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: il post con foto accodato senza rete parte automaticamente al ritorno online.
 P1,sync-rete,passed,l’offline conserva testo e allegati;,globale:T-0678,"offline-queue: testo, foto, audio e video conservati nella coda"
 P1,sync-rete,passed,Mappe e coordinate essenziali offline.,globale:T-0124,"ui-cache-recovery Samsung S20 FE 1/1: offline restano disponibili giornate, Rockland Hotel, indirizzo, tappe e coordinate essenziali; l’interfaccia avverte che la cartografia dettagliata può richiedere rete."
 P1,sync-rete,pending,nuovi post sincronizzati;,globale:T-1763,
@@ -962,8 +962,8 @@ P1,sync-rete,pending,Provare senza rete.,usabilita:U0360,
 P1,sync-rete,pending,Pulsante per cancellare i dati offline.,globale:T-0126,
 P1,sync-rete,pending,Rete 3G.,usabilita:U0521,
 P1,sync-rete,pending,rete assente;,usabilita:U0506;addendum:A0165,
-P1,sync-rete,pending,Rete interrotta al 50%.,usabilita:U0528,
-P1,sync-rete,pending,Rete interrotta al 90%.,usabilita:U0529,
+P1,sync-rete,passed,Rete interrotta al 50%.,usabilita:U0528,"resumable-upload 5/5: interruzione esatta al 50%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
+P1,sync-rete,passed,Rete interrotta al 90%.,usabilita:U0529,"resumable-upload 5/5: interruzione esatta al 90%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
 P1,sync-rete,pending,Rete lenta.,usabilita:U0522,
 P1,sync-rete,pending,rete utilizzata;,globale:T-1256,
 P1,sync-rete,pending,Riapertura offline.,globale:T-1231,
@@ -972,7 +972,7 @@ P1,sync-rete,pending,Riattivare la rete.,globale:T-0550,
 P1,sync-rete,pending,Ricerca offline sui dati disponibili.,globale:T-1696,
 P1,sync-rete,pending,Ricevere una sincronizzazione.,globale:T-1400,
 P1,sync-rete,pending,Ridurre frequenza di sincronizzazione.,globale:T-1651,
-P1,sync-rete,pending,Ripresa dopo perdita della rete.,globale:T-1725,
+P1,sync-rete,passed,Ripresa dopo perdita della rete.,globale:T-1725,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: perdita rete, chiusura pagina, riapertura e ripresa automatica verificate con coda IndexedDB reale."
 P1,sync-rete,pending,Ritorno della rete.,globale:T-1237,
 P1,sync-rete,passed,Salvare più bozze offline.,globale:T-0849,offline-queue 3/3: due bozze post distinte restano contemporaneamente in IndexedDB con chiavi idempotenti differenti e vengono inviate una sola volta ciascuna.
 P1,sync-rete,passed,Salvataggio offline dei commenti.,globale:T-0129,"offline-queue 3/3: commento offline conserva post_id, testo e chiave idempotente come operazione separata e viene rimosso dalla coda soltanto dopo risposta positiva."
@@ -992,25 +992,25 @@ P1,sync-rete,pending,toccare con rete lenta;,usabilita:U0085,
 P1,sync-rete,pending,toccare senza rete;,usabilita:U0086,
 P1,sync-rete,pending,vecchi Service Worker;,addendum:A0407,
 P1,sync-rete,pending,verifica dall’India o da una rete con caratteristiche equivalenti;,globale:T-1811,
-P1,sync-rete,pending,Verificare aggiornamento al successivo ritorno della rete.,globale:T-0831,
+P1,sync-rete,passed,Verificare aggiornamento al successivo ritorno della rete.,globale:T-0831,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: al successivo ritorno della rete la coda viene svuotata, il feed aggiornato e il post compare una sola volta."
 P1,sync-rete,passed,Verificare aggiornamento con telefono offline.,globale:T-0832,"ui-offline Samsung S20 FE 1/1: il telefono viene posto offline, la pagina chiusa e riaperta online; coda svuotata e stato aggiornato senza duplicazioni."
 P1,sync-rete,pending,Verificare alternativa offline.,globale:T-0397,
 P1,sync-rete,pending,"Verificare bozze, se devono essere sincronizzate.",globale:T-1604,
 P1,sync-rete,pending,Verificare che il Service Worker utilizzi la cache 1.21.5.,globale:T-0012,
 P1,sync-rete,passed,Verificare che non sia necessario cancellare manualmente la cache.,addendum:A0093,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P1,sync-rete,pending,Verificare comportamento offline.,globale:T-1639,
-P1,sync-rete,pending,Verificare funzionamento con rete assente.,globale:T-1192,
+P1,sync-rete,passed,Verificare funzionamento con rete assente.,globale:T-1192,"ui-network-india 6/6 + ui-p0-cache-recovery 1/1 + ui-offline 1/1 su Thailandia 1.48.4: shell pubblica, emergenze e invio differito funzionano con rete assente."
 P1,sync-rete,passed,Verificare gestione della revoca al ritorno della rete.,globale:T-0769,"ui-session-history Samsung S20 FE 2/2: il telefono resta temporaneamente con la sessione locale mentre è offline; dopo la revoca da un secondo dispositivo e il ritorno online riceve 401, cancella token/ruolo/profilo e torna pubblico."
 P1,sync-rete,passed,Verificare nessuna anteprima nella cache pubblica.,globale:T-1007,"public-cache 1/1 + service-worker-offline 2/2: campi personali, contenuti non pubblici, API private e documenti non vengono inseriti nella cache pubblica o serviti offline."
 P1,sync-rete,passed,Verificare quali dati restano nella Cache API.,globale:T-1629,public-cache 1/1 + service-worker-offline 2/2: la Cache API contiene soltanto shell e risorse pubbliche esplicitamente ammesse; richieste private restano network-only.
 P1,sync-rete,passed,Verificare Service Worker.,globale:T-1182,production-smoke: Service Worker live contiene la revisione corrente
 P1,sync-rete,passed,"Verificare sincronizzazione, se prevista.",usabilita:U0275,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
 P1,sync-rete,passed,Verificare sincronizzazione.,usabilita:U0262;usabilita:U0470,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04 | Playwright su viaggiatore e coordinatore: inserimento e rimozione propagati automaticamente; preview 20382a40; 2026-08-04"
-P1,sync-rete,pending,Verificare tempo di apertura su rete 3G.,globale:T-1676,
+P1,sync-rete,passed,Verificare tempo di apertura su rete 3G.,globale:T-1676,ui-network-india Thailandia 1.48.4 6/6: profilo SIM 3G a 420 Kbps/450 ms apre la bacheca mobile senza pagina bianca entro il limite stabilito.
 P1,sync-rete,pending,Verificare trigger della sincronizzazione.,globale:T-1042,
 P1,sync-rete,passed,Verificare unicità delle operazioni idempotenti.,globale:T-1025,production-smoke: unicita operazioni idempotenti verificata
-P1,sync-rete,pending,Viene simulata una rete lenta.,globale:T-1746,
-P1,sync-rete,pending,Viene verificato il ritorno della rete.,globale:T-1747,
+P1,sync-rete,passed,Viene simulata una rete lenta.,globale:T-1746,"ui-network-india Thailandia 1.48.4 6/6: Wi-Fi debole, 3G, roaming congestionato ed eSIM 4G emulati con latenza e banda limitate."
+P1,sync-rete,passed,Viene verificato il ritorno della rete.,globale:T-1747,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: ritorno online verificato dopo chiusura; sessione preservata, coda azzerata e singolo record persistito."
 P2,mappe-posizione,pending,Apertura mappa.,globale:T-1203,
 P2,mappe-posizione,passed,Aprire la mappa completa.,usabilita:U0339,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P2,mappe-posizione,pending,Aprire la mappa generale.,globale:T-0381,
@@ -1043,11 +1043,11 @@ P2,mappe-posizione,pending,Verificare mappa quando Google Maps non risponde.,glo
 P2,mappe-posizione,pending,Verificare mappa quando OpenFreeMap non risponde.,globale:T-0962,
 P2,media-upload,pending,un cambio di ruolo viene applicato immediatamente;,addendum:A0452,
 P2,media-upload,pending,Verificare cancellazione immediata dalla mappa.,globale:T-1463,
-P2,profili-ruoli,pending,"A modifica profilo, B vede modifica.",usabilita:U0562,
+P2,profili-ruoli,passed,"A modifica profilo, B vede modifica.",usabilita:U0562,ui-people Thailandia 1.48.4 Samsung S20 FE 1/1: il coordinatore aggiorna origine e biografia; il secondo telefono vede subito il profilo aggiornato e i permessi corretti.
 P2,profili-ruoli,passed,Accedere come Viaggiatore A.,globale:T-0321;addendum:A0066,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P2,profili-ruoli,pending,accedere come Viaggiatore B;,addendum:A0069,
 P2,profili-ruoli,passed,Accedere come Viaggiatore.,addendum:A0088,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
-P2,profili-ruoli,pending,Aggiungere funzione di cancellazione del proprio profilo.,globale:T-0045,
+P2,profili-ruoli,passed,Aggiungere funzione di cancellazione del proprio profilo.,globale:T-0045,"P0_PROFILE_DELETION 44/44: cancellazione del proprio profilo disponibile e atomica; dati collegati rimossi, con protezione dell’ultimo coordinatore."
 P2,profili-ruoli,pending,Aprire il proprio profilo.,usabilita:U0070;usabilita:U0370,
 P2,profili-ruoli,pending,Aprire la Bacheca come Viaggiatore.,usabilita:U0097,
 P2,profili-ruoli,pending,Aprire un profilo.,globale:T-1393,
@@ -1093,7 +1093,7 @@ P2,profili-ruoli,pending,Modificare il proprio profilo.,usabilita:U0371,
 P2,profili-ruoli,pending,Modificare localStorage con il nome di un altro Viaggiatore.,usabilita:U0171,
 P2,profili-ruoli,pending,Modificare location profile_id.,usabilita:U0575,
 P2,profili-ruoli,pending,Modificare manualmente profile_id.,globale:T-0326,
-P2,profili-ruoli,pending,Modificare profile_id nella richiesta.,usabilita:U0173,
+P2,profili-ruoli,passed,Modificare profile_id nella richiesta.,usabilita:U0173,P0_ROLES 20/20: profile_id falsificato nella richiesta non sostituisce l’identità derivata dalla sessione server.
 P2,profili-ruoli,passed,Modificare profile_id.,globale:T-0621;usabilita:U0569,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P2,profili-ruoli,passed,Modificare profilo.,usabilita:U0375,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,pending,Moltiplicare per tutti i Viaggiatori e familiari.,globale:T-1537,
@@ -1115,12 +1115,12 @@ P2,profili-ruoli,pending,profilo modificato;,globale:T-1576,
 P2,profili-ruoli,pending,profilo non collegato;,usabilita:U0496,
 P2,profili-ruoli,pending,profilo o ospite corretto;,usabilita:U0597,
 P2,profili-ruoli,pending,profilo;,globale:T-1577,
-P2,profili-ruoli,pending,Protezione contro modifica manuale del profile_id.,globale:T-0225,
-P2,profili-ruoli,pending,Protezione contro modifica manuale del ruolo.,globale:T-0226,
+P2,profili-ruoli,passed,Protezione contro modifica manuale del profile_id.,globale:T-0225,P0_ROLES 20/20 + P0_AUTHORIZATION_MATRIX 86/86: modifica manuale di profile_id ignorata o rifiutata per ogni comando protetto.
+P2,profili-ruoli,passed,Protezione contro modifica manuale del ruolo.,globale:T-0226,P0_ROLES 20/20 + ui-role-live Thailandia 1.48.4 1/1: ruolo manuale non concede privilegi; promozione/revoca sono server-side e aggiornano il telefono aperto.
 P2,profili-ruoli,passed,reinviarla dopo cambio ruolo;,addendum:A0329,Live demotion command 403 + authenticated remote QA 20/20; preview a4b05356; 2026-08-04
 P2,profili-ruoli,pending,risultati dei test API per ruolo;,addendum:A0475,
 P2,profili-ruoli,pending,risultati dei test di cambio ruolo;,addendum:A0478,
-P2,profili-ruoli,pending,Risultati filtrati in base al ruolo.,globale:T-1704,
+P2,profili-ruoli,passed,Risultati filtrati in base al ruolo.,globale:T-1704,"P0_AUTHORIZATION_MATRIX 86/86 + ui-public-access-boundary 2/2: stato e comandi sono filtrati per pubblico, viaggiatore e coordinatore."
 P2,profili-ruoli,pending,ruolo corrente;,addendum:A0414,
 P2,profili-ruoli,pending,ruolo modificato;,globale:T-1581,
 P2,profili-ruoli,pending,ruolo mostrato;,addendum:A0045,
@@ -1135,17 +1135,17 @@ P2,profili-ruoli,pending,Tentare di scegliere un profilo esistente.,usabilita:U0
 P2,profili-ruoli,pending,test come Viaggiatore;,usabilita:U0721,
 P2,profili-ruoli,pending,test del percorso completo del Viaggiatore;,globale:T-1806,
 P2,profili-ruoli,pending,Tutti controllano il proprio profilo.,globale:T-1733,
-P2,profili-ruoli,pending,Verificare che il cambio di anteprima non modifichi il ruolo reale.,usabilita:U0455,
-P2,profili-ruoli,pending,Verificare che il codice comune non consenta di riattivare il profilo.,globale:T-1618,
+P2,profili-ruoli,passed,Verificare che il cambio di anteprima non modifichi il ruolo reale.,usabilita:U0455,ui-session-history 2/2 + P0_ROLES 20/20: il cambio di anteprima modifica soltanto la vista e non il ruolo reale verificato dal server.
+P2,profili-ruoli,passed,Verificare che il codice comune non consenta di riattivare il profilo.,globale:T-1618,ui-public-access-boundary Thailandia 1.48.4 2/2 + P0_ACCESS_SESSION_BOUNDARIES 17/17: il codice comune non crea né riattiva una sessione personale.
 P2,profili-ruoli,pending,Verificare che il nome del marker corrisponda al profilo A.,globale:T-0711,
 P2,profili-ruoli,pending,Verificare che il profilo non compaia nel feed.,globale:T-1327,
-P2,profili-ruoli,pending,Verificare che il Viaggiatore modifichi soltanto il proprio profilo.,globale:T-0356,
+P2,profili-ruoli,passed,Verificare che il Viaggiatore modifichi soltanto il proprio profilo.,globale:T-0356,P0_AUTHORIZATION_MATRIX 86/86: il viaggiatore può modificare soltanto il proprio profilo; tentativi su altri profili ricevono 403.
 P2,profili-ruoli,pending,Verificare che non sia possibile pubblicare utilizzando il nome del Viaggiatore B.,globale:T-0719,
-P2,profili-ruoli,pending,Verificare che ogni comando appartenga al profilo corretto.,usabilita:U0076,
+P2,profili-ruoli,passed,Verificare che ogni comando appartenga al profilo corretto.,usabilita:U0076,P0_AUTHORIZATION_MATRIX 86/86: ogni comando protetto usa il profilo della sessione e non l’identità proposta dal client.
 P2,profili-ruoli,pending,Verificare comportamento dopo cambio profilo.,globale:T-1361,
 P2,profili-ruoli,pending,Verificare numero dei Viaggiatori.,usabilita:U0444,
-P2,profili-ruoli,pending,Verificare profile_id o guest_id corretto.,usabilita:U0019,
-P2,profili-ruoli,pending,Verificare profili precedenti conservati.,globale:T-1039,
+P2,profili-ruoli,passed,Verificare profile_id o guest_id corretto.,usabilita:U0019,"P0_SOCIAL 12/12 + P0_ROLES 20/20: pubblicazioni, commenti e reazioni conservano il profile_id o guest_id corretto derivato dalla sessione."
+P2,profili-ruoli,passed,Verificare profili precedenti conservati.,globale:T-1039,P0_MIGRATION_CHAIN 23/23 + P0_LEGACY_DATA_PRESERVATION 3/3: i profili precedenti restano presenti e invariati attraverso l’intera catena di migrazione.
 P2,profili-ruoli,pending,Verificare profilo colore.,globale:T-1437,
 P2,profili-ruoli,passed,Verificare profilo corretto.,globale:T-1610;usabilita:U0405,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P2,profili-ruoli,pending,Verificare ruolo effettivo.,usabilita:U0626,
@@ -1313,7 +1313,7 @@ P3,altro,pending,Aggiungere scansione automatica dei segreti nella pipeline.,glo
 P3,altro,pending,Aggiungere segnalazione dei contenuti.,globale:T-0060,
 P3,altro,pending,Aggiungere un messaggio “Aggiornamento disponibile”.,globale:T-0823,
 P3,altro,pending,Allarme in caso di errori ripetuti.,globale:T-0216,
-P3,altro,pending,allegati conservati;,usabilita:U0531,
+P3,altro,passed,allegati conservati;,usabilita:U0531,"resumable-upload 5/5 + offline-queue 2/2: bozze, allegati e parti già accettate restano nel dispositivo dopo interruzione e riapertura."
 P3,altro,pending,allegati corretti.,usabilita:U0594,
 P3,altro,pending,allegato corretto.,usabilita:U0598,
 P3,altro,pending,Alta latenza.,usabilita:U0523,
@@ -1393,7 +1393,7 @@ P3,altro,pending,Bloccare lo schermo durante la registrazione.,globale:T-0446,
 P3,altro,pending,bloccare lo schermo;,globale:T-0809;usabilita:U0231;usabilita:U0539,
 P3,altro,pending,BLOCCATO,globale:T-0277;usabilita:U0033,
 P3,altro,pending,bonifica periodica dei file orfani.,globale:T-0145,
-P3,altro,pending,Bozza conservata.,usabilita:U0487;usabilita:U0530,
+P3,altro,passed,Bozza conservata.,usabilita:U0487;usabilita:U0530,"resumable-upload 5/5 + offline-queue 2/2: bozze, allegati e parti già accettate restano nel dispositivo dopo interruzione e riapertura."
 P3,altro,pending,Bozza recuperabile.,usabilita:U0491,
 P3,altro,pending,bozze personali;,addendum:A0074,
 P3,altro,pending,Browser con cookie/storage bloccati.,globale:T-1082,
@@ -1905,7 +1905,7 @@ P3,altro,pending,nessun titolo o nome sensibile mostrato prima del 403;,addendum
 P3,altro,pending,nessuna apertura contemporanea di due modali incompatibili;,addendum:A0246,
 P3,altro,pending,Nessuna chiusura involontaria di modali e tastiera.,globale:T-0107,
 P3,altro,pending,Nessuna duplicazione dopo cambio Wi-Fi/dati mobili.,globale:T-0135,
-P3,altro,pending,nessuna duplicazione;,globale:T-1761;usabilita:U0533;usabilita:U0552,
+P3,altro,passed,nessuna duplicazione;,globale:T-1761;usabilita:U0533;usabilita:U0552,"resumable-upload 5/5 + ui-offline 1/1: ripresa dell’invio completata una sola volta; nessuna parte, pubblicazione o allegato duplicato."
 P3,altro,pending,nessuna funzione esista soltanto nel codice senza essere raggiungibile;,addendum:A0018,
 P3,altro,pending,Nessuna informazione comunicata soltanto tramite colore.,globale:T-1071,
 P3,altro,pending,nessuna informazione sensibile nella risposta.,globale:T-0747,
@@ -2124,7 +2124,7 @@ P3,altro,pending,riordinamento allegati;,globale:T-0159,
 P3,altro,pending,Ripetere lo scatto.,usabilita:U0192,
 P3,altro,pending,riprendere automaticamente quando il servizio ritorna;,globale:T-1145,
 P3,altro,pending,Riprendere.,globale:T-0456;usabilita:U0219,
-P3,altro,pending,ripresa dell’invio;,usabilita:U0532,
+P3,altro,passed,ripresa dell’invio;,usabilita:U0532,"resumable-upload 5/5 + ui-offline 1/1: ripresa dell’invio completata una sola volta; nessuna parte, pubblicazione o allegato duplicato."
 P3,altro,passed,ripresa;,globale:T-0160,resumable-upload: ripresa da parti già confermate
 P3,altro,pending,riprovare con intervalli progressivi;,globale:T-1146,
 P3,altro,pending,risorsa coinvolta;,globale:T-1579,

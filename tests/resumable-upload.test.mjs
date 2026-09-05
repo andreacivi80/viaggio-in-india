@@ -76,3 +76,61 @@ test("dopo la riapertura riprende dalle parti già confermate", async () => {
   assert.deepEqual(partsSent, [2]);
   assert.equal(storage.has(key), false);
 });
+
+for (const interruptedAt of [25, 50, 90]) {
+  test(`un upload interrotto al ${interruptedAt}% riprende senza reinviare le parti confermate`, async () => {
+    storage.clear();
+    const partSize = 100;
+    const totalParts = 20;
+    const completedBeforeFailure = interruptedAt === 25 ? 5 : interruptedAt === 50 ? 10 : 18;
+    const file = new File([new Uint8Array(partSize * totalParts)], `video-${interruptedAt}.mp4`, {
+      type: "video/mp4",
+      lastModified: interruptedAt,
+    });
+    const uploadId = `upload-${interruptedAt}`;
+    const confirmed = new Set();
+    const firstRunParts = [];
+    let interrupt = true;
+    globalThis.fetch = async (url) => {
+      if (url.endsWith("/uploads/init"))
+        return response({ upload_id: uploadId, part_size: partSize, uploaded_parts: [] }, 201);
+      if (url.endsWith(`/uploads/${uploadId}`))
+        return response({
+          upload_id: uploadId,
+          part_size: partSize,
+          uploaded_parts: [...confirmed].map((part_number) => ({ part_number, part_size: partSize })),
+        });
+      const part = Number(url.match(/\/parts\/(\d+)$/)?.[1] || 0);
+      if (part) {
+        if (interrupt) firstRunParts.push(part);
+        if (interrupt && part === completedBeforeFailure + 1)
+          return response({ error: "rete interrotta" }, 400);
+        confirmed.add(part);
+        return response({ ok: true, part_number: part, part_size: partSize, etag: `etag-${part}` });
+      }
+      if (url.endsWith("/complete")) return response({ ok: true, upload_id: uploadId });
+      throw new Error(`URL inatteso: ${url}`);
+    };
+
+    await assert.rejects(
+      uploadFileResumable({ file, scope: "post", visibility: "public" }),
+      /rete interrotta/,
+    );
+    assert.equal(confirmed.size, completedBeforeFailure);
+    assert.equal(storage.size, 1, "il manifesto di ripresa deve sopravvivere all’interruzione");
+
+    interrupt = false;
+    const progress = [];
+    const result = await uploadFileResumable({
+      file,
+      scope: "post",
+      visibility: "public",
+      onProgress: (value) => progress.push(value),
+    });
+    assert.equal(result.upload_id, uploadId);
+    assert.equal(confirmed.size, totalParts);
+    assert.deepEqual(firstRunParts, Array.from({ length: completedBeforeFailure + 1 }, (_, index) => index + 1));
+    assert.equal(progress.at(-1), 100);
+    assert.equal(storage.size, 0);
+  });
+}

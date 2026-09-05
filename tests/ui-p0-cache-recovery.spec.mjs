@@ -21,7 +21,7 @@ test("P0: cache vecchia e cache difettosa vengono eliminate mantenendo l'app off
   await page.reload({ waitUntil: "domcontentloaded" });
   await page.evaluate(() => navigator.serviceWorker.ready);
   await expect.poll(() => page.evaluate(() => caches.keys()), { timeout: 20_000 }).toEqual([
-    `india-insieme-v${packageData.version}`,
+    `thailandia-insieme-v${packageData.version}`,
   ]);
   await context.setOffline(true);
   try {
@@ -30,11 +30,10 @@ test("P0: cache vecchia e cache difettosa vengono eliminate mantenendo l'app off
     await expect(page.locator("body")).not.toContainText(/pagina vecchia|pagina non valida/i);
     await page.getByRole("button", { name: "Viaggio", exact: true }).tap();
     await page.getByText("Emergenza e dati offline", { exact: true }).tap();
-    await expect(page.getByRole("link", { name: /112/ })).toHaveAttribute("href", "tel:112");
-    await expect(page.getByRole("link", { name: /91 98101 58737/ })).toHaveAttribute("href", "tel:+919810158737");
+    await expect(page.getByRole("link", { name: /1155/ })).toHaveAttribute("href", "tel:1155");
+    await expect(page.getByRole("link", { name: /66 81 825 6103/ })).toHaveAttribute("href", "tel:+66818256103");
     await expect(page.getByText(/Le giornate conservano localmente tappe/)).toBeVisible();
-    await expect(page.getByText("Rockland Hotel C.R. Park", { exact: true })).toBeVisible();
-    await expect(page.getByText(/B-207.*Outer Ring Road.*New Delhi/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: /^Giorno 1,.*Bangkok$/i })).toBeVisible();
   } finally {
     await context.setOffline(false);
   }

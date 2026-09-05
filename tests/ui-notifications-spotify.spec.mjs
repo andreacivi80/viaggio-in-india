@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+test.use({ serviceWorkers: "block" });
+
 test("campanella mobile gestisce nuove, viste, eliminazione e Spotify", async ({ page }) => {
   const createdAt = new Date().toISOString();
   await page.addInitScript(() => localStorage.clear());
