@@ -21,13 +21,13 @@ test("le icone della mappa generale sono ancorate a tratte reali", () => {
   for (const reference of ["Bangkok–Hua Hin", "Kui Buri", "Cheow Lan", "Phi Phi", "Surat–Bangkok"])
     assert.ok(itinerary.includes(`"${reference}"`), `riferimento mancante: ${reference}`);
   assert.match(source, /node\.dataset\.routeReference = reference/);
-  for (const [reference, stage] of [["Bangkok–Hua Hin", "2"], ["Kui Buri", "3"], ["Cheow Lan", "5"], ["Phi Phi", "6"], ["Surat–Bangkok", "9"]])
+  for (const [reference, stage] of [["Bangkok–Hua Hin", "2"], ["Kui Buri", "3"], ["Cheow Lan", "5"], ["Phi Phi", "6"], ["Surat–Bangkok", "7"]])
     assert.ok(itinerary.includes(`"${reference}", "${stage}"`), `${reference} non è vicino alla tappa ${stage}`);
   assert.match(source, /node\.dataset\.nearStage = nearStage/);
   assert.match(source, /const route = roadPaths\[pathName\] \|\| \[\]/);
   assert.match(source, /const lat = fromLat \+ \(toLat - fromLat\) \* ratio/);
   for (const path of ["bangkok-huahin", "huahin-chumphon", "khaosok-pier", "krabi-phiphi", "surat-bangkok"])
-    assert.match(itinerary, new RegExp(`"${path}", 0\\.`), `icona non ancorata alla tratta ${path}`);
+    assert.match(itinerary, new RegExp(`"${path}", 0(?:\\.|,)`), `icona non ancorata alla tratta ${path}`);
 });
 
 test("i simboli dei mezzi restano separati dai nomi di Phi Phi e delle tappe vicine", () => {
@@ -42,7 +42,7 @@ test("i simboli dei mezzi restano separati dai nomi di Phi Phi e delle tappe vic
 test("le tappe 2-7 restano sul percorso o a contatto col relativo tratto", () => {
   assert.match(
     itinerary,
-    /overviewStageOffsets\s*=\s*\[\s*\[-6,\s*-6\],\s*\[0,\s*0\],\s*\[0,\s*0\],\s*\[-8,\s*-6\],\s*\[8,\s*-6\],\s*\[-8,\s*8\],\s*\[8,\s*8\],\s*\[6,\s*6\]/s,
+    /overviewStageOffsets\s*=\s*\[\s*\[-6,\s*-6\],\s*\[0,\s*0\],\s*\[0,\s*0\],\s*\[-8,\s*-6\],\s*\[8,\s*-6\],\s*\[-5,\s*5\],\s*\[5,\s*-5\],\s*\[6,\s*6\]/s,
   );
   for (const city of ["Hua Hin", "Chumphon", "Khao Sok", "Cheow Lan Lake", "Phi Phi Island", "Krabi"])
     assert.ok(placesOnRoute(itinerary, city), `${city} deve appartenere a una tratta della mappa generale`);

@@ -1,4 +1,5 @@
 import { test, expect, devices } from "@playwright/test";
+import { days } from "../src/tripThailand.js";
 
 test.use({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
 
@@ -12,17 +13,15 @@ test("mappa generale: numeri piccoli, mezzi distinti e nessuna sovrapposizione",
   await waitForMap(page);
   await expect(page.locator(".overviewRouteMap .vectorMarker")).toHaveCount(8);
   await expect(page.locator(".overviewRouteMap .tripCityNameLabel")).toHaveCount(7);
-  for (const city of ["Delhi", "Udaipur", "Ranakpur", "Jodhpur", "Jaipur", "Agra", "Varanasi"])
+  for (const city of ["Bangkok", "Hua Hin", "Chumphon", "Khao Sok", "Cheow Lan Lake", "Phi Phi Island", "Krabi"])
     await expect(page.locator(`.tripCityNameLabel[data-city-name="${city}"]`)).toBeVisible();
   await expect(page.locator(".overviewModeMarker")).toHaveCount(5);
-  await expect(page.locator('.overviewModeMarker[data-route-reference="DEL–UDR"]')).toHaveCount(1);
-  await expect(page.locator('.overviewModeMarker[data-route-reference="Udaipur–Jodhpur"]')).toHaveCount(1);
-  await expect(page.locator('.overviewModeMarker[data-route-reference="Agra–Varanasi"]')).toHaveCount(1);
-  await expect(page.locator('.overviewModeMarker[data-route-reference="Varanasi"]')).toHaveCount(1);
-  await expect(page.locator('.overviewModeMarker[data-route-reference="Jodhpur"]')).toHaveCount(1);
-  await expect(page.locator(".overviewRouteLegend")).toContainText("Aereo");
+  for (const reference of ["Bangkok–Hua Hin", "Kui Buri", "Cheow Lan", "Phi Phi", "Surat–Bangkok"])
+    await expect(page.locator(`.overviewModeMarker[data-route-reference="${reference}"]`)).toHaveCount(1);
   await expect(page.locator(".overviewRouteLegend")).toContainText("Van");
-  await expect(page.locator(".overviewRouteLegend")).toContainText("Treno");
+  await expect(page.locator(".overviewRouteLegend")).toContainText("Bus notturno");
+  await expect(page.locator(".overviewRouteLegend")).toContainText("Barca");
+  await expect(page.locator(".overviewRouteLegend")).toContainText("Piedi");
   const geometry = await page.evaluate(() => {
     const boxes = (selector) => [...document.querySelectorAll(selector)].map((el) => {
       const r = el.getBoundingClientRect();
@@ -44,7 +43,7 @@ test("mappa generale: numeri piccoli, mezzi distinti e nessuna sovrapposizione",
   });
   expect(geometry.numbered.every((box) => box.width <= 19)).toBe(true);
   expect(geometry.overlaps).toEqual([]);
-  expect(geometry.distances.every((distance) => distance <= 58)).toBe(true);
+  expect(geometry.distances.every((distance) => distance <= 58), JSON.stringify(geometry.distances)).toBe(true);
   expect(geometry.legendScaleOverlap).toBe(false);
 });
 
@@ -71,32 +70,18 @@ test("cartina provenienze: Mantova è riconosciuta e i gruppi restano compatti",
   expect(sizes.every(({ width, height }) => width <= 30 && height <= 30)).toBe(true);
 });
 
-for (const [day, expectedMode, expectedStops] of [
-  [3, "Aereo", 3],
-  [10, "Treno notturno", 3],
-  [13, "Treno", 3],
-]) {
-  test(`giorno ${day}: percorso ${expectedMode} agganciato a scali e alloggio`, async ({ page }) => {
-    await page.goto(`/?view=map&day=${day}`, { waitUntil: "networkidle" });
-    await waitForMap(page);
-    await expect(page.locator(".transportMapBadge")).toContainText(expectedMode);
-    await expect(page.locator(".routeEndpointMarker")).toHaveCount(2);
-    await expect(page.locator(".specialTripMarker")).toHaveCount(expectedStops);
-    await expect(page.locator(".routeMapSummary")).toBeVisible();
-  });
-}
-
-test("tutte le quattordici mappe giornaliere mostrano cartografia e nomi delle città", async ({ page }) => {
-  const expectedCities = ["Delhi", "Delhi", "Udaipur", "Udaipur", "Jodhpur", "Jodhpur", "Jaipur", "Jaipur", "Agra", "Agra", "Varanasi", "Varanasi", "Varanasi", "Delhi"];
+test("tutte le undici mappe giornaliere mostrano cartografia, percorso e nomi delle città", async ({ page }) => {
   await page.goto("/?view=map", { waitUntil: "networkidle" });
   await waitForMap(page);
   const dayButtons = page.locator(".routeChips button");
-  await expect(dayButtons).toHaveCount(14);
-  for (let index = 0; index < 14; index += 1) {
+  await expect(dayButtons).toHaveCount(days.length);
+  for (let index = 0; index < days.length; index += 1) {
     await dayButtons.nth(index).tap();
     await waitForMap(page);
-    await expect(page.locator(".dayRouteMap .tripCityNameLabel").filter({ hasText: expectedCities[index] })).toBeVisible();
+    await expect(page.locator(".dayRouteMap .tripCityNameLabel").filter({ hasText: days[index].city })).toBeVisible();
     await expect(page.locator(".routeMapSummary")).toBeVisible();
+    if (days[index].from !== days[index].to)
+      await expect(page.locator(".routeEndpointMarker")).toHaveCount(2);
     const canvas = await page.locator(".dayRouteMap canvas").evaluate((node) => ({ width: node.width, height: node.height }));
     expect(canvas.width).toBeGreaterThan(300);
     expect(canvas.height).toBeGreaterThan(300);

@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.14",
+const VERSION = "1.48.15",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -969,11 +969,12 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
           id: "trip-route-shadow",
           type: "line",
           source: "trip-route",
+          layout: { "line-cap": "round", "line-join": "round" },
           paint: {
             "line-color": "#102d25",
-            "line-width": 11,
-            "line-opacity": 0.34,
-            "line-blur": 2.4,
+            "line-width": 8,
+            "line-opacity": 0.24,
+            "line-blur": 1.6,
           },
         });
         map.current.addLayer({
@@ -981,9 +982,10 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
           type: "line",
           source: "trip-route",
           filter: ["==", ["get", "mode"], "road"],
+          layout: { "line-cap": "round", "line-join": "round" },
           paint: {
             "line-color": "#ed6a24",
-            "line-width": 6,
+            "line-width": 5.2,
             "line-opacity": 1,
           },
         });
@@ -992,9 +994,10 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
           type: "line",
           source: "trip-route",
           filter: ["==", ["get", "mode"], "transit"],
+          layout: { "line-cap": "round", "line-join": "round" },
           paint: {
             "line-color": "#123b72",
-            "line-width": 5.5,
+            "line-width": 4.8,
             "line-opacity": 1,
             "line-dasharray": [1.6, 1.4],
           },
@@ -1010,9 +1013,10 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
             type: "line",
             source: "trip-route",
             filter: ["==", ["get", "mode"], mode],
+            layout: { "line-cap": "round", "line-join": "round" },
             paint: {
               "line-color": color,
-              "line-width": 5.5,
+              "line-width": 4.8,
               "line-opacity": 1,
               "line-dasharray": dash,
             },
