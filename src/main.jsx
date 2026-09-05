@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.13",
+const VERSION = "1.48.14",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -4366,6 +4366,10 @@ function BackgroundAudio({ src, title = "Messaggio dal viaggio", className = "",
 }
 
 function Post({ p, author, groupCode, sessionToken, people, refresh }) {
+  const opensLinkedComment = () => {
+    const params = new URLSearchParams(location.search);
+    return params.get("post") === p.id && Boolean(params.get("comment"));
+  };
   const [comment, setComment] = useState(""),
     [replyFile, setReplyFile] = useState(null),
     [menuOpen, setMenuOpen] = useState(false),
@@ -4378,7 +4382,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
     [editingCommentText, setEditingCommentText] = useState(""),
     [deletingCommentId, setDeletingCommentId] = useState(""),
     [hiddenCommentIds, setHiddenCommentIds] = useState([]),
-    [showAllComments, setShowAllComments] = useState(false);
+    [showAllComments, setShowAllComments] = useState(opensLinkedComment);
   const replyInputRef = useRef(null);
   const commentOperationRef = useRef("");
   const reactionOperationRef = useRef({});
