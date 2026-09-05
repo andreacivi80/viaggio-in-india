@@ -214,4 +214,5 @@
   ,"globale:T-1645": "P1_IMAGE_QUALITY su QA isolato 1.48.8: JPEG reale 12x8 a qualità ridotta caricato, riaperto e decodificato conservando dimensioni e MIME."
   ,"globale:T-0997": "P1_IMAGE_QUALITY su QA isolato 1.48.8: fotografia reale 320x240 con sfocatura intenzionale caricata, riaperta e decodificata senza rifiuto o corruzione."
   ,"globale:T-0245": "ui-photo-deep-link Thailandia 1.48.9 Samsung S20 FE 1/1: URL della singola fotografia apre il media esatto, il reload conserva il visualizzatore e il comando touch Chiudi foto torna alla bacheca ripulendo il parametro; L1/L2 completo 18/18 applicabili."
+  ,"globale:T-0759": "ui-upload-logout Thailandia 1.48.10 Samsung S20 FE 1/1 + resumable-upload 6/6: video reale portato a 9 MB, prima parte trattenuta, sessione revocata durante il trasferimento, fetch annullata, complete mai chiamato e nessun post visibile dal secondo account; manifesto locale conservato per ripresa autorizzata."
 }

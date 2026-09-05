@@ -2,7 +2,13 @@ const DEFAULT_PART_SIZE = 4 * 1024 * 1024;
 const LARGE_FILE_THRESHOLD = 8 * 1024 * 1024;
 const manifestKey = (file, scope, visibility) =>
   `india-upload:${scope}:${visibility}:${file.name}:${file.size}:${file.lastModified}`;
-const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const wait = (ms, signal) => new Promise((resolve, reject) => {
+  const timer = setTimeout(resolve, ms);
+  signal?.addEventListener("abort", () => {
+    clearTimeout(timer);
+    reject(new DOMException("Caricamento interrotto", "AbortError"));
+  }, { once: true });
+});
 
 export const shouldUseResumableUpload = (file) => file.size >= LARGE_FILE_THRESHOLD;
 
@@ -20,9 +26,11 @@ async function requestWithRetry(url, options, attempts = 5) {
       if (response.ok || response.status < 500) return response;
       lastError = new Error(`Errore temporaneo ${response.status}`);
     } catch (error) {
+      if (options.signal?.aborted || error?.name === "AbortError") throw error;
       lastError = error;
     }
-    if (attempt < attempts - 1) await wait(Math.min(8000, 500 * 2 ** attempt));
+    if (attempt < attempts - 1)
+      await wait(Math.min(8000, 500 * 2 ** attempt), options.signal);
   }
   throw lastError;
 }
@@ -34,12 +42,13 @@ export async function uploadFileResumable({
   visibility = "private",
   headers = {},
   onProgress = () => {},
+  signal,
 }) {
   const key = manifestKey(file, scope, visibility);
   let manifest;
   try { manifest = JSON.parse(localStorage.getItem(key) || "null"); } catch { manifest = null; }
   if (manifest?.upload_id) {
-    const status = await requestWithRetry(`${api}/uploads/${manifest.upload_id}`, { headers });
+    const status = await requestWithRetry(`${api}/uploads/${manifest.upload_id}`, { headers, signal });
     if (status.ok) {
       const current = await status.json();
       manifest.part_size = current.part_size || DEFAULT_PART_SIZE;
@@ -57,6 +66,7 @@ export async function uploadFileResumable({
         file_size: file.size,
         content_type: file.type || "application/octet-stream",
       }),
+      signal,
     }));
     manifest.uploaded_parts = [];
   }
@@ -72,7 +82,7 @@ export async function uploadFileResumable({
     const chunk = file.slice((partNumber - 1) * partSize, Math.min(file.size, partNumber * partSize));
     const uploaded = await checkedJson(await requestWithRetry(
       `${api}/uploads/${manifest.upload_id}/parts/${partNumber}`,
-      { method: "PUT", headers: { "content-type": "application/octet-stream", ...headers }, body: chunk },
+      { method: "PUT", headers: { "content-type": "application/octet-stream", ...headers }, body: chunk, signal },
     ));
     manifest.uploaded_parts.push(uploaded);
     localStorage.setItem(key, JSON.stringify(manifest));
@@ -80,7 +90,7 @@ export async function uploadFileResumable({
   }
   const result = await checkedJson(await requestWithRetry(
     `${api}/uploads/${manifest.upload_id}/complete`,
-    { method: "POST", headers },
+    { method: "POST", headers, signal },
   ));
   localStorage.removeItem(key);
   return result;

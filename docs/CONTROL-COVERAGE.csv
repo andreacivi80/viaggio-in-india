@@ -801,7 +801,7 @@ P1,media-upload,pending,Definire gestione della componente video della Live Phot
 P1,media-upload,pending,Descrizione delle fotografie.,globale:T-1064,
 P1,media-upload,passed,Disattivare caricamento automatico video.,globale:T-1647,ui-publish-complete Thailandia 1.48.4 1/1: il video resta solo in anteprima con conteggio allegati finché l’utente non preme esplicitamente Pubblica.
 P1,media-upload,passed,"dispone di screenshot, video o log come prova.",globale:T-0247,"Playwright Thailandia 1.48.4: ogni errore UI produce screenshot, video, trace e contesto; gli esiti riusciti conservano log nominativi del controllo."
-P1,media-upload,pending,Eseguire logout durante un caricamento.,globale:T-0759,
+P1,media-upload,passed,Eseguire logout durante un caricamento.,globale:T-0759,"ui-upload-logout Thailandia 1.48.10 Samsung S20 FE 1/1 + resumable-upload 6/6: video reale portato a 9 MB, prima parte trattenuta, sessione revocata durante il trasferimento, fetch annullata, complete mai chiamato e nessun post visibile dal secondo account; manifesto locale conservato per ripresa autorizzata."
 P1,media-upload,pending,fotocamera negata;,usabilita:U0504,
 P1,media-upload,passed,Fotografia → carosello → indietro.,globale:T-1413,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
 P1,media-upload,pending,fotografia orizzontale.,globale:T-0430,

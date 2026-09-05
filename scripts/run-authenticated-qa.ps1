@@ -18,6 +18,7 @@ param(
   [switch]$ExtendedProfileDeletion,
   [switch]$SlowActivationUi,
   [switch]$PhotoDeepLinkUi,
+  [switch]$UploadLogoutUi,
   [switch]$DownloadArchiveUi,
   [switch]$PublishUi
 )
@@ -145,6 +146,9 @@ try {
   elseif ($PhotoDeepLinkUi) {
     & npx playwright test "tests/ui-photo-deep-link.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
   }
+  elseif ($UploadLogoutUi) {
+    & npx playwright test "tests/ui-upload-logout.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
   elseif ($DownloadArchiveUi) {
     & npx playwright test "tests/ui-download-archive.spec.mjs" --reporter=line
   }
@@ -206,6 +210,8 @@ DELETE FROM post_media WHERE post_id IN (SELECT id FROM posts WHERE profile_id I
 DELETE FROM posts WHERE profile_id IN ($quotedIds);
 DELETE FROM document_status WHERE profile_id IN ($quotedIds);
 DELETE FROM locations WHERE profile_id IN ($quotedIds);
+DELETE FROM upload_parts WHERE upload_session_id IN (SELECT id FROM upload_sessions WHERE profile_id IN ($quotedIds));
+DELETE FROM upload_sessions WHERE profile_id IN ($quotedIds);
 DELETE FROM profile_invites WHERE profile_id IN ($quotedIds) OR created_by IN ($quotedIds);
 DELETE FROM auth_sessions WHERE profile_id IN ($quotedIds);
 DELETE FROM profile_device_claims WHERE profile_id IN ($quotedIds);

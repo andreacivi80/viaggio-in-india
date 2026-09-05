@@ -134,3 +134,34 @@ for (const interruptedAt of [25, 50, 90]) {
     assert.equal(storage.size, 0);
   });
 }
+
+test("il blocco del dispositivo interrompe subito un upload senza completare il post", async () => {
+  storage.clear();
+  const file = new File([new Uint8Array(9 * 1024 * 1024)], "video-logout.mp4", {
+    type: "video/mp4",
+    lastModified: 500,
+  });
+  const controller = new AbortController();
+  let completeCalls = 0;
+  globalThis.fetch = async (url, options = {}) => {
+    if (url.endsWith("/uploads/init"))
+      return response({ upload_id: "upload-logout", part_size: 4 * 1024 * 1024, uploaded_parts: [] }, 201);
+    if (/\/parts\/1$/.test(url)) {
+      setTimeout(() => controller.abort(), 10);
+      return new Promise((resolve, reject) => {
+        options.signal.addEventListener("abort", () => reject(new DOMException("interrotto", "AbortError")), { once: true });
+      });
+    }
+    if (url.endsWith("/complete")) {
+      completeCalls += 1;
+      return response({ ok: true });
+    }
+    throw new Error(`URL inatteso: ${url}`);
+  };
+  await assert.rejects(
+    uploadFileResumable({ file, scope: "post", visibility: "public", signal: controller.signal }),
+    (error) => error?.name === "AbortError",
+  );
+  assert.equal(completeCalls, 0);
+  assert.equal(storage.size, 1, "il manifesto resta disponibile per una ripresa autorizzata");
+});

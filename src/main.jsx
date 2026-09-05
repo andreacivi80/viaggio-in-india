@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.9",
+const VERSION = "1.48.10",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -3342,6 +3342,7 @@ function Diary({
 }) {
   const locationRequestRef = useRef(0);
   const postOperationRef = useRef("");
+  const uploadAbortRef = useRef(null);
   const [clock, setClock] = useState(() => Date.now());
   useEffect(() => {
     const timer = setInterval(() => setClock(Date.now()), 1000);
@@ -3394,6 +3395,17 @@ function Diary({
     localStorage.setItem("india-visitor-name", deviceProfileName);
   }, [deviceProfileName]);
   useEffect(() => localStorage.setItem("india-draft", text), [text]);
+  useEffect(() => {
+    const stopLoggedOutUpload = (event) => {
+      if (event.key === "india-session-token" && !event.newValue)
+        uploadAbortRef.current?.abort();
+    };
+    addEventListener("storage", stopLoggedOutUpload);
+    return () => {
+      removeEventListener("storage", stopLoggedOutUpload);
+      uploadAbortRef.current?.abort();
+    };
+  }, [sessionToken]);
   useEffect(() => {
     if (!publishNotice) return undefined;
     const timer = setTimeout(() => setPublishNotice(""), 5000);
@@ -3477,6 +3489,9 @@ function Diary({
     if (!sessionToken || (!text.trim() && !files.length && !spotify)) return;
     setBusy(true);
     setFileStatus("Pubblicazione in corso…");
+    uploadAbortRef.current?.abort();
+    const uploadController = new AbortController();
+    uploadAbortRef.current = uploadController;
     let pendingForm;
     try {
       const f = new FormData();
@@ -3504,6 +3519,7 @@ function Diary({
             visibility: postVisibility,
             headers: sessionHeaders(sessionToken),
             onProgress: (progress) => setFileStatus(`Caricamento protetto di ${file.name}: ${progress}%`),
+            signal: uploadController.signal,
           });
           uploadedIds.push(uploaded.upload_id);
         } else f.append("files", file);
@@ -3518,6 +3534,7 @@ function Diary({
           "x-idempotency-key": postOperationRef.current,
         },
         body: f,
+        signal: uploadController.signal,
       });
       const j = await r.json();
       if (!r.ok) {
@@ -3543,6 +3560,10 @@ function Diary({
       setComposeOpen(false);
       setPublishNotice("Pubblicazione riuscita.");
     } catch (e) {
+      if (e?.name === "AbortError") {
+        setFileStatus("Caricamento interrotto dal blocco del dispositivo.");
+        return;
+      }
       if (pendingForm && (!navigator.onLine || e instanceof TypeError)) {
         try {
           await queueFormRequest({
@@ -3567,6 +3588,7 @@ function Diary({
         }
       } else setFileStatus(e.message || "Pubblicazione non riuscita.");
     } finally {
+      if (uploadAbortRef.current === uploadController) uploadAbortRef.current = null;
       setBusy(false);
     }
   };
