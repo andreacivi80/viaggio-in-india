@@ -1,4 +1,4 @@
-const CACHE = "thailandia-insieme-v1.48.1";
+const CACHE = "thailandia-insieme-v1.48.2";
 const PRECACHE = [
   "./",
   "./manifest.webmanifest",
@@ -11,6 +11,9 @@ const PRECACHE = [
 self.addEventListener("install", (event) => {
   self.skipWaiting();
   event.waitUntil(caches.open(CACHE).then((cache) => cache.addAll(PRECACHE)));
+});
+self.addEventListener("message", (event) => {
+  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
 });
 self.addEventListener("activate", (event) =>
   event.waitUntil(

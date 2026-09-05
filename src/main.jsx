@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.1",
+const VERSION = "1.48.2",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -1116,8 +1116,16 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         markers.current.push(marker);
       });
     if (selectedDay == null) {
-      overviewModes.forEach(([symbol, label, mode, placeName, offset, reference, nearStage]) => {
-        const [lat, lng] = places[placeName];
+      overviewModes.forEach(([symbol, label, mode, pathName, progress, reference, nearStage]) => {
+        const route = roadPaths[pathName] || [];
+        if (route.length < 2) return;
+        const scaled = Math.max(0, Math.min(1, progress)) * (route.length - 1);
+        const fromIndex = Math.min(Math.floor(scaled), route.length - 2);
+        const ratio = scaled - fromIndex;
+        const [fromLat, fromLng] = route[fromIndex];
+        const [toLat, toLng] = route[fromIndex + 1];
+        const lat = fromLat + (toLat - fromLat) * ratio;
+        const lng = fromLng + (toLng - fromLng) * ratio;
         const coordinates = [lng, lat];
         const node = document.createElement("span");
         node.className = `overviewModeMarker mode-${mode}`;
@@ -1125,7 +1133,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         node.setAttribute("aria-label", label);
         node.dataset.routeReference = reference;
         node.dataset.nearStage = nearStage;
-        markers.current.push(new maplibregl.Marker({ element: node, anchor: "center", offset })
+        markers.current.push(new maplibregl.Marker({ element: node, anchor: "center" })
           .setLngLat(coordinates)
           .setPopup(new maplibregl.Popup({ offset: 18 }).setText(label))
           .addTo(map.current));
@@ -1255,9 +1263,8 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       )}
       {!day && (
         <div className="overviewRouteLegend" aria-label="Legenda dei mezzi">
-          <span className="air">✈️ Aereo</span>
           <span className="road">🚐 Van</span>
-          <span className="rail">🚆 Treno</span>
+          <span className="transit">🚌 Bus notturno</span>
           <span className="boat">⛵ Barca</span>
           <span className="walk">👣 Piedi</span>
         </div>

@@ -59,13 +59,20 @@ if ($Target -in @("qa", "both")) {
 
 if ($Target -in @("production", "both")) {
   $productionOutput = & npx --yes wrangler@4.118.0 pages deploy dist `
-    --project-name viaggio-in-india-2026 `
+    --project-name viaggio-in-thailandia-2026 `
     --branch main `
     --commit-dirty=true 2>&1
   $productionOutput | ForEach-Object { Write-Output $_ }
   if ($LASTEXITCODE -ne 0) { throw "Deploy produzione non riuscito" }
-  $productionUrl = [regex]::Match(($productionOutput | Out-String), 'https://[a-z0-9-]+\.viaggio-in-india-2026\.pages\.dev').Value
+  $productionUrl = [regex]::Match(($productionOutput | Out-String), 'https://[a-z0-9-]+\.viaggio-in-thailandia-2026\.pages\.dev').Value
   if (-not $productionUrl) { throw "URL del deployment produzione non rilevato" }
   & $readyScript -BaseUrl $productionUrl -ExpectedVersion $expectedVersion
-  & $readyScript -BaseUrl "https://viaggio-in-india-2026.pages.dev" -ExpectedVersion $expectedVersion
+  & $readyScript -BaseUrl "https://viaggio-in-thailandia-2026.pages.dev" -ExpectedVersion $expectedVersion
+
+  $redirectOutput = & npx --yes wrangler@4.118.0 pages deploy redirect-old-site `
+    --project-name viaggio-in-india-2026 `
+    --branch main `
+    --commit-dirty=true 2>&1
+  $redirectOutput | ForEach-Object { Write-Output $_ }
+  if ($LASTEXITCODE -ne 0) { throw "Reindirizzamento del vecchio indirizzo non riuscito" }
 }

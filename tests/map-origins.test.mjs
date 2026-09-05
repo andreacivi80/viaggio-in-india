@@ -24,16 +24,24 @@ test("le icone della mappa generale sono ancorate a tratte reali", () => {
   for (const [reference, stage] of [["Bangkok–Hua Hin", "2"], ["Kui Buri", "3"], ["Cheow Lan", "5"], ["Phi Phi", "6"], ["Surat–Bangkok", "9"]])
     assert.ok(itinerary.includes(`"${reference}", "${stage}"`), `${reference} non è vicino alla tappa ${stage}`);
   assert.match(source, /node\.dataset\.nearStage = nearStage/);
+  assert.match(source, /const route = roadPaths\[pathName\] \|\| \[\]/);
+  assert.match(source, /const lat = fromLat \+ \(toLat - fromLat\) \* ratio/);
+  for (const path of ["bangkok-huahin", "huahin-chumphon", "khaosok-pier", "krabi-phiphi", "surat-bangkok"])
+    assert.match(itinerary, new RegExp(`"${path}", 0\\.`), `icona non ancorata alla tratta ${path}`);
 });
 
 test("i simboli dei mezzi restano separati dai nomi di Phi Phi e delle tappe vicine", () => {
-  assert.match(itinerary, /"Phi Phi Island", \[5, 42\], "Phi Phi", "6"/);
-  assert.match(itinerary, /"Cheow Lan Lake", \[55, -35\], "Cheow Lan", "5"/);
-  assert.doesNotMatch(itinerary, /"Phi Phi Island", \[-34, 19\]/);
+  assert.match(itinerary, /"krabi-phiphi", 0\.56, "Phi Phi", "6"/);
+  assert.match(itinerary, /"khaosok-pier", 0\.78, "Cheow Lan", "5"/);
+  assert.doesNotMatch(itinerary, /"Phi Phi Island", \[[^\]]+\]/);
 });
 
 test("la legenda dei mezzi non copre più la scala chilometrica", () => {
   assert.match(styles, /\.overviewRouteLegend\s*\{[^}]*top:\s*9px;[^}]*bottom:\s*auto;/s);
+  assert.match(source, /🚐 Van/);
+  assert.match(source, /🚌 Bus notturno/);
+  assert.doesNotMatch(source, /<span className="air">✈️ Aereo<\/span>/);
+  assert.doesNotMatch(source, /<span className="rail">🚆 Treno<\/span>/);
 });
 
 test("i nomi delle città non dipendono dalle etichette della cartografia esterna", () => {

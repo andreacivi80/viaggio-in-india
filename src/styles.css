@@ -5724,6 +5724,7 @@ mark.mention {
 .overviewModeMarker.mode-air { color: #1769aa; }
 .overviewModeMarker.mode-road { color: #d65015; }
 .overviewModeMarker.mode-rail { color: #7b2845; }
+.overviewModeMarker.mode-transit { color: #744111; }
 .overviewModeMarker.mode-boat { color: #007f86; }
 .overviewModeMarker.mode-walk { color: #287943; }
 .overviewRouteLegend {
@@ -5753,6 +5754,7 @@ mark.mention {
 .overviewRouteLegend .air { color: #1769aa; }
 .overviewRouteLegend .road { color: #d65015; }
 .overviewRouteLegend .rail { color: #7b2845; }
+.overviewRouteLegend .transit { color: #744111; }
 .overviewRouteLegend .boat { color: #007f86; }
 .overviewRouteLegend .walk { color: #287943; }
 .travelerOriginsSheet {

@@ -119,7 +119,8 @@ test("il deploy QA usa obbligatoriamente i binding QA", async () => {
   assert.doesNotMatch(sessionDeploy, /--project-name viaggio-in-india-2026-qa/);
   assert.match(sessionDeploy, /wait-deployment-ready\.ps1/);
   assert.match(sessionDeploy, /viaggio-in-india-2026-qa\.pages\.dev/);
-  assert.match(sessionDeploy, /viaggio-in-india-2026\.pages\.dev/);
+  assert.match(sessionDeploy, /viaggio-in-thailandia-2026\.pages\.dev/);
+  assert.match(sessionDeploy, /pages deploy redirect-old-site[\s\S]*--project-name viaggio-in-india-2026/);
   const readiness = await readFile(new URL("../scripts/wait-deployment-ready.ps1", import.meta.url), "utf8");
   assert.match(readiness, /api\/health/);
   assert.match(readiness, /api\/private/);

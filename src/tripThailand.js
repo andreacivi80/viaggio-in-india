@@ -126,17 +126,20 @@ export const roadPaths = {
   "phiphi-krabi": [[7.7407, 98.7784], [7.89, 98.84], [8.0421, 98.9182], [8.0863, 98.9063]],
   "krabi-local": [[8.0863, 98.9063], [8.032, 98.8225], [8.056, 98.79], [8.0863, 98.9063]],
   "krabi-surat": [[8.0863, 98.9063], [8.55, 99.02], [9.1382, 99.3217]],
-  "surat-bangkok": [[9.1382, 99.3217], [10.493, 99.18], [12.5684, 99.9577], [13.7563, 100.5018]],
+  "surat-bangkok": [
+    [9.1382, 99.3217], [10.493, 99.18], [10.708, 99.318], [11.214, 99.512],
+    [11.812, 99.798], [12.5684, 99.9577], [13.1119, 99.9397], [13.7563, 100.5018],
+  ],
   "bangkok-local": [[13.7563, 100.5018], [13.7466, 100.493], [13.7516, 100.4927], [13.7563, 100.5018]],
   "bangkok-bkk": [[13.7563, 100.5018], [13.725, 100.65], [13.69, 100.7501]],
 };
 
 export const overviewModes = [
-  ["🚐", "Minivan Bangkok–Hua Hin", "road", "Hua Hin", [34, 24], "Bangkok–Hua Hin", "2"],
-  ["🦶", "Trekking e safari a Kui Buri", "walk", "Chumphon", [34, 20], "Kui Buri", "3"],
-  ["⛵", "Barca sul lago Cheow Lan", "boat", "Cheow Lan Lake", [55, -35], "Cheow Lan", "5"],
-  ["⛴️", "Traghetto per Phi Phi", "boat", "Phi Phi Island", [5, 42], "Phi Phi", "6"],
-  ["🚌", "Bus notturno per Bangkok", "transit", "Surat Thani", [28, 18], "Surat–Bangkok", "9"],
+  ["🚐", "Minivan Bangkok–Hua Hin", "road", "bangkok-huahin", 0.58, "Bangkok–Hua Hin", "2"],
+  ["🦶", "Trekking e safari a Kui Buri", "walk", "huahin-chumphon", 0.66, "Kui Buri", "3"],
+  ["⛵", "Barca sul lago Cheow Lan", "boat", "khaosok-pier", 0.78, "Cheow Lan", "5"],
+  ["⛴️", "Traghetto per Phi Phi", "boat", "krabi-phiphi", 0.56, "Phi Phi", "6"],
+  ["🚌", "Bus notturno per Bangkok", "transit", "surat-bangkok", 0.18, "Surat–Bangkok", "9"],
 ];
 
 export const overviewSegments = [

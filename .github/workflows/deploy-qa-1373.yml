@@ -23,7 +23,7 @@ on:
         type: boolean
 
 concurrency:
-  group: deploy-india-verified
+  group: deploy-thailandia-verified
   cancel-in-progress: true
 
 jobs:
@@ -89,16 +89,21 @@ jobs:
       - name: Test statici e compilazione
         run: npm test
       - name: Pubblicazione Cloudflare Pages produzione
-        run: npx wrangler pages deploy dist --project-name viaggio-in-india-2026 --branch main
+        run: npx wrangler pages deploy dist --project-name viaggio-in-thailandia-2026 --branch main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - name: Verifica produzione raggiungibile
         run: |
           for attempt in {1..30}; do
-            if curl --fail --silent https://viaggio-in-india-2026.pages.dev/ | grep --quiet "root"; then
+            if curl --fail --silent https://viaggio-in-thailandia-2026.pages.dev/ | grep --quiet "root"; then
               exit 0
             fi
             sleep 2
           done
           exit 1
+      - name: Reindirizza il vecchio indirizzo India verso Thailandia
+        run: npx wrangler pages deploy redirect-old-site --project-name viaggio-in-india-2026 --branch main
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
