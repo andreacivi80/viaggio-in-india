@@ -890,7 +890,7 @@ P1,media-upload,passed,utilizzare uno stato neutro di caricamento;,addendum:A029
 P1,media-upload,pending,Verifica caricamento foto.,globale:T-0653,
 P1,media-upload,pending,Verifica caricamento video.,globale:T-0654,
 P1,media-upload,pending,Verificare audio.,usabilita:U0106,
-P1,media-upload,pending,Verificare caricamento di ogni immagine Unsplash.,globale:T-1634,
+P1,media-upload,passed,Verificare caricamento di ogni immagine Unsplash.,globale:T-1634,"production-smoke Thailandia 1.48.12: nessun riferimento Unsplash o immagine remota resta nel bundle; tutte le fotografie delle città sono asset locali e hanno risposto correttamente sul dominio ufficiale, eliminando dipendenza, scadenza e blocco del fornitore esterno."
 P1,media-upload,pending,Verificare caricamento differito.,globale:T-1635,
 P1,media-upload,passed,Verificare caricamento heic2any soltanto con file HEIC.,globale:T-1673,ui-network-india 6/6 + sorgente verificato: heic2any non è scaricato all’apertura e viene importato dinamicamente soltanto per HEIC/HEIF.
 P1,media-upload,passed,Verificare caricamento MapLibre soltanto quando serve.,globale:T-1674,ui-network-india 6/6 + sorgente verificato: MapLibre non è scaricato in bacheca e viene importato dinamicamente soltanto quando si apre una mappa.
@@ -1100,7 +1100,7 @@ P2,profili-ruoli,pending,Moltiplicare per tutti i Viaggiatori e familiari.,globa
 P2,profili-ruoli,pending,Mostrare un messaggio preciso: “Per pubblicare devi prima collegare questo dispositivo al tuo profilo”.,usabilita:U0007,
 P2,profili-ruoli,passed,nessun utente può risultare contemporaneamente Viaggiatore A e Viaggiatore B.,addendum:A0065,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P2,profili-ruoli,pending,nomi differenti per lo stesso ruolo;,addendum:A0410,
-P2,profili-ruoli,pending,Non associare automaticamente un profilo scelto dal client.,usabilita:U0482,
+P2,profili-ruoli,passed,Non associare automaticamente un profilo scelto dal client.,usabilita:U0482,"ui-people Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: dopo creazione e modifica di un altro viaggiatore il profilo locale resta quello del coordinatore autenticato; un viaggiatore vede la persona esistente ma non riceve comandi per sceglierla, modificarla, crearle inviti o aprirne i documenti."
 P2,profili-ruoli,passed,non deve modificare il ruolo reale;,addendum:A0277,"ui-coordinator-grid touch ripetuto due volte: token, profile-id e ruolo coordinatore restano identici durante navigazione e riapertura della griglia; ruolo confermato da auth/session"
 P2,profili-ruoli,pending,non deve poter scegliere il profilo di un Viaggiatore;,usabilita:U0026,
 P2,profili-ruoli,pending,non esistono profili;,addendum:A0297,
@@ -1131,7 +1131,7 @@ P2,profili-ruoli,pending,telefono B – Viaggiatore 1;,globale:T-0302,
 P2,profili-ruoli,pending,telefono C – Viaggiatore 2;,globale:T-0303,
 P2,profili-ruoli,pending,Tentare di accedere come Viaggiatore B usando il codice comune.,globale:T-0334,
 P2,profili-ruoli,passed,Tentare di modificare un profilo.,usabilita:U0622,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
-P2,profili-ruoli,pending,Tentare di scegliere un profilo esistente.,usabilita:U0634,
+P2,profili-ruoli,passed,Tentare di scegliere un profilo esistente.,usabilita:U0634,"ui-people Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: dopo creazione e modifica di un altro viaggiatore il profilo locale resta quello del coordinatore autenticato; un viaggiatore vede la persona esistente ma non riceve comandi per sceglierla, modificarla, crearle inviti o aprirne i documenti."
 P2,profili-ruoli,pending,test come Viaggiatore;,usabilita:U0721,
 P2,profili-ruoli,pending,test del percorso completo del Viaggiatore;,globale:T-1806,
 P2,profili-ruoli,pending,Tutti controllano il proprio profilo.,globale:T-1733,
