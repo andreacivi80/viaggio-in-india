@@ -812,7 +812,7 @@ P1,media-upload,pending,fotografie e video presenti;,globale:T-1756,
 P1,media-upload,pending,Fotografie e video.,usabilita:U0148,
 P1,media-upload,passed,"Fotografie, video e audio.",usabilita:U0149,"ui-publish-complete Thailandia 1.48.4 1/1: fotografia, video, audio caricato e audio registrato sono presenti nello stesso post reale."
 P1,media-upload,pending,Fotografie.,usabilita:U0117,
-P1,media-upload,pending,Gestire errore nel caricamento della pagina successiva.,globale:T-1681,
+P1,media-upload,passed,Gestire errore nel caricamento della pagina successiva.,globale:T-1681,"ui-feed-scroll-robustness Thailandia 1.48.11 Samsung S20 FE 1/1: 18 post reali, scorrimento touch fino al più vecchio oltre 1.000 px, risposta 503 forzata al successivo aggiornamento senza perdita del feed già caricato e recupero completo al retry; pulizia finale 18/18."
 P1,media-upload,pending,gli upload riprendono dopo perdita della rete;,globale:T-0672,
 P1,media-upload,passed,il caricamento impedisce una seconda operazione incompatibile;,addendum:A0174,"Playwright Galaxy S9+: invito e sessione server, modale sopra barra, pulsante raggiungibile, stato disabilitato/invio, doppio clic=una richiesta, HTTP 201 e record confermato; preview 9913ac2c; 2026-08-04"
 P1,media-upload,passed,impossibilità di pubblicare con identità non ancora caricata;,addendum:A0317,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
@@ -860,7 +860,7 @@ P1,media-upload,passed,Salvataggio offline dei video selezionati.,globale:T-0130
 P1,media-upload,passed,Salvataggio offline delle fotografie selezionate.,globale:T-0131,"offline-queue: file JPEG conservato con nome, MIME e contenuto"
 P1,media-upload,pending,Scaricamento soltanto delle modifiche.,globale:T-0112,
 P1,media-upload,pending,Scattare una fotografia.,usabilita:U0190,
-P1,media-upload,pending,Scorrere e caricare i successivi.,globale:T-1686,
+P1,media-upload,passed,Scorrere e caricare i successivi.,globale:T-1686,"ui-feed-scroll-robustness Thailandia 1.48.11 Samsung S20 FE 1/1: 18 post reali, scorrimento touch fino al più vecchio oltre 1.000 px, risposta 503 forzata al successivo aggiornamento senza perdita del feed già caricato e recupero completo al retry; pulizia finale 18/18."
 P1,media-upload,passed,Selezionare fotografie e video.,globale:T-0830,"ui-publish-complete Thailandia 1.48.4 1/1: selettori galleria, scatto e video presenti e utilizzati nello stesso flusso touch."
 P1,media-upload,passed,Selezionare più fotografie.,usabilita:U0196,Playwright mobile: selezione simultanea di 10 JPEG e conteggio esatto; preview b4f2cf13; 2026-08-04
 P1,media-upload,pending,Selezionare un video MOV.,usabilita:U0200,
@@ -995,7 +995,7 @@ P1,sync-rete,pending,verifica dall’India o da una rete con caratteristiche equ
 P1,sync-rete,passed,Verificare aggiornamento al successivo ritorno della rete.,globale:T-0831,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: al successivo ritorno della rete la coda viene svuotata, il feed aggiornato e il post compare una sola volta."
 P1,sync-rete,passed,Verificare aggiornamento con telefono offline.,globale:T-0832,"ui-offline Samsung S20 FE 1/1: il telefono viene posto offline, la pagina chiusa e riaperta online; coda svuotata e stato aggiornato senza duplicazioni."
 P1,sync-rete,pending,Verificare alternativa offline.,globale:T-0397,
-P1,sync-rete,pending,"Verificare bozze, se devono essere sincronizzate.",globale:T-1604,
+P1,sync-rete,passed,"Verificare bozze, se devono essere sincronizzate.",globale:T-1604,"draft-privacy 1/1: decisione verificata di non sincronizzare le bozze tra dispositivi; testo e coda offline restano negli archivi locali del telefono, vengono rimossi dopo la pubblicazione e non esistono endpoint o tabelle server per bozze incompiute."
 P1,sync-rete,pending,Verificare che il Service Worker utilizzi la cache 1.21.5.,globale:T-0012,
 P1,sync-rete,passed,Verificare che non sia necessario cancellare manualmente la cache.,addendum:A0093,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P1,sync-rete,pending,Verificare comportamento offline.,globale:T-1639,
