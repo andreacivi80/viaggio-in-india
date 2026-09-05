@@ -146,6 +146,13 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
     const post = page.locator(".post").filter({ hasText: text });
     await expect(post).toBeVisible();
     await expect(post.locator("img", { has: undefined })).toBeVisible();
+    await post.getByRole("button", { name: "Apri fotografia 1" }).tap();
+    const photoViewer = page.getByRole("dialog", { name: "Fotografia aperta" });
+    await expect(photoViewer).toBeVisible();
+    await expect(photoViewer.getByAltText("Fotografia a schermo intero")).toBeVisible();
+    await photoViewer.getByRole("button", { name: "Chiudi foto" }).tap();
+    await expect(photoViewer).toBeHidden();
+    await expect(post).toBeVisible();
     const audioPlayer = post.locator("audio");
     await expect(audioPlayer).toHaveCount(1);
     await expect(audioPlayer).toBeHidden();

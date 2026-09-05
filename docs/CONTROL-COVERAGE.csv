@@ -751,17 +751,17 @@ P1,mappe-posizione,passed,Verificare posizione geografica di ogni hotel.,globale
 P1,mappe-posizione,passed,Verificare ritorno allo stesso giorno e alla stessa posizione.,globale:T-0399,ui-navigation Samsung S20 FE 1/1: Giorno 7 → Percorso → Torna alla Bacheca ripristina la stessa giornata aperta e lo stesso scrollY entro 2 pixel.
 P1,mappe-posizione,passed,Verificare stato posizione vecchia.,globale:T-0511,"P0_LOCATION_RETENTION 5/5: la posizione più vecchia di 24 ore viene rimossa, quella recente resta disponibile e il timestamp continua a distinguerne lo stato."
 P1,mappe-posizione,pending,Visualizzazione della precisione GPS.,globale:T-0215,
-P1,media-upload,pending,100 upload dallo stesso utente.,globale:T-1051,
+P1,media-upload,passed,100 upload dallo stesso utente.,globale:T-1051,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: 100/100 fotografie caricate dallo stesso viaggiatore in 20 post, tutte persistite e riaperte con byte e MIME corretti."
 P1,media-upload,passed,Aggiungere l’audio al post.,usabilita:U0224,Playwright mobile: WAV valido aggiunto insieme a foto e video; preview b4f2cf13; 2026-08-04
-P1,media-upload,pending,Aprire fotografia.,usabilita:U0208;usabilita:U0422,
+P1,media-upload,passed,Aprire fotografia.,usabilita:U0208;usabilita:U0422,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
 P1,media-upload,passed,Aprire fotografie e video pubblici.,usabilita:U0616,"ui-publish-complete Thailandia 1.48.4 1/1: il secondo telefono pubblico visualizza due fotografie, video, due audio e luogo pubblicati, senza comandi di eliminazione."
 P1,media-upload,pending,Aprire la fotocamera.,usabilita:U0187,
-P1,media-upload,pending,Aprire una fotografia del carosello.,globale:T-1394,
+P1,media-upload,passed,Aprire una fotografia del carosello.,globale:T-1394,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
 P1,media-upload,pending,Archivio di audio.,globale:T-1708,
 P1,media-upload,pending,Archivio di fotografie.,globale:T-1709,
 P1,media-upload,pending,Archivio di video.,globale:T-1714,
 P1,media-upload,pending,Audio.,usabilita:U0119,
-P1,media-upload,pending,Aumento improvviso degli upload.,globale:T-1540,
+P1,media-upload,passed,Aumento improvviso degli upload.,globale:T-1540,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: quattro raffiche reali da cinque richieste concorrenti completate senza errori, perdita o duplicazione."
 P1,media-upload,passed,Bloccare lo schermo durante l’audio.,globale:T-0909,"ui-media Thailandia 1.48.4 1/1: l’audio avviato con touch viene messo in pausa al pagehide, quindi non continua con schermo/app in background."
 P1,media-upload,pending,Calcolare peso medio di un audio.,globale:T-1527,
 P1,media-upload,pending,Calcolare peso medio di un video.,globale:T-1528,
@@ -769,17 +769,17 @@ P1,media-upload,pending,Calcolare peso medio di una fotografia.,globale:T-1529,
 P1,media-upload,pending,caricamento post;,usabilita:U0545,
 P1,media-upload,pending,caricamento;,addendum:A0162,
 P1,media-upload,pending,Caricare assicurazione.,globale:T-0476;usabilita:U0419,
-P1,media-upload,pending,Caricare due file con lo stesso nome.,globale:T-0989,
+P1,media-upload,passed,Caricare due file con lo stesso nome.,globale:T-0989,P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: due fotografie con identico nome foto-vacanza.jpg persistono entrambe con URL storage distinti e contenuto riapribile.
 P1,media-upload,passed,Caricare file con MIME falso.,globale:T-0614,QA autenticata 1.48.4: file camuffati e firme incoerenti rifiutati; nessun contenuto con MIME falso viene memorizzato.
-P1,media-upload,pending,Caricare fotografia con nome originale personale.,globale:T-1425,
-P1,media-upload,pending,Caricare fotografia contenente data e ora.,globale:T-1426,
+P1,media-upload,passed,Caricare fotografia con nome originale personale.,globale:T-1425,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: fotografia con nome originale personale accettata, persistita, riletta e cancellata senza alterare il post."
+P1,media-upload,passed,Caricare fotografia contenente data e ora.,globale:T-1426,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: fotografia con data e ora nel nome accettata, persistita, riletta e cancellata correttamente."
 P1,media-upload,passed,Caricare fotografia contenente modello del telefono.,globale:T-1427,"P0_MEDIA_DELETE 14/14: JPEG contenente modello Samsung SM-G781B viene accettato e riaperto, ma il modello non viene estratto né mostrato nei dati del post."
 P1,media-upload,pending,Caricare fotografia.,globale:T-0342,
-P1,media-upload,pending,Caricare i primi 20 post.,globale:T-1679,
+P1,media-upload,passed,Caricare i primi 20 post.,globale:T-1679,P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: i primi 20/20 post creati in sequenza a raffiche compaiono tutti nello stato finale con cinque media ciascuno.
 P1,media-upload,pending,Caricare immagini a qualità ridotta.,globale:T-1645,
-P1,media-upload,pending,Caricare un file con accenti.,globale:T-0990,
-P1,media-upload,pending,Caricare un file con emoji nel nome.,globale:T-0991,
-P1,media-upload,pending,Caricare un file con nome molto lungo.,globale:T-0992,
+P1,media-upload,passed,Caricare un file con accenti.,globale:T-0990,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: file città-perché-caffè.jpg caricato, conservato e riaperto correttamente."
+P1,media-upload,passed,Caricare un file con emoji nel nome.,globale:T-0991,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: nome Thailandia con emoji palma e fotocamera caricato, conservato e riaperto correttamente."
+P1,media-upload,passed,Caricare un file con nome molto lungo.,globale:T-0992,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: nome file di 259 caratteri caricato, persistito e riaperto senza troncamenti che impediscano l’accesso."
 P1,media-upload,passed,Caricare una fotografia contenente coordinate GPS EXIF.,globale:T-1428,P0_MEDIA_DELETE 14/14: JPEG reale con coordinate GPS EXIF pubblicato senza trasferire latitudine o longitudine nei dati del post.
 P1,media-upload,passed,Caricare una fotografia orizzontale.,globale:T-0996,"ui-publish-complete Thailandia 1.48.4 1/1: fotografia orizzontale reale selezionata da galleria e scatto, pubblicata e resa visibile su due telefoni."
 P1,media-upload,pending,Caricare una fotografia sfocata.,globale:T-0997,
@@ -803,11 +803,11 @@ P1,media-upload,passed,Disattivare caricamento automatico video.,globale:T-1647,
 P1,media-upload,passed,"dispone di screenshot, video o log come prova.",globale:T-0247,"Playwright Thailandia 1.48.4: ogni errore UI produce screenshot, video, trace e contesto; gli esiti riusciti conservano log nominativi del controllo."
 P1,media-upload,pending,Eseguire logout durante un caricamento.,globale:T-0759,
 P1,media-upload,pending,fotocamera negata;,usabilita:U0504,
-P1,media-upload,pending,Fotografia → carosello → indietro.,globale:T-1413,
+P1,media-upload,passed,Fotografia → carosello → indietro.,globale:T-1413,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
 P1,media-upload,pending,fotografia orizzontale.,globale:T-0430,
 P1,media-upload,pending,fotografia verticale.,globale:T-0431,
 P1,media-upload,pending,Fotografia.,usabilita:U0389;addendum:A0072,
-P1,media-upload,pending,fotografie cliccabili;,addendum:A0010,
+P1,media-upload,passed,fotografie cliccabili;,addendum:A0010,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
 P1,media-upload,pending,fotografie e video presenti;,globale:T-1756,
 P1,media-upload,pending,Fotografie e video.,usabilita:U0148,
 P1,media-upload,passed,"Fotografie, video e audio.",usabilita:U0149,"ui-publish-complete Thailandia 1.48.4 1/1: fotografia, video, audio caricato e audio registrato sono presenti nello stesso post reale."
@@ -816,7 +816,7 @@ P1,media-upload,pending,Gestire errore nel caricamento della pagina successiva.,
 P1,media-upload,pending,gli upload riprendono dopo perdita della rete;,globale:T-0672,
 P1,media-upload,passed,il caricamento impedisce una seconda operazione incompatibile;,addendum:A0174,"Playwright Galaxy S9+: invito e sessione server, modale sopra barra, pulsante raggiungibile, stato disabilitato/invio, doppio clic=una richiesta, HTTP 201 e record confermato; preview 9913ac2c; 2026-08-04"
 P1,media-upload,passed,impossibilità di pubblicare con identità non ancora caricata;,addendum:A0317,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
-P1,media-upload,pending,Ingrandire una fotografia.,globale:T-0912,
+P1,media-upload,passed,Ingrandire una fotografia.,globale:T-0912,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
 P1,media-upload,passed,Interrompere upload al 25%.,globale:T-0541,"resumable-upload 5/5: interruzione esatta al 25%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
 P1,media-upload,passed,Interrompere upload al 50%.,globale:T-0542,"resumable-upload 5/5: interruzione esatta al 50%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
 P1,media-upload,passed,Interrompere upload al 90%.,globale:T-0543,"resumable-upload 5/5: interruzione esatta al 90%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
@@ -878,7 +878,7 @@ P1,media-upload,pending,Testo e audio.,usabilita:U0147,
 P1,media-upload,pending,Testo e fotografia.,usabilita:U0145,
 P1,media-upload,pending,Testo e video.,usabilita:U0146,
 P1,media-upload,pending,toccare durante un caricamento;,usabilita:U0084,
-P1,media-upload,pending,Tornare dopo la visualizzazione di una fotografia.,globale:T-0977,
+P1,media-upload,passed,Tornare dopo la visualizzazione di una fotografia.,globale:T-0977,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
 P1,media-upload,pending,Tre upload contemporanei.,globale:T-0574,
 P1,media-upload,pending,Tutti pubblicano una fotografia.,globale:T-1740,
 P1,media-upload,pending,Tutti registrano un audio.,globale:T-1741,
@@ -907,7 +907,7 @@ P1,media-upload,passed,Verificare fotografia della città.,usabilita:U0319,"Play
 P1,media-upload,pending,Verificare fotografie HDR.,globale:T-1434,
 P1,media-upload,pending,Verificare fotografie.,usabilita:U0104,
 P1,media-upload,passed,Verificare funzionamento dopo ricaricamento della pagina.,globale:T-0983,"ui-offline e ui-publish-complete Thailandia 1.48.4: dopo reload sessione, post, fotografia e assenza di duplicati restano coerenti."
-P1,media-upload,pending,Verificare quali fotografie restano memorizzate.,globale:T-1631,
+P1,media-upload,passed,Verificare quali fotografie restano memorizzate.,globale:T-1631,P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: 100 URL media verificati prima della pulizia; dopo eliminazione dei 20 post tutti i 100 URL non restituiscono più 200.
 P1,media-upload,passed,"Verificare stesso post, stessi commenti e stessa fotografia.",globale:T-1408,"QA autenticata 1.48.4: due dispositivi leggono lo stesso ID post, la stessa fotografia e gli stessi commenti dopo sincronizzazione e reload."
 P1,media-upload,passed,Verificare streaming senza caricare tutto il file in memoria.,globale:T-1008,"QA autenticata 1.48.4: upload grande a parti completato con streaming, commit finale e lettura del contenuto senza caricamento monolitico del file."
 P1,media-upload,pending,Verificare video.,usabilita:U0105,

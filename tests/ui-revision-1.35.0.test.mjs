@@ -20,8 +20,9 @@ test("il ruolo sicuro assegnato dal server viene mostrato senza auto-promozione"
 });
 
 test("le fotografie social sono adattate senza ritaglio", () => {
-  assert.match(styles, /\.postMediaSlide > img[\s\S]*?object-fit: contain/);
-  assert.doesNotMatch(styles, /\.postMediaSlide > img[\s\S]{0,240}?object-fit: cover/);
+  assert.match(styles, /\.postMediaOpen > img[\s\S]*?object-fit: contain/);
+  assert.doesNotMatch(styles, /\.postMediaOpen > img[\s\S]{0,240}?object-fit: cover/);
+  assert.match(source, /aria-label=\{`Apri fotografia \$\{index \+ 1\}`\}/);
 });
 
 test("l'audio associato alla foto usa controlli compatti e si ferma in background", () => {

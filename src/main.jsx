@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.5",
+const VERSION = "1.48.6",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -4174,6 +4174,7 @@ function AudioRecorder({ onRecorded }) {
 }
 
 function PostMedia({ items }) {
+  const [openImage, setOpenImage] = useState(null);
   const visualItems = items.filter(
     (item) => !item.media_type?.startsWith("audio"),
   );
@@ -4192,7 +4193,14 @@ function PostMedia({ items }) {
           {visualItems.map((item, index) => (
             <div className="postMediaSlide" key={item.id || item.media_url}>
               {item.media_type?.startsWith("image") && (
-                <img src={item.media_url} alt="Ricordo del viaggio" loading="lazy" />
+                <button
+                  type="button"
+                  className="postMediaOpen"
+                  aria-label={`Apri fotografia ${index + 1}`}
+                  onClick={() => setOpenImage(item)}
+                >
+                  <img src={item.media_url} alt="Ricordo del viaggio" loading="lazy" />
+                </button>
               )}
               {item.media_type?.startsWith("video") && (
                 <video controls playsInline preload="metadata" src={item.media_url} />
@@ -4221,6 +4229,17 @@ function PostMedia({ items }) {
           />
         </div>
       ))}
+      {openImage && (
+        <div className="photoViewerOverlay" role="dialog" aria-modal="true" aria-label="Fotografia aperta">
+          <header>
+            <b>Ricordo del viaggio</b>
+            <button type="button" onClick={() => setOpenImage(null)}>Chiudi foto</button>
+          </header>
+          <div className="photoViewerCanvas">
+            <img src={openImage.media_url} alt="Fotografia a schermo intero" />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

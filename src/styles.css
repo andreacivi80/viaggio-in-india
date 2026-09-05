@@ -2039,7 +2039,7 @@ footer small {
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
-.postMediaSlide > img,
+.postMediaSlide > .postMediaOpen,
 .postMediaSlide > video {
   display: block;
   max-width: 100%;
@@ -2047,9 +2047,23 @@ footer small {
   margin: auto;
   object-fit: contain;
 }
-.postMediaSlide > img {
+.postMediaSlide > .postMediaOpen {
   width: auto;
   height: auto;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+.postMediaOpen > img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 75vh;
+  object-fit: contain;
 }
 .postMediaSlide > video {
   width: 100%;
@@ -2093,6 +2107,44 @@ footer small {
   color: #fff;
   font-size: 12px;
   font-weight: 800;
+}
+.photoViewerOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  padding: max(8px, env(safe-area-inset-top)) 8px max(8px, env(safe-area-inset-bottom));
+  background: #07100ded;
+}
+.photoViewerOverlay > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 4px 4px 10px;
+  color: #fff;
+}
+.photoViewerOverlay > header button {
+  min-height: 44px;
+  padding: 0 15px;
+  border: 1px solid #ffffff73;
+  border-radius: 999px;
+  background: #fff;
+  color: #10251c;
+  font-weight: 850;
+}
+.photoViewerCanvas {
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  overflow: auto;
+}
+.photoViewerCanvas > img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
 }
 .mediaTypeLabel {
   position: absolute;

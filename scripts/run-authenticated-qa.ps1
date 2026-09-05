@@ -7,6 +7,7 @@ param(
   [switch]$ExtendedDocumentConcurrency,
   [switch]$ExtendedSync,
   [switch]$ExtendedMedia,
+  [switch]$ExtendedMediaRobustness,
   [switch]$ExtendedLocation,
   [switch]$ExtendedRoles,
   [switch]$ExtendedSocial,
@@ -167,6 +168,9 @@ try {
   }
   elseif ($ExtendedMedia) {
     & node tests\extended-p0-media-delete.mjs
+  }
+  elseif ($ExtendedMediaRobustness) {
+    & node tests\extended-p1-media-robustness.mjs
   }
   elseif ($ExtendedSync) {
     & node tests\extended-p0-sync-delete.mjs
