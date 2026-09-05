@@ -28,6 +28,7 @@ param(
   [switch]$OwnProfileUi,
   [switch]$SocialFlood,
   [switch]$SocialConcurrency,
+  [switch]$SocialComments,
   [switch]$DownloadArchiveUi,
   [switch]$PublishUi
 )
@@ -185,6 +186,9 @@ try {
   }
   elseif ($SocialConcurrency) {
     & node tests\extended-p1-social-concurrency.mjs
+  }
+  elseif ($SocialComments) {
+    & node tests\extended-p1-social-comments.mjs
   }
   elseif ($DownloadArchiveUi) {
     & npx playwright test "tests/ui-download-archive.spec.mjs" --reporter=line
