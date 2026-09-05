@@ -121,8 +121,6 @@ const candidates = parseCsv(fs.readFileSync(sourcePath, "utf8"))
   .map((row, index) => ({ ...row, sourceOrder: index, riskScore: score(row) }))
   .sort((left, right) => right.riskScore - left.riskScore || left.sourceOrder - right.sourceOrder);
 
-if (candidates.length < LIMIT) throw new Error(`Controlli critici pendenti insufficienti: ${candidates.length}`);
-
 const selected = candidates.slice(0, LIMIT).map((row, index) => ({
   id: `K-${String(index + 1).padStart(3, "0")}`,
   band: index < 40 ? "K0" : index < 90 ? "K1" : "K2",

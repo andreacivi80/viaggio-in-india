@@ -847,7 +847,7 @@ P1,media-upload,passed,Rete interrotta al 25% dell’upload.,usabilita:U0527,"re
 P1,media-upload,pending,Ricaricare la pagina.,globale:T-0395;usabilita:U0128,
 P1,media-upload,passed,Ricaricare ogni URL significativo.,globale:T-1420,"ui-significant-urls Thailandia 1.48.11 Samsung S20 FE 1/1: bacheca, mappa generale, mappa del giorno, singolo post e singola fotografia aperti e ricaricati due volte ciascuno; trovato e corretto il reset del parametro view=map; zero pagine bianche e L1/L2 18/18 applicabili."
 P1,media-upload,passed,ripresa upload;,globale:T-1800,resumable-upload: ripresa upload coperta da prova automatica
-P1,media-upload,pending,Riprodurre il video con rete lenta.,globale:T-0915,
+P1,media-upload,passed,Riprodurre il video con rete lenta.,globale:T-0915,"ui-large-slow-video Thailandia 1.48.11 Samsung S20 FE 1/1: video WebM reale portato a 26 MB, caricato in 7 parti, collegato a un post pubblico, servito con richieste media ritardate di 1,2 secondi e riprodotto realmente oltre 0,2 secondi; pausa e pulizia server completate."
 P1,media-upload,passed,Riprodurre un file audio.,globale:T-0916,"ui-media Thailandia 1.48.4 1/1 + ui-comment-media 1/1: audio reale caricato, durata valida e riproduzione avviata tramite touch."
 P1,media-upload,passed,Riprodurre un video con audio.,globale:T-0917,"ui-media Thailandia 1.48.4 1/1 + ui-comment-media 1/1: video con traccia multimediale caricato, salvato e riprodotto nel post/commento."
 P1,media-upload,pending,Riprodurre video.,usabilita:U0207,
@@ -913,7 +913,7 @@ P1,media-upload,passed,Verificare streaming senza caricare tutto il file in memo
 P1,media-upload,pending,Verificare video.,usabilita:U0105,
 P1,media-upload,pending,Video,globale:T-0292;globale:T-1262;usabilita:U0035;usabilita:U0118,
 P1,media-upload,pending,video dei percorsi completi;,usabilita:U0713,
-P1,media-upload,pending,video oltre 25 MB.,globale:T-0441,
+P1,media-upload,passed,video oltre 25 MB.,globale:T-0441,"ui-large-slow-video Thailandia 1.48.11 Samsung S20 FE 1/1: video WebM reale portato a 26 MB, caricato in 7 parti, collegato a un post pubblico, servito con richieste media ritardate di 1,2 secondi e riprodotto realmente oltre 0,2 secondi; pausa e pulizia server completate."
 P1,media-upload,pending,video orizzontale.,globale:T-0442,
 P1,media-upload,pending,video verticale.,globale:T-0443,
 P1,social,pending,Notifica con apertura del commento preciso.,globale:T-0082,
