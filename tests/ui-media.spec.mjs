@@ -3,6 +3,8 @@ import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { isSafeMutationTarget } from "./helpers/qa-mutation-target.mjs";
 
+test.use({ serviceWorkers: "block" });
+
 const profileName = process.env.QA_UI_PROFILE_NAME;
 const inviteToken = process.env.QA_UI_INVITE_TOKEN;
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");

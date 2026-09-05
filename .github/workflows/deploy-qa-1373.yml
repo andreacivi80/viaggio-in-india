@@ -46,7 +46,13 @@ jobs:
         run: npm test
       - name: Pubblicazione Cloudflare Pages QA
         if: env.CLOUDFLARE_CONFIGURED == 'true'
-        run: npx wrangler pages deploy dist --project-name viaggio-in-india-2026-qa --branch main
+        run: |
+          cp wrangler.jsonc wrangler.production.jsonc
+          trap 'mv -f wrangler.production.jsonc wrangler.jsonc' EXIT
+          cp wrangler.qa.jsonc wrangler.jsonc
+          grep -q '"database_name": "viaggio-in-india-qa-db"' wrangler.jsonc
+          if grep -q '"database_name": "viaggio-in-india-db"' wrangler.jsonc; then exit 1; fi
+          npx wrangler pages deploy dist --project-name viaggio-in-india-2026-qa --branch main
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

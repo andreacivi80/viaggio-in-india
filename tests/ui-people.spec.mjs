@@ -85,7 +85,7 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     await expect(form.getByPlaceholder("Nome *")).toHaveValue(managedName);
     await form.getByPlaceholder("Da dove vieni (es. Milano)").fill("Bologna");
     await form.getByPlaceholder("Raccontaci qualcosa di te…").fill("Profilo aggiornato e sincronizzato.");
-    await form.getByLabel("Ruolo nel viaggio").selectOption("coordinator");
+    await expect(form.getByLabel("Ruolo nel viaggio")).toHaveCount(0);
     const updateResponse = coordinatorPage.waitForResponse(
       (response) => response.url().includes("/api/profiles/") && response.request().method() === "PUT",
     );
@@ -94,7 +94,7 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     await expect(form.getByRole("status")).toContainText("Profilo aggiornato correttamente.");
     expect(await coordinatorPage.evaluate(() => localStorage.getItem("india-profile-id"))).toBe(coordinatorProfileId);
     card = coordinatorPage.locator(".peopleGrid article").filter({ hasText: managedName });
-    await expect(card).toContainText("Coordinatore");
+    await expect(card).toContainText("Partecipante");
     await expect(card).toContainText("Bologna");
     await expect(card).toContainText("Profilo aggiornato e sincronizzato.");
 
@@ -121,7 +121,7 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     await travelerPage.goto(`${baseUrl}/#invite=${encodeURIComponent(travelerInvite)}`, { waitUntil: "domcontentloaded" });
     await tapBottom(travelerPage, "Gruppo");
     const travelerView = travelerPage.locator(".peopleGrid article").filter({ hasText: managedName });
-    await expect(travelerView).toContainText("Coordinatore", { timeout: 15_000 });
+    await expect(travelerView).toContainText("Partecipante", { timeout: 15_000 });
     await expect(travelerView.getByRole("button", { name: /Modifica profilo|Crea invito personale|Documenti e posizione/ })).toHaveCount(0);
     await expect(travelerPage.locator(".profileForm")).toHaveCount(0);
 

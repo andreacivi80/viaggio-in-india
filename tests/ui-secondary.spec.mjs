@@ -2,6 +2,8 @@ import { test, expect } from "@playwright/test";
 import { fileURLToPath } from "node:url";
 import { isSafeMutationTarget } from "./helpers/qa-mutation-target.mjs";
 
+test.use({ serviceWorkers: "block" });
+
 const inviteToken = process.env.QA_UI_INVITE_TOKEN;
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 const photoPath = fileURLToPath(new URL("../public/cities/jaipur.jpg", import.meta.url));

@@ -114,6 +114,12 @@ test("il deploy QA usa obbligatoriamente i binding QA", async () => {
   const qaConfig = await readFile(new URL("../wrangler.qa.jsonc", import.meta.url), "utf8");
   assert.match(qaConfig, /"name": "viaggio-in-india-2026-qa"/);
   assert.match(qaConfig, /"database_name": "viaggio-in-india-qa-db"/);
+  const workflow = await readFile(new URL("../.github/workflows/deploy-qa-1373.yml", import.meta.url), "utf8");
+  assert.match(workflow, /cp wrangler\.qa\.jsonc wrangler\.jsonc/);
+  assert.match(workflow, /"database_name": "viaggio-in-india-qa-db"/);
+  assert.match(workflow, /if grep -q '"database_name": "viaggio-in-india-db"'/);
+  const levelOneGate = await readFile(new URL("../scripts/run-level1-gate.ps1", import.meta.url), "utf8");
+  assert.match(levelOneGate, /deploy-qa\.ps1 -Branch main/);
   const sessionDeploy = await readFile(new URL("../scripts/deploy-cloudflare-session.ps1", import.meta.url), "utf8");
   assert.match(sessionDeploy, /deploy-qa\.ps1/);
   assert.doesNotMatch(sessionDeploy, /--project-name viaggio-in-india-2026-qa/);

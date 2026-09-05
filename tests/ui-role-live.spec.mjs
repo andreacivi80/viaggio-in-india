@@ -35,7 +35,7 @@ const changeRole = (page, profileId, role) => page.evaluate(async ({ id, nextRol
   return response.status;
 }, { id: profileId, nextRole: role, name: travelerName });
 
-test("promozione, retrocessione e revoca aggiornano subito un telefono già aperto", async ({ browser }) => {
+test("il coordinatore resta unico e la revoca aggiorna subito un telefono già aperto", async ({ browser }) => {
   test.slow();
   const travelerContext = await browser.newContext({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
   const secondContext = await browser.newContext({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
@@ -57,13 +57,10 @@ test("promozione, retrocessione e revoca aggiornano subito un telefono già aper
     await expect.poll(
       () => travelerPage.evaluate(() => localStorage.getItem("india-role")),
       { timeout: 12_000 },
-    ).toBe("coordinator");
+    ).toBe("traveler");
     await travelerPage.locator(".accessPill").tap();
-    await expect(travelerPage.getByRole("button", { name: "Griglia coordinatore" })).toBeVisible();
-    await expect(travelerPage.getByRole("button", { name: "Documenti e sicurezza" })).toHaveCount(0);
-    await travelerPage.locator(".accessPill").tap();
-
-    expect(await changeRole(coordinatorPage, profileId, "traveler")).toBe(200);
+    await expect(travelerPage.getByRole("button", { name: "Documenti e sicurezza" })).toBeVisible();
+    await expect(travelerPage.getByRole("button", { name: "Griglia coordinatore" })).toHaveCount(0);
     const staleCoordinatorStatus = await travelerPage.evaluate(async (targetProfileId) => {
       const response = await fetch("/api/auth/invites", {
         method: "POST",
@@ -77,13 +74,6 @@ test("promozione, retrocessione e revoca aggiornano subito un telefono già aper
       return response.status;
     }, profileId);
     expect(staleCoordinatorStatus).toBe(403);
-    await expect.poll(
-      () => travelerPage.evaluate(() => localStorage.getItem("india-role")),
-      { timeout: 12_000 },
-    ).toBe("traveler");
-    await travelerPage.locator(".accessPill").tap();
-    await expect(travelerPage.getByRole("button", { name: "Documenti e sicurezza" })).toBeVisible();
-    await expect(travelerPage.getByRole("button", { name: "Griglia coordinatore" })).toHaveCount(0);
     await travelerPage.getByRole("button", { name: "Documenti e sicurezza" }).tap();
     await expect(travelerPage.getByText("Dispositivo sbloccato")).toBeVisible();
     const soonRevokedToken = await travelerPage.evaluate(() => localStorage.getItem("india-session-token"));

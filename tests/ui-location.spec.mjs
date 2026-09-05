@@ -1,5 +1,7 @@
 import { test, expect, devices } from "@playwright/test";
 
+test.use({ serviceWorkers: "block" });
+
 const travelerName = process.env.QA_UI_PROFILE_NAME;
 const travelerInvite = process.env.QA_UI_INVITE_TOKEN;
 const coordinatorName = process.env.QA_UI_COORDINATOR_NAME;
@@ -27,7 +29,7 @@ const openPersonalPanel = async (page) => {
   await expect(page.locator(".quickProfilePanel")).toBeVisible();
 };
 
-test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", async ({ browser }) => {
+test("GPS volontario, mappa Thailandia, Google Maps, rimozione e sincronizzazione", async ({ browser }) => {
   test.slow();
   const travelerContext = await browser.newContext({
     ...devices["Galaxy S9+"],
@@ -75,7 +77,7 @@ test("GPS volontario, mappa India, Google Maps, rimozione e sincronizzazione", a
     );
     await expect(travelerPage.locator(".peopleLocationMap")).toHaveAttribute(
       "aria-label",
-      "Posizioni del gruppo sulla cartina dell'India",
+      "Posizioni del gruppo sulla cartina della Thailandia",
     );
     await expect(travelerPage.locator(".personMapMarker").filter({ hasText: travelerName[0] }).first()).toBeVisible({
       timeout: 20_000,

@@ -20,7 +20,7 @@ if ($parsedBaseUrl.Scheme -ne "https" -or $parsedBaseUrl.Host -notmatch '(^|\.)v
 }
 
 if ($DeployOnly) {
-  & npx wrangler pages deploy dist --branch main --commit-dirty=true
+  & .\scripts\deploy-qa.ps1 -Branch main
   exit $LASTEXITCODE
 }
 

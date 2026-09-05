@@ -1,5 +1,12 @@
 import { test, expect } from "@playwright/test";
 
+test.use({ serviceWorkers: "block" });
+
+const groupCode = process.env.QA_UI_GROUP_CODE;
+const testBaseUrl = process.env.TEST_BASE_URL || "";
+const canMutateQa = process.env.QA_UI_ALLOW_REGISTRATION === "true"
+  && /^https:\/\/([^.]+\.)?viaggio-in-india-2026-qa\.pages\.dev\/?$/i.test(testBaseUrl);
+
 const openApp = async (page) => {
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await expect(page.locator(".accessPill")).toBeVisible();
@@ -41,13 +48,13 @@ test("i cinque comandi inferiori aprono schermate reali senza pagina bianca", as
   await expect(page.locator(".uploadSheet").getByText("Accesso privato")).toBeVisible();
 });
 
-test("tutte le quattordici giornate si aprono con foto e contenuto", async ({ page }) => {
+test("tutte le undici giornate si aprono con foto e contenuto", async ({ page }) => {
   test.slow();
   await openApp(page);
   await tapCenter(page, page.locator(".tabs").getByRole("button", { name: "Viaggio" }));
   const dayButtons = page.locator(".diaryDayPicker button");
-  await expect(dayButtons).toHaveCount(14);
-  for (let index = 0; index < 14; index += 1) {
+  await expect(dayButtons).toHaveCount(11);
+  for (let index = 0; index < 11; index += 1) {
     await dayButtons.nth(index).tap();
     const article = page.locator(".day").nth(index);
     await expect(article).toHaveClass(/open/);
@@ -71,14 +78,28 @@ test("tutte le quattordici giornate si aprono con foto e contenuto", async ({ pa
 });
 
 test("spunte e navigazione del diario restano coerenti dopo il ricaricamento", async ({ page }) => {
+  test.skip(!groupCode || !canMutateQa, "Scrittura delle spunte consentita soltanto nel QA isolato");
   await openApp(page);
+  await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
+  await page.getByPlaceholder("Password").fill(groupCode);
+  await page.locator(".quickProfilePanel").getByRole("button", { name: "Accedi", exact: true }).tap();
+  await page.getByPlaceholder("Nome *").fill(`QA Diario ${Date.now()}`);
+  const travelerRole = page.getByRole("button", { name: "Viaggiatore", exact: true });
+  const coordinatorRole = page.getByRole("button", { name: "Coordinatore", exact: true });
+  await expect((await coordinatorRole.count()) === 1 ? coordinatorRole : travelerRole).toBeDisabled();
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", { name: "Crea profilo e accedi", exact: true }).tap();
+  await expect(page.locator(".accessPill")).not.toContainText("Pubblico");
   await tapCenter(page, page.locator(".tabs").getByRole("button", { name: "Viaggio" }));
   await page.locator(".diaryDayPicker button").first().tap();
   const firstDay = page.locator(".day").first();
   await expect(firstDay.getByRole("button", { name: "Giorno precedente" })).toBeDisabled();
   const firstCheck = firstDay.locator('.checks input[type="checkbox"]').first();
+  const initialCheckState = await firstCheck.isChecked();
+  const expectedCheckState = !initialCheckState;
   await firstDay.locator(".checks label").first().tap();
-  await expect(firstCheck).toBeChecked();
+  if (expectedCheckState) await expect(firstCheck).toBeChecked();
+  else await expect(firstCheck).not.toBeChecked();
   await firstDay.getByRole("button", { name: "Giorno successivo" }).tap();
   await expect(page.locator(".day").nth(1)).toHaveClass(/open/);
   await page.locator(".day").nth(1).getByRole("button", { name: "Giorno precedente" }).tap();
@@ -88,7 +109,21 @@ test("spunte e navigazione del diario restano coerenti dopo il ricaricamento", a
   await page.reload({ waitUntil: "domcontentloaded" });
   await tapCenter(page, page.locator(".tabs").getByRole("button", { name: "Viaggio" }));
   await page.locator(".diaryDayPicker button").first().tap();
-  await expect(page.locator(".day").first().locator('.checks input[type="checkbox"]').first()).toBeChecked();
+  const reloadedCheck = page.locator(".day").first().locator('.checks input[type="checkbox"]').first();
+  if (expectedCheckState) await expect(reloadedCheck).toBeChecked();
+  else await expect(reloadedCheck).not.toBeChecked();
+  const cleanup = await page.evaluate(async () => {
+    const token = localStorage.getItem("india-session-token");
+    const id = localStorage.getItem("india-profile-id");
+    const deviceKey = localStorage.getItem("india-device-key");
+    if (!token || !id) return 0;
+    const response = await fetch(`/api/profiles/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: { authorization: `Bearer ${token}`, "x-device-key": deviceKey || "" },
+    });
+    return response.status;
+  });
+  expect([200, 409]).toContain(cleanup);
 });
 
 test("il percorso torna alla stessa giornata e alla stessa posizione di scorrimento", async ({ page }) => {
@@ -113,13 +148,13 @@ test("la mappa seleziona automaticamente tutte le tappe e torna alla bacheca", a
   await openApp(page);
   await tapCenter(page, page.locator(".tabs").getByRole("button", { name: "Mappa" }));
   await expect(page.locator(".maplibregl-map")).toBeVisible({ timeout: 20_000 });
-  await expect(page.locator('.vectorMarker[aria-label="Tappa 1: Delhi"]')).toBeVisible();
-  await expect(page.locator('.vectorMarker[aria-label="Tappa 3: Ranakpur"]')).toBeVisible();
-  await expect(page.locator('.vectorMarker[aria-label="Tappa 8: Delhi"]')).toBeVisible();
+  await expect(page.locator('.vectorMarker[aria-label="Tappa 1: Bangkok"]')).toBeVisible();
+  await expect(page.locator('.vectorMarker[aria-label="Tappa 4: Khao Sok"]')).toBeVisible();
+  await expect(page.locator('.vectorMarker[aria-label="Tappa 8: Bangkok"]')).toBeVisible();
   await expect(page.locator(".vectorMarker")).toHaveCount(8);
   const routeButtons = page.locator(".routeChips button");
-  await expect(routeButtons).toHaveCount(14);
-  for (let index = 0; index < 14; index += 1) {
+  await expect(routeButtons).toHaveCount(11);
+  for (let index = 0; index < 11; index += 1) {
     await routeButtons.nth(index).tap();
     await expect(routeButtons.nth(index)).toHaveClass(/active/);
     await expect(page.locator(".mapTrip")).toContainText(`Giorno ${index + 1}`);

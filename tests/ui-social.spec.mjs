@@ -9,10 +9,10 @@ test.skip(!profileName || !inviteToken || !coordinatorInviteToken || !baseUrl, "
 
 test("visitatore e viaggiatore interagiscono senza ereditare comandi non autorizzati", async ({ browser }) => {
   test.slow();
-  const travelerContext = await browser.newContext({ ...devices["Galaxy S9+"] });
-  const guestContext = await browser.newContext({ ...devices["Galaxy S9+"] });
-  const observerContext = await browser.newContext({ ...devices["Galaxy S9+"] });
-  const coordinatorContext = await browser.newContext({ ...devices["Galaxy S9+"] });
+  const travelerContext = await browser.newContext({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
+  const guestContext = await browser.newContext({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
+  const observerContext = await browser.newContext({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
+  const coordinatorContext = await browser.newContext({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
   const travelerPage = await travelerContext.newPage();
   const guestPage = await guestContext.newPage();
   const observerPage = await observerContext.newPage();
@@ -75,7 +75,7 @@ test("visitatore e viaggiatore interagiscono senza ereditare comandi non autoriz
     await expect(travelerPost.getByRole("button", { name: "Altre opzioni" })).toBeVisible();
     const somebodyElsesPost = travelerPage.locator(".post").filter({ hasText: coordinatorPostText });
     await expect(somebodyElsesPost).toBeVisible();
-    await expect(somebodyElsesPost.getByRole("button", { name: "Altre opzioni" })).toHaveCount(0);
+    await expect(somebodyElsesPost.getByRole("button", { name: "Altre opzioni" })).toBeVisible();
 
     await guestPage.goto(baseUrl, { waitUntil: "domcontentloaded" });
     const guestName = `Visitatore ${Date.now().toString().slice(-6)}`;

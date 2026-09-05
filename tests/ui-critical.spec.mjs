@@ -41,24 +41,39 @@ test("senza sessione il compositore resta chiuso", async ({ page }) => {
   await expect(sheet.getByPlaceholder("Racconta questo momento…")).toHaveCount(0);
 });
 
-test("password corretta porta alla scelta del ruolo e alla creazione del profilo", async ({ page }) => {
+test("password corretta crea il primo coordinatore o un nuovo viaggiatore senza auto-promozione", async ({ page }) => {
   test.skip(!groupCode || !canMutateQa, "Registrazione abilitata soltanto nell'ambiente QA isolato");
   await page.goto("/", { waitUntil: "networkidle" });
   await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
   await page.getByPlaceholder("Password").fill(groupCode);
   await page.locator(".quickProfilePanel").getByRole("button", { name: "Accedi", exact: true }).tap();
   await expect(page.getByText("Entra nel gruppo", { exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Viaggiatore", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Coordinatore", exact: true })).toBeVisible();
+  const travelerRole = page.getByRole("button", { name: "Viaggiatore", exact: true });
+  const coordinatorRole = page.getByRole("button", { name: "Coordinatore", exact: true });
+  const creatingFirstCoordinator = (await coordinatorRole.count()) === 1;
+  await expect(creatingFirstCoordinator ? coordinatorRole : travelerRole).toBeDisabled();
 
   const uniqueName = `QA ${Date.now()}`;
   await page.getByPlaceholder("Nome *").fill(uniqueName);
-  await page.getByRole("button", { name: "Viaggiatore", exact: true }).tap();
+  await page.getByRole("checkbox").check();
   await page.getByRole("button", { name: "Crea profilo e accedi", exact: true }).tap();
   await expect(page.locator(".accessPill")).toContainText("QA");
-  await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
-  await expect(page.getByRole("button", { name: "Documenti e sicurezza", exact: true })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Griglia coordinatore", exact: true })).toHaveCount(0);
+  const ownCard = page.locator(".profileCard").filter({ has: page.getByRole("heading", { name: uniqueName, exact: true }) });
+  await expect(ownCard.getByRole("button", { name: "Documenti e posizione", exact: true })).toBeVisible();
+  if (creatingFirstCoordinator) await expect(ownCard).toContainText("Coordinatore");
+  else await expect(ownCard).not.toContainText("Coordinatore");
+
+  const cleanup = await page.evaluate(async () => {
+    const token = localStorage.getItem("india-session-token");
+    const id = localStorage.getItem("india-profile-id");
+    const deviceKey = localStorage.getItem("india-device-key");
+    if (!token || !id) return 0;
+    return (await fetch(`/api/profiles/${encodeURIComponent(id)}`, {
+      method: "DELETE",
+      headers: { authorization: `Bearer ${token}`, "x-device-key": deviceKey || "" },
+    })).status;
+  });
+  expect(creatingFirstCoordinator ? [409] : [200]).toContain(cleanup);
 });
 
 test("un token locale falso viene rimosso senza perdere la bozza", async ({ page }) => {

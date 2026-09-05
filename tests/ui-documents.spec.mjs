@@ -2,6 +2,8 @@ import { test, expect, devices } from "@playwright/test";
 import { fileURLToPath } from "node:url";
 import { readFile } from "node:fs/promises";
 
+test.use({ serviceWorkers: "block" });
+
 const travelerName = process.env.QA_UI_PROFILE_NAME;
 const travelerInvite = process.env.QA_UI_INVITE_TOKEN;
 const coordinatorName = process.env.QA_UI_COORDINATOR_NAME;
