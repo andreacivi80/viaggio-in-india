@@ -1,7 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
-Controlli selezionati: **89** tra 89 controlli P0–P2 ancora privi di evidenza conclusiva.
-Stato del pacchetto: **0 superati**, **89 pendenti**.
+Controlli selezionati: **85** tra 85 controlli P0–P2 ancora privi di evidenza conclusiva.
+Stato del pacchetto: **0 superati**, **85 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -108,89 +108,81 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `usabilita:U0453`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
 - [ ] **K-047 · profili-ruoli** — Verificare numero dei Viaggiatori.
   Sorgente: `usabilita:U0444`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-048 · social** — 100 commenti in un minuto.
-  Sorgente: `globale:T-1043`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-049 · social** — 100 reazioni in un minuto.
-  Sorgente: `globale:T-1045`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-050 · social** — Aggiungere limite di commenti al minuto.
-  Sorgente: `globale:T-0054`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-051 · social** — Aggiungere limite di reazioni al minuto.
-  Sorgente: `globale:T-0055`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-052 · social** — Aggiungere reazioni ai commenti.
+- [ ] **K-048 · social** — Aggiungere reazioni ai commenti.
   Sorgente: `globale:T-0058`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-053 · social** — Aggiungere risposte ai commenti.
+- [ ] **K-049 · social** — Aggiungere risposte ai commenti.
   Sorgente: `globale:T-0059`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-054 · social** — Bacheca → post → commenti → indietro.
+- [ ] **K-050 · social** — Bacheca → post → commenti → indietro.
   Sorgente: `globale:T-1410`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-055 · social** — Chiudi tutti i commenti.
+- [ ] **K-051 · social** — Chiudi tutti i commenti.
   Sorgente: `usabilita:U0313`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-056 · social** — Commenti periodici durante la prova.
+- [ ] **K-052 · social** — Commenti periodici durante la prova.
   Sorgente: `globale:T-1126`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-057 · social** — Confrontare numero di commenti.
+- [ ] **K-053 · social** — Confrontare numero di commenti.
   Sorgente: `globale:T-1159`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-058 · social** — Confrontare numero di reazioni.
+- [ ] **K-054 · social** — Confrontare numero di reazioni.
   Sorgente: `globale:T-1163`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-059 · social** — Copiare il collegamento del commento.
+- [ ] **K-055 · social** — Copiare il collegamento del commento.
   Sorgente: `globale:T-0968`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-060 · social** — Deep link del singolo commento.
+- [ ] **K-056 · social** — Deep link del singolo commento.
   Sorgente: `globale:T-0243`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-061 · social** — Errore durante creazione del post con 10 allegati.
+- [ ] **K-057 · social** — Errore durante creazione del post con 10 allegati.
   Sorgente: `globale:T-1148`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-062 · social** — Espandere tutti i commenti.
+- [ ] **K-058 · social** — Espandere tutti i commenti.
   Sorgente: `globale:T-1398`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-063 · social** — Iniziare a scrivere un commento.
+- [ ] **K-059 · social** — Iniziare a scrivere un commento.
   Sorgente: `globale:T-1399`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-064 · social** — Modificare contemporaneamente la stessa reazione.
+- [ ] **K-060 · social** — Modificare contemporaneamente la stessa reazione.
   Sorgente: `globale:T-0796`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-065 · social** — Tutti aggiungono una reazione.
+- [ ] **K-061 · social** — Tutti aggiungono una reazione.
   Sorgente: `globale:T-1730`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-066 · social** — Tutti inseriscono un commento.
+- [ ] **K-062 · social** — Tutti inseriscono un commento.
   Sorgente: `globale:T-1737`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-067 · social** — Verificare apertura del commento preciso.
+- [ ] **K-063 · social** — Verificare apertura del commento preciso.
   Sorgente: `globale:T-0978`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-068 · social** — Verificare che l’aggiornamento non chiuda i commenti.
+- [ ] **K-064 · social** — Verificare che l’aggiornamento non chiuda i commenti.
   Sorgente: `usabilita:U0111`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-069 · social** — Verificare ora dei commenti.
+- [ ] **K-065 · social** — Verificare ora dei commenti.
   Sorgente: `globale:T-0942`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-070 · social** — Visualizza tutti i commenti.
+- [ ] **K-066 · social** — Visualizza tutti i commenti.
   Sorgente: `usabilita:U0312`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-071 · mappe-posizione** — Copiare il collegamento della mappa.
+- [ ] **K-067 · mappe-posizione** — Copiare il collegamento della mappa.
   Sorgente: `globale:T-0971`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-072 · mappe-posizione** — Correggere i popup della mappa per impedire inserimento di HTML o script nei nomi.
+- [ ] **K-068 · mappe-posizione** — Correggere i popup della mappa per impedire inserimento di HTML o script nei nomi.
   Sorgente: `globale:T-0186`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-073 · mappe-posizione** — Descrizione dei marker della mappa.
+- [ ] **K-069 · mappe-posizione** — Descrizione dei marker della mappa.
   Sorgente: `globale:T-1063`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-074 · mappe-posizione** — Itinerario → giorno → mappa → indietro.
+- [ ] **K-070 · mappe-posizione** — Itinerario → giorno → mappa → indietro.
   Sorgente: `globale:T-1414`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-075 · mappe-posizione** — Mappa → Google Maps → ritorno all’app.
+- [ ] **K-071 · mappe-posizione** — Mappa → Google Maps → ritorno all’app.
   Sorgente: `globale:T-1416`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-076 · mappe-posizione** — Mappa con coordinate 0,0.
+- [ ] **K-072 · mappe-posizione** — Mappa con coordinate 0,0.
   Sorgente: `globale:T-0945`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-077 · mappe-posizione** — Mappa con dieci persone nello stesso punto.
+- [ ] **K-073 · mappe-posizione** — Mappa con dieci persone nello stesso punto.
   Sorgente: `globale:T-0946`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-078 · mappe-posizione** — Mappa con latitudine -90.
+- [ ] **K-074 · mappe-posizione** — Mappa con latitudine -90.
   Sorgente: `globale:T-0948;globale:T-0949`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-079 · mappe-posizione** — Mappa con longitudine -180.
+- [ ] **K-075 · mappe-posizione** — Mappa con longitudine -180.
   Sorgente: `globale:T-0950;globale:T-0951`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-080 · mappe-posizione** — Mappa con una persona fuori dall’India.
+- [ ] **K-076 · mappe-posizione** — Mappa con una persona fuori dall’India.
   Sorgente: `globale:T-0953`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-081 · mappe-posizione** — Misurare batteria con mappa aperta.
+- [ ] **K-077 · mappe-posizione** — Misurare batteria con mappa aperta.
   Sorgente: `globale:T-1659`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-082 · mappe-posizione** — Verificare mappa quando Google Maps non risponde.
+- [ ] **K-078 · mappe-posizione** — Verificare mappa quando Google Maps non risponde.
   Sorgente: `globale:T-0961`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-083 · mappe-posizione** — Verificare mappa quando OpenFreeMap non risponde.
+- [ ] **K-079 · mappe-posizione** — Verificare mappa quando OpenFreeMap non risponde.
   Sorgente: `globale:T-0962`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-084 · altro** — Disattivazione completa delle notifiche.
+- [ ] **K-080 · altro** — Disattivazione completa delle notifiche.
   Sorgente: `globale:T-0077`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-085 · altro** — Inviare due notifiche con lo stesso tag.
+- [ ] **K-081 · altro** — Inviare due notifiche con lo stesso tag.
   Sorgente: `globale:T-0861`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-086 · altro** — Misurare batteria con notifiche attive.
+- [ ] **K-082 · altro** — Misurare batteria con notifiche attive.
   Sorgente: `globale:T-1660`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-087 · altro** — Notifiche durante la prova.
+- [ ] **K-083 · altro** — Notifiche durante la prova.
   Sorgente: `globale:T-1127`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-088 · altro** — Tutti attivano le notifiche.
+- [ ] **K-084 · altro** — Tutti attivano le notifiche.
   Sorgente: `globale:T-1731`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-089 · altro** — Verificare raggruppamento delle notifiche.
+- [ ] **K-085 · altro** — Verificare raggruppamento delle notifiche.
   Sorgente: `globale:T-0880`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
 
 ## K2

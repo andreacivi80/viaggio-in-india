@@ -26,6 +26,7 @@ param(
   [switch]$UploadScreenReaderUi,
   [switch]$AllMembersPublishUi,
   [switch]$OwnProfileUi,
+  [switch]$SocialFlood,
   [switch]$DownloadArchiveUi,
   [switch]$PublishUi
 )
@@ -176,6 +177,9 @@ try {
   }
   elseif ($OwnProfileUi) {
     & npx playwright test "tests/ui-own-profile.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($SocialFlood) {
+    & node tests\extended-p1-social-flood.mjs
   }
   elseif ($DownloadArchiveUi) {
     & npx playwright test "tests/ui-download-archive.spec.mjs" --reporter=line

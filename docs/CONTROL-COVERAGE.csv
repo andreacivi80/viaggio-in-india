@@ -1154,15 +1154,15 @@ P2,profili-ruoli,pending,Viaggiatore,globale:T-0291;addendum:A0211,
 P2,social,pending,1.000 commenti.,globale:T-0558,
 P2,social,pending,10.000 commenti.,globale:T-1098,
 P2,social,pending,10.000 reazioni.,globale:T-0562,
-P2,social,pending,100 commenti in un minuto.,globale:T-1043,
-P2,social,pending,100 reazioni in un minuto.,globale:T-1045,
+P2,social,passed,100 commenti in un minuto.,globale:T-1043,"P1_SOCIAL_FLOOD Thailandia 1.48.12 su QA isolato 204/204: cento commenti consecutivi producono esattamente 10 risposte 201 e 90 blocchi 429; cento reazioni producono esattamente 30 risposte 200 e 70 blocchi 429; stato finale integro con dieci commenti, al massimo una reazione per persona e cancellazione completa del post di prova."
+P2,social,passed,100 reazioni in un minuto.,globale:T-1045,"P1_SOCIAL_FLOOD Thailandia 1.48.12 su QA isolato 204/204: cento commenti consecutivi producono esattamente 10 risposte 201 e 90 blocchi 429; cento reazioni producono esattamente 30 risposte 200 e 70 blocchi 429; stato finale integro con dieci commenti, al massimo una reazione per persona e cancellazione completa del post di prova."
 P2,social,pending,2.500 commenti.,globale:T-1099,
 P2,social,pending,20.000 reazioni.,globale:T-1100,
 P2,social,pending,5.000 reazioni.,globale:T-1103,
 P2,social,pending,500 commenti.,globale:T-1105,
 P2,social,pending,500 reazioni.,globale:T-1107,
-P2,social,pending,Aggiungere limite di commenti al minuto.,globale:T-0054,
-P2,social,pending,Aggiungere limite di reazioni al minuto.,globale:T-0055,
+P2,social,passed,Aggiungere limite di commenti al minuto.,globale:T-0054,"P1_SOCIAL_FLOOD Thailandia 1.48.12 su QA isolato 204/204: cento commenti consecutivi producono esattamente 10 risposte 201 e 90 blocchi 429; cento reazioni producono esattamente 30 risposte 200 e 70 blocchi 429; stato finale integro con dieci commenti, al massimo una reazione per persona e cancellazione completa del post di prova."
+P2,social,passed,Aggiungere limite di reazioni al minuto.,globale:T-0055,"P1_SOCIAL_FLOOD Thailandia 1.48.12 su QA isolato 204/204: cento commenti consecutivi producono esattamente 10 risposte 201 e 90 blocchi 429; cento reazioni producono esattamente 30 risposte 200 e 70 blocchi 429; stato finale integro con dieci commenti, al massimo una reazione per persona e cancellazione completa del post di prova."
 P2,social,passed,Aggiungere reazione.,usabilita:U0250,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
 P2,social,pending,Aggiungere reazioni ai commenti.,globale:T-0058,
 P2,social,pending,Aggiungere risposte ai commenti.,globale:T-0059,
