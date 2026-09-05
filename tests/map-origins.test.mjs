@@ -34,7 +34,28 @@ test("i simboli dei mezzi restano separati dai nomi di Phi Phi e delle tappe vic
   assert.match(itinerary, /"krabi-phiphi", 0\.56, "Phi Phi", "6"/);
   assert.match(itinerary, /"khaosok-pier", 0\.78, "Cheow Lan", "5"/);
   assert.doesNotMatch(itinerary, /"Phi Phi Island", \[[^\]]+\]/);
+  assert.match(itinerary, /"Cheow Lan", "5", \[34, 14\]/);
+  assert.match(itinerary, /"Phi Phi", "6", \[-26, -12\]/);
+  assert.match(source, /offset: markerOffset/);
 });
+
+test("le tappe 2-7 restano sul percorso o a contatto col relativo tratto", () => {
+  assert.match(
+    itinerary,
+    /overviewStageOffsets\s*=\s*\[\s*\[-6,\s*-6\],\s*\[0,\s*0\],\s*\[0,\s*0\],\s*\[-8,\s*-6\],\s*\[8,\s*-6\],\s*\[-8,\s*8\],\s*\[8,\s*8\],\s*\[6,\s*6\]/s,
+  );
+  for (const city of ["Hua Hin", "Chumphon", "Khao Sok", "Cheow Lan Lake", "Phi Phi Island", "Krabi"])
+    assert.ok(placesOnRoute(itinerary, city), `${city} deve appartenere a una tratta della mappa generale`);
+});
+
+function placesOnRoute(sourceText, city) {
+  const placesBlock = sourceText.match(/export const places = \{([\s\S]*?)\n\};/)?.[1] || "";
+  const key = city.includes(" ") ? JSON.stringify(city) : city;
+  const coordinates = placesBlock.match(new RegExp(`${key.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\s*:\\s*(\\[[^\\]]+\\])`))?.[1];
+  if (!coordinates) return false;
+  const routesBlock = sourceText.match(/export const roadPaths = \{([\s\S]*?)\n\};/)?.[1] || "";
+  return routesBlock.includes(coordinates);
+}
 
 test("la legenda dei mezzi non copre più la scala chilometrica", () => {
   assert.match(styles, /\.overviewRouteLegend\s*\{[^}]*top:\s*9px;[^}]*bottom:\s*auto;/s);

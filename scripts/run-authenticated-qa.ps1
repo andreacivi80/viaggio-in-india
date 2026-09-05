@@ -22,6 +22,7 @@ param(
   [switch]$SignificantUrlsUi,
   [switch]$FeedScrollUi,
   [switch]$LargeSlowVideoUi,
+  [switch]$OfflineMediaDraftsUi,
   [switch]$DownloadArchiveUi,
   [switch]$PublishUi
 )
@@ -160,6 +161,9 @@ try {
   }
   elseif ($LargeSlowVideoUi) {
     & npx playwright test "tests/ui-large-slow-video.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($OfflineMediaDraftsUi) {
+    & npx playwright test "tests/ui-offline-media-drafts.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
   }
   elseif ($DownloadArchiveUi) {
     & npx playwright test "tests/ui-download-archive.spec.mjs" --reporter=line

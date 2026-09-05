@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.11",
+const VERSION = "1.48.12",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -1116,7 +1116,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         markers.current.push(marker);
       });
     if (selectedDay == null) {
-      overviewModes.forEach(([symbol, label, mode, pathName, progress, reference, nearStage]) => {
+      overviewModes.forEach(([symbol, label, mode, pathName, progress, reference, nearStage, markerOffset = [0, 0]]) => {
         const route = roadPaths[pathName] || [];
         if (route.length < 2) return;
         const scaled = Math.max(0, Math.min(1, progress)) * (route.length - 1);
@@ -1133,7 +1133,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         node.setAttribute("aria-label", label);
         node.dataset.routeReference = reference;
         node.dataset.nearStage = nearStage;
-        markers.current.push(new maplibregl.Marker({ element: node, anchor: "center" })
+        markers.current.push(new maplibregl.Marker({ element: node, anchor: "center", offset: markerOffset })
           .setLngLat(coordinates)
           .setPopup(new maplibregl.Popup({ offset: 18 }).setText(label))
           .addTo(map.current));

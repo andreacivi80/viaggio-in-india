@@ -120,3 +120,73 @@ test("la coda conserva più bozze e un commento come operazioni distinte", async
   );
   assert.equal(new Set(sent.map(([, , key]) => key)).size, 3);
 });
+
+test("le bozze offline conservano 10 foto, un video e una foto singola", async () => {
+  const photoNames = Array.from({ length: 10 }, (_, index) => `foto-${index + 1}.jpg`);
+  const photoDraft = new FormData();
+  photoDraft.set("text", "bozza con dieci foto");
+  for (const [index, name] of photoNames.entries())
+    photoDraft.append(
+      "files",
+      new Blob([`contenuto-foto-${index + 1}`], { type: "image/jpeg" }),
+      name,
+    );
+
+  const videoDraft = new FormData();
+  videoDraft.set("text", "bozza video");
+  videoDraft.append(
+    "files",
+    new Blob(["contenuto-video"], { type: "video/mp4" }),
+    "video-bozza.mp4",
+  );
+
+  const singlePhotoDraft = new FormData();
+  singlePhotoDraft.set("text", "bozza foto singola");
+  singlePhotoDraft.append(
+    "files",
+    new Blob(["contenuto-foto-singola"], { type: "image/jpeg" }),
+    "foto-singola.jpg",
+  );
+
+  for (const [id, form] of [
+    ["bozza-dieci-foto", photoDraft],
+    ["bozza-video", videoDraft],
+    ["bozza-foto-singola", singlePhotoDraft],
+  ]) {
+    await queueFormRequest({
+      id,
+      endpoint: "/api/posts",
+      form,
+      authType: "session",
+      operationKey: `operazione-${id}-123456`,
+    });
+  }
+
+  assert.equal(await queuedRequestCount(), 3);
+  const restored = new Map();
+  globalThis.fetch = async (_endpoint, options) => {
+    const label = options.body.get("text");
+    restored.set(label, options.body.getAll("files"));
+    return new Response("{}", { status: 201 });
+  };
+
+  assert.deepEqual(await flushOfflineQueue(), { sent: 3, pending: 0 });
+  const tenPhotos = restored.get("bozza con dieci foto");
+  assert.equal(tenPhotos.length, 10);
+  assert.deepEqual(tenPhotos.map((file) => file.name), photoNames);
+  assert.ok(tenPhotos.every((file) => file.type === "image/jpeg"));
+  assert.deepEqual(
+    await Promise.all(tenPhotos.map((file) => file.text())),
+    Array.from({ length: 10 }, (_, index) => `contenuto-foto-${index + 1}`),
+  );
+
+  const [video] = restored.get("bozza video");
+  assert.equal(video.name, "video-bozza.mp4");
+  assert.equal(video.type, "video/mp4");
+  assert.equal(await video.text(), "contenuto-video");
+
+  const [photo] = restored.get("bozza foto singola");
+  assert.equal(photo.name, "foto-singola.jpg");
+  assert.equal(photo.type, "image/jpeg");
+  assert.equal(await photo.text(), "contenuto-foto-singola");
+});

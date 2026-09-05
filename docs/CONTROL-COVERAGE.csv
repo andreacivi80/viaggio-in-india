@@ -852,9 +852,9 @@ P1,media-upload,passed,Riprodurre un file audio.,globale:T-0916,"ui-media Thaila
 P1,media-upload,passed,Riprodurre un video con audio.,globale:T-0917,"ui-media Thailandia 1.48.4 1/1 + ui-comment-media 1/1: video con traccia multimediale caricato, salvato e riprodotto nel post/commento."
 P1,media-upload,pending,Riprodurre video.,usabilita:U0207,
 P1,media-upload,pending,rotazione e ritaglio fotografie;,globale:T-0161,
-P1,media-upload,pending,Salvare una bozza con dieci fotografie.,globale:T-0850,
-P1,media-upload,pending,Salvare una bozza con un video.,globale:T-0851,
-P1,media-upload,pending,Salvare una bozza con una fotografia.,globale:T-0852,
+P1,media-upload,passed,Salvare una bozza con dieci fotografie.,globale:T-0850,"ui-offline-media-drafts Thailandia 1.48.12 Samsung S20 FE 1/1 + offline-queue 4/4: bozza con dieci JPEG reali, bozza con video WebM reale e bozza con fotografia singola salvate in IndexedDB senza rete; chiusura completa della pagina, riapertura online, retry automatico, tre pubblicazioni uniche con 10/1/1 media e apertura o riproduzione finale; pulizia QA completata."
+P1,media-upload,passed,Salvare una bozza con un video.,globale:T-0851,"ui-offline-media-drafts Thailandia 1.48.12 Samsung S20 FE 1/1 + offline-queue 4/4: bozza con dieci JPEG reali, bozza con video WebM reale e bozza con fotografia singola salvate in IndexedDB senza rete; chiusura completa della pagina, riapertura online, retry automatico, tre pubblicazioni uniche con 10/1/1 media e apertura o riproduzione finale; pulizia QA completata."
+P1,media-upload,passed,Salvare una bozza con una fotografia.,globale:T-0852,"ui-offline-media-drafts Thailandia 1.48.12 Samsung S20 FE 1/1 + offline-queue 4/4: bozza con dieci JPEG reali, bozza con video WebM reale e bozza con fotografia singola salvate in IndexedDB senza rete; chiusura completa della pagina, riapertura online, retry automatico, tre pubblicazioni uniche con 10/1/1 media e apertura o riproduzione finale; pulizia QA completata."
 P1,media-upload,passed,Salvataggio offline degli audio selezionati.,globale:T-0128,"offline-queue: file MP3 conservato con nome, MIME e contenuto"
 P1,media-upload,passed,Salvataggio offline dei video selezionati.,globale:T-0130,"offline-queue: file MP4 conservato con nome, MIME e contenuto"
 P1,media-upload,passed,Salvataggio offline delle fotografie selezionate.,globale:T-0131,"offline-queue: file JPEG conservato con nome, MIME e contenuto"
