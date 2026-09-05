@@ -2289,24 +2289,24 @@ export async function onRequest(context) {
         visitorId,
       );
       if (operation.response) return operation.response;
-      const existing = await env.DB.prepare(
-        "SELECT kind FROM reactions WHERE post_id=? AND visitor_id=? LIMIT 1",
+      const removedSameReaction = await env.DB.prepare(
+        "DELETE FROM reactions WHERE post_id=? AND visitor_id=? AND kind=?",
       )
-        .bind(b.post_id, visitorId)
-        .first();
-      await env.DB.prepare(
-        "DELETE FROM reactions WHERE post_id=? AND visitor_id=?",
-      )
-        .bind(b.post_id, visitorId)
+        .bind(b.post_id, visitorId, kind)
         .run();
-      if (existing?.kind === kind) {
+      if (Number(removedSameReaction.meta?.changes || 0) > 0) {
         const payload = { ok: true, reaction: null };
         await completeIdempotentOperation(env, operation.operationHash, payload);
         return json(payload);
       }
       try {
         await env.DB.prepare(
-          "INSERT INTO reactions(id,post_id,visitor_id,author_name,kind,created_at) VALUES(?,?,?,?,?,?)",
+          `INSERT INTO reactions(id,post_id,visitor_id,author_name,kind,created_at)
+           VALUES(?,?,?,?,?,?)
+           ON CONFLICT(post_id,visitor_id) DO UPDATE SET
+             author_name=excluded.author_name,
+             kind=excluded.kind,
+             created_at=excluded.created_at`,
         )
           .bind(
             id(),

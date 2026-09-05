@@ -27,6 +27,7 @@ param(
   [switch]$AllMembersPublishUi,
   [switch]$OwnProfileUi,
   [switch]$SocialFlood,
+  [switch]$SocialConcurrency,
   [switch]$DownloadArchiveUi,
   [switch]$PublishUi
 )
@@ -132,6 +133,7 @@ try {
   $env:QA_UNCLAIMED_PROFILE_ID = $unclaimedId
   $env:QA_EXPIRED_SESSION_TOKEN = $expiredToken
   $env:QA_SECOND_DEVICE_ID = $secondaryDeviceId
+  $env:QA_SECOND_DEVICE_TOKEN = $secondaryDeviceToken
   $env:QA_RUN_ID = $runId
   $env:QA_DELETE_PROFILE_ID = $deleteProfileId
   $env:QA_DELETE_PROFILE_TOKEN = $deleteProfileToken
@@ -180,6 +182,9 @@ try {
   }
   elseif ($SocialFlood) {
     & node tests\extended-p1-social-flood.mjs
+  }
+  elseif ($SocialConcurrency) {
+    & node tests\extended-p1-social-concurrency.mjs
   }
   elseif ($DownloadArchiveUi) {
     & npx playwright test "tests/ui-download-archive.spec.mjs" --reporter=line

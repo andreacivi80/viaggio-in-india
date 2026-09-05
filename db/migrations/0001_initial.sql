@@ -55,7 +55,7 @@ CREATE TABLE IF NOT EXISTS reactions (
   author_name TEXT DEFAULT '',
   kind TEXT NOT NULL,
   created_at TEXT NOT NULL,
-  UNIQUE(post_id, visitor_id, kind)
+  UNIQUE(post_id, visitor_id)
 );
 
 CREATE TABLE IF NOT EXISTS document_status (

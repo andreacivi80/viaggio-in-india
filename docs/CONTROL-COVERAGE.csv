@@ -1186,7 +1186,7 @@ P2,social,passed,Commento testuale.,globale:T-0463;usabilita:U0299,Authenticated
 P2,social,pending,Commento vuoto.,usabilita:U0303,
 P2,social,pending,commento;,globale:T-0730;usabilita:U0546;usabilita:U0642,
 P2,social,pending,Confrontare numero di commenti.,globale:T-1159,
-P2,social,pending,Confrontare numero di reazioni.,globale:T-1163,
+P2,social,passed,Confrontare numero di reazioni.,globale:T-1163,"P1_SOCIAL_CONCURRENCY Thailandia 1.48.13 su QA isolato 12/12 + L1/L2 autenticato 18/18 applicabili: due dispositivi dello stesso profilo modificano contemporaneamente la stessa reazione e convergono a una sola riga; due viaggiatori e la coordinatrice aggiungono una reazione ciascuno e tutti e tre i dispositivi leggono identico conteggio, autori e tipi. Il difetto concorrente trovato su 1.48.12 è stato corretto con vincolo unico persona/post e upsert."
 P2,social,pending,Copiare il collegamento del commento.,globale:T-0968,
 P2,social,pending,Deep link del singolo commento.,globale:T-0243,
 P2,social,pending,Definire cosa accade ai commenti.,globale:T-1317,
@@ -1203,7 +1203,7 @@ P2,social,pending,Moderazione commenti.,usabilita:U0662,
 P2,social,passed,modifica commento altrui;,globale:T-0740,QA 1.31.0: attacco modifica commento altrui respinto
 P2,social,passed,modifica commento proprio;,globale:T-0741;usabilita:U0307,QA 1.31.0: modifica commento proprio completata | Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P2,social,passed,Modifica commento.,globale:T-0468,QA 1.31.0: proprietario modifica correttamente il proprio commento
-P2,social,pending,Modificare contemporaneamente la stessa reazione.,globale:T-0796,
+P2,social,passed,Modificare contemporaneamente la stessa reazione.,globale:T-0796,"P1_SOCIAL_CONCURRENCY Thailandia 1.48.13 su QA isolato 12/12 + L1/L2 autenticato 18/18 applicabili: due dispositivi dello stesso profilo modificano contemporaneamente la stessa reazione e convergono a una sola riga; due viaggiatori e la coordinatrice aggiungono una reazione ciascuno e tutti e tre i dispositivi leggono identico conteggio, autori e tipi. Il difetto concorrente trovato su 1.48.12 è stato corretto con vincolo unico persona/post e upsert."
 P2,social,pending,non esistono commenti;,addendum:A0300,
 P2,social,pending,Nuovo commento.,globale:T-0526,
 P2,social,passed,Ogni commento deve essere collegato a un post esistente.,globale:T-1015,P0_RATE_LIMIT_DIMENSIONS 10/10 su QA isolato: trenta reazioni e dieci commenti riferiti ogni volta a post inesistenti sono stati rifiutati con 404 prima di qualsiasi inserimento; nessun commento o reazione orfano è stato creato.
@@ -1222,7 +1222,7 @@ P2,social,passed,Tentare modifica commento altrui.,globale:T-0626,QA 1.31.0: mod
 P2,social,passed,Tentare modifica diretta di commenti altrui.,usabilita:U0582,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P2,social,passed,Tentativo di modifica di commento altrui.,usabilita:U0309,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P2,social,passed,Tentativo di modificare commento altrui.,globale:T-0472,QA 1.31.0: modifica commento altrui negata
-P2,social,pending,Tutti aggiungono una reazione.,globale:T-1730,
+P2,social,passed,Tutti aggiungono una reazione.,globale:T-1730,"P1_SOCIAL_CONCURRENCY Thailandia 1.48.13 su QA isolato 12/12 + L1/L2 autenticato 18/18 applicabili: due dispositivi dello stesso profilo modificano contemporaneamente la stessa reazione e convergono a una sola riga; due viaggiatori e la coordinatrice aggiungono una reazione ciascuno e tutti e tre i dispositivi leggono identico conteggio, autori e tipi. Il difetto concorrente trovato su 1.48.12 è stato corretto con vincolo unico persona/post e upsert."
 P2,social,pending,Tutti inseriscono un commento.,globale:T-1737,
 P2,social,passed,Un solo commento dopo dieci retry.,globale:T-0140,QA autenticata isolata Thailandia 1.48.8: lo stesso commento è stato ritentato dieci volte con la medesima chiave idempotente; tutte le risposte successive sono replay e nello stato finale esiste un solo commento. I replay completati non consumano la quota antispam.
 P2,social,passed,Una sola reazione dopo dieci retry.,globale:T-0144,QA autenticata isolata Thailandia 1.48.8: la stessa reazione è stata ritentata dieci volte con la medesima chiave idempotente; tutte le risposte successive sono replay e lo stato viene invertito una sola volta. I replay completati non consumano la quota antispam.
