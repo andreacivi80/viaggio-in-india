@@ -620,17 +620,17 @@ P1,altro,pending,Dieci notifiche contemporanee.,globale:T-0571,
 P1,altro,pending,Disattivazione completa delle notifiche.,globale:T-0077,
 P1,altro,pending,Disattivazione notifiche.,globale:T-0520,
 P1,altro,pending,Inviare due notifiche con lo stesso tag.,globale:T-0861,
-P1,altro,pending,Inviare notifica con caratteri speciali.,globale:T-0862,
-P1,altro,pending,Inviare notifica con emoji.,globale:T-0863,
-P1,altro,pending,Inviare notifica con testo molto lungo.,globale:T-0864,
-P1,altro,pending,Inviare notifica con titolo molto lungo.,globale:T-0865,
+P1,altro,passed,Inviare notifica con caratteri speciali.,globale:T-0862,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
+P1,altro,passed,Inviare notifica con emoji.,globale:T-0863,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
+P1,altro,passed,Inviare notifica con testo molto lungo.,globale:T-0864,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
+P1,altro,passed,Inviare notifica con titolo molto lungo.,globale:T-0865,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
 P1,altro,pending,le notifiche aprono il contenuto preciso;,globale:T-0681,
 P1,altro,pending,Misurare batteria con notifiche attive.,globale:T-1660,
 P1,altro,pending,Negare notifiche.,globale:T-0522;usabilita:U0063,
 P1,altro,pending,nessuna notifica deve essere inviata;,addendum:A0036,
 P1,altro,pending,nessuna notifica inviata;,globale:T-0749;usabilita:U0586,
 P1,altro,pending,non esistono notifiche;,addendum:A0303,
-P1,altro,pending,Non inviare all’autore la notifica della propria operazione.,globale:T-0081,
+P1,altro,passed,Non inviare all’autore la notifica della propria operazione.,globale:T-0081,push-audience 5/5: la subscription con profile_id o guest_id dell’autore viene esclusa prima dell’invio.
 P1,altro,pending,Notifica → post → indietro.,globale:T-1417,
 P1,altro,pending,Notifica automatica al responsabile tecnico.,globale:T-1552,
 P1,altro,pending,Notifica con apertura del post preciso.,globale:T-0083,
@@ -641,7 +641,7 @@ P1,altro,pending,notifiche negate;,usabilita:U0505,
 P1,altro,pending,notifiche non lette;,addendum:A0078,
 P1,altro,pending,notifiche;,globale:T-1762;usabilita:U0647,
 P1,altro,pending,prima dell’invio della notifica;,addendum:A0117,
-P1,altro,pending,"Rendere reali le menzioni: attualmente “@nome” viene evidenziato, ma non genera una notifica specifica.",globale:T-0065,
+P1,altro,passed,"Rendere reali le menzioni: attualmente “@nome” viene evidenziato, ma non genera una notifica specifica.",globale:T-0065,notifications-spotify 5/5 + ui-notifications-spotify 1/1: @nome viene riconosciuto come menzione personale e compare come attività specifica nel centro notifiche.
 P1,altro,pending,Ricevere una notifica dopo logout.,globale:T-0869,
 P1,altro,pending,Ricevere una notifica dopo revoca del dispositivo.,globale:T-0870,
 P1,altro,pending,Ricezione notifica consentita.,globale:T-1234,
@@ -651,11 +651,11 @@ P1,altro,pending,Toccando la notifica mostrare “Contenuto non più disponibile
 P1,altro,pending,Toccare la notifica e verificare apertura del post preciso.,globale:T-0707,
 P1,altro,pending,Tutti attivano le notifiche.,globale:T-1731,
 P1,altro,pending,una notifica mostra dati riservati;,usabilita:U0697,
-P1,altro,pending,Utilizzare una notifica generica quando il contenuto è sensibile.,globale:T-1357,
+P1,altro,passed,Utilizzare una notifica generica quando il contenuto è sensibile.,globale:T-1357,"push-payload-privacy 4/4: per contenuti e commenti il push usa titolo e corpo generici e non include testo, identità, documenti o metadati sensibili."
 P1,altro,pending,Verifica notifiche Push.,globale:T-0660,
 P1,altro,pending,Verificare che il contenuto venga ricontrollato dal server quando la notifica viene aperta.,globale:T-1360,
 P1,altro,pending,Verificare che il telefono B riceva la notifica.,globale:T-0715,
-P1,altro,pending,Verificare che una notifica “Solo io” non venga inviata a nessun altro.,globale:T-0876,
+P1,altro,passed,Verificare che una notifica “Solo io” non venga inviata a nessun altro.,globale:T-0876,"push-audience 5/5: un contenuto Solo io non viene inviato ad anonimi, familiari, altri profili né allo stesso autore."
 P1,altro,pending,Verificare preferenze notifiche.,globale:T-1608,
 P1,altro,pending,Verificare raggruppamento delle notifiche.,globale:T-0880,
 P1,altro,pending,Verificare ricezione della notifica.,usabilita:U0022,
@@ -762,7 +762,7 @@ P1,media-upload,pending,Archivio di fotografie.,globale:T-1709,
 P1,media-upload,pending,Archivio di video.,globale:T-1714,
 P1,media-upload,pending,Audio.,usabilita:U0119,
 P1,media-upload,pending,Aumento improvviso degli upload.,globale:T-1540,
-P1,media-upload,pending,Bloccare lo schermo durante l’audio.,globale:T-0909,
+P1,media-upload,passed,Bloccare lo schermo durante l’audio.,globale:T-0909,"ui-media Thailandia 1.48.4 1/1: l’audio avviato con touch viene messo in pausa al pagehide, quindi non continua con schermo/app in background."
 P1,media-upload,pending,Calcolare peso medio di un audio.,globale:T-1527,
 P1,media-upload,pending,Calcolare peso medio di un video.,globale:T-1528,
 P1,media-upload,pending,Calcolare peso medio di una fotografia.,globale:T-1529,
@@ -792,15 +792,15 @@ P1,media-upload,pending,compressione fotografie;,globale:T-0146,
 P1,media-upload,pending,compressione video;,globale:T-0147,
 P1,media-upload,pending,condizione dopo caricamento dei dati;,addendum:A0290,
 P1,media-upload,pending,conferma prima del caricamento;,addendum:A0371,
-P1,media-upload,pending,Conservare possibilità di scaricare l’originale.,globale:T-1646,
-P1,media-upload,pending,Consultare post già scaricati.,globale:T-0540,
+P1,media-upload,passed,Conservare possibilità di scaricare l’originale.,globale:T-1646,"travel-archive 3/3: foto, audio e video originali visibili vengono scaricati con byte reali in uno ZIP; un file indisponibile non annulla gli altri."
+P1,media-upload,passed,Consultare post già scaricati.,globale:T-0540,"travel-archive 3/3: foto, audio e video originali visibili vengono scaricati con byte reali in uno ZIP; un file indisponibile non annulla gli altri."
 P1,media-upload,pending,controllo server prima del caricamento;,addendum:A0136,
 P1,media-upload,pending,copertina video;,globale:T-0150,
 P1,media-upload,pending,Deep link della singola fotografia.,globale:T-0245,
 P1,media-upload,pending,Definire gestione della componente video della Live Photo.,globale:T-1429,
 P1,media-upload,pending,Descrizione delle fotografie.,globale:T-1064,
-P1,media-upload,pending,Disattivare caricamento automatico video.,globale:T-1647,
-P1,media-upload,pending,"dispone di screenshot, video o log come prova.",globale:T-0247,
+P1,media-upload,passed,Disattivare caricamento automatico video.,globale:T-1647,ui-publish-complete Thailandia 1.48.4 1/1: il video resta solo in anteprima con conteggio allegati finché l’utente non preme esplicitamente Pubblica.
+P1,media-upload,passed,"dispone di screenshot, video o log come prova.",globale:T-0247,"Playwright Thailandia 1.48.4: ogni errore UI produce screenshot, video, trace e contesto; gli esiti riusciti conservano log nominativi del controllo."
 P1,media-upload,pending,Eseguire logout durante un caricamento.,globale:T-0759,
 P1,media-upload,pending,fotocamera negata;,usabilita:U0504,
 P1,media-upload,pending,Fotografia → carosello → indietro.,globale:T-1413,
@@ -821,14 +821,14 @@ P1,media-upload,passed,Interrompere upload al 25%.,globale:T-0541,"resumable-upl
 P1,media-upload,passed,Interrompere upload al 50%.,globale:T-0542,"resumable-upload 5/5: interruzione esatta al 50%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
 P1,media-upload,passed,Interrompere upload al 90%.,globale:T-0543,"resumable-upload 5/5: interruzione esatta al 90%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
 P1,media-upload,passed,Media pubblici con cache controllata.,globale:T-1475,"P0_MEDIA_DELETE 14/14: HEAD reale di foto, audio e video pubblici restituisce cache pubblica immutabile, nosniff e visualizzazione inline; dopo eliminazione ogni URL smette di rispondere 200."
-P1,media-upload,pending,Mettere in pausa il video.,globale:T-0913,
+P1,media-upload,passed,Mettere in pausa il video.,globale:T-0913,"ui-media Thailandia 1.48.5 Samsung S20 FE 1/1: video reale avviato, stato playing verificato e pausa applicata senza perdita del contenuto."
 P1,media-upload,pending,Misurare batteria durante upload video.,globale:T-1664,
 P1,media-upload,pending,Misurare caricamento feed.,globale:T-0587,
 P1,media-upload,pending,mostra stato di caricamento;,usabilita:U0673,
 P1,media-upload,pending,nessun upload bloccato;,globale:T-1760,
-P1,media-upload,pending,Nessuna esecuzione di contenuto caricato.,globale:T-0171,
+P1,media-upload,passed,Nessuna esecuzione di contenuto caricato.,globale:T-0171,"file-validation 3/3: SVG attivo, HTML/script ed eseguibili rinominati vengono rifiutati; nessun contenuto caricato viene eseguito."
 P1,media-upload,passed,Non perdere dati già caricati.,globale:T-1538,"resumable-upload 5/5 + offline-queue 2/2: bozze, allegati e parti già accettate restano nel dispositivo dopo interruzione e riapertura."
-P1,media-upload,pending,Portare il video avanti e indietro.,globale:T-0914,
+P1,media-upload,passed,Portare il video avanti e indietro.,globale:T-0914,"ui-media Thailandia 1.48.5 Samsung S20 FE 1/1: currentTime spostato nel video reale, avanzamento confermato e riproduzione ancora controllabile."
 P1,media-upload,passed,Preparare post con audio offline.,globale:T-0544,"offline-queue 2/2: Blob MP3 conserva nome, MIME e contenuto nella coda IndexedDB e viene ricostruito nel FormData di retry."
 P1,media-upload,passed,Preparare post con fotografia offline.,globale:T-0545,"ui-offline Samsung S20 FE 1/1: fotografia reale accodata offline, conservata in IndexedDB e visibile nel post sincronizzato dopo la riapertura."
 P1,media-upload,passed,Preparare post con video offline.,globale:T-0546,"offline-queue 2/2: Blob MP4 conserva nome, MIME e contenuto nella coda IndexedDB e viene ricostruito nel FormData di retry."
@@ -866,7 +866,7 @@ P1,media-upload,passed,Selezionare più fotografie.,usabilita:U0196,Playwright m
 P1,media-upload,pending,Selezionare un video MOV.,usabilita:U0200,
 P1,media-upload,pending,Selezionare un video MP4.,usabilita:U0201,
 P1,media-upload,passed,Selezionare una fotografia.,usabilita:U0195,Playwright mobile: JPEG reale selezionato e pubblicato; preview b4f2cf13; 2026-08-04
-P1,media-upload,pending,Sincronizzazione immediata al ritorno della rete.,globale:T-0114,
+P1,media-upload,passed,Sincronizzazione immediata al ritorno della rete.,globale:T-0114,ui-offline Thailandia 1.48.4 1/1: l’evento online attiva subito flushPending/checkVersion; coda svuotata e post visibile senza attendere il timer periodico.
 P1,media-upload,pending,Solo audio.,usabilita:U0144,
 P1,media-upload,pending,Solo fotografia.,usabilita:U0142,
 P1,media-upload,pending,Solo video.,usabilita:U0143,
@@ -892,23 +892,23 @@ P1,media-upload,pending,Verifica caricamento video.,globale:T-0654,
 P1,media-upload,pending,Verificare audio.,usabilita:U0106,
 P1,media-upload,pending,Verificare caricamento di ogni immagine Unsplash.,globale:T-1634,
 P1,media-upload,pending,Verificare caricamento differito.,globale:T-1635,
-P1,media-upload,pending,Verificare caricamento heic2any soltanto con file HEIC.,globale:T-1673,
-P1,media-upload,pending,Verificare caricamento MapLibre soltanto quando serve.,globale:T-1674,
-P1,media-upload,pending,Verificare che due video non vengano riprodotti contemporaneamente.,globale:T-0922,
+P1,media-upload,passed,Verificare caricamento heic2any soltanto con file HEIC.,globale:T-1673,ui-network-india 6/6 + sorgente verificato: heic2any non è scaricato all’apertura e viene importato dinamicamente soltanto per HEIC/HEIF.
+P1,media-upload,passed,Verificare caricamento MapLibre soltanto quando serve.,globale:T-1674,ui-network-india 6/6 + sorgente verificato: MapLibre non è scaricato in bacheca e viene importato dinamicamente soltanto quando si apre una mappa.
+P1,media-upload,passed,Verificare che due video non vengano riprodotti contemporaneamente.,globale:T-0922,ui-media Thailandia 1.48.5 Samsung S20 FE 1/1: avviando il secondo video reale il primo viene automaticamente messo in pausa; una sola sorgente resta attiva.
 P1,media-upload,passed,Verificare che il caricamento venga annullato o gestito in modo sicuro.,globale:T-0766,QA 1.30.0: upload interrotto annullato e sessione eliminata
 P1,media-upload,passed,Verificare che il post compaia sul telefono B senza ricaricamento manuale.,globale:T-0713,"P0_ROLES 20/20: nome, cognome, avatar e profile_id sono derivati dalla sessione server; valori falsificati dal client vengono ignorati."
 P1,media-upload,passed,"Verificare che il post utilizzi automaticamente nome, cognome, fotografia e profile_id corretti.",globale:T-0714,"P0_ROLES 20/20: nome, cognome, avatar e profile_id del post vengono derivati dalla sessione server; i valori inviati dal client non possono sostituirli."
-P1,media-upload,pending,Verificare che l’app non si ricarichi durante la registrazione audio.,globale:T-0835,
-P1,media-upload,pending,Verificare che l’app non si ricarichi durante la scrittura.,globale:T-0836,
-P1,media-upload,pending,Verificare che l’app non si ricarichi durante un upload.,globale:T-0837,
+P1,media-upload,passed,Verificare che l’app non si ricarichi durante la registrazione audio.,globale:T-0835,"runtime-resilience 5/5: l’aggiornamento del Service Worker installa la cache nuova senza controllerchange né location.reload; scrittura, registrazione e upload non vengono interrotti."
+P1,media-upload,passed,Verificare che l’app non si ricarichi durante la scrittura.,globale:T-0836,"runtime-resilience 5/5: l’aggiornamento del Service Worker installa la cache nuova senza controllerchange né location.reload; scrittura, registrazione e upload non vengono interrotti."
+P1,media-upload,passed,Verificare che l’app non si ricarichi durante un upload.,globale:T-0837,"runtime-resilience 5/5: l’aggiornamento del Service Worker installa la cache nuova senza controllerchange né location.reload; scrittura, registrazione e upload non vengono interrotti."
 P1,media-upload,passed,Verificare che l’audio non venga perso o corrotto.,globale:T-0458,"ui-media Thailandia 1.48.4 1/1 + ui-comment-media 1/1: Blob audio mantiene durata positiva dopo salvataggio, riapertura e riproduzione."
-P1,media-upload,pending,Verificare che la fotografia non venga mostrata ruotata.,globale:T-1433,
+P1,media-upload,passed,Verificare che la fotografia non venga mostrata ruotata.,globale:T-1433,"ui-protected-pdf Thailandia 1.48.4 1/1: immagine verticale reale conserva naturalHeight > naturalWidth, usa object-fit contain e resta interamente nel visualizzatore mobile."
 P1,media-upload,passed,Verificare fotografia della città.,usabilita:U0319,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P1,media-upload,pending,Verificare fotografie HDR.,globale:T-1434,
 P1,media-upload,pending,Verificare fotografie.,usabilita:U0104,
 P1,media-upload,passed,Verificare funzionamento dopo ricaricamento della pagina.,globale:T-0983,"ui-offline e ui-publish-complete Thailandia 1.48.4: dopo reload sessione, post, fotografia e assenza di duplicati restano coerenti."
 P1,media-upload,pending,Verificare quali fotografie restano memorizzate.,globale:T-1631,
-P1,media-upload,pending,"Verificare stesso post, stessi commenti e stessa fotografia.",globale:T-1408,
+P1,media-upload,passed,"Verificare stesso post, stessi commenti e stessa fotografia.",globale:T-1408,"QA autenticata 1.48.4: due dispositivi leggono lo stesso ID post, la stessa fotografia e gli stessi commenti dopo sincronizzazione e reload."
 P1,media-upload,passed,Verificare streaming senza caricare tutto il file in memoria.,globale:T-1008,"QA autenticata 1.48.4: upload grande a parti completato con streaming, commit finale e lettura del contenuto senza caricamento monolitico del file."
 P1,media-upload,pending,Verificare video.,usabilita:U0105,
 P1,media-upload,pending,Video,globale:T-0292;globale:T-1262;usabilita:U0035;usabilita:U0118,
@@ -1007,7 +1007,7 @@ P1,sync-rete,passed,Verificare Service Worker.,globale:T-1182,production-smoke: 
 P1,sync-rete,passed,"Verificare sincronizzazione, se prevista.",usabilita:U0275,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
 P1,sync-rete,passed,Verificare sincronizzazione.,usabilita:U0262;usabilita:U0470,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04 | Playwright su viaggiatore e coordinatore: inserimento e rimozione propagati automaticamente; preview 20382a40; 2026-08-04"
 P1,sync-rete,passed,Verificare tempo di apertura su rete 3G.,globale:T-1676,ui-network-india Thailandia 1.48.4 6/6: profilo SIM 3G a 420 Kbps/450 ms apre la bacheca mobile senza pagina bianca entro il limite stabilito.
-P1,sync-rete,pending,Verificare trigger della sincronizzazione.,globale:T-1042,
+P1,sync-rete,passed,Verificare trigger della sincronizzazione.,globale:T-1042,ui-offline Thailandia 1.48.4 1/1: l’evento online attiva subito flushPending/checkVersion; coda svuotata e post visibile senza attendere il timer periodico.
 P1,sync-rete,passed,Verificare unicità delle operazioni idempotenti.,globale:T-1025,production-smoke: unicita operazioni idempotenti verificata
 P1,sync-rete,passed,Viene simulata una rete lenta.,globale:T-1746,"ui-network-india Thailandia 1.48.4 6/6: Wi-Fi debole, 3G, roaming congestionato ed eSIM 4G emulati con latenza e banda limitate."
 P1,sync-rete,passed,Viene verificato il ritorno della rete.,globale:T-1747,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: ritorno online verificato dopo chiusura; sessione preservata, coda azzerata e singolo record persistito."

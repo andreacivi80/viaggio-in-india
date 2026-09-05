@@ -68,7 +68,7 @@ const makePlayableWebm = async (page) => {
       context.fillRect(0, 0, canvas.width, canvas.height);
       context.fillStyle = "white";
       context.font = "bold 28px sans-serif";
-      context.fillText("India Insieme", 58, 126);
+      context.fillText("Thailandia Insieme", 36, 126);
       await new Promise((resolve) => setTimeout(resolve, 70));
     }
     recorder.stop();
@@ -120,20 +120,19 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
     const sheet = page.locator(".uploadSheet");
     await sheet.locator('input[accept^="image"]').first().setInputFiles(photoPath);
     await expect(sheet.getByText("1 allegati pronti")).toBeVisible();
-    await sheet.locator('input[accept^="video"]').setInputFiles({
-      name: "prova-video.webm",
-      mimeType: "video/webm",
-      buffer: video,
-    });
-    await expect(sheet.getByText("2 allegati pronti")).toBeVisible();
+    await sheet.locator('input[accept^="video"]').setInputFiles([
+      { name: "prova-video-a.webm", mimeType: "video/webm", buffer: video },
+      { name: "prova-video-b.webm", mimeType: "video/webm", buffer: video },
+    ]);
+    await expect(sheet.getByText("3 allegati pronti")).toBeVisible();
     await sheet.locator('input[accept^="audio"]').setInputFiles({
       name: "prova-audio.wav",
       mimeType: "audio/wav",
       buffer: audio,
     });
-    await expect(sheet.getByText("3 allegati pronti")).toBeVisible();
+    await expect(sheet.getByText("4 allegati pronti")).toBeVisible();
     await expect(sheet.locator(".attachmentPreviews img")).toHaveCount(1);
-    await expect(sheet.locator(".attachmentPreviews video")).toHaveCount(1);
+    await expect(sheet.locator(".attachmentPreviews video")).toHaveCount(2);
     await expect(sheet.locator(".attachmentPreviews audio")).toHaveCount(1);
     const text = `Media UI ${Date.now()}`;
     await sheet.getByPlaceholder("Racconta questo momento…").fill(text);
@@ -161,11 +160,20 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
     const beforeSwipe = await carousel.evaluate((element) => element.scrollLeft);
     await swipeMediaLikeAFinger(page, carousel);
     await expect.poll(() => carousel.evaluate((element) => element.scrollLeft)).toBeGreaterThan(beforeSwipe + 20);
-    await expect(post.locator(".mediaCounter")).toHaveText("2 contenuti · scorri");
+    await expect(post.locator(".mediaCounter")).toHaveText("3 contenuti · scorri");
     await expect(post.getByRole("button", { name: /Contenuto (precedente|successivo)/ })).toHaveCount(0);
-    const videoPlayer = post.locator("video");
-    await expect(videoPlayer).toBeVisible();
-    await expect.poll(() => videoPlayer.evaluate((element) => element.duration)).toBeGreaterThan(0);
+    const videoPlayers = post.locator("video");
+    await expect(videoPlayers).toHaveCount(2);
+    await expect(videoPlayers.nth(0)).toBeVisible();
+    await expect.poll(() => videoPlayers.nth(0).evaluate((element) => element.duration)).toBeGreaterThan(0);
+    await videoPlayers.nth(0).evaluate(async (element) => { element.muted = true; await element.play(); });
+    await expect.poll(() => videoPlayers.nth(0).evaluate((element) => element.paused)).toBe(false);
+    await videoPlayers.nth(1).evaluate(async (element) => { element.muted = true; await element.play(); });
+    await expect.poll(() => videoPlayers.nth(1).evaluate((element) => element.paused)).toBe(false);
+    await expect.poll(() => videoPlayers.nth(0).evaluate((element) => element.paused)).toBe(true);
+    await videoPlayers.nth(1).evaluate((element) => { element.currentTime = Math.min(0.5, element.duration / 2); });
+    await expect.poll(() => videoPlayers.nth(1).evaluate((element) => element.currentTime)).toBeGreaterThan(0);
+    await videoPlayers.nth(1).evaluate((element) => element.pause());
 
     await page.getByRole("button", { name: "Pubblica" }).tap();
     const secondSheet = page.locator(".uploadSheet");

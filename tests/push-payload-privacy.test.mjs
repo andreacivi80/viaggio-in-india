@@ -41,3 +41,17 @@ test("un URL esterno o inatteso viene sostituito con la home", () => {
   assert.equal(sanitizePushPayload({ url: "https://evil.example/document" }).url, "/");
   assert.equal(sanitizePushPayload({ url: "/documents/private/passport" }).url, "/");
 });
+
+test("emoji, caratteri speciali e testi molto lunghi producono sempre una notifica generica limitata", () => {
+  const result = sanitizePushPayload({
+    title: `🎉 <script>${"T".repeat(2_000)}`,
+    body: `àèìòù & < > ${"B".repeat(10_000)}`,
+    tag: `post-🎉-${"x".repeat(300)}`,
+    url: "/?post=post-1",
+  });
+  assert.equal(result.title, "Thailandia Insieme");
+  assert.equal(result.body, "È stato pubblicato un nuovo ricordo del viaggio.");
+  assert.ok(result.tag.length <= 96);
+  assert.doesNotMatch(JSON.stringify(result), /<script>|B{100}|T{100}/);
+  assert.equal(result.url, "/?post=post-1");
+});

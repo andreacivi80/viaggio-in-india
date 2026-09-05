@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.4",
+const VERSION = "1.48.5",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -1711,6 +1711,13 @@ function App() {
     document.documentElement.classList.remove("travelerDirectoryOpen");
   }, [tab]);
   useEffect(() => {
+    const keepSingleMediaActive = (event) => {
+      const active = event.target;
+      if (!(active instanceof HTMLMediaElement)) return;
+      document.querySelectorAll("audio, video").forEach((media) => {
+        if (media !== active && !media.paused) media.pause();
+      });
+    };
     const pauseEveryMedia = () => {
       document.querySelectorAll("audio, video").forEach((media) => {
         if (!media.paused) media.pause();
@@ -1722,10 +1729,12 @@ function App() {
     const onVisibilityChange = () => {
       if (document.hidden) pauseEveryMedia();
     };
+    document.addEventListener("play", keepSingleMediaActive, true);
     document.addEventListener("visibilitychange", onVisibilityChange);
     window.addEventListener("pagehide", pauseEveryMedia);
     window.addEventListener("freeze", pauseEveryMedia);
     return () => {
+      document.removeEventListener("play", keepSingleMediaActive, true);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       window.removeEventListener("pagehide", pauseEveryMedia);
       window.removeEventListener("freeze", pauseEveryMedia);

@@ -4,6 +4,7 @@ import test from "node:test";
 
 const source = await readFile(new URL("../src/main.jsx", import.meta.url), "utf8");
 const serviceWorker = await readFile(new URL("../public/sw.js", import.meta.url), "utf8");
+const serviceWorkerRegister = await readFile(new URL("../public/sw-register.js", import.meta.url), "utf8");
 const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
 
 test("K0: un errore React non lascia una schermata bianca e non cancella i dati", () => {
@@ -34,4 +35,11 @@ test("K1: API e documenti privati restano esclusi dal fallback offline", () => {
   assert.match(serviceWorker, /event\.respondWith\(fetch\(event\.request\)\)/);
   const precache = serviceWorker.match(/const PRECACHE = \[([\s\S]*?)\];/)?.[1] || "";
   assert.doesNotMatch(precache, /\/api\//);
+});
+
+test("K0: un aggiornamento non ricarica la pagina durante scrittura, registrazione o upload", () => {
+  assert.match(serviceWorkerRegister, /registration\.update\(\)/);
+  assert.match(serviceWorkerRegister, /SKIP_WAITING/);
+  assert.doesNotMatch(serviceWorkerRegister, /location\.reload\s*\(/);
+  assert.doesNotMatch(serviceWorkerRegister, /controllerchange/);
 });
