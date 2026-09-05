@@ -1048,8 +1048,8 @@ P2,profili-ruoli,passed,Accedere come Viaggiatore A.,globale:T-0321;addendum:A00
 P2,profili-ruoli,pending,accedere come Viaggiatore B;,addendum:A0069,
 P2,profili-ruoli,passed,Accedere come Viaggiatore.,addendum:A0088,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P2,profili-ruoli,passed,Aggiungere funzione di cancellazione del proprio profilo.,globale:T-0045,"P0_PROFILE_DELETION 44/44: cancellazione del proprio profilo disponibile e atomica; dati collegati rimossi, con protezione dell’ultimo coordinatore."
-P2,profili-ruoli,pending,Aprire il proprio profilo.,usabilita:U0070;usabilita:U0370,
-P2,profili-ruoli,pending,Aprire la Bacheca come Viaggiatore.,usabilita:U0097,
+P2,profili-ruoli,passed,Aprire il proprio profilo.,usabilita:U0070;usabilita:U0370,"ui-own-profile Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: il viaggiatore apre la propria scheda, modifica nome e cognome con touch, mantiene lo stesso profile_id e vede la modifica sincronizzata sul secondo telefono; l’altro viaggiatore non può modificarla, nessun profilo compare nel feed e i dati originali vengono ripristinati a fine prova."
+P2,profili-ruoli,passed,Aprire la Bacheca come Viaggiatore.,usabilita:U0097,"ui-all-members-publish Thailandia 1.48.12 Samsung S20 FE 1/1: due sessioni viaggiatore distinte hanno aperto la Bacheca personale, visualizzato l’identità corretta e usato Pubblica tramite touch."
 P2,profili-ruoli,pending,Aprire un profilo.,globale:T-1393,
 P2,profili-ruoli,passed,Assegnare ruolo.,usabilita:U0376,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,passed,Cambiare il ruolo in Viaggiatore.,addendum:A0096,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
@@ -1076,7 +1076,7 @@ P2,profili-ruoli,pending,il codice comune non permette di impersonare un profilo
 P2,profili-ruoli,passed,il ruolo restituito dal server prevale sempre sul ruolo locale;,addendum:A0060,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P2,profili-ruoli,pending,il server restituisce soltanto i dati necessari al ruolo;,addendum:A0455,
 P2,profili-ruoli,passed,il Viaggiatore agisca soltanto sulle proprie risorse;,addendum:A0379,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
-P2,profili-ruoli,pending,Il Viaggiatore non deve poter scrivere il nome di un’altra persona.,usabilita:U0168,
+P2,profili-ruoli,passed,Il Viaggiatore non deve poter scrivere il nome di un’altra persona.,usabilita:U0168,"P0_ROLES_AND_SHARED_CONTROLS 30/30 + P0_AUTHORIZATION_MATRIX 86/86: il viaggiatore ha inviato author_name e profile_id falsificati e ha alterato i dati locali; il server ha ignorato il nome proposto, derivato autore e profilo dalla sessione e impedito la pubblicazione come un altro viaggiatore."
 P2,profili-ruoli,passed,Impedire definitivamente di selezionare l’identità di un altro Viaggiatore.,globale:T-0035,QA 1.31.0: nomi e identita inviati dal browser vengono ignorati dal server
 P2,profili-ruoli,pending,l’Ospite non erediti privilegi da un profilo memorizzato;,addendum:A0378,
 P2,profili-ruoli,pending,lettura profilo;,globale:T-0738,
@@ -1087,10 +1087,10 @@ P2,profili-ruoli,pending,modifica profilo proprio;,globale:T-0744;usabilita:U064
 P2,profili-ruoli,passed,Modifica profilo.,usabilita:U0654,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,pending,modifica ruolo;,globale:T-0745,
 P2,profili-ruoli,pending,Modificare contemporaneamente lo stesso profilo da due dispositivi.,globale:T-0797,
-P2,profili-ruoli,pending,Modificare il nome del profilo A.,globale:T-0702,
+P2,profili-ruoli,passed,Modificare il nome del profilo A.,globale:T-0702,"ui-own-profile Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: il viaggiatore apre la propria scheda, modifica nome e cognome con touch, mantiene lo stesso profile_id e vede la modifica sincronizzata sul secondo telefono; l’altro viaggiatore non può modificarla, nessun profilo compare nel feed e i dati originali vengono ripristinati a fine prova."
 P2,profili-ruoli,pending,Modificare il profilo dalla seconda.,globale:T-1591,
-P2,profili-ruoli,pending,Modificare il proprio profilo.,usabilita:U0371,
-P2,profili-ruoli,pending,Modificare localStorage con il nome di un altro Viaggiatore.,usabilita:U0171,
+P2,profili-ruoli,passed,Modificare il proprio profilo.,usabilita:U0371,"ui-own-profile Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: il viaggiatore apre la propria scheda, modifica nome e cognome con touch, mantiene lo stesso profile_id e vede la modifica sincronizzata sul secondo telefono; l’altro viaggiatore non può modificarla, nessun profilo compare nel feed e i dati originali vengono ripristinati a fine prova."
+P2,profili-ruoli,passed,Modificare localStorage con il nome di un altro Viaggiatore.,usabilita:U0171,"P0_ROLES_AND_SHARED_CONTROLS 30/30 + P0_AUTHORIZATION_MATRIX 86/86: il viaggiatore ha inviato author_name e profile_id falsificati e ha alterato i dati locali; il server ha ignorato il nome proposto, derivato autore e profilo dalla sessione e impedito la pubblicazione come un altro viaggiatore."
 P2,profili-ruoli,pending,Modificare location profile_id.,usabilita:U0575,
 P2,profili-ruoli,pending,Modificare manualmente profile_id.,globale:T-0326,
 P2,profili-ruoli,passed,Modificare profile_id nella richiesta.,usabilita:U0173,P0_ROLES 20/20: profile_id falsificato nella richiesta non sostituisce l’identità derivata dalla sessione server.
@@ -1129,7 +1129,7 @@ P2,profili-ruoli,pending,se è Viaggiatore;,addendum:A0429,
 P2,profili-ruoli,passed,"Se la pubblicazione richiede obbligatoriamente un profilo personale, non mostrare il compositore finché il dispositivo non è associato a un profilo.",usabilita:U0003,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P2,profili-ruoli,pending,telefono B – Viaggiatore 1;,globale:T-0302,
 P2,profili-ruoli,pending,telefono C – Viaggiatore 2;,globale:T-0303,
-P2,profili-ruoli,pending,Tentare di accedere come Viaggiatore B usando il codice comune.,globale:T-0334,
+P2,profili-ruoli,passed,Tentare di accedere come Viaggiatore B usando il codice comune.,globale:T-0334,P0_ACCESS_SESSION_BOUNDARIES 17/17 + P0_AUTHORIZATION_MATRIX 86/86: la password comune non apre endpoint personali e non può essere usata per impersonare il Viaggiatore B o un profilo esistente; è richiesta una sessione personale legata al dispositivo.
 P2,profili-ruoli,passed,Tentare di modificare un profilo.,usabilita:U0622,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,passed,Tentare di scegliere un profilo esistente.,usabilita:U0634,"ui-people Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: dopo creazione e modifica di un altro viaggiatore il profilo locale resta quello del coordinatore autenticato; un viaggiatore vede la persona esistente ma non riceve comandi per sceglierla, modificarla, crearle inviti o aprirne i documenti."
 P2,profili-ruoli,pending,test come Viaggiatore;,usabilita:U0721,
@@ -1138,9 +1138,9 @@ P2,profili-ruoli,pending,Tutti controllano il proprio profilo.,globale:T-1733,
 P2,profili-ruoli,passed,Verificare che il cambio di anteprima non modifichi il ruolo reale.,usabilita:U0455,ui-session-history 2/2 + P0_ROLES 20/20: il cambio di anteprima modifica soltanto la vista e non il ruolo reale verificato dal server.
 P2,profili-ruoli,passed,Verificare che il codice comune non consenta di riattivare il profilo.,globale:T-1618,ui-public-access-boundary Thailandia 1.48.4 2/2 + P0_ACCESS_SESSION_BOUNDARIES 17/17: il codice comune non crea né riattiva una sessione personale.
 P2,profili-ruoli,pending,Verificare che il nome del marker corrisponda al profilo A.,globale:T-0711,
-P2,profili-ruoli,pending,Verificare che il profilo non compaia nel feed.,globale:T-1327,
+P2,profili-ruoli,passed,Verificare che il profilo non compaia nel feed.,globale:T-1327,"ui-own-profile Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: il viaggiatore apre la propria scheda, modifica nome e cognome con touch, mantiene lo stesso profile_id e vede la modifica sincronizzata sul secondo telefono; l’altro viaggiatore non può modificarla, nessun profilo compare nel feed e i dati originali vengono ripristinati a fine prova."
 P2,profili-ruoli,passed,Verificare che il Viaggiatore modifichi soltanto il proprio profilo.,globale:T-0356,P0_AUTHORIZATION_MATRIX 86/86: il viaggiatore può modificare soltanto il proprio profilo; tentativi su altri profili ricevono 403.
-P2,profili-ruoli,pending,Verificare che non sia possibile pubblicare utilizzando il nome del Viaggiatore B.,globale:T-0719,
+P2,profili-ruoli,passed,Verificare che non sia possibile pubblicare utilizzando il nome del Viaggiatore B.,globale:T-0719,"P0_ROLES_AND_SHARED_CONTROLS 30/30 + P0_AUTHORIZATION_MATRIX 86/86: il viaggiatore ha inviato author_name e profile_id falsificati e ha alterato i dati locali; il server ha ignorato il nome proposto, derivato autore e profilo dalla sessione e impedito la pubblicazione come un altro viaggiatore."
 P2,profili-ruoli,passed,Verificare che ogni comando appartenga al profilo corretto.,usabilita:U0076,P0_AUTHORIZATION_MATRIX 86/86: ogni comando protetto usa il profilo della sessione e non l’identità proposta dal client.
 P2,profili-ruoli,pending,Verificare comportamento dopo cambio profilo.,globale:T-1361,
 P2,profili-ruoli,pending,Verificare numero dei Viaggiatori.,usabilita:U0444,
@@ -1235,8 +1235,8 @@ P2,social,pending,Visualizza tutti i commenti.,usabilita:U0312,
 P2,social,pending,Visualizza ultimi commenti.,usabilita:U0311,
 P2,usabilita-mobile,pending,Aggiornamento in automobile.,globale:T-1459,
 P2,usabilita-mobile,pending,Attivarle su iPhone PWA.,globale:T-0518,
-P2,usabilita-mobile,pending,Confrontare iPhone e Android.,globale:T-1653,
-P2,usabilita-mobile,pending,funziona su iPhone e Android.,usabilita:U0686,
+P2,usabilita-mobile,passed,Confrontare iPhone e Android.,globale:T-1653,"ui-publish-complete Thailandia 1.48.4 1/1 + regressione mappe Thailandia 1.48.12 su tre viewport: telefono Android autenticato ha pubblicato con touch foto, video, due audio e posizione; iPhone SE ha ricevuto e visualizzato lo stesso post senza privilegi impropri; navigazione e mappe sono state inoltre confrontate su Samsung S20 FE, Samsung meno recente e iPhone piccolo."
+P2,usabilita-mobile,passed,funziona su iPhone e Android.,usabilita:U0686,"ui-publish-complete Thailandia 1.48.4 1/1 + regressione mappe Thailandia 1.48.12 su tre viewport: telefono Android autenticato ha pubblicato con touch foto, video, due audio e posizione; iPhone SE ha ricevuto e visualizzato lo stesso post senza privilegi impropri; navigazione e mappe sono state inoltre confrontate su Samsung S20 FE, Samsung meno recente e iPhone piccolo."
 P2,usabilita-mobile,pending,funziona su iPhone;,globale:T-0255,
 P2,usabilita-mobile,pending,Installare la PWA su iPhone.,globale:T-0308,
 P2,usabilita-mobile,pending,iPhone con schermo piccolo.,globale:T-1090,
