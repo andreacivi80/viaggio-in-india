@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.10",
+const VERSION = "1.48.11",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -1850,12 +1850,6 @@ function App() {
     };
   }, []);
   useEffect(() => {
-    const initialUrl = new URL(location.href);
-    if (initialUrl.searchParams.has("view") || initialUrl.searchParams.has("day")) {
-      initialUrl.searchParams.delete("view");
-      initialUrl.searchParams.delete("day");
-      history.replaceState({}, "", initialUrl);
-    }
     refresh();
     const checkVersion = async () => {
       if (document.hidden || !navigator.onLine) return;
