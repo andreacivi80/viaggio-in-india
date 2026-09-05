@@ -880,8 +880,8 @@ P1,media-upload,pending,Testo e video.,usabilita:U0146,
 P1,media-upload,pending,toccare durante un caricamento;,usabilita:U0084,
 P1,media-upload,passed,Tornare dopo la visualizzazione di una fotografia.,globale:T-0977,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
 P1,media-upload,pending,Tre upload contemporanei.,globale:T-0574,
-P1,media-upload,pending,Tutti pubblicano una fotografia.,globale:T-1740,
-P1,media-upload,pending,Tutti registrano un audio.,globale:T-1741,
+P1,media-upload,passed,Tutti pubblicano una fotografia.,globale:T-1740,"ui-all-members-publish Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: due viaggiatori e la coordinatrice, ciascuno con sessione e telefono distinti, hanno pubblicato tramite touch una fotografia JPEG reale e un audio registrato dal microfono; tutti e tre i post con entrambi i media sono risultati visibili dagli altri dispositivi e sono stati eliminati al termine."
+P1,media-upload,passed,Tutti registrano un audio.,globale:T-1741,"ui-all-members-publish Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: due viaggiatori e la coordinatrice, ciascuno con sessione e telefono distinti, hanno pubblicato tramite touch una fotografia JPEG reale e un audio registrato dal microfono; tutti e tre i post con entrambi i media sono risultati visibili dagli altri dispositivi e sono stati eliminati al termine."
 P1,media-upload,passed,un upload interrotto non può riprendere;,usabilita:U0695,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P1,media-upload,pending,upload interrotto;,usabilita:U0509,
 P1,media-upload,pending,upload multipart;,globale:T-0164,
