@@ -4,6 +4,7 @@ import test from "node:test";
 
 const source = await readFile(new URL("../src/main.jsx", import.meta.url), "utf8");
 const serviceWorker = await readFile(new URL("../public/sw.js", import.meta.url), "utf8");
+const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
 
 test("K0: un errore React non lascia una schermata bianca e non cancella i dati", () => {
   assert.match(source, /class AppErrorBoundary extends React\.Component/);
@@ -21,7 +22,7 @@ test("K0: storage browser negato o pieno non provoca lo shutdown dell'app", () =
 });
 
 test("K1: aggiornamento e recupero offline usano cache versionata e fallback della shell", () => {
-  assert.match(serviceWorker, /thailandia-insieme-v1\.48\.3/);
+  assert.match(serviceWorker, new RegExp(`thailandia-insieme-v${packageJson.version.replaceAll(".", "\\.")}`));
   assert.match(serviceWorker, /\.filter\(\(key\) => key !== CACHE\)/);
   assert.match(serviceWorker, /event\.request\.mode === "navigate"/);
   assert.match(serviceWorker, /event\.respondWith\(network\.catch\(\(\) => cached/);
