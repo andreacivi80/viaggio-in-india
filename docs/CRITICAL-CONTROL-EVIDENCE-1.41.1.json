@@ -210,4 +210,8 @@
   ,"globale:T-1651": "runtime-resilience 6/6: polling visibile ridotto da 2,5 a 5 secondi, completamente sospeso quando pagina nascosta o offline, con controllo immediato agli eventi online e visibilitychange."
   ,"globale:T-0140": "QA autenticata isolata Thailandia 1.48.8: lo stesso commento è stato ritentato dieci volte con la medesima chiave idempotente; tutte le risposte successive sono replay e nello stato finale esiste un solo commento. I replay completati non consumano la quota antispam."
   ,"globale:T-0144": "QA autenticata isolata Thailandia 1.48.8: la stessa reazione è stata ritentata dieci volte con la medesima chiave idempotente; tutte le risposte successive sono replay e lo stato viene invertito una sola volta. I replay completati non consumano la quota antispam."
+  ,"globale:T-1644": "ui-slow-activation Thailandia 1.48.8 Samsung S20 FE 1/1: ogni chiamata API ritardata di 1,5 secondi; apertura del link personale, consumo automatico dell’invito, sessione viaggiatore persistita, URL ripulito e nessuna promozione di ruolo."
+  ,"globale:T-1645": "P1_IMAGE_QUALITY su QA isolato 1.48.8: JPEG reale 12x8 a qualità ridotta caricato, riaperto e decodificato conservando dimensioni e MIME."
+  ,"globale:T-0997": "P1_IMAGE_QUALITY su QA isolato 1.48.8: fotografia reale 320x240 con sfocatura intenzionale caricata, riaperta e decodificata senza rifiuto o corruzione."
+  ,"globale:T-0245": "ui-photo-deep-link Thailandia 1.48.9 Samsung S20 FE 1/1: URL della singola fotografia apre il media esatto, il reload conserva il visualizzatore e il comando touch Chiudi foto torna alla bacheca ripulendo il parametro; L1/L2 completo 18/18 applicabili."
 }

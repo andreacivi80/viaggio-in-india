@@ -8,6 +8,7 @@ param(
   [switch]$ExtendedSync,
   [switch]$ExtendedMedia,
   [switch]$ExtendedMediaRobustness,
+  [switch]$ExtendedImageQuality,
   [switch]$ExtendedLocation,
   [switch]$ExtendedRoles,
   [switch]$ExtendedSocial,
@@ -15,6 +16,8 @@ param(
   [switch]$ExtendedAvatar,
   [switch]$ExtendedChunkRetry,
   [switch]$ExtendedProfileDeletion,
+  [switch]$SlowActivationUi,
+  [switch]$PhotoDeepLinkUi,
   [switch]$DownloadArchiveUi,
   [switch]$PublishUi
 )
@@ -136,7 +139,13 @@ try {
   $env:QA_UI_DEVICE_KEY = $ownerDeviceKey
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
-  if ($DownloadArchiveUi) {
+  if ($SlowActivationUi) {
+    & npx playwright test "tests/ui-slow-activation.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($PhotoDeepLinkUi) {
+    & npx playwright test "tests/ui-photo-deep-link.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($DownloadArchiveUi) {
     & npx playwright test "tests/ui-download-archive.spec.mjs" --reporter=line
   }
   elseif ($PublishUi) {
@@ -171,6 +180,9 @@ try {
   }
   elseif ($ExtendedMediaRobustness) {
     & node tests\extended-p1-media-robustness.mjs
+  }
+  elseif ($ExtendedImageQuality) {
+    & node tests\extended-p1-image-quality.mjs
   }
   elseif ($ExtendedSync) {
     & node tests\extended-p0-sync-delete.mjs

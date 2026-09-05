@@ -776,13 +776,13 @@ P1,media-upload,passed,Caricare fotografia contenente data e ora.,globale:T-1426
 P1,media-upload,passed,Caricare fotografia contenente modello del telefono.,globale:T-1427,"P0_MEDIA_DELETE 14/14: JPEG contenente modello Samsung SM-G781B viene accettato e riaperto, ma il modello non viene estratto né mostrato nei dati del post."
 P1,media-upload,pending,Caricare fotografia.,globale:T-0342,
 P1,media-upload,passed,Caricare i primi 20 post.,globale:T-1679,P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: i primi 20/20 post creati in sequenza a raffiche compaiono tutti nello stato finale con cinque media ciascuno.
-P1,media-upload,pending,Caricare immagini a qualità ridotta.,globale:T-1645,
+P1,media-upload,passed,Caricare immagini a qualità ridotta.,globale:T-1645,"P1_IMAGE_QUALITY su QA isolato 1.48.8: JPEG reale 12x8 a qualità ridotta caricato, riaperto e decodificato conservando dimensioni e MIME."
 P1,media-upload,passed,Caricare un file con accenti.,globale:T-0990,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: file città-perché-caffè.jpg caricato, conservato e riaperto correttamente."
 P1,media-upload,passed,Caricare un file con emoji nel nome.,globale:T-0991,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: nome Thailandia con emoji palma e fotocamera caricato, conservato e riaperto correttamente."
 P1,media-upload,passed,Caricare un file con nome molto lungo.,globale:T-0992,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: nome file di 259 caratteri caricato, persistito e riaperto senza troncamenti che impediscano l’accesso."
 P1,media-upload,passed,Caricare una fotografia contenente coordinate GPS EXIF.,globale:T-1428,P0_MEDIA_DELETE 14/14: JPEG reale con coordinate GPS EXIF pubblicato senza trasferire latitudine o longitudine nei dati del post.
 P1,media-upload,passed,Caricare una fotografia orizzontale.,globale:T-0996,"ui-publish-complete Thailandia 1.48.4 1/1: fotografia orizzontale reale selezionata da galleria e scatto, pubblicata e resa visibile su due telefoni."
-P1,media-upload,pending,Caricare una fotografia sfocata.,globale:T-0997,
+P1,media-upload,passed,Caricare una fotografia sfocata.,globale:T-0997,"P1_IMAGE_QUALITY su QA isolato 1.48.8: fotografia reale 320x240 con sfocatura intenzionale caricata, riaperta e decodificata senza rifiuto o corruzione."
 P1,media-upload,passed,Chiudere una scheda durante un upload.,globale:T-1589,resumable-upload 5/5: una nuova istanza dopo chiusura/interruzione legge lo stato server e riparte dalla prima parte non confermata.
 P1,media-upload,pending,Commento con audio.,globale:T-0460;usabilita:U0302,
 P1,media-upload,pending,Commento con fotografia.,globale:T-0461;usabilita:U0300,
@@ -796,7 +796,7 @@ P1,media-upload,passed,Conservare possibilità di scaricare l’originale.,globa
 P1,media-upload,passed,Consultare post già scaricati.,globale:T-0540,"travel-archive 3/3: foto, audio e video originali visibili vengono scaricati con byte reali in uno ZIP; un file indisponibile non annulla gli altri."
 P1,media-upload,pending,controllo server prima del caricamento;,addendum:A0136,
 P1,media-upload,pending,copertina video;,globale:T-0150,
-P1,media-upload,pending,Deep link della singola fotografia.,globale:T-0245,
+P1,media-upload,passed,Deep link della singola fotografia.,globale:T-0245,"ui-photo-deep-link Thailandia 1.48.9 Samsung S20 FE 1/1: URL della singola fotografia apre il media esatto, il reload conserva il visualizzatore e il comando touch Chiudi foto torna alla bacheca ripulendo il parametro; L1/L2 completo 18/18 applicabili."
 P1,media-upload,pending,Definire gestione della componente video della Live Photo.,globale:T-1429,
 P1,media-upload,pending,Descrizione delle fotografie.,globale:T-1064,
 P1,media-upload,passed,Disattivare caricamento automatico video.,globale:T-1647,ui-publish-complete Thailandia 1.48.4 1/1: il video resta solo in anteprima con conteggio allegati finché l’utente non preme esplicitamente Pubblica.
@@ -928,7 +928,7 @@ P1,sync-rete,pending,Aggiungere alternativa offline.,globale:T-0181,
 P1,sync-rete,pending,Album HTML offline.,globale:T-0233,
 P1,sync-rete,passed,Aprire Emergenza senza rete.,globale:T-1183,ui-p0-cache-recovery Thailandia 1.48.4 Samsung S20 FE 1/1: dopo eliminazione di cache vecchie/difettose l’app si riapre offline e rende disponibili numeri di emergenza thailandesi e tappe essenziali.
 P1,sync-rete,passed,Aprire il dominio senza cache.,globale:T-0305,"ui-cache-recovery Samsung S20 FE 1/1: dominio aperto senza cache valida, vecchia cache e cache difettosa eliminate; nuova shell caricata e riaperta realmente offline."
-P1,sync-rete,pending,Attivazione automatica su rete lenta.,globale:T-1644,
+P1,sync-rete,passed,Attivazione automatica su rete lenta.,globale:T-1644,"ui-slow-activation Thailandia 1.48.8 Samsung S20 FE 1/1: ogni chiamata API ritardata di 1,5 secondi; apertura del link personale, consumo automatico dell’invito, sessione viaggiatore persistita, URL ripulito e nessuna promozione di ruolo."
 P1,sync-rete,pending,Badge sincronizzato dei contenuti non letti.,globale:T-0076,
 P1,sync-rete,pending,Cache-Control corretto.,globale:T-1469,
 P1,sync-rete,pending,Centro “Pronto per l’offline”.,globale:T-0116,

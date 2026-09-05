@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.8",
+const VERSION = "1.48.9",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -4173,7 +4173,7 @@ function AudioRecorder({ onRecorded }) {
   );
 }
 
-function PostMedia({ items }) {
+function PostMedia({ items, postId }) {
   const [openImage, setOpenImage] = useState(null);
   const visualItems = items.filter(
     (item) => !item.media_type?.startsWith("audio"),
@@ -4181,6 +4181,34 @@ function PostMedia({ items }) {
   const audioItems = items.filter((item) =>
     item.media_type?.startsWith("audio"),
   );
+  const mediaIdentity = items.map((item) => item.id || item.media_url).join("|");
+  useEffect(() => {
+    const syncDeepLink = () => {
+      const requested = new URLSearchParams(location.search).get("photo");
+      if (!requested || !postId || !requested.startsWith(`${postId}:`)) {
+        setOpenImage(null);
+        return;
+      }
+      const index = Number(requested.slice(postId.length + 1));
+      const selected = items[index];
+      setOpenImage(selected?.media_type?.startsWith("image") ? selected : null);
+    };
+    syncDeepLink();
+    addEventListener("popstate", syncDeepLink);
+    return () => removeEventListener("popstate", syncDeepLink);
+  }, [postId, mediaIdentity]);
+  const openPhoto = (item, index) => {
+    const url = new URL(location.href);
+    url.searchParams.set("photo", `${postId}:${index}`);
+    history.pushState({}, "", url);
+    setOpenImage(item);
+  };
+  const closePhoto = () => {
+    const url = new URL(location.href);
+    url.searchParams.delete("photo");
+    history.replaceState({}, "", url);
+    setOpenImage(null);
+  };
   if (!items.length) return null;
   const photoAudio = visualItems.some((item) => item.media_type?.startsWith("image"))
     ? audioItems[0]
@@ -4197,7 +4225,7 @@ function PostMedia({ items }) {
                   type="button"
                   className="postMediaOpen"
                   aria-label={`Apri fotografia ${index + 1}`}
-                  onClick={() => setOpenImage(item)}
+                  onClick={() => openPhoto(item, index)}
                 >
                   <img src={item.media_url} alt="Ricordo del viaggio" loading="lazy" />
                 </button>
@@ -4233,7 +4261,7 @@ function PostMedia({ items }) {
         <div className="photoViewerOverlay" role="dialog" aria-modal="true" aria-label="Fotografia aperta">
           <header>
             <b>Ricordo del viaggio</b>
-            <button type="button" onClick={() => setOpenImage(null)}>Chiudi foto</button>
+            <button type="button" onClick={closePhoto}>Chiudi foto</button>
           </header>
           <div className="photoViewerCanvas">
             <img src={openImage.media_url} alt="Fotografia a schermo intero" />
@@ -4599,6 +4627,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
         )}
       </div>
       <PostMedia
+        postId={p.id}
         items={
           p.media?.length
             ? p.media
