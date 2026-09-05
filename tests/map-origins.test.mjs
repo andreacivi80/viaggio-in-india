@@ -26,6 +26,12 @@ test("le icone della mappa generale sono ancorate a tratte reali", () => {
   assert.match(source, /node\.dataset\.nearStage = nearStage/);
 });
 
+test("i simboli dei mezzi restano separati dai nomi di Phi Phi e delle tappe vicine", () => {
+  assert.match(itinerary, /"Phi Phi Island", \[5, 42\], "Phi Phi", "6"/);
+  assert.match(itinerary, /"Cheow Lan Lake", \[55, -35\], "Cheow Lan", "5"/);
+  assert.doesNotMatch(itinerary, /"Phi Phi Island", \[-34, 19\]/);
+});
+
 test("la legenda dei mezzi non copre più la scala chilometrica", () => {
   assert.match(styles, /\.overviewRouteLegend\s*\{[^}]*top:\s*9px;[^}]*bottom:\s*auto;/s);
 });

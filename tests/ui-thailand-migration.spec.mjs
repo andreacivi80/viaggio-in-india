@@ -21,8 +21,11 @@ test("titolo e anteprima del link identificano la Thailandia", async ({ page }) 
   await page.goto("/", { waitUntil: "domcontentloaded" });
   await expect(page).toHaveTitle("Viaggio in Thailandia 2026 · Thailandia Insieme");
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", "Viaggio in Thailandia 2026");
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute("content", "https://viaggio-in-thailandia-2026.pages.dev/");
   await expect(page.locator('meta[property="og:image"]')).toHaveAttribute("content", /\/thailand\/thailandia-insieme\.png$/);
   await expect(page.locator('img[alt="Bandiera della Thailandia"]')).toBeVisible();
+  await expect(page.locator(".heroCopy")).toContainText("26 DICEMBRE 2026 — 5 GENNAIO 2027");
+  await expect(page.locator(".heroCopy")).toContainText("da Bangkok al Mare delle Andamane");
   const heroBackground = await page.locator(".hero").evaluate((node) => getComputedStyle(node).backgroundImage);
   expect(heroBackground).toContain("/thailand/khao-sok.jpg");
 });
@@ -72,6 +75,19 @@ test("mappa generale e mappe giornaliere mantengono tappe e percorsi", async ({ 
   await expect(page.locator(".overviewRouteMap .tripCityNameLabel")).toHaveCount(7);
   for (const city of ["Bangkok", "Hua Hin", "Chumphon", "Khao Sok", "Cheow Lan Lake", "Phi Phi Island", "Krabi"])
     await expect(page.locator(`.tripCityNameLabel[data-city-name="${city}"]`)).toBeVisible();
+  const iconLabelOverlaps = await page.locator(".overviewRouteMap").evaluate((map) => {
+    const rectangles = (selector) => [...map.querySelectorAll(selector)].map((node) => ({
+      name: node.dataset.routeReference || node.dataset.cityName || node.textContent,
+      rect: node.getBoundingClientRect(),
+    }));
+    const icons = rectangles(".overviewModeMarker");
+    const labels = rectangles(".tripCityNameLabel");
+    return icons.flatMap((icon) => labels
+      .filter((label) => Math.min(icon.rect.right, label.rect.right) > Math.max(icon.rect.left, label.rect.left)
+        && Math.min(icon.rect.bottom, label.rect.bottom) > Math.max(icon.rect.top, label.rect.top))
+      .map((label) => `${icon.name}/${label.name}`));
+  });
+  expect(iconLabelOverlaps).toEqual([]);
   const routeButtons = page.locator(".routeChips button");
   await expect(routeButtons).toHaveCount(11);
   for (let index = 0; index < 11; index += 1) {

@@ -43,14 +43,18 @@ export const dayMarkerIndexes = [
 export const currentMarkerIndexes = [0, 1, 2, 3, 4, 5, 6, 6, 7, 7, 7];
 
 export const overviewCityLabelOffsets = {
-  Bangkok: [0, -29],
-  "Hua Hin": [34, -8],
-  Chumphon: [-35, -8],
-  "Khao Sok": [-39, 14],
-  "Cheow Lan Lake": [45, 18],
-  "Phi Phi Island": [-43, 17],
-  Krabi: [33, -18],
+  Bangkok: [0, -35],
+  "Hua Hin": [40, -10],
+  Chumphon: [-42, -10],
+  "Khao Sok": [-52, -5],
+  "Cheow Lan Lake": [60, -7],
+  "Phi Phi Island": [-50, 22],
+  Krabi: [48, 24],
 };
+
+export const overviewStageOffsets = [
+  [-11, -4], [-15, 7], [15, -7], [-12, 0], [12, 0], [0, -8], [0, 9], [11, 4],
+];
 
 export const cityFacts = {
   Bangkok: {
@@ -128,10 +132,10 @@ export const roadPaths = {
 };
 
 export const overviewModes = [
-  ["🚐", "Minivan Bangkok–Hua Hin", "road", "Hua Hin", [30, 14], "Bangkok–Hua Hin", "2"],
-  ["🦶", "Trekking e safari a Kui Buri", "walk", "Chumphon", [-34, 17], "Kui Buri", "3"],
-  ["⛵", "Barca sul lago Cheow Lan", "boat", "Cheow Lan Lake", [34, -20], "Cheow Lan", "5"],
-  ["⛴️", "Traghetto per Phi Phi", "boat", "Phi Phi Island", [-34, 19], "Phi Phi", "6"],
+  ["🚐", "Minivan Bangkok–Hua Hin", "road", "Hua Hin", [34, 24], "Bangkok–Hua Hin", "2"],
+  ["🦶", "Trekking e safari a Kui Buri", "walk", "Chumphon", [34, 20], "Kui Buri", "3"],
+  ["⛵", "Barca sul lago Cheow Lan", "boat", "Cheow Lan Lake", [55, -35], "Cheow Lan", "5"],
+  ["⛴️", "Traghetto per Phi Phi", "boat", "Phi Phi Island", [5, 42], "Phi Phi", "6"],
   ["🚌", "Bus notturno per Bangkok", "transit", "Surat Thani", [28, 18], "Surat–Bangkok", "9"],
 ];
 

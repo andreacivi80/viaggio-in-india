@@ -17,6 +17,8 @@ test("la pubblicazione WEROAD storica resta idempotente negli schemi", () => {
 
 test("l’API converte soltanto la pubblicazione statica in Thailandia senza toccare i dati degli utenti", () => {
   assert.match(api, /async function ensureStaticPosts/);
+  assert.match(api, /WHERE post_id='india-welcome' AND id IN \('india-welcome-photo','india-welcome-audio'\)/);
+  assert.match(api, /WHERE id='india-welcome' AND profile_id=''/);
   assert.match(api, /INSERT OR IGNORE INTO posts/);
   assert.match(api, /INSERT OR IGNORE INTO post_media/);
   assert.match(api, /ON CONFLICT\(id\) DO UPDATE SET author_name=excluded\.author_name,text=excluded\.text/);

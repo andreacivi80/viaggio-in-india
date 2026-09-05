@@ -144,6 +144,14 @@ const mediaUrl = (key) => {
 async function ensureStaticPosts(env) {
   await env.DB.batch([
     env.DB.prepare(
+      `DELETE FROM post_media
+       WHERE post_id='india-welcome' AND id IN ('india-welcome-photo','india-welcome-audio')`,
+    ),
+    env.DB.prepare(
+      `DELETE FROM posts
+       WHERE id='india-welcome' AND profile_id=''`,
+    ),
+    env.DB.prepare(
       `INSERT OR IGNORE INTO posts(
         id,author_name,profile_id,day_index,visibility,text,place_name,
         media_key,media_type,media_name,media_size,created_at

@@ -50,6 +50,7 @@ import {
   dayMarkerIndexes,
   days,
   overviewCityLabelOffsets,
+  overviewStageOffsets,
   overviewModes,
   overviewSegments,
   places,
@@ -58,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.0",
+const VERSION = "1.48.1",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -1059,19 +1060,13 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       );
       node.onclick = () => onSelect?.(dayMarkerIndexes.findIndex((indexes) => indexes.includes(i)));
       const [lat, lng] = places[name];
-      const overviewOffset =
-        selectedDay == null && i === 1
-          ? [-15, 7]
-          : selectedDay == null && i === 2
-            ? [15, -7]
-            : [0, 0];
+      const overviewOffset = selectedDay == null
+        ? overviewStageOffsets[i] || [0, 0]
+        : [0, 0];
       const marker = new maplibregl.Marker({
         element: node,
         anchor: "center",
-        offset:
-          selectedDay == null && name === "Delhi"
-            ? [i === 0 ? -16 : 16, 0]
-            : overviewOffset,
+        offset: overviewOffset,
       })
         .setLngLat([lng, lat])
         .setPopup(
@@ -2389,7 +2384,7 @@ function App() {
             id: `post-${post.id}`,
             kind: "post",
             author: post.author_name,
-            text: `Nuovo ricordo · ${days[post.day_index]?.city || "India"}`,
+            text: `Nuovo ricordo · ${days[post.day_index]?.city || "Thailandia"}`,
             createdAt: post.created_at,
             dayIndex: Number(post.day_index) || 0,
           },
@@ -2704,11 +2699,11 @@ function App() {
           </div>
         )}
         <div className="heroCopy">
-          <p>10 — 23 AGOSTO 2026</p>
+          <p>26 DICEMBRE 2026 — 5 GENNAIO 2027</p>
           <h1>
             Un diario vivo,
             <br />
-            dal Rajasthan al Gange.
+            da Bangkok al Mare delle Andamane.
           </h1>
           <button
             className="heroRoute"
