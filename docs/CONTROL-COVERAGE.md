@@ -5,26 +5,26 @@ Questa vista non dichiara superato un controllo senza evidenza registrata. Manti
 - Righe sorgente: 3024
 - Controlli unici normalizzati: 2848
 - Doppioni consolidati: 176
-- Superati con evidenza gia registrata: 759
-- Da verificare o collegare a evidenza: 2089
+- Superati con evidenza gia registrata: 879
+- Da verificare o collegare a evidenza: 1969
 
 | Priorita | Categoria | Superati | Pendenti | Totale |
 |---|---|---:|---:|---:|
-| P0 | accessi-privacy | 300 | 18 | 318 |
-| P0 | altro | 28 | 19 | 47 |
-| P0 | documenti | 60 | 48 | 108 |
-| P0 | mappe-posizione | 3 | 2 | 5 |
+| P0 | accessi-privacy | 306 | 12 | 318 |
+| P0 | altro | 33 | 14 | 47 |
+| P0 | documenti | 80 | 28 | 108 |
+| P0 | mappe-posizione | 4 | 1 | 5 |
 | P0 | media-upload | 14 | 0 | 14 |
-| P0 | persistenza | 26 | 35 | 61 |
-| P0 | profili-ruoli | 20 | 19 | 39 |
+| P0 | persistenza | 44 | 17 | 61 |
+| P0 | profili-ruoli | 31 | 8 | 39 |
 | P0 | social | 14 | 0 | 14 |
 | P0 | sync-rete | 4 | 0 | 4 |
 | P1 | altro | 0 | 52 | 52 |
-| P1 | documenti | 1 | 8 | 9 |
-| P1 | mappe-posizione | 9 | 72 | 81 |
-| P1 | media-upload | 14 | 151 | 165 |
-| P1 | social | 0 | 4 | 4 |
-| P1 | sync-rete | 14 | 77 | 91 |
+| P1 | documenti | 3 | 6 | 9 |
+| P1 | mappe-posizione | 44 | 37 | 81 |
+| P1 | media-upload | 22 | 143 | 165 |
+| P1 | social | 1 | 3 | 4 |
+| P1 | sync-rete | 27 | 64 | 91 |
 | P2 | mappe-posizione | 6 | 24 | 30 |
 | P2 | media-upload | 0 | 2 | 2 |
 | P2 | profili-ruoli | 28 | 80 | 108 |

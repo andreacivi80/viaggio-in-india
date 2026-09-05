@@ -88,6 +88,32 @@ test("mappa generale e mappe giornaliere mantengono tappe e percorsi", async ({ 
       .map((label) => `${icon.name}/${label.name}`));
   });
   expect(iconLabelOverlaps).toEqual([]);
+  const iconStageOverlaps = await page.locator(".overviewRouteMap").evaluate((map) => {
+    const boxes = (selector) => [...map.querySelectorAll(selector)].map((node) => ({
+      name: node.dataset.routeReference || node.dataset.stageIndex || node.textContent,
+      rect: node.getBoundingClientRect(),
+    }));
+    const icons = boxes(".overviewModeMarker");
+    const stages = boxes(".vectorMarker");
+    return icons.flatMap((icon) => stages
+      .filter((stage) => Math.min(icon.rect.right, stage.rect.right) > Math.max(icon.rect.left, stage.rect.left)
+        && Math.min(icon.rect.bottom, stage.rect.bottom) > Math.max(icon.rect.top, stage.rect.top))
+      .map((stage) => `${icon.name}/${stage.name}`));
+  });
+  expect(iconStageOverlaps).toEqual([]);
+  const stageLabelOverlaps = await page.locator(".overviewRouteMap").evaluate((map) => {
+    const boxes = (selector) => [...map.querySelectorAll(selector)].map((node) => ({
+      name: node.dataset.cityName || node.dataset.stageIndex || node.textContent,
+      rect: node.getBoundingClientRect(),
+    }));
+    const stages = boxes(".vectorMarker");
+    const labels = boxes(".tripCityNameLabel");
+    return stages.flatMap((stage) => labels
+      .filter((label) => Math.min(stage.rect.right, label.rect.right) > Math.max(stage.rect.left, label.rect.left)
+        && Math.min(stage.rect.bottom, label.rect.bottom) > Math.max(stage.rect.top, label.rect.top))
+      .map((label) => `${stage.name}/${label.name}`));
+  });
+  expect(stageLabelOverlaps).toEqual([]);
   const routeButtons = page.locator(".routeChips button");
   await expect(routeButtons).toHaveCount(11);
   for (let index = 0; index < 11; index += 1) {

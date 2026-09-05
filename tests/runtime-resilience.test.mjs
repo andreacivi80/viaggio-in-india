@@ -21,7 +21,7 @@ test("K0: storage browser negato o pieno non provoca lo shutdown dell'app", () =
 });
 
 test("K1: aggiornamento e recupero offline usano cache versionata e fallback della shell", () => {
-  assert.match(serviceWorker, /thailandia-insieme-v1\.48\.2/);
+  assert.match(serviceWorker, /thailandia-insieme-v1\.48\.3/);
   assert.match(serviceWorker, /\.filter\(\(key\) => key !== CACHE\)/);
   assert.match(serviceWorker, /event\.request\.mode === "navigate"/);
   assert.match(serviceWorker, /event\.respondWith\(network\.catch\(\(\) => cached/);
