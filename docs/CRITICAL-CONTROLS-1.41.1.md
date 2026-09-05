@@ -1,7 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
-Controlli selezionati: **109** tra 109 controlli P0–P2 ancora privi di evidenza conclusiva.
-Stato del pacchetto: **0 superati**, **109 pendenti**.
+Controlli selezionati: **100** tra 100 controlli P0–P2 ancora privi di evidenza conclusiva.
+Stato del pacchetto: **0 superati**, **100 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -164,74 +164,56 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-1399`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
 - [ ] **K-075 · social** — Modificare contemporaneamente la stessa reazione.
   Sorgente: `globale:T-0796`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-076 · social** — Ogni commento deve essere collegato a un post esistente.
-  Sorgente: `globale:T-1015`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-077 · social** — Ogni reazione deve essere collegata a un post esistente.
-  Sorgente: `globale:T-1020`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-078 · social** — Tutti aggiungono una reazione.
+- [ ] **K-076 · social** — Tutti aggiungono una reazione.
   Sorgente: `globale:T-1730`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-079 · social** — Tutti inseriscono un commento.
+- [ ] **K-077 · social** — Tutti inseriscono un commento.
   Sorgente: `globale:T-1737`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-080 · social** — Verificare apertura del commento preciso.
+- [ ] **K-078 · social** — Verificare apertura del commento preciso.
   Sorgente: `globale:T-0978`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-081 · social** — Verificare che l’aggiornamento non chiuda i commenti.
+- [ ] **K-079 · social** — Verificare che l’aggiornamento non chiuda i commenti.
   Sorgente: `usabilita:U0111`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-082 · social** — Verificare ora dei commenti.
+- [ ] **K-080 · social** — Verificare ora dei commenti.
   Sorgente: `globale:T-0942`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-083 · social** — Verificare presenza di una sola reazione per persona.
-  Sorgente: `globale:T-0805`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-084 · social** — Verificare una sola reazione.
-  Sorgente: `usabilita:U0256`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-085 · social** — Visualizza tutti i commenti.
+- [ ] **K-081 · social** — Visualizza tutti i commenti.
   Sorgente: `usabilita:U0312`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-086 · mappe-posizione** — Aprire la mappa generale.
-  Sorgente: `globale:T-0381`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-087 · mappe-posizione** — Aprire una mappa tramite collegamento.
-  Sorgente: `globale:T-0383`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-088 · mappe-posizione** — Copiare il collegamento della mappa.
+- [ ] **K-082 · mappe-posizione** — Copiare il collegamento della mappa.
   Sorgente: `globale:T-0971`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-089 · mappe-posizione** — Correggere i popup della mappa per impedire inserimento di HTML o script nei nomi.
+- [ ] **K-083 · mappe-posizione** — Correggere i popup della mappa per impedire inserimento di HTML o script nei nomi.
   Sorgente: `globale:T-0186`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-090 · mappe-posizione** — Descrizione dei marker della mappa.
+- [ ] **K-084 · mappe-posizione** — Descrizione dei marker della mappa.
   Sorgente: `globale:T-1063`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
+- [ ] **K-085 · mappe-posizione** — Itinerario → giorno → mappa → indietro.
+  Sorgente: `globale:T-1414`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
+- [ ] **K-086 · mappe-posizione** — Mappa → Google Maps → ritorno all’app.
+  Sorgente: `globale:T-1416`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
+- [ ] **K-087 · mappe-posizione** — Mappa con coordinate 0,0.
+  Sorgente: `globale:T-0945`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
+- [ ] **K-088 · mappe-posizione** — Mappa con dieci persone nello stesso punto.
+  Sorgente: `globale:T-0946`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
+- [ ] **K-089 · mappe-posizione** — Mappa con latitudine -90.
+  Sorgente: `globale:T-0948;globale:T-0949`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
+- [ ] **K-090 · mappe-posizione** — Mappa con longitudine -180.
+  Sorgente: `globale:T-0950;globale:T-0951`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
 
 ## K2
 
-- [ ] **K-091 · mappe-posizione** — Itinerario → giorno → mappa → indietro.
-  Sorgente: `globale:T-1414`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-092 · mappe-posizione** — Mappa → Google Maps → ritorno all’app.
-  Sorgente: `globale:T-1416`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-093 · mappe-posizione** — Mappa con coordinate 0,0.
-  Sorgente: `globale:T-0945`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-094 · mappe-posizione** — Mappa con dieci persone nello stesso punto.
-  Sorgente: `globale:T-0946`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-095 · mappe-posizione** — Mappa con latitudine -90.
-  Sorgente: `globale:T-0948;globale:T-0949`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-096 · mappe-posizione** — Mappa con longitudine -180.
-  Sorgente: `globale:T-0950;globale:T-0951`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-097 · mappe-posizione** — Mappa con una persona fuori dall’India.
+- [ ] **K-091 · mappe-posizione** — Mappa con una persona fuori dall’India.
   Sorgente: `globale:T-0953`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-098 · mappe-posizione** — Misurare batteria con mappa aperta.
+- [ ] **K-092 · mappe-posizione** — Misurare batteria con mappa aperta.
   Sorgente: `globale:T-1659`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-099 · mappe-posizione** — Verificare apertura della mappa precisa.
-  Sorgente: `globale:T-0981`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-100 · mappe-posizione** — Verificare che il collegamento riapra la stessa mappa.
-  Sorgente: `globale:T-0398`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-101 · mappe-posizione** — Verificare mappa quando Google Maps non risponde.
+- [ ] **K-093 · mappe-posizione** — Verificare mappa quando Google Maps non risponde.
   Sorgente: `globale:T-0961`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-102 · mappe-posizione** — Verificare mappa quando OpenFreeMap non risponde.
+- [ ] **K-094 · mappe-posizione** — Verificare mappa quando OpenFreeMap non risponde.
   Sorgente: `globale:T-0962`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-103 · altro** — Aprire il pannello notifiche.
-  Sorgente: `usabilita:U0056`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-104 · altro** — Disattivazione completa delle notifiche.
+- [ ] **K-095 · altro** — Disattivazione completa delle notifiche.
   Sorgente: `globale:T-0077`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-105 · altro** — Inviare due notifiche con lo stesso tag.
+- [ ] **K-096 · altro** — Inviare due notifiche con lo stesso tag.
   Sorgente: `globale:T-0861`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-106 · altro** — Misurare batteria con notifiche attive.
+- [ ] **K-097 · altro** — Misurare batteria con notifiche attive.
   Sorgente: `globale:T-1660`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-107 · altro** — Notifiche durante la prova.
+- [ ] **K-098 · altro** — Notifiche durante la prova.
   Sorgente: `globale:T-1127`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-108 · altro** — Tutti attivano le notifiche.
+- [ ] **K-099 · altro** — Tutti attivano le notifiche.
   Sorgente: `globale:T-1731`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-109 · altro** — Verificare raggruppamento delle notifiche.
+- [ ] **K-100 · altro** — Verificare raggruppamento delle notifiche.
   Sorgente: `globale:T-0880`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.

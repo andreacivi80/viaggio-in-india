@@ -610,7 +610,7 @@ P0,sync-rete,passed,Sincronizzazione delle eliminazioni.,globale:T-0113,"extende
 P0,sync-rete,passed,Verificare eliminazione della cache difettosa.,globale:T-1181,ui-p0-cache-recovery: cache corrotta rimossa e riapertura offline riuscita
 P0,sync-rete,passed,Verificare eliminazione della vecchia cache.,globale:T-0840,"ui-p0-cache-recovery: cache 1.37.18 rimossa, resta soltanto 1.37.19"
 P1,altro,pending,“Notifiche attive” significhi subscription registrata e prova ricevuta;,addendum:A0386,
-P1,altro,pending,Aprire il pannello notifiche.,usabilita:U0056,
+P1,altro,passed,Aprire il pannello notifiche.,usabilita:U0056,"ui-notifications-spotify 1/1 su viewport mobile + notifications-spotify 5/5: apertura touch della campanella, pannello con tre attività, distinzione Nuova/Già vista, eliminazione singola, eliminazione totale e chiusura verificati."
 P1,altro,pending,Aprire la notifica.,globale:T-0516,
 P1,altro,pending,Aprire una notifica.,usabilita:U0065,
 P1,altro,pending,attivare le notifiche;,globale:T-1770,
@@ -1013,11 +1013,11 @@ P1,sync-rete,passed,Viene simulata una rete lenta.,globale:T-1746,"ui-network-in
 P1,sync-rete,passed,Viene verificato il ritorno della rete.,globale:T-1747,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: ritorno online verificato dopo chiusura; sessione preservata, coda azzerata e singolo record persistito."
 P2,mappe-posizione,pending,Apertura mappa.,globale:T-1203,
 P2,mappe-posizione,passed,Aprire la mappa completa.,usabilita:U0339,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
-P2,mappe-posizione,pending,Aprire la mappa generale.,globale:T-0381,
+P2,mappe-posizione,passed,Aprire la mappa generale.,globale:T-0381,"ui-significant-urls Thailandia 1.48.11 Samsung S20 FE 1/1 + map-origins Thailandia 1.48.12 su tre viewport: la mappa generale e la mappa precisa del giorno sono state aperte direttamente dai rispettivi URL, renderizzate su canvas e ricaricate due volte conservando la stessa vista senza pagina bianca; successiva regressione di tutte le 11 mappe giornaliere superata."
 P2,mappe-posizione,pending,Aprire la mappa.,globale:T-1390;globale:T-1769,
 P2,mappe-posizione,passed,Aprire la mini-mappa della giornata.,usabilita:U0338,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P2,mappe-posizione,passed,Aprire mappa.,usabilita:U0461,Playwright mobile: cartina posizioni aperta su viaggiatore e coordinatore; preview 20382a40; 2026-08-04
-P2,mappe-posizione,pending,Aprire una mappa tramite collegamento.,globale:T-0383,
+P2,mappe-posizione,passed,Aprire una mappa tramite collegamento.,globale:T-0383,"ui-significant-urls Thailandia 1.48.11 Samsung S20 FE 1/1 + map-origins Thailandia 1.48.12 su tre viewport: la mappa generale e la mappa precisa del giorno sono state aperte direttamente dai rispettivi URL, renderizzate su canvas e ricaricate due volte conservando la stessa vista senza pagina bianca; successiva regressione di tutte le 11 mappe giornaliere superata."
 P2,mappe-posizione,passed,Chiudere mappa.,usabilita:U0462,Playwright mobile: chiusura smonta cartina e marker prima del cambio dispositivo; preview 20382a40; 2026-08-04
 P2,mappe-posizione,pending,Copiare il collegamento della mappa.,globale:T-0971,
 P2,mappe-posizione,pending,Correggere i popup della mappa per impedire inserimento di HTML o script nei nomi.,globale:T-0186,
@@ -1037,8 +1037,8 @@ P2,mappe-posizione,pending,nessun popup della mappa sopra una conferma di sicure
 P2,mappe-posizione,passed,Selezionare ogni giorno dai pulsanti della mappa.,usabilita:U0341,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P2,mappe-posizione,pending,Tornare dalla mappa.,globale:T-0976,
 P2,mappe-posizione,pending,Trascinare la mappa.,usabilita:U0351,
-P2,mappe-posizione,pending,Verificare apertura della mappa precisa.,globale:T-0981,
-P2,mappe-posizione,pending,Verificare che il collegamento riapra la stessa mappa.,globale:T-0398,
+P2,mappe-posizione,passed,Verificare apertura della mappa precisa.,globale:T-0981,"ui-significant-urls Thailandia 1.48.11 Samsung S20 FE 1/1 + map-origins Thailandia 1.48.12 su tre viewport: la mappa generale e la mappa precisa del giorno sono state aperte direttamente dai rispettivi URL, renderizzate su canvas e ricaricate due volte conservando la stessa vista senza pagina bianca; successiva regressione di tutte le 11 mappe giornaliere superata."
+P2,mappe-posizione,passed,Verificare che il collegamento riapra la stessa mappa.,globale:T-0398,"ui-significant-urls Thailandia 1.48.11 Samsung S20 FE 1/1 + map-origins Thailandia 1.48.12 su tre viewport: la mappa generale e la mappa precisa del giorno sono state aperte direttamente dai rispettivi URL, renderizzate su canvas e ricaricate due volte conservando la stessa vista senza pagina bianca; successiva regressione di tutte le 11 mappe giornaliere superata."
 P2,mappe-posizione,pending,Verificare mappa quando Google Maps non risponde.,globale:T-0961,
 P2,mappe-posizione,pending,Verificare mappa quando OpenFreeMap non risponde.,globale:T-0962,
 P2,media-upload,pending,un cambio di ruolo viene applicato immediatamente;,addendum:A0452,
@@ -1206,8 +1206,8 @@ P2,social,passed,Modifica commento.,globale:T-0468,QA 1.31.0: proprietario modif
 P2,social,pending,Modificare contemporaneamente la stessa reazione.,globale:T-0796,
 P2,social,pending,non esistono commenti;,addendum:A0300,
 P2,social,pending,Nuovo commento.,globale:T-0526,
-P2,social,pending,Ogni commento deve essere collegato a un post esistente.,globale:T-1015,
-P2,social,pending,Ogni reazione deve essere collegata a un post esistente.,globale:T-1020,
+P2,social,passed,Ogni commento deve essere collegato a un post esistente.,globale:T-1015,P0_RATE_LIMIT_DIMENSIONS 10/10 su QA isolato: trenta reazioni e dieci commenti riferiti ogni volta a post inesistenti sono stati rifiutati con 404 prima di qualsiasi inserimento; nessun commento o reazione orfano è stato creato.
+P2,social,passed,Ogni reazione deve essere collegata a un post esistente.,globale:T-1020,P0_RATE_LIMIT_DIMENSIONS 10/10 su QA isolato: trenta reazioni e dieci commenti riferiti ogni volta a post inesistenti sono stati rifiutati con 404 prima di qualsiasi inserimento; nessun commento o reazione orfano è stato creato.
 P2,social,pending,Paginazione dei commenti.,globale:T-0108,
 P2,social,passed,Protezione contro modifica di commenti altrui.,globale:T-0224,QA 1.31.0: secondo viaggiatore non puo modificare il commento altrui
 P2,social,pending,Reazione Mi piace.,globale:T-0469,
@@ -1229,8 +1229,8 @@ P2,social,passed,Una sola reazione dopo dieci retry.,globale:T-0144,QA autentica
 P2,social,pending,Verificare apertura del commento preciso.,globale:T-0978,
 P2,social,pending,Verificare che l’aggiornamento non chiuda i commenti.,usabilita:U0111,
 P2,social,pending,Verificare ora dei commenti.,globale:T-0942,
-P2,social,pending,Verificare presenza di una sola reazione per persona.,globale:T-0805,
-P2,social,pending,Verificare una sola reazione.,usabilita:U0256,
+P2,social,passed,Verificare presenza di una sola reazione per persona.,globale:T-0805,QA autenticata Thailandia 1.48.8: dieci invii della stessa reazione con la stessa identità e chiave idempotente producono un solo cambiamento; i replay non creano reazioni duplicate né consumano la quota antispam.
+P2,social,passed,Verificare una sola reazione.,usabilita:U0256,QA autenticata Thailandia 1.48.8: dieci invii della stessa reazione con la stessa identità e chiave idempotente producono un solo cambiamento; i replay non creano reazioni duplicate né consumano la quota antispam.
 P2,social,pending,Visualizza tutti i commenti.,usabilita:U0312,
 P2,social,pending,Visualizza ultimi commenti.,usabilita:U0311,
 P2,usabilita-mobile,pending,Aggiornamento in automobile.,globale:T-1459,
