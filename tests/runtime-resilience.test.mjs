@@ -43,3 +43,11 @@ test("K0: un aggiornamento non ricarica la pagina durante scrittura, registrazio
   assert.doesNotMatch(serviceWorkerRegister, /location\.reload\s*\(/);
   assert.doesNotMatch(serviceWorkerRegister, /controllerchange/);
 });
+
+test("K1: la sincronizzazione riduce il polling e accelera soltanto su ritorno online o in primo piano", () => {
+  assert.match(source, /setInterval\(checkVersion, 5000\)/);
+  assert.match(source, /if \(document\.hidden \|\| !navigator\.onLine\) return/);
+  assert.match(source, /addEventListener\("online", checkVersion\)/);
+  assert.match(source, /document\.addEventListener\("visibilitychange", onReturn\)/);
+  assert.doesNotMatch(source, /setInterval\(checkVersion, 2500\)/);
+});

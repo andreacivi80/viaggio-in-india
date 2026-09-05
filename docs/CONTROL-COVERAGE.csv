@@ -942,7 +942,7 @@ P1,sync-rete,passed,dati di emergenza disponibili offline.,globale:T-1752,ui-cac
 P1,sync-rete,pending,è stata eseguita una prova dalla rete indiana;,globale:T-0666,
 P1,sync-rete,pending,Emergenza offline.,globale:T-0249,
 P1,sync-rete,pending,Errore Service Worker.,globale:T-1549,
-P1,sync-rete,pending,Eseguire logout senza rete.,globale:T-0760,
+P1,sync-rete,passed,Eseguire logout senza rete.,globale:T-0760,"ui-offline-logout Thailandia 1.48.7 Samsung S20 FE 1/1: rete disattivata prima del tocco su Blocca; token, profilo, ruolo e codice locale rimossi, schermata privata chiusa e riapertura online rimasta pubblica."
 P1,sync-rete,passed,Gestione delle modifiche concorrenti.,globale:T-0101,QA autenticata 1.48.4: concorrenza su due dispositivi e carico con 10 pubblicazioni simultanee completati senza duplicazioni o perdita dello stato finale.
 P1,sync-rete,pending,gli allegati vengono persi offline;,usabilita:U0694,
 P1,sync-rete,passed,Hotel e indirizzi offline.,globale:T-0119,ui-cache-recovery Samsung S20 FE 1/1: dopo riapertura completamente offline il Diario mostra nome e indirizzo del Rockland Hotel di Delhi dalla shell locale aggiornata.
@@ -971,7 +971,7 @@ P1,sync-rete,pending,Riaprire offline.,globale:T-0549,
 P1,sync-rete,pending,Riattivare la rete.,globale:T-0550,
 P1,sync-rete,pending,Ricerca offline sui dati disponibili.,globale:T-1696,
 P1,sync-rete,pending,Ricevere una sincronizzazione.,globale:T-1400,
-P1,sync-rete,pending,Ridurre frequenza di sincronizzazione.,globale:T-1651,
+P1,sync-rete,passed,Ridurre frequenza di sincronizzazione.,globale:T-1651,"runtime-resilience 6/6: polling visibile ridotto da 2,5 a 5 secondi, completamente sospeso quando pagina nascosta o offline, con controllo immediato agli eventi online e visibilitychange."
 P1,sync-rete,passed,Ripresa dopo perdita della rete.,globale:T-1725,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: perdita rete, chiusura pagina, riapertura e ripresa automatica verificate con coda IndexedDB reale."
 P1,sync-rete,pending,Ritorno della rete.,globale:T-1237,
 P1,sync-rete,passed,Salvare più bozze offline.,globale:T-0849,offline-queue 3/3: due bozze post distinte restano contemporaneamente in IndexedDB con chiavi idempotenti differenti e vengono inviate una sola volta ciascuna.

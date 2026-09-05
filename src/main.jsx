@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.6",
+const VERSION = "1.48.7",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -1871,7 +1871,7 @@ function App() {
     const onReturn = () => {
       if (!document.hidden) checkVersion();
     };
-    const timer = setInterval(checkVersion, 2500);
+    const timer = setInterval(checkVersion, 5000);
     const silentRepair = setInterval(async () => {
       if (document.hidden || !navigator.onLine) return;
       try {
