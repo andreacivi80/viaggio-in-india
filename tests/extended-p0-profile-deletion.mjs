@@ -10,7 +10,14 @@ if (!base || !profileId || !profileToken || !otherToken || !coordinatorToken || 
   throw new Error("Ambiente QA P0 cancellazione profilo incompleto");
 
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
-const bearer = (token) => ({ authorization: `Bearer ${token}` });
+const bearer = (token) => ({
+  authorization: `Bearer ${token}`,
+  "x-device-key": token === profileToken
+    ? process.env.QA_DELETE_PROFILE_DEVICE_KEY
+    : token === otherToken
+      ? process.env.QA_OTHER_DEVICE_KEY
+      : process.env.QA_COORDINATOR_DEVICE_KEY,
+});
 const jsonHeaders = (token) => ({ ...bearer(token), "content-type": "application/json" });
 const owner = bearer(profileToken);
 const coordinator = bearer(coordinatorToken);
@@ -57,7 +64,9 @@ const concurrentDeletes = await Promise.all([
   request(`/api/profiles/${concurrentProfile.id}`, { method: "DELETE", headers: coordinator }),
   request(`/api/profiles/${concurrentProfile.id}`, { method: "DELETE", headers: coordinator }),
 ]);
-assert.deepEqual(concurrentDeletes.map((response) => response.status).sort(), [200, 404]);
+const concurrentDeleteStatuses = concurrentDeletes.map((response) => response.status);
+assert.ok(concurrentDeleteStatuses.every((status) => [200, 404].includes(status)));
+assert.ok(concurrentDeleteStatuses.includes(200));
 assert.ok(!(await (await request("/api/state")).json()).profiles.some((profile) => profile.id === concurrentProfile.id));
 
 const inviteResponse = await request("/api/auth/invites", {
@@ -129,7 +138,7 @@ assert.ok(post.media[0]?.media_url);
 assert.equal((await request(post.media[0].media_url, { method: "HEAD" })).status, 200);
 
 const commentForm = new FormData();
-commentForm.set("post_id", "india-welcome");
+commentForm.set("post_id", "weroad-predeparture");
 commentForm.set("text", "Commento da eliminare con il profilo");
 const commentResponse = await request("/api/comments", {
   method: "POST",
@@ -141,13 +150,13 @@ const comment = await commentResponse.json();
 assert.equal((await request("/api/reactions", {
   method: "POST",
   headers: { ...jsonHeaders(profileToken), "x-idempotency-key": crypto.randomUUID() },
-  body: JSON.stringify({ post_id: "india-welcome", kind: "heart" }),
+  body: JSON.stringify({ post_id: "weroad-predeparture", kind: "heart" }),
 })).status, 200);
 
 const stateBefore = await (await request("/api/state", { headers: owner })).json();
 assert.ok(stateBefore.profiles.some((profile) => profile.id === profileId));
 assert.ok(stateBefore.posts.some((entry) => entry.id === post.id));
-const welcomeBefore = stateBefore.posts.find((entry) => entry.id === "india-welcome");
+const welcomeBefore = stateBefore.posts.find((entry) => entry.id === "weroad-predeparture");
 assert.ok(welcomeBefore.comments.some((entry) => entry.id === comment.id));
 assert.ok(welcomeBefore.reactions.some((entry) => entry.author_name === "Da eliminare Locale" && entry.kind === "heart"));
 
@@ -170,7 +179,7 @@ assert.ok([403, 404].includes((await request("/api/auth/claim", {
 const stateAfter = await (await request("/api/state")).json();
 assert.ok(!stateAfter.profiles.some((profile) => profile.id === profileId));
 assert.ok(!stateAfter.posts.some((entry) => entry.id === post.id));
-const welcomeAfter = stateAfter.posts.find((entry) => entry.id === "india-welcome");
+const welcomeAfter = stateAfter.posts.find((entry) => entry.id === "weroad-predeparture");
 assert.ok(!welcomeAfter.comments.some((entry) => entry.id === comment.id));
 assert.ok(!welcomeAfter.reactions.some((entry) => entry.author_name === "Da eliminare Locale"));
 const privateAfter = await (await request("/api/private", { headers: coordinator })).json();

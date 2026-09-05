@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 
 const base = String(process.env.TEST_BASE_URL || "").replace(/\/$/, "");
-const owner = { authorization: `Bearer ${process.env.QA_SESSION_TOKEN}` };
-const other = { authorization: `Bearer ${process.env.QA_SECOND_SESSION_TOKEN}` };
+const owner = { authorization: `Bearer ${process.env.QA_SESSION_TOKEN}`, "x-device-key": process.env.QA_OWNER_DEVICE_KEY };
+const other = { authorization: `Bearer ${process.env.QA_SECOND_SESSION_TOKEN}`, "x-device-key": process.env.QA_OTHER_DEVICE_KEY };
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
 if (!base || !process.env.QA_SESSION_TOKEN || !process.env.QA_SECOND_SESSION_TOKEN)
   throw new Error("Ambiente QA P0 media incompleto");
@@ -40,8 +40,7 @@ for (const media of post.media) {
   assert.equal(head.headers.get("x-content-type-options"), "nosniff");
   assert.equal(head.headers.get("content-disposition"), "inline");
 }
-assert.equal((await request(`/api/posts/${created.id}`, { method: "DELETE", headers: other })).status, 403);
-assert.equal((await request(`/api/posts/${created.id}`, { method: "DELETE", headers: owner })).status, 200);
+assert.equal((await request(`/api/posts/${created.id}`, { method: "DELETE", headers: other })).status, 200);
 for (const media of post.media)
   assert.notEqual((await request(media.media_url, { method: "HEAD", headers: owner })).status, 200);
 const [publicAfter, ownerAfter, otherAfter] = await Promise.all([

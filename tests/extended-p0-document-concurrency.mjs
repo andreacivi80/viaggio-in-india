@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 
 const base = String(process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 const ownerId = process.env.QA_PROFILE_ID;
-const owner = { authorization: `Bearer ${process.env.QA_SESSION_TOKEN}` };
-const coordinator = { authorization: `Bearer ${process.env.QA_COORDINATOR_TOKEN}` };
+const owner = { authorization: `Bearer ${process.env.QA_SESSION_TOKEN}`, "x-device-key": process.env.QA_OWNER_DEVICE_KEY };
+const coordinator = { authorization: `Bearer ${process.env.QA_COORDINATOR_TOKEN}`, "x-device-key": process.env.QA_COORDINATOR_DEVICE_KEY };
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
 
 if (!base || !ownerId || !process.env.QA_SESSION_TOKEN || !process.env.QA_COORDINATOR_TOKEN)
@@ -91,7 +91,16 @@ const retryResponses = await Promise.all(Array.from(
   { length: 10 },
   () => upload("visa", "p0-visa-retry", retryKey),
 ));
-assert.ok(retryResponses.every((response) => response.status === 200));
+assert.ok(
+  retryResponses.every((response) => [200, 409].includes(response.status)),
+  "le richieste simultanee devono completarsi o chiedere un retry esplicito",
+);
+const replayResponses = await Promise.all(Array.from(
+  { length: 10 },
+  () => upload("visa", "p0-visa-retry", retryKey),
+));
+assert.ok(replayResponses.every((response) => response.status === 200));
+assert.ok(replayResponses.every((response) => response.headers.get("idempotency-replayed") === "true"));
 state = await privateState();
 assert.equal(state.documents.filter((item) => item.profile_id === ownerId && item.doc_type === "visa").length, 1);
 

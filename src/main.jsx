@@ -43,8 +43,22 @@ import { validateMediaSelection } from "./mediaValidation.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 import { createTravelArchive, visibleArchiveMedia } from "./travelArchive.js";
+import {
+  cityFacts,
+  cityImages,
+  currentMarkerIndexes,
+  dayMarkerIndexes,
+  days,
+  overviewCityLabelOffsets,
+  overviewModes,
+  overviewSegments,
+  places,
+  roadPaths,
+  routeSequence,
+  tripDateKeys,
+} from "./tripThailand.js";
 
-const VERSION = "1.47.0",
+const VERSION = "1.48.0",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -107,7 +121,7 @@ const ITALIAN_CITY_COORDINATES = {
 };
 const normalizeItalianCity = (value = "") => String(value).trim().toLocaleLowerCase("it-IT")
   .normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]+/g, "_").replace(/^_|_$/g, "");
-const tripDateKeys = Array.from({ length: 14 },
+const indiaTripDateKeysLegacy = Array.from({ length: 14 },
   (_, index) => `2026-08-${String(10 + index).padStart(2, "0")}`,
 );
 const conciseWeather = (description = "") => {
@@ -120,12 +134,12 @@ const conciseWeather = (description = "") => {
   if (value.includes("partly cloudy") || value.includes("parzialmente nuvoloso")) return "⛅ Parzialmente nuvoloso";
   if (value.includes("cloud") || value.includes("nuvoloso")) return "☁️ Nuvoloso";
   if (value.includes("clear") || value.includes("sereno")) return "☀️ Sereno";
-  return "🌤️ Meteo IMD";
+  return "🌤️ Meteo";
 };
 const weatherIcon = (description) => conciseWeather(description).split(" ")[0];
 const indiaDateKey = (date = new Date()) =>
   new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Kolkata",
+    timeZone: "Asia/Bangkok",
     year: "numeric",
     month: "2-digit",
     day: "2-digit",
@@ -216,7 +230,7 @@ async function verifyGroupCode(code, setGroupCode) {
   setGroupCode(normalizedCode);
   return true;
 }
-const cityImages = {
+const indiaCityImagesLegacy = {
   Delhi: "/cities/delhi.jpg",
   Udaipur: "/cities/udaipur.jpg",
   Ranakpur: "/cities/ranakpur.jpg",
@@ -225,7 +239,7 @@ const cityImages = {
   Agra: "/cities/agra.jpg",
   Varanasi: "/cities/varanasi.jpg",
 };
-const places = {
+const indiaPlacesLegacy = {
   Delhi: [28.6139, 77.209],
   "Aeroporto DEL": [28.5562, 77.1],
   "Aeroporto UDR": [24.6177, 73.8961],
@@ -245,7 +259,7 @@ const places = {
   "Costa River Varanasi": [25.3385012, 82.9795559],
   Varanasi: [25.3176, 82.9739],
 };
-const cityFacts = {
+const indiaCityFactsLegacy = {
   Delhi: {
     healthDeclaration: {
       state: "Delhi",
@@ -364,20 +378,20 @@ const solarEventTime = (dateKey, latitude, longitude, sunrise) => {
     : Math.acos(cosHour) * 180 / Math.PI;
   localHour /= 15;
   const utcHour = normalizedDegrees((localHour + rightAscension - 0.06571 * approximate - 6.622 - longitudeHour) * 15) / 15;
-  const indiaHour = (utcHour + 5.5) % 24;
-  const hours = Math.floor(indiaHour);
-  const minutes = Math.round((indiaHour - hours) * 60);
+  const thailandHour = (utcHour + 7) % 24;
+  const hours = Math.floor(thailandHour);
+  const minutes = Math.round((thailandHour - hours) * 60);
   const adjustedHours = minutes === 60 ? (hours + 1) % 24 : hours;
   return `${String(adjustedHours).padStart(2, "0")}:${String(minutes === 60 ? 0 : minutes).padStart(2, "0")}`;
 };
 const solarTimesForDay = (dateKey, city, forecast) => {
-  const [latitude, longitude] = places[city] || places.Delhi;
+  const [latitude, longitude] = places[city] || places.Bangkok;
   return {
     sunrise: forecast?.sunrise || solarEventTime(dateKey, latitude, longitude, true),
     sunset: forecast?.sunset || solarEventTime(dateKey, latitude, longitude, false),
   };
 };
-const roadPaths = {
+const indiaRoadPathsLegacy = {
   "Delhi-arrival": [
     [28.5562, 77.1],
     [28.5578, 77.121],
@@ -519,7 +533,7 @@ const roadPaths = {
     [28.6139, 77.209],
   ],
 };
-const days = [
+const indiaDaysLegacy = [
   {
     date: "Lun 10 ago",
     city: "Delhi",
@@ -881,6 +895,7 @@ const transportPresentation = (transport = "") => {
   const icons = [];
   if (transport.includes("Aereo")) icons.push("\u2708\uFE0F");
   if (transport.includes("Treno")) icons.push("\uD83D\uDE86");
+  if (transport.toLowerCase().includes("bus")) icons.push("\uD83D\uDE8C");
   if (transport.includes("Barca")) icons.push("\u26F5");
   if (transport.includes("A piedi")) icons.push("\uD83D\uDC63");
   if (transport.includes("Tuk-tuk")) icons.push("\uD83D\uDED6");
@@ -891,6 +906,8 @@ const transportPresentation = (transport = "") => {
     ? "air"
     : transport.includes("Treno")
       ? "rail"
+      : transport.toLowerCase().includes("bus")
+        ? "transit"
       : transport.includes("Barca")
         ? "boat"
         : transport.includes("A piedi")
@@ -926,9 +943,9 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       map.current = new maplibregl.Map({
         container: el.current,
         style: "https://tiles.openfreemap.org/styles/liberty",
-        center: [77.2, 25.8],
-        zoom: 4.5,
-        minZoom: 3.5,
+        center: [99.75, 10.8],
+        zoom: 5.2,
+        minZoom: 4,
         attributionControl: false,
         cooperativeGestures: true,
         antialias: true,
@@ -1019,33 +1036,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
     const maplibregl = maplibre.current;
     markers.current.forEach((x) => x.remove());
     markers.current = [];
-    const sequence = [
-      "Delhi",
-      "Udaipur",
-      "Ranakpur",
-      "Jodhpur",
-      "Jaipur",
-      "Agra",
-      "Varanasi",
-      "Delhi",
-    ];
-    const dayMarkerIndexes = [
-      [0],
-      [0],
-      [0, 1],
-      [1],
-      [1, 2, 3],
-      [3],
-      [3, 4],
-      [4],
-      [4, 5],
-      [5, 6],
-      [6],
-      [6],
-      [6, 7],
-      [7],
-    ];
-    const currentMarkerIndexes = [0, 0, 1, 1, 3, 3, 4, 4, 5, 6, 6, 6, 7, 7];
+    const sequence = routeSequence;
     const currentMarkerIndex =
       currentDayIndex >= 0 ? currentMarkerIndexes[currentDayIndex] : -1;
     const visibleMarkerIndexes =
@@ -1066,7 +1057,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         "aria-label",
         `${isCurrent ? "Siamo qui oggi. " : ""}Tappa ${i + 1}: ${name}`,
       );
-      node.onclick = () => onSelect?.(days.findIndex((d) => d.city === name));
+      node.onclick = () => onSelect?.(dayMarkerIndexes.findIndex((indexes) => indexes.includes(i)));
       const [lat, lng] = places[name];
       const overviewOffset =
         selectedDay == null && i === 1
@@ -1091,15 +1082,6 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         .addTo(map.current);
       markers.current.push(marker);
     });
-    const overviewCityLabelOffsets = {
-      Delhi: [0, -27],
-      Udaipur: [30, 20],
-      Ranakpur: [38, -18],
-      Jodhpur: [-8, -29],
-      Jaipur: [31, 21],
-      Agra: [0, -29],
-      Varanasi: [-28, -28],
-    };
     [...new Set(visibleMarkerIndexes.map((index) => sequence[index]))].forEach((name) => {
       const node = document.createElement("span");
       node.className = "tripCityNameLabel";
@@ -1117,16 +1099,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
     const specialStops = selectedDay == null
       ? []
       : [
-          ...([0, 2].includes(selectedDay) ? [["✈", "Aeroporto DEL", places["Aeroporto DEL"]]] : []),
-          ...(selectedDay === 2 ? [["✈", "Aeroporto UDR", places["Aeroporto UDR"]]] : []),
-          ...(selectedDay === 9 ? [
-            ["🚆", "Stazione Agra Cantt", places["Agra Cantt"]],
-            ["🚆", "Varanasi Junction", places["Varanasi Junction"]],
-          ] : []),
-          ...(selectedDay === 12 ? [
-            ["🚆", "Varanasi Junction", places["Varanasi Junction"]],
-            ["🚆", "Delhi Junction", places["Delhi Junction"]],
-          ] : []),
+          ...(day?.specialStops || []).map((stop) => [stop.symbol, stop.label, places[stop.place]]),
           ...(day?.hotel?.place ? [["🏨", day.hotel.name, places[day.hotel.place]]] : []),
         ];
     specialStops
@@ -1148,13 +1121,9 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         markers.current.push(marker);
       });
     if (selectedDay == null) {
-      [
-        ["✈️", "Volo interno DEL–UDR", "air", [places.Udaipur[1], places.Udaipur[0]], [-40, -19], "DEL–UDR", "2"],
-        ["🚐", "Spostamenti su strada Udaipur–Jodhpur", "road", [places.Ranakpur[1], places.Ranakpur[0]], [27, 22], "Udaipur–Jodhpur", "3"],
-        ["🚆", "Treno notturno Agra–Varanasi", "rail", [places.Agra[1], places.Agra[0]], [27, -20], "Agra–Varanasi", "6"],
-        ["⛵", "Barca sul Gange a Varanasi", "boat", [places.Varanasi[1], places.Varanasi[0]], [27, 20], "Varanasi", "7"],
-        ["👣", "Visite a piedi a Jodhpur", "walk", [places.Jodhpur[1], places.Jodhpur[0]], [-29, -20], "Jodhpur", "4"],
-      ].forEach(([symbol, label, mode, coordinates, offset, reference, nearStage]) => {
+      overviewModes.forEach(([symbol, label, mode, placeName, offset, reference, nearStage]) => {
+        const [lat, lng] = places[placeName];
+        const coordinates = [lng, lat];
         const node = document.createElement("span");
         node.className = `overviewModeMarker mode-${mode}`;
         node.textContent = symbol;
@@ -1184,36 +1153,21 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
           ? [places[day.from]]
           : [places[day.from], places[day.to]];
       const routeMode = transportPresentation(day.transport).mode;
-      if (selectedDay === 2) {
-        features = [
-          line(roadPaths["Delhi-airport-transfer"], "road"),
-          line([places["Aeroporto DEL"], [27.2, 75.45], places["Aeroporto UDR"]], "air"),
-          line(roadPaths["Udaipur-airport-transfer"], "road"),
-        ];
-      } else if (selectedDay === 9) {
-        features = [
-          line(roadPaths["Agra-station-transfer"], "road"),
-          line([places["Agra Cantt"], [26.15, 80.55], places["Varanasi Junction"]], "rail"),
-          line(roadPaths["Varanasi-station-transfer"], "road"),
-        ];
-      } else if (selectedDay === 12) {
-        features = [
-          line([...roadPaths["Varanasi-station-transfer"]].reverse(), "road"),
-          line([places["Varanasi Junction"], [26.75, 80.4], places["Delhi Junction"]], "rail"),
-          line(roadPaths["Delhi-station-transfer"], "road"),
-        ];
-      } else {
-        features = coords.length > 1 ? [line(coords, routeMode)] : [];
-      }
+      features = day.segments?.length
+        ? day.segments.map((segment) => line(roadPaths[segment.path], segment.mode))
+        : coords.length > 1 ? [line(coords, routeMode)] : [];
       fitPoints = [
         ...features.flatMap((feature) => feature.geometry.coordinates.map(([lng, lat]) => [lat, lng])),
         ...visibleMarkerIndexes.map((index) => places[sequence[index]]),
         ...specialStops.map(([, , coordinates]) => coordinates),
       ].filter(Boolean);
-      if (coords.length > 1) {
+      const routeCoordinates = features.flatMap((feature) =>
+        feature.geometry.coordinates.map(([lng, lat]) => [lat, lng]),
+      );
+      if (routeCoordinates.length > 1) {
         [
-          ["start", "Partenza", day.from, coords[0]],
-          ["finish", "Arrivo", day.to, coords[coords.length - 1]],
+          ["start", "Partenza", day.from, routeCoordinates[0]],
+          ["finish", "Arrivo", day.to, routeCoordinates[routeCoordinates.length - 1]],
         ].forEach(([kind, label, place, coordinates]) => {
           const node = document.createElement("span");
           node.className = `routeEndpointMarker ${kind}`;
@@ -1229,14 +1183,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         });
       }
     } else {
-      features = [
-        line([places["Aeroporto DEL"], [27.2, 75.45], places["Aeroporto UDR"]], "air"),
-        line(roadPaths["Udaipur-Jodhpur"], "road"),
-        line(roadPaths["Jodhpur-Jaipur"], "road"),
-        line(roadPaths["Jaipur-Agra"], "road"),
-        line([places["Agra Cantt"], [26.15, 80.55], places["Varanasi Junction"]], "rail"),
-        line([places["Varanasi Junction"], [26.75, 80.4], places["Delhi Junction"]], "rail"),
-      ];
+      features = overviewSegments.map((segment) => line(roadPaths[segment.path], segment.mode));
       fitPoints = Object.values(places);
     }
     map.current.getSource("trip-route").setData({
@@ -1272,7 +1219,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
               : day.km <= 120
                 ? 10.2
                 : 7.5
-          : 5.2,
+          : 5.7,
         duration: 950,
         bearing: 0,
         pitch: 0,
@@ -1300,7 +1247,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       <div
         className="realMap"
         ref={el}
-        aria-label="Mappa interattiva reale dell’itinerario in India"
+        aria-label="Mappa interattiva reale dell’itinerario in Thailandia"
       />
       {day && (
         <div
@@ -1340,12 +1287,12 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
 
 function GoogleTripMap({ selectedDay, onReady }) {
   const day = selectedDay == null ? null : days[selectedDay];
-  const place = (value) => `${value === "Delhi" ? "New Delhi" : value}, India`;
+  const place = (value) => `${value}, Thailand`;
   const mapQuery = day
     ? day.from === day.to
       ? place(day.to)
       : `${place(day.from)} to ${place(day.to)}`
-    : "Northern India";
+    : "Thailand";
   const zoom = day ? (day.km <= 35 ? 11 : day.km <= 120 ? 8 : 6) : 5;
   const embedUrl = `https://www.google.com/maps?q=${encodeURIComponent(mapQuery)}&z=${zoom}&output=embed`;
   const directions = new URL("https://www.google.com/maps/dir/");
@@ -1354,18 +1301,18 @@ function GoogleTripMap({ selectedDay, onReady }) {
     directions.searchParams.set("origin", place(day.from));
     directions.searchParams.set("destination", place(day.to));
   } else {
-    directions.searchParams.set("origin", "New Delhi, India");
-    directions.searchParams.set("destination", "New Delhi, India");
+    directions.searchParams.set("origin", "Bangkok, Thailand");
+    directions.searchParams.set("destination", "Bangkok, Thailand");
     directions.searchParams.set(
       "waypoints",
-      "Udaipur, India|Jodhpur, India|Jaipur, India|Agra, India|Varanasi, India",
+      "Hua Hin, Thailand|Chumphon, Thailand|Khao Sok, Thailand|Cheow Lan Lake, Thailand|Phi Phi Islands, Thailand|Krabi, Thailand",
     );
   }
   return (
     <div className="googleTripMap">
       <iframe
         key={`${selectedDay}-${embedUrl}`}
-        title={day ? `Google Maps: ${day.from} - ${day.to}` : "Google Maps: itinerario India"}
+        title={day ? `Google Maps: ${day.from} - ${day.to}` : "Google Maps: itinerario Thailandia"}
         src={embedUrl}
         loading="eager"
         allowFullScreen
@@ -1374,7 +1321,7 @@ function GoogleTripMap({ selectedDay, onReady }) {
       />
       <div className="googleMapCaption">
         <span>Google Maps</span>
-        <b>{day ? `${day.from} → ${day.to}` : "India del Nord"}</b>
+        <b>{day ? `${day.from} → ${day.to}` : "Thailandia · da Bangkok al Mare delle Andamane"}</b>
         <a href={directions.toString()} target="_blank" rel="noreferrer">
           Apri percorso
         </a>
@@ -1397,9 +1344,9 @@ function PeopleLocationMap({ locations }) {
       mapRef.current = new maplibregl.Map({
         container: elementRef.current,
         style: "https://tiles.openfreemap.org/styles/liberty",
-        center: [78.9, 22.6],
-        zoom: 3.8,
-        minZoom: 3,
+        center: [99.75, 10.8],
+        zoom: 5.2,
+        minZoom: 4,
         attributionControl: false,
       });
       mapRef.current.addControl(
@@ -1407,15 +1354,7 @@ function PeopleLocationMap({ locations }) {
         "top-right",
       );
       mapRef.current.once("load", () => {
-        const routeCities = [
-          "Delhi",
-          "Udaipur",
-          "Jodhpur",
-          "Jaipur",
-          "Agra",
-          "Varanasi",
-          "Delhi",
-        ];
+        const routeCities = routeSequence;
         mapRef.current.addSource("group-trip-context", {
           type: "geojson",
           data: {
@@ -1485,7 +1424,7 @@ function PeopleLocationMap({ locations }) {
       });
       map.resize();
       if (!locations.length) {
-        map.easeTo({ center: [78.9, 22.6], zoom: 3.8, duration: 500 });
+        map.easeTo({ center: [99.75, 10.8], zoom: 5.2, duration: 500 });
       } else if (locations.length === 1) {
         map.easeTo({
           center: [Number(locations[0].longitude), Number(locations[0].latitude)],
@@ -1507,7 +1446,7 @@ function PeopleLocationMap({ locations }) {
     render();
   }, [locations, mapReady]);
   return (
-    <div className="peopleLocationMap" ref={elementRef} aria-label="Posizioni del gruppo sulla cartina dell'India" />
+    <div className="peopleLocationMap" ref={elementRef} aria-label="Posizioni del gruppo sulla cartina della Thailandia" />
   );
 }
 
@@ -1750,7 +1689,7 @@ function App() {
   }, []);
 
   const indiaTime = new Intl.DateTimeFormat("it-IT", {
-    timeZone: "Asia/Kolkata",
+    timeZone: "Asia/Bangkok",
     hour: "2-digit",
     minute: "2-digit",
   }).format(indiaClock);
@@ -1792,7 +1731,7 @@ function App() {
     };
   }, []);
   const simulatedDate = initialParams.get("simulateDate");
-  const activeDateKey = /^2026-08-(1\d|2[0-3])$/.test(simulatedDate || "")
+  const activeDateKey = /^2026-12-(2[6-9]|3[01])$|^2027-01-0[1-5]$/.test(simulatedDate || "")
     ? simulatedDate
     : indiaToday;
   const todayTripIndex = tripDateKeys.indexOf(activeDateKey);
@@ -2412,7 +2351,7 @@ function App() {
     const origin = {
       page: tab,
       tab,
-      tripId: "india-2026",
+      tripId: "thailandia-2026",
       day: Number.isInteger(i) ? i : open,
       dayId: `giorno-${String((Number.isInteger(i) ? i : open) + 1).padStart(2, "0")}`,
       contentId: `day-${(Number.isInteger(i) ? i : open) + 1}`,
@@ -2513,7 +2452,7 @@ function App() {
       <header className={`hero ${tab === "diary" ? "heroFeed" : ""}`}>
         <div className="heroShade" />
         <div className="top">
-          <img className="flag" src="/cities/india-flag-real.png" alt="Bandiera dell’India" />
+          <img className="flag" src="/thailand/thailand-flag.png" alt="Bandiera della Thailandia" />
           <span className="versionBadge">REV {VERSION}</span>
           <button
             className={`accessPill ${effectiveSessionToken ? "unlocked" : ""}`}
@@ -2611,7 +2550,7 @@ function App() {
                     <em>{!activitySeenBeforeOpen || item.createdAt > activitySeenBeforeOpen ? "Nuova" : "Già vista"}</em>
                   </span>
                 </button>
-                <button className="notificationDismiss" aria-label={`Elimina notifica di ${item.author || "India Insieme"}`} onClick={() => dismissActivity(item.id)}>
+                <button className="notificationDismiss" aria-label={`Elimina notifica di ${item.author || "Thailandia Insieme"}`} onClick={() => dismissActivity(item.id)}>
                   <Trash2 aria-hidden="true" />
                 </button>
               </div>
@@ -2852,8 +2791,9 @@ function App() {
                 <strong aria-hidden="true">+</strong>
               </summary>
               <div className="offlineEmergencyBody">
-                <a href="tel:112"><small>EMERGENZE IN INDIA</small><b>112</b><span>Polizia · ambulanza · vigili del fuoco</span></a>
-                <a href="tel:+919810158737"><small>AMBASCIATA D’ITALIA · REPERIBILITÀ</small><b>+91 98101 58737</b><span>Solo emergenze di cittadini italiani fuori orario</span></a>
+                <a href="tel:1155"><small>POLIZIA TURISTICA THAILANDIA</small><b>1155</b><span>Assistenza turistica multilingue · attiva 24 ore</span></a>
+                <a href="tel:1669"><small>EMERGENZA SANITARIA</small><b>1669</b><span>Servizio medico di emergenza thailandese</span></a>
+                <a href="tel:+66818256103"><small>AMBASCIATA D’ITALIA · REPERIBILITÀ</small><b>+66 81 825 6103</b><span>Solo emergenze comprovate e inderogabili</span></a>
                 <p>Le giornate conservano localmente tappe, pernottamenti e coordinate essenziali. La cartografia dettagliata può richiedere rete.</p>
               </div>
             </details>
@@ -2920,7 +2860,7 @@ function App() {
                       loading="lazy"
                       onError={(event) => {
                         event.currentTarget.onerror = null;
-                        event.currentTarget.src = "/cities/delhi.jpg";
+                        event.currentTarget.src = "/thailand/khao-sok.jpg";
                       }}
                     />
                     <span className="dayNo">
@@ -2934,9 +2874,9 @@ function App() {
                       <span className="travelMini">
                         {d.transport} · {d.km} km
                       </span>
-                      <span className="dayWeatherLine" title={forecast?.description || "Ora locale India"}>
+                      <span className="dayWeatherLine" title={forecast?.description || "Ora locale Thailandia"}>
                         {forecast ? `${forecast.max}°/${forecast.min}° · ${conciseWeather(forecast.description)}${Number.isFinite(forecast.rain_probability) ? ` ${forecast.rain_probability}%` : ""} · ` : ""}
-                        Ora India {indiaTime}
+                        Ora Thailandia {indiaTime}
                       </span>
                     </div>
                     <ChevronDown className={open === i ? "rot" : ""} />
@@ -2950,14 +2890,14 @@ function App() {
                         <img
                           className="birthdayPartyScene"
                           src="/ui/birthday-party-we-road-v1.jpg"
-                          alt="Gruppo di viaggiatori WEROAD in festa in India"
+                          alt="Gruppo di viaggiatori WEROAD in festa in Thailandia"
                           loading="lazy"
                         />
                       </div>
                       <div className="birthdayRibbonCopy">
                         <span className="birthdayCake" aria-hidden="true">🎉</span>
                         <div>
-                          <small>IL GRUPPO FESTEGGIA IN INDIA</small>
+                          <small>IL GRUPPO FESTEGGIA IN THAILANDIA</small>
                           <b>{d.birthdays.map((birthday) => `${birthday.name} · ${birthday.age} anni`).join("  •  ")}</b>
                         </div>
                         <span className="birthdayTravelers" aria-hidden="true">
@@ -3318,7 +3258,7 @@ function MapSection({ selectedDay, setSelectedDay, currentDayIndex, onBack }) {
       )}
       <div className="mapHeading">
         <div>
-          <span className="eyebrow">CARTINA REALE DELL’INDIA</span>
+          <span className="eyebrow">CARTINA REALE DELLA THAILANDIA</span>
           <h2>{d ? `${d.from} → ${d.to}` : "Tutto l’itinerario"}</h2>
         </div>
         {d && <button onClick={() => focusMap(null)}>Vedi tutto</button>}
@@ -3397,8 +3337,8 @@ function Diary({
     return () => clearInterval(timer);
   }, []);
   const today = new Date(clock);
-  const tripStart = new Date("2026-08-10T00:00:00+05:30");
-  const departure = new Date("2026-08-10T18:00:00+02:00");
+  const tripStart = new Date("2026-12-26T00:00:00+07:00");
+  const departure = new Date("2026-12-26T18:00:00+07:00");
   const remainingToDeparture = Math.max(0, departure.getTime() - clock);
   const countdownDays = Math.floor(remainingToDeparture / 86400000);
   const countdownHours = Math.floor((remainingToDeparture % 86400000) / 3600000);
@@ -3407,7 +3347,7 @@ function Diary({
   const countdownLabel = `${countdownDays}g ${countdownHours}h ${countdownMinutes}m ${countdownSeconds}s`;
   const liveIndex = Math.max(
     0,
-    Math.min(13, Math.floor((today - tripStart) / 86400000)),
+    Math.min(days.length - 1, Math.floor((today - tripStart) / 86400000)),
   );
   const liveDay = days[liveIndex];
   const [text, setText] = useState(
@@ -3693,7 +3633,7 @@ function Diary({
           <small className="livePlaceDetail">
             {today < departure
               ? "Preparativi prima della partenza"
-              : `${liveDay.city}, India · tappa prevista oggi`}
+              : `${liveDay.city}, Thailandia · tappa prevista oggi`}
           </small>
         </div>
         <MapPinned />
@@ -3828,7 +3768,7 @@ function Diary({
                       setPlaceName(event.target.value);
                       setPostCoordinates(null);
                     }}
-                    placeholder="Aggiungi luogo (es. Taj Mahal)"
+                    placeholder="Aggiungi luogo (es. Bangkok)"
                   />
                   <button type="button" onClick={capturePostLocation} disabled={locatingPost}>
                     {locatingPost ? "Cerco…" : "Usa posizione"}
@@ -4289,8 +4229,8 @@ function BackgroundAudio({ src, title = "Messaggio dal viaggio", className = "",
     if (!audio || !("mediaSession" in navigator)) return;
     try {
       navigator.mediaSession.metadata = new MediaMetadata({
-        title, artist: "India insieme", album: "Viaggio in India 2026",
-        artwork: [{ src: "/cities/india-insieme-collage.png", type: "image/png" }],
+        title, artist: "Thailandia insieme", album: "Viaggio in Thailandia 2026",
+        artwork: [{ src: "/thailand/thailandia-insieme.png", type: "image/png" }],
       });
       navigator.mediaSession.setActionHandler("play", () => audio.play());
       navigator.mediaSession.setActionHandler("pause", () => audio.pause());
@@ -4661,7 +4601,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
         </button>
         <button
           aria-label="Condividi"
-          onClick={() => navigator.share?.({ title: "India Insieme", url: location.href })}
+          onClick={() => navigator.share?.({ title: "Thailandia Insieme", url: location.href })}
         >
           <Share2 />
         </button>
@@ -4947,7 +4887,7 @@ function People({
       const url = URL.createObjectURL(result.blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = `viaggio-india-${new Date().toISOString().slice(0, 10)}.zip`;
+      link.download = `viaggio-thailandia-${new Date().toISOString().slice(0, 10)}.zip`;
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -5591,7 +5531,7 @@ function VaultOnline({
     );
   const types = [
     ["passport", "Passaporto"],
-    ["visa", "Visto India"],
+    ["visa", "Visto Thailandia"],
     ["tickets", "Biglietti"],
     ["insurance", "Assicurazione"],
   ];

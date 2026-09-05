@@ -253,7 +253,7 @@ html.travelerDirectoryOpen body {
 .hero {
   height: 430px;
   position: relative;
-  background: url("/cities/taj-hero-v2.webp")
+  background: url("/thailand/khao-sok.jpg")
     center/cover;
   color: white;
 }

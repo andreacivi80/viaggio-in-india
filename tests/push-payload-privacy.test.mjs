@@ -18,7 +18,7 @@ test("la notifica conserva soltanto campi pubblici strettamente necessari", () =
   const result = sanitizePushPayload(sensitivePayload);
 
   assert.deepEqual(Object.keys(result).sort(), ["body", "tag", "title", "url"]);
-  assert.equal(result.title, "India Insieme");
+  assert.equal(result.title, "Thailandia Insieme");
   assert.equal(result.body, "È stato aggiunto un nuovo commento.");
   assert.equal(result.url, "/?post=post-1&comment=comment-2");
   assert.equal(result.tag, "comment-comment-2");

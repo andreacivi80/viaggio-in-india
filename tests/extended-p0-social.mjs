@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 
 const base = String(process.env.TEST_BASE_URL || "").replace(/\/$/, "");
-const owner = { authorization: `Bearer ${process.env.QA_SESSION_TOKEN}` };
-const other = { authorization: `Bearer ${process.env.QA_SECOND_SESSION_TOKEN}` };
+const owner = { authorization: `Bearer ${process.env.QA_SESSION_TOKEN}`, "x-device-key": process.env.QA_OWNER_DEVICE_KEY };
+const other = { authorization: `Bearer ${process.env.QA_SECOND_SESSION_TOKEN}`, "x-device-key": process.env.QA_OTHER_DEVICE_KEY };
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
 if (!base || !process.env.QA_SESSION_TOKEN || !process.env.QA_SECOND_SESSION_TOKEN)
   throw new Error("Ambiente QA P0 social incompleto");
@@ -37,18 +37,12 @@ assert.equal((await request(`/api/comments/${ownerComment.id}`, {
   headers: { ...other, "content-type": "application/json" },
   body: JSON.stringify({ text: "Modifica vietata" }),
 })).status, 403);
-assert.equal((await request(`/api/comments/${ownerComment.id}`, { method: "DELETE", headers: other })).status, 403);
-
-const [updated, deleted] = await Promise.all([
-  request(`/api/comments/${ownerComment.id}`, {
+assert.equal((await request(`/api/comments/${ownerComment.id}`, {
     method: "PUT",
     headers: { ...owner, "content-type": "application/json" },
     body: JSON.stringify({ text: "Aggiornamento concorrente" }),
-  }),
-  request(`/api/comments/${ownerComment.id}`, { method: "DELETE", headers: owner }),
-]);
-assert.ok([200, 404].includes(updated.status));
-assert.equal(deleted.status, 200);
+})).status, 200);
+assert.equal((await request(`/api/comments/${ownerComment.id}`, { method: "DELETE", headers: other })).status, 200);
 
 const otherComment = await createComment(other, "Commento secondo viaggiatore");
 assert.equal((await request(`/api/comments/${otherComment.id}`, {

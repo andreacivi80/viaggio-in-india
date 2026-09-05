@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const source = await readFile(new URL("../src/main.jsx", import.meta.url), "utf8");
+const itinerary = await readFile(new URL("../src/tripThailand.js", import.meta.url), "utf8");
 const styles = await readFile(new URL("../src/styles.css", import.meta.url), "utf8");
 
 test("Mantova e gli alias italiani principali sono localizzati", () => {
@@ -17,11 +18,11 @@ test("i punti italiani rimangono compatti anche con conteggi a due cifre", () =>
 });
 
 test("le icone della mappa generale sono ancorate a tratte reali", () => {
-  for (const reference of ["DEL–UDR", "Udaipur–Jodhpur", "Agra–Varanasi", "Varanasi", "Jodhpur"])
-    assert.ok(source.includes(`"${reference}"`), `riferimento mancante: ${reference}`);
+  for (const reference of ["Bangkok–Hua Hin", "Kui Buri", "Cheow Lan", "Phi Phi", "Surat–Bangkok"])
+    assert.ok(itinerary.includes(`"${reference}"`), `riferimento mancante: ${reference}`);
   assert.match(source, /node\.dataset\.routeReference = reference/);
-  for (const [reference, stage] of [["DEL–UDR", "2"], ["Udaipur–Jodhpur", "3"], ["Agra–Varanasi", "6"], ["Varanasi", "7"], ["Jodhpur", "4"]])
-    assert.ok(source.includes(`"${reference}", "${stage}"`), `${reference} non è vicino alla tappa ${stage}`);
+  for (const [reference, stage] of [["Bangkok–Hua Hin", "2"], ["Kui Buri", "3"], ["Cheow Lan", "5"], ["Phi Phi", "6"], ["Surat–Bangkok", "9"]])
+    assert.ok(itinerary.includes(`"${reference}", "${stage}"`), `${reference} non è vicino alla tappa ${stage}`);
   assert.match(source, /node\.dataset\.nearStage = nearStage/);
 });
 
@@ -32,7 +33,7 @@ test("la legenda dei mezzi non copre più la scala chilometrica", () => {
 test("i nomi delle città non dipendono dalle etichette della cartografia esterna", () => {
   assert.match(source, /className = "tripCityNameLabel"/);
   assert.match(source, /node\.dataset\.cityName = name/);
-  for (const city of ["Delhi", "Udaipur", "Ranakpur", "Jodhpur", "Jaipur", "Agra", "Varanasi"])
-    assert.ok(source.includes(`${city}: [`), `offset etichetta mancante: ${city}`);
+  for (const city of ["Bangkok", "Hua Hin", "Chumphon", "Khao Sok", "Cheow Lan Lake", "Phi Phi Island", "Krabi"])
+    assert.ok(itinerary.includes(`${JSON.stringify(city)}:`) || itinerary.includes(`${city}:`), `offset etichetta mancante: ${city}`);
   assert.match(source, /setTimeout\(markVisualReady, 1800\)/);
 });

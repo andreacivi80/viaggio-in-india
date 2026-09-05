@@ -22,21 +22,14 @@ const json = (data, status = 200, additionalHeaders = {}) =>
 const id = () => crypto.randomUUID();
 const now = () => new Date().toISOString();
 const PRIVACY_CONSENT_VERSION = "2026-08-06";
-const imdStations = {
-  Delhi: "42182",
-  Udaipur: "42542",
-  Jodhpur: "42339",
-  Jaipur: "42348",
-  Agra: "42259",
-  Varanasi: "42479",
-};
 const weatherCoordinates = {
-  Delhi: [28.6139, 77.209],
-  Udaipur: [24.5854, 73.7125],
-  Jodhpur: [26.2389, 73.0243],
-  Jaipur: [26.9124, 75.7873],
-  Agra: [27.1767, 78.0081],
-  Varanasi: [25.3176, 82.9739],
+  Bangkok: [13.7563, 100.5018],
+  "Hua Hin": [12.5684, 99.9577],
+  Chumphon: [10.493, 99.18],
+  "Khao Sok": [8.9105, 98.5315],
+  "Cheow Lan Lake": [8.9777, 98.8193],
+  "Phi Phi Island": [7.7407, 98.7784],
+  Krabi: [8.0863, 98.9063],
 };
 const monthNumber = {
   Jan: "01", Feb: "02", Mar: "03", Apr: "04", May: "05", Jun: "06",
@@ -52,7 +45,7 @@ const htmlText = (value) => String(value || "")
   .trim();
 async function readImdForecast(city, stationId) {
   const upstream = await fetch(`https://city.imd.gov.in/citywx/citywxnew.php?id=${stationId}`, {
-    headers: { accept: "text/html", "user-agent": "India-Insieme/1.0 weather display" },
+    headers: { accept: "text/html", "user-agent": "Thailandia-Insieme/1.0 weather display" },
     cf: { cacheTtl: 1800, cacheEverything: true },
   });
   if (!upstream.ok) return [];
@@ -94,7 +87,7 @@ async function readExtendedForecast(city, coordinates) {
   target.searchParams.set("longitude", String(coordinates[1]));
   target.searchParams.set("daily", "weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,sunrise,sunset");
   target.searchParams.set("hourly", "relative_humidity_2m");
-  target.searchParams.set("timezone", "Asia/Kolkata");
+  target.searchParams.set("timezone", "Asia/Bangkok");
   target.searchParams.set("forecast_days", "16");
   const upstream = await fetch(target, {
     headers: { accept: "application/json" },
@@ -149,23 +142,23 @@ const mediaUrl = (key) => {
   return `/api/media/${key}`;
 };
 async function ensureStaticPosts(env) {
-  const existing = await env.DB.prepare("SELECT id FROM posts WHERE id='weroad-predeparture'").first();
-  if (existing) return;
   await env.DB.batch([
     env.DB.prepare(
       `INSERT OR IGNORE INTO posts(
         id,author_name,profile_id,day_index,visibility,text,place_name,
         media_key,media_type,media_name,media_size,created_at
-      ) VALUES('weroad-predeparture','India insieme','',-1,'public',?,'',NULL,NULL,NULL,0,?)`,
+      ) VALUES('weroad-predeparture','Thailandia insieme','',-1,'public',?,'',NULL,NULL,NULL,0,?)
+      ON CONFLICT(id) DO UPDATE SET author_name=excluded.author_name,text=excluded.text,created_at=excluded.created_at`,
     ).bind(
-      "Il gruppo si sta formando: preparativi in corso, valigie quasi pronte e l’India sempre più vicina. Si parte insieme con WEROAD!",
-      "2026-08-04 13:30:16",
+      "Il gruppo si sta formando: preparativi in corso, zaini quasi pronti e la Thailandia sempre più vicina. Da Bangkok a Khao Sok, Phi Phi e Krabi: si parte insieme con WEROAD!",
+      "2026-09-05 12:00:00",
     ),
     env.DB.prepare(
       `INSERT OR IGNORE INTO post_media(
         id,post_id,media_key,media_type,media_name,media_size,position,created_at
-      ) VALUES('weroad-predeparture-photo','weroad-predeparture','static:/ui/weroad-logo.png','image/png',?,55812,0,?)`,
-    ).bind("WEROAD · Preparativi per l’India", "2026-08-04 13:30:16"),
+      ) VALUES('weroad-predeparture-photo','weroad-predeparture','static:/thailand/thailandia-insieme.png','image/png',?,2615298,0,?)
+      ON CONFLICT(id) DO UPDATE SET media_key=excluded.media_key,media_type=excluded.media_type,media_name=excluded.media_name,media_size=excluded.media_size`,
+    ).bind("Thailandia Insieme · preparativi WEROAD", "2026-09-05 12:00:00"),
   ]);
 }
 const futureIso = (hours) =>
@@ -465,7 +458,7 @@ export function sanitizePushPayload(payload = {}) {
     ? requestedUrl
     : "/";
   return {
-    title: "India Insieme",
+    title: "Thailandia Insieme",
     body,
     url,
     tag,
@@ -1396,29 +1389,18 @@ export async function onRequest(context) {
       });
     }
     if (request.method === "GET" && path === "weather") {
-      const [imdSettled, extendedSettled] = await Promise.all([
-        Promise.allSettled(
-          Object.entries(imdStations).map(([city, station]) => readImdForecast(city, station)),
-        ),
-        Promise.allSettled(
-          Object.entries(weatherCoordinates).map(([city, coordinates]) => readExtendedForecast(city, coordinates)),
-        ),
-      ]);
+      const extendedSettled = await Promise.allSettled(
+        Object.entries(weatherCoordinates).map(([city, coordinates]) => readExtendedForecast(city, coordinates)),
+      );
       const merged = new Map();
       for (const result of extendedSettled)
         if (result.status === "fulfilled")
           for (const forecast of result.value) merged.set(`${forecast.date}:${forecast.city}`, forecast);
-      for (const result of imdSettled)
-        if (result.status === "fulfilled")
-          for (const forecast of result.value) {
-            const key = `${forecast.date}:${forecast.city}`;
-            merged.set(key, { ...(merged.get(key) || {}), ...forecast });
-          }
       const forecasts = [...merged.values()].sort(
         (a, b) => a.date.localeCompare(b.date) || a.city.localeCompare(b.city),
       );
       return json(
-        { source: "IMD con estensione Open-Meteo", timezone: "Asia/Kolkata", forecasts },
+        { source: "Open-Meteo", timezone: "Asia/Bangkok", forecasts },
         200,
         { "cache-control": "public, max-age=900, s-maxage=1800" },
       );
@@ -1559,7 +1541,7 @@ export async function onRequest(context) {
       const limited = await rateLimit(env, request, "push-test", 3, 300, session.profile_id);
       if (limited) return limited;
       const delivery = await notifySubscribers(env, {
-        title: "India Insieme",
+        title: "Thailandia Insieme",
         body: "Notifica di prova ricevuta correttamente, anche con l’app chiusa.",
         url: "/",
         tag: `test-${Date.now()}`,

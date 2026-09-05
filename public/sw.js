@@ -1,4 +1,4 @@
-const CACHE = "india-insieme-v1.47.0";
+const CACHE = "thailandia-insieme-v1.48.0";
 const PRECACHE = [
   "./",
   "./manifest.webmanifest",
@@ -67,11 +67,11 @@ self.addEventListener("push", (event) => {
     data = { body: event.data?.text() || "Nuovo aggiornamento dal viaggio." };
   }
   event.waitUntil(
-    self.registration.showNotification(data.title || "India Insieme", {
+    self.registration.showNotification(data.title || "Thailandia Insieme", {
       body: data.body || "Nuovo aggiornamento dal viaggio.",
       icon: "./icon.svg",
       badge: "./icon.svg",
-      tag: data.tag || "india-update",
+      tag: data.tag || "thailandia-update",
       renotify: true,
       data: { url: data.url || "/" },
     }),

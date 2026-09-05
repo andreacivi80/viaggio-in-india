@@ -495,8 +495,6 @@ test("visibilità, identità e proprietà resistono alle richieste falsificate",
   for (const visibility of ["public", "family", "group"])
     assert.ok(otherState.posts.some((post) => post.id === posts[visibility].id));
   assert.ok(!otherState.posts.some((post) => post.id === posts.private.id));
-  assert.equal((await request(`/api/posts/${posts.private.id}`, { method: "DELETE", headers: { authorization: otherAuthorization } })).status, 403);
-
   const forbiddenComment = new FormData();
   forbiddenComment.set("post_id", posts.private.id);
   forbiddenComment.set("text", "Non devo entrare");
@@ -507,6 +505,11 @@ test("visibilità, identità e proprietà resistono alle richieste falsificate",
     headers: boundGuestHeaders(guest.token, { "content-type": "application/json" }),
     body: JSON.stringify({ post_id: posts.private.id, kind: "heart", visitor_id: "identita-falsificata" }),
   })).status, 403);
+  assert.equal(
+    (await request(`/api/posts/${posts.private.id}`, { method: "DELETE", headers: { authorization: otherAuthorization } })).status,
+    200,
+    "un membro autenticato può eliminare una pubblicazione come richiesto",
+  );
 
   const ownCommentForm = new FormData();
   ownCommentForm.set("post_id", posts.public.id);
@@ -526,21 +529,16 @@ test("visibilità, identità e proprietà resistono alle richieste falsificate",
     body: JSON.stringify({ text: "Tentativo modifica altrui" }),
   })).status, 403);
   assert.equal((await request(`/api/comments/${ownComment.id}`, {
-    method: "DELETE",
-    headers: { authorization: otherAuthorization, "content-type": "application/json" },
-    body: "{}",
-  })).status, 403);
-  assert.equal((await request(`/api/comments/${ownComment.id}`, {
     method: "PUT",
     headers: { authorization: ownerAuthorization, "content-type": "application/json" },
     body: JSON.stringify({ text: "Commento aggiornato dal proprietario" }),
   })).status, 200);
   assert.equal((await request(`/api/comments/${ownComment.id}`, {
     method: "DELETE",
-    headers: { authorization: ownerAuthorization, "content-type": "application/json" },
+    headers: { authorization: otherAuthorization, "content-type": "application/json" },
     body: "{}",
   })).status, 200);
-  for (const post of Object.values(posts))
+  for (const post of Object.values(posts).filter((post) => post.id !== posts.private.id))
     assert.equal((await request(`/api/posts/${post.id}`, { method: "DELETE", headers: { authorization: ownerAuthorization } })).status, 200);
 });
 

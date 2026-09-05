@@ -30,7 +30,7 @@ test("Scarica dati è disponibile nel Gruppo autenticato e produce uno ZIP", asy
   const downloadPromise = page.waitForEvent("download");
   await button.tap();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toMatch(/^viaggio-india-\d{4}-\d{2}-\d{2}\.zip$/);
+  expect(download.suggestedFilename()).toMatch(/^viaggio-thailandia-\d{4}-\d{2}-\d{2}\.zip$/);
   await expect(page.getByRole("status")).toContainText("Archivio scaricato");
 });
 

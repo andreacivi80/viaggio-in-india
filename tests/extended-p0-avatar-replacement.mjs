@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 const base = String(process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 const profileId = process.env.QA_PROFILE_ID;
 const authorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
-const headers = { authorization };
+const headers = { authorization, "x-device-key": process.env.QA_OWNER_DEVICE_KEY };
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
 
 if (!base || !profileId || !process.env.QA_SESSION_TOKEN)

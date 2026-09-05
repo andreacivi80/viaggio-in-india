@@ -74,7 +74,7 @@ export async function createTravelArchive({ posts = [], requestHeaders = {}, fet
         testo: comment.text || "",
       })),
     }));
-    addText("LEGGIMI.txt", "Archivio Viaggio in India. Contiene le pubblicazioni e i contenuti multimediali visibili a questo utente al momento del download. I documenti privati non sono inclusi.\n");
+    addText("LEGGIMI.txt", "Archivio Viaggio in Thailandia. Contiene le pubblicazioni e i contenuti multimediali visibili a questo utente al momento del download. I documenti privati non sono inclusi.\n");
     addText("pubblicazioni.json", JSON.stringify(manifest, null, 2));
     (async () => {
       for (const item of media) {

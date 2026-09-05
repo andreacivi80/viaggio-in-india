@@ -6,6 +6,7 @@ import { join } from "node:path";
 
 const base = String(process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 const authorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
+const authenticated = { authorization, "x-device-key": process.env.QA_OWNER_DEVICE_KEY };
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
 if (!base || !process.env.QA_SESSION_TOKEN) throw new Error("Ambiente QA backup/commenti incompleto");
 
@@ -15,7 +16,7 @@ postForm.set("day_index", "-1");
 postForm.set("text", `P0 backup commenti ${crypto.randomUUID()}`);
 const postResponse = await request("/api/posts", {
   method: "POST",
-  headers: { authorization, "x-idempotency-key": crypto.randomUUID(), "x-qa-silent": "true" },
+  headers: { ...authenticated, "x-idempotency-key": crypto.randomUUID(), "x-qa-silent": "true" },
   body: postForm,
 });
 assert.equal(postResponse.status, 201);
@@ -38,7 +39,7 @@ try {
     form.set("text", `Commento concorrente ${index + 1}`);
     const response = await request("/api/comments", {
       method: "POST",
-      headers: { authorization, "x-idempotency-key": crypto.randomUUID(), "x-qa-silent": "true" },
+      headers: { ...authenticated, "x-idempotency-key": crypto.randomUUID(), "x-qa-silent": "true" },
       body: form,
     });
     assert.equal(response.status, 201);
@@ -51,12 +52,12 @@ try {
   assert.ok((await stat(backup)).size > 10_000);
   const sql = await readFile(backup, "utf8");
   assert.match(sql, /CREATE TABLE (?:IF NOT EXISTS )?comments/i);
-  const state = await (await request("/api/state", { headers: { authorization } })).json();
+  const state = await (await request("/api/state", { headers: authenticated })).json();
   const livePost = state.posts.find((item) => item.id === post.id);
   assert.equal(livePost?.comments?.length, 8);
   console.log("P0_BACKUP_COMMENTS=12/12");
 } finally {
-  await request(`/api/posts/${post.id}`, { method: "DELETE", headers: { authorization } });
+  await request(`/api/posts/${post.id}`, { method: "DELETE", headers: authenticated });
   if (exportProcess.exitCode === null) exportProcess.kill();
   await rm(directory, { recursive: true, force: true });
 }

@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 
 const base = String(process.env.TEST_BASE_URL || "").replace(/\/$/, "");
-const headers = { authorization: `Bearer ${process.env.QA_SESSION_TOKEN}` };
+const headers = { authorization: `Bearer ${process.env.QA_SESSION_TOKEN}`, "x-device-key": process.env.QA_OWNER_DEVICE_KEY };
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
 if (!base || !process.env.QA_SESSION_TOKEN) throw new Error("Ambiente QA chunk retry incompleto");
 
