@@ -871,7 +871,7 @@ P1,media-upload,pending,Solo audio.,usabilita:U0144,
 P1,media-upload,pending,Solo fotografia.,usabilita:U0142,
 P1,media-upload,pending,Solo video.,usabilita:U0143,
 P1,media-upload,pending,Sostituire fotografia.,globale:T-0354,
-P1,media-upload,pending,Sostituire la propria fotografia.,usabilita:U0372,
+P1,media-upload,passed,Sostituire la propria fotografia.,usabilita:U0372,"P0_AVATAR_REPLACEMENT Thailandia 1.48.12 su QA isolato 7/7: il proprietario carica una fotografia, la sostituisce con un secondo PNG reale, ottiene una nuova chiave, riapre il nuovo file, verifica la rimozione del precedente e lo stato pubblico punta soltanto alla fotografia nuova."
 P1,media-upload,passed,Stato caricamento comunicato allo screen reader.,globale:T-1073,ui-upload-screen-reader Thailandia 1.48.12 Samsung S20 FE 1/1: video WebM reale portato a 9 MB e caricato a parti con ritardo; regione semantica role=status individuata tramite albero accessibile e sequenza annunci osservata da 0% a 100%; pubblicazione conclusa e pulizia QA completata.
 P1,media-upload,pending,test di carico;,globale:T-0021,
 P1,media-upload,pending,Testo e audio.,usabilita:U0147,
