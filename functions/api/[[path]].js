@@ -391,6 +391,23 @@ async function beginIdempotentOperation(env, request, scope, actorId) {
   };
 }
 
+async function completedIdempotentResponse(env, request, scope, actorId) {
+  const key = String(request.headers.get("x-idempotency-key") || "").trim();
+  if (!key) return null;
+  if (!/^[a-zA-Z0-9:_-]{16,160}$/.test(key))
+    return json({ error: "Identificativo operazione non valido" }, 400);
+  const operationHash = await tokenHash(`${scope}:${actorId}:${key}`);
+  const existing = await env.DB.prepare(
+    "SELECT state,response_status,response_json FROM idempotency_operations WHERE operation_hash=?",
+  ).bind(operationHash).first();
+  if (existing?.state !== "completed" || !existing.response_json) return null;
+  return json(
+    JSON.parse(existing.response_json),
+    Number(existing.response_status || 200),
+    { "idempotency-replayed": "true" },
+  );
+}
+
 async function completeIdempotentOperation(env, operationHash, payload, status = 200) {
   if (!operationHash) return;
   await env.DB.prepare(
@@ -2078,13 +2095,18 @@ export async function onRequest(context) {
       const guest = session ? null : await guestFromRequest(request, env);
       if (!session && !guest)
         return json({ error: "Identità ospite richiesta" }, 401);
+      const commentActorId = session?.profile_id || guest?.visitor_id;
+      const completedComment = await completedIdempotentResponse(
+        env, request, "create-comment", commentActorId,
+      );
+      if (completedComment) return completedComment;
       const limited = await rateLimit(
         env,
         request,
         "comments",
         10,
         60,
-        session?.profile_id || guest?.visitor_id,
+        commentActorId,
       );
       if (limited) return limited;
       const form = await request.formData();
@@ -2112,7 +2134,7 @@ export async function onRequest(context) {
         env,
         request,
         "create-comment",
-        session?.profile_id || guest.visitor_id,
+        commentActorId,
       );
       if (operation.response) return operation.response;
       const commentPrefix = targetPost.visibility === "public"
@@ -2234,6 +2256,10 @@ export async function onRequest(context) {
       const authorName = session
         ? `${session.name} ${session.surname || ""}`.trim()
         : guest.display_name;
+      const completedReaction = await completedIdempotentResponse(
+        env, request, "toggle-reaction", visitorId,
+      );
+      if (completedReaction) return completedReaction;
       const limited = await rateLimit(
         env,
         request,

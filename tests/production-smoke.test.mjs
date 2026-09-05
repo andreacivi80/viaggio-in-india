@@ -203,14 +203,13 @@ test("lo stesso invio non crea due commenti né inverte due volte una reazione",
       body: form,
     });
   };
-  const firstResponse = await sendComment();
-  const secondResponse = await sendComment();
-  assert.equal(firstResponse.status, 201);
-  assert.equal(secondResponse.status, 201);
-  assert.equal(secondResponse.headers.get("idempotency-replayed"), "true");
-  const first = await firstResponse.json();
-  const second = await secondResponse.json();
-  assert.equal(first.id, second.id);
+  const commentResponses = [];
+  for (let attempt = 0; attempt < 10; attempt += 1) commentResponses.push(await sendComment());
+  assert.ok(commentResponses.every((response) => response.status === 201));
+  assert.ok(commentResponses.slice(1).every((response) => response.headers.get("idempotency-replayed") === "true"));
+  const commentPayloads = await Promise.all(commentResponses.map((response) => response.json()));
+  const first = commentPayloads[0];
+  assert.equal(new Set(commentPayloads.map((payload) => payload.id)).size, 1);
   const afterComments = await (await request("/api/state", {
     headers: boundGuestHeaders(guest.token),
     cache: "no-store",
@@ -229,13 +228,12 @@ test("lo stesso invio non crea due commenti né inverte due volte una reazione",
     },
     body: JSON.stringify({ post_id: postId, kind: "clap" }),
   });
-  const firstReaction = await reactionRequest();
-  const secondReaction = await reactionRequest();
-  assert.equal(firstReaction.status, 200);
-  assert.equal(secondReaction.status, 200);
-  assert.equal((await firstReaction.json()).reaction, "clap");
-  assert.equal((await secondReaction.json()).reaction, "clap");
-  assert.equal(secondReaction.headers.get("idempotency-replayed"), "true");
+  const reactionResponses = [];
+  for (let attempt = 0; attempt < 10; attempt += 1) reactionResponses.push(await reactionRequest());
+  assert.ok(reactionResponses.every((response) => response.status === 200));
+  assert.ok(reactionResponses.slice(1).every((response) => response.headers.get("idempotency-replayed") === "true"));
+  const reactionPayloads = await Promise.all(reactionResponses.map((response) => response.json()));
+  assert.ok(reactionPayloads.every((payload) => payload.reaction === "clap"));
 
   await request(`/api/comments/${encodeURIComponent(first.id)}`, {
     method: "DELETE",

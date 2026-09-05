@@ -98,6 +98,15 @@ test("notifiche e caricamenti sono autenticati e limitati", async () => {
   assert.match(worker, /rateLimit\(env, request, "upload-part"/);
 });
 
+test("i retry già completati non consumano nuovamente la quota antispam", async () => {
+  const worker = await read("functions/api/[[path]].js");
+  assert.match(worker, /async function completedIdempotentResponse/);
+  const comments = worker.slice(worker.indexOf('request.method === "POST" && path === "comments"'));
+  assert.match(comments, /completedIdempotentResponse[\s\S]*?rateLimit\([\s\S]*?"comments"/);
+  const reactions = worker.slice(worker.indexOf('request.method === "POST" && path === "reactions"'));
+  assert.match(reactions, /completedIdempotentResponse[\s\S]*?rateLimit\([\s\S]*?"reactions"/);
+});
+
 test("la cassaforte documenti accetta soltanto formati mobili espliciti", async () => {
   const [worker, validation] = await Promise.all([
     read("functions/api/[[path]].js"), read("functions/_lib/fileValidation.js"),

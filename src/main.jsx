@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.7",
+const VERSION = "1.48.8",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
