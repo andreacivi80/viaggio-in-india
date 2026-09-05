@@ -872,7 +872,7 @@ P1,media-upload,pending,Solo fotografia.,usabilita:U0142,
 P1,media-upload,pending,Solo video.,usabilita:U0143,
 P1,media-upload,pending,Sostituire fotografia.,globale:T-0354,
 P1,media-upload,pending,Sostituire la propria fotografia.,usabilita:U0372,
-P1,media-upload,pending,Stato caricamento comunicato allo screen reader.,globale:T-1073,
+P1,media-upload,passed,Stato caricamento comunicato allo screen reader.,globale:T-1073,ui-upload-screen-reader Thailandia 1.48.12 Samsung S20 FE 1/1: video WebM reale portato a 9 MB e caricato a parti con ritardo; regione semantica role=status individuata tramite albero accessibile e sequenza annunci osservata da 0% a 100%; pubblicazione conclusa e pulizia QA completata.
 P1,media-upload,pending,test di carico;,globale:T-0021,
 P1,media-upload,pending,Testo e audio.,usabilita:U0147,
 P1,media-upload,pending,Testo e fotografia.,usabilita:U0145,

@@ -23,6 +23,7 @@ param(
   [switch]$FeedScrollUi,
   [switch]$LargeSlowVideoUi,
   [switch]$OfflineMediaDraftsUi,
+  [switch]$UploadScreenReaderUi,
   [switch]$DownloadArchiveUi,
   [switch]$PublishUi
 )
@@ -164,6 +165,9 @@ try {
   }
   elseif ($OfflineMediaDraftsUi) {
     & npx playwright test "tests/ui-offline-media-drafts.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($UploadScreenReaderUi) {
+    & npx playwright test "tests/ui-upload-screen-reader.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
   }
   elseif ($DownloadArchiveUi) {
     & npx playwright test "tests/ui-download-archive.spec.mjs" --reporter=line
