@@ -7,6 +7,7 @@ const travelerInvite = process.env.QA_UI_INVITE_TOKEN;
 const coordinatorName = process.env.QA_UI_COORDINATOR_NAME;
 const coordinatorInvite = process.env.QA_UI_COORDINATOR_INVITE_TOKEN;
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
+const markerName = "Profilo <img src=x onerror=alert(1)>";
 
 test.skip(
   !travelerName || !travelerInvite || !coordinatorName || !coordinatorInvite || !baseUrl,
@@ -52,6 +53,23 @@ test("GPS volontario, mappa Thailandia, Google Maps, rimozione e sincronizzazion
     await expect(travelerPage.locator(".accessPill")).toContainText(travelerName.split(" ")[0]);
     await openPersonalPanel(travelerPage);
     await expect(travelerPage.locator(".quickProfilePanel")).toContainText(travelerName);
+    expect(await travelerPage.evaluate(async (name) => {
+      const form = new FormData();
+      form.set("name", name);
+      const id = localStorage.getItem("india-profile-id");
+      const response = await fetch(`/api/profiles/${encodeURIComponent(id)}`, {
+        method: "PUT",
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("india-session-token")}`,
+          "x-device-key": localStorage.getItem("india-device-key"),
+        },
+        body: form,
+      });
+      return response.status;
+    }, markerName)).toBe(200);
+    await travelerPage.reload({ waitUntil: "domcontentloaded" });
+    await expect(travelerPage.locator(".accessPill")).toContainText("Profilo");
+    await openPersonalPanel(travelerPage);
     const locationResponse = travelerPage.waitForResponse(
       (response) => response.url().endsWith("/api/locations") && response.request().method() === "POST",
     );
@@ -63,7 +81,7 @@ test("GPS volontario, mappa Thailandia, Google Maps, rimozione e sincronizzazion
     const mapToggle = travelerPage.getByRole("button", { name: /Apri mappa posizioni/ });
     await expect(mapToggle).toContainText(/\d+/);
     await mapToggle.tap();
-    const travelerLocation = travelerPage.locator(".locationList article").filter({ hasText: travelerName });
+    const travelerLocation = travelerPage.locator(".locationList article").filter({ hasText: markerName });
     await expect(travelerLocation).toContainText("28.6139, 77.2090");
     await expect(travelerLocation).toContainText("Posizione fornita dal dispositivo · non certificata");
     await expect(travelerLocation).toContainText("Precisione stimata · ±3500 m · segnale GPS debole");
@@ -80,12 +98,13 @@ test("GPS volontario, mappa Thailandia, Google Maps, rimozione e sincronizzazion
       "aria-label",
       "Posizioni del gruppo sulla cartina della Thailandia",
     );
-    const travelerMarker = travelerPage.locator(".personMapMarker").filter({ hasText: travelerName[0] }).first();
+    const travelerMarker = travelerPage.locator(".personMapMarker").filter({ hasText: markerName[0] }).first();
     await expect(travelerMarker).toBeVisible({
       timeout: 20_000,
     });
     await travelerMarker.tap();
-    await expect(travelerPage.locator(".maplibregl-popup")).toContainText(travelerName);
+    await expect(travelerPage.locator(".maplibregl-popup")).toContainText(markerName);
+    await expect(travelerPage.locator(".maplibregl-popup img")).toHaveCount(0);
     await travelerPage.getByRole("button", { name: /Chiudi mappa posizioni/ }).tap();
     await expect(travelerPage.locator(".peopleLocationMap")).toHaveCount(0);
 
@@ -101,7 +120,7 @@ test("GPS volontario, mappa Thailandia, Google Maps, rimozione e sincronizzazion
     expect((await coordinatorLocationResponse).status()).toBe(200);
     await coordinatorPage.getByRole("button", { name: "Griglia coordinatore" }).tap();
     await coordinatorPage.getByRole("button", { name: /Apri mappa posizioni/ }).tap();
-    const syncedLocation = coordinatorPage.locator(".locationList article").filter({ hasText: travelerName });
+    const syncedLocation = coordinatorPage.locator(".locationList article").filter({ hasText: markerName });
     await expect(syncedLocation).toContainText("28.6139, 77.2090", { timeout: 15_000 });
     await expect(syncedLocation.getByRole("button", { name: "Cancella posizione" })).toHaveCount(0);
     const coordinatorLocation = coordinatorPage.locator(".locationList article").filter({ hasText: coordinatorName });

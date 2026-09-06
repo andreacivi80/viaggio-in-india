@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.21",
+const VERSION = "1.48.22",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -1436,12 +1436,16 @@ function PeopleLocationMap({ locations }) {
         const node = document.createElement("div");
         node.className = "personMapMarker";
         node.textContent = location.display_name?.[0]?.toUpperCase() || "•";
+        const popupContent = document.createElement("div");
+        const popupName = document.createElement("strong");
+        const popupTime = document.createElement("small");
+        popupName.textContent = location.display_name || "Viaggiatore";
+        popupTime.textContent = new Date(location.updated_at).toLocaleString("it-IT");
+        popupContent.append(popupName, document.createElement("br"), popupTime);
         return new maplibregl.Marker({ element: node })
           .setLngLat([Number(location.longitude), Number(location.latitude)])
           .setPopup(
-            new maplibregl.Popup({ offset: 18 }).setHTML(
-              `<strong>${location.display_name}</strong><br><small>${new Date(location.updated_at).toLocaleString("it-IT")}</small>`,
-            ),
+            new maplibregl.Popup({ offset: 18 }).setDOMContent(popupContent),
           )
           .addTo(map);
       });

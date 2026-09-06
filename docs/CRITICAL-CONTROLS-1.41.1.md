@@ -1,7 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
-Controlli selezionati: **51** tra 51 controlli P0–P2 ancora privi di evidenza conclusiva.
-Stato del pacchetto: **0 superati**, **51 pendenti**.
+Controlli selezionati: **50** tra 50 controlli P0–P2 ancora privi di evidenza conclusiva.
+Stato del pacchetto: **0 superati**, **50 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -77,44 +77,42 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-1399`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
 - [ ] **K-033 · mappe-posizione** — Copiare il collegamento della mappa.
   Sorgente: `globale:T-0971`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-034 · mappe-posizione** — Correggere i popup della mappa per impedire inserimento di HTML o script nei nomi.
-  Sorgente: `globale:T-0186`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-035 · mappe-posizione** — Descrizione dei marker della mappa.
+- [ ] **K-034 · mappe-posizione** — Descrizione dei marker della mappa.
   Sorgente: `globale:T-1063`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-036 · mappe-posizione** — Itinerario → giorno → mappa → indietro.
+- [ ] **K-035 · mappe-posizione** — Itinerario → giorno → mappa → indietro.
   Sorgente: `globale:T-1414`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-037 · mappe-posizione** — Mappa → Google Maps → ritorno all’app.
+- [ ] **K-036 · mappe-posizione** — Mappa → Google Maps → ritorno all’app.
   Sorgente: `globale:T-1416`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-038 · mappe-posizione** — Mappa con coordinate 0,0.
+- [ ] **K-037 · mappe-posizione** — Mappa con coordinate 0,0.
   Sorgente: `globale:T-0945`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-039 · mappe-posizione** — Mappa con dieci persone nello stesso punto.
+- [ ] **K-038 · mappe-posizione** — Mappa con dieci persone nello stesso punto.
   Sorgente: `globale:T-0946`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-040 · mappe-posizione** — Mappa con latitudine -90.
+- [ ] **K-039 · mappe-posizione** — Mappa con latitudine -90.
   Sorgente: `globale:T-0948;globale:T-0949`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
+- [ ] **K-040 · mappe-posizione** — Mappa con longitudine -180.
+  Sorgente: `globale:T-0950;globale:T-0951`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
 
 ## K1
 
-- [ ] **K-041 · mappe-posizione** — Mappa con longitudine -180.
-  Sorgente: `globale:T-0950;globale:T-0951`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-042 · mappe-posizione** — Mappa con una persona fuori dall’India.
+- [ ] **K-041 · mappe-posizione** — Mappa con una persona fuori dall’India.
   Sorgente: `globale:T-0953`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-043 · mappe-posizione** — Misurare batteria con mappa aperta.
+- [ ] **K-042 · mappe-posizione** — Misurare batteria con mappa aperta.
   Sorgente: `globale:T-1659`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-044 · mappe-posizione** — Verificare mappa quando Google Maps non risponde.
+- [ ] **K-043 · mappe-posizione** — Verificare mappa quando Google Maps non risponde.
   Sorgente: `globale:T-0961`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-045 · mappe-posizione** — Verificare mappa quando OpenFreeMap non risponde.
+- [ ] **K-044 · mappe-posizione** — Verificare mappa quando OpenFreeMap non risponde.
   Sorgente: `globale:T-0962`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-046 · altro** — Disattivazione completa delle notifiche.
+- [ ] **K-045 · altro** — Disattivazione completa delle notifiche.
   Sorgente: `globale:T-0077`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-047 · altro** — Inviare due notifiche con lo stesso tag.
+- [ ] **K-046 · altro** — Inviare due notifiche con lo stesso tag.
   Sorgente: `globale:T-0861`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-048 · altro** — Misurare batteria con notifiche attive.
+- [ ] **K-047 · altro** — Misurare batteria con notifiche attive.
   Sorgente: `globale:T-1660`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-049 · altro** — Notifiche durante la prova.
+- [ ] **K-048 · altro** — Notifiche durante la prova.
   Sorgente: `globale:T-1127`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-050 · altro** — Tutti attivano le notifiche.
+- [ ] **K-049 · altro** — Tutti attivano le notifiche.
   Sorgente: `globale:T-1731`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-051 · altro** — Verificare raggruppamento delle notifiche.
+- [ ] **K-050 · altro** — Verificare raggruppamento delle notifiche.
   Sorgente: `globale:T-0880`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
 
 ## K2
