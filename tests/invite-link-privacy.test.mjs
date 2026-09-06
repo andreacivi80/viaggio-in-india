@@ -20,6 +20,13 @@ test("il token viene rimosso dalla barra prima del claim e i vecchi link restano
   assert.match(ui.slice(start, claim), /cleanUrl\.hash = ""/);
 });
 
+test("un deep link aperto nello stesso tab viene intercettato senza ricaricare la pagina", async () => {
+  const ui = await read("src/main.jsx");
+  assert.match(ui, /window\.addEventListener\("hashchange", handleInvite\)/);
+  assert.match(ui, /window\.removeEventListener\("hashchange", handleInvite\)/);
+  assert.match(ui, /sessionStorage\.getItem\("india-auth-claiming"\) === "1"/);
+});
+
 test("l’invito è legato al profilo, scade e viene consumato atomicamente una sola volta", async () => {
   const worker = await read("functions/api/[[path]].js");
   assert.match(worker, /const expiresAt = futureIso\(48\)/);
