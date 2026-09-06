@@ -346,4 +346,6 @@
   ,{ "control": "Preferiti sincronizzati tra dispositivi.", "evidence": "ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: due sessioni reali dello stesso profilo su due telefoni sincronizzano salvataggio e rimozione in entrambe le direzioni senza refresh manuale; pulizia QA completata." }
   ,{ "control": "preferiti;", "evidence": "ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: comando Salva/Rimuovi verificato con touch e stato persistente personale sincronizzato tra due telefoni." }
   ,{ "control": "Verificare preferiti.", "evidence": "ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: ciclo completo salva, sincronizza, rimuove e risincronizza sul secondo dispositivo." }
+  ,{ "control": "Itinerario → giorno → mappa → indietro.", "evidence": "ui-navigation Thailandia 1.48.23 QA mobile 2/2: apertura Percorso con touch dal giorno 7, ritorno alla stessa giornata e identica posizione di scorrimento; l’intero itinerario seleziona tutte le 11 tappe e torna alla Bacheca." }
+  ,{ "control": "Descrizione dei marker della mappa.", "evidence": "ui-maps + ui-navigation Thailandia 1.48.23 QA mobile: tutti gli 8 marker espongono numero e nome della tappa nell’etichetta accessibile; i 7 nomi città sono visibili e il touch apre il giorno corrispondente." }
 ]
