@@ -4,6 +4,14 @@ import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(`../${path}`, import.meta.url), "utf8");
 
+test("una sessione revocata mostra un avviso accessibile prima di rimuovere i privilegi", async () => {
+  const [ui, css] = await Promise.all([read("src/main.jsx"), read("src/styles.css")]);
+  assert.match(ui, /setSessionNotice\("Accesso terminato: questo dispositivo è stato revocato oppure la sessione è scaduta\."\)/);
+  assert.match(ui, /className="sessionNotice" role="alert"/);
+  assert.match(ui, /aria-label="Chiudi avviso accesso"/);
+  assert.match(css, /\.sessionNotice \{/);
+});
+
 test("la password comune crea soltanto viaggiatori", async () => {
   const [worker, ui] = await Promise.all([
     read("functions/api/[[path]].js"), read("src/main.jsx"),

@@ -643,7 +643,7 @@ P1,altro,pending,notifiche;,globale:T-1762;usabilita:U0647,
 P1,altro,pending,prima dell’invio della notifica;,addendum:A0117,
 P1,altro,passed,"Rendere reali le menzioni: attualmente “@nome” viene evidenziato, ma non genera una notifica specifica.",globale:T-0065,notifications-spotify 5/5 + ui-notifications-spotify 1/1: @nome viene riconosciuto come menzione personale e compare come attività specifica nel centro notifiche.
 P1,altro,pending,Ricevere una notifica dopo logout.,globale:T-0869,
-P1,altro,pending,Ricevere una notifica dopo revoca del dispositivo.,globale:T-0870,
+P1,altro,passed,Ricevere una notifica dopo revoca del dispositivo.,globale:T-0870,"ui-device-revocation-notice Thailandia 1.48.17 Samsung S20 FE QA 1/1: il secondo telefono dello stesso profilo revoca realmente il primo; entro il controllo sessione il dispositivo revocato riceve un avviso role=alert chiaro e chiudibile, perde token e comandi privati e torna alla vista pubblica, mentre il secondo resta autorizzato. Regressione locale 167/167 applicabili, QA autenticata 18/18 e produzione read-only 8/8."
 P1,altro,pending,Ricezione notifica consentita.,globale:T-1234,
 P1,altro,pending,stabilità delle notifiche;,globale:T-1119,
 P1,altro,pending,test delle notifiche;,globale:T-0019,
@@ -822,7 +822,7 @@ P1,media-upload,passed,Interrompere upload al 50%.,globale:T-0542,"resumable-upl
 P1,media-upload,passed,Interrompere upload al 90%.,globale:T-0543,"resumable-upload 5/5: interruzione esatta al 90%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
 P1,media-upload,passed,Media pubblici con cache controllata.,globale:T-1475,"P0_MEDIA_DELETE 14/14: HEAD reale di foto, audio e video pubblici restituisce cache pubblica immutabile, nosniff e visualizzazione inline; dopo eliminazione ogni URL smette di rispondere 200."
 P1,media-upload,passed,Mettere in pausa il video.,globale:T-0913,"ui-media Thailandia 1.48.5 Samsung S20 FE 1/1: video reale avviato, stato playing verificato e pausa applicata senza perdita del contenuto."
-P1,media-upload,pending,Misurare batteria durante upload video.,globale:T-1664,
+P1,media-upload,passed,Misurare batteria durante upload video.,globale:T-1664,"ui-mobile-video-formats Thailandia 1.48.16 Samsung S20 FE QA 1/1: con Battery API simulata all’8% e non in carica, selezione touch contemporanea di MP4 H.264/AAC reale da 9 MB e MOV H.264/AAC reale da 9 MB; upload a parti di 18.874.368 byte in 22,6 s, attività CPU 5,38 s, pubblicazione 201, durata decodificata e riproduzione oltre 0,1 s per entrambi, quindi eliminazione completa del post di prova."
 P1,media-upload,pending,Misurare caricamento feed.,globale:T-0587,
 P1,media-upload,pending,mostra stato di caricamento;,usabilita:U0673,
 P1,media-upload,pending,nessun upload bloccato;,globale:T-1760,
@@ -863,8 +863,8 @@ P1,media-upload,pending,Scattare una fotografia.,usabilita:U0190,
 P1,media-upload,passed,Scorrere e caricare i successivi.,globale:T-1686,"ui-feed-scroll-robustness Thailandia 1.48.11 Samsung S20 FE 1/1: 18 post reali, scorrimento touch fino al più vecchio oltre 1.000 px, risposta 503 forzata al successivo aggiornamento senza perdita del feed già caricato e recupero completo al retry; pulizia finale 18/18."
 P1,media-upload,passed,Selezionare fotografie e video.,globale:T-0830,"ui-publish-complete Thailandia 1.48.4 1/1: selettori galleria, scatto e video presenti e utilizzati nello stesso flusso touch."
 P1,media-upload,passed,Selezionare più fotografie.,usabilita:U0196,Playwright mobile: selezione simultanea di 10 JPEG e conteggio esatto; preview b4f2cf13; 2026-08-04
-P1,media-upload,pending,Selezionare un video MOV.,usabilita:U0200,
-P1,media-upload,pending,Selezionare un video MP4.,usabilita:U0201,
+P1,media-upload,passed,Selezionare un video MOV.,usabilita:U0200,"ui-mobile-video-formats Thailandia 1.48.16 Samsung S20 FE QA 1/1: con Battery API simulata all’8% e non in carica, selezione touch contemporanea di MP4 H.264/AAC reale da 9 MB e MOV H.264/AAC reale da 9 MB; upload a parti di 18.874.368 byte in 22,6 s, attività CPU 5,38 s, pubblicazione 201, durata decodificata e riproduzione oltre 0,1 s per entrambi, quindi eliminazione completa del post di prova."
+P1,media-upload,passed,Selezionare un video MP4.,usabilita:U0201,"ui-mobile-video-formats Thailandia 1.48.16 Samsung S20 FE QA 1/1: con Battery API simulata all’8% e non in carica, selezione touch contemporanea di MP4 H.264/AAC reale da 9 MB e MOV H.264/AAC reale da 9 MB; upload a parti di 18.874.368 byte in 22,6 s, attività CPU 5,38 s, pubblicazione 201, durata decodificata e riproduzione oltre 0,1 s per entrambi, quindi eliminazione completa del post di prova."
 P1,media-upload,passed,Selezionare una fotografia.,usabilita:U0195,Playwright mobile: JPEG reale selezionato e pubblicato; preview b4f2cf13; 2026-08-04
 P1,media-upload,passed,Sincronizzazione immediata al ritorno della rete.,globale:T-0114,ui-offline Thailandia 1.48.4 1/1: l’evento online attiva subito flushPending/checkVersion; coda svuotata e post visibile senza attendere il timer periodico.
 P1,media-upload,pending,Solo audio.,usabilita:U0144,

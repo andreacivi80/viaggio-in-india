@@ -34,7 +34,7 @@ test("i simboli dei mezzi restano separati dai nomi di Phi Phi e delle tappe vic
   assert.match(itinerary, /"krabi-phiphi", 0\.56, "Phi Phi", "6"/);
   assert.match(itinerary, /"khaosok-pier", 0\.78, "Cheow Lan", "5"/);
   assert.doesNotMatch(itinerary, /"Phi Phi Island", \[[^\]]+\]/);
-  assert.match(itinerary, /"Cheow Lan", "5", \[34, 14\]/);
+  assert.match(itinerary, /"Cheow Lan", "5", \[20, -32\]/);
   assert.match(itinerary, /"Phi Phi", "6", \[-26, -12\]/);
   assert.match(source, /offset: markerOffset/);
 });
@@ -42,7 +42,7 @@ test("i simboli dei mezzi restano separati dai nomi di Phi Phi e delle tappe vic
 test("le tappe 2-7 restano sul percorso o a contatto col relativo tratto", () => {
   assert.match(
     itinerary,
-    /overviewStageOffsets\s*=\s*\[\s*\[-6,\s*-6\],\s*\[0,\s*0\],\s*\[0,\s*0\],\s*\[-8,\s*-6\],\s*\[8,\s*-6\],\s*\[-5,\s*5\],\s*\[5,\s*-5\],\s*\[6,\s*6\]/s,
+    /overviewStageOffsets\s*=\s*\[\s*\[-6,\s*-6\],\s*\[0,\s*0\],\s*\[0,\s*0\],\s*\[-8,\s*-6\],\s*\[8,\s*-6\],\s*\[-13,\s*10\],\s*\[13,\s*-10\],\s*\[6,\s*6\]/s,
   );
   for (const city of ["Hua Hin", "Chumphon", "Khao Sok", "Cheow Lan Lake", "Phi Phi Island", "Krabi"])
     assert.ok(placesOnRoute(itinerary, city), `${city} deve appartenere a una tratta della mappa generale`);

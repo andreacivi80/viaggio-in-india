@@ -53,7 +53,7 @@ export const overviewCityLabelOffsets = {
 };
 
 export const overviewStageOffsets = [
-  [-6, -6], [0, 0], [0, 0], [-8, -6], [8, -6], [-5, 5], [5, -5], [6, 6],
+  [-6, -6], [0, 0], [0, 0], [-8, -6], [8, -6], [-13, 10], [13, -10], [6, 6],
 ];
 
 export const cityFacts = {
@@ -137,9 +137,9 @@ export const roadPaths = {
 export const overviewModes = [
   ["🚐", "Minivan Bangkok–Hua Hin", "road", "bangkok-huahin", 0.58, "Bangkok–Hua Hin", "2", [0, 0]],
   ["🦶", "Trekking e safari a Kui Buri", "walk", "huahin-chumphon", 0.80, "Kui Buri", "3", [0, 0]],
-  ["⛵", "Barca sul lago Cheow Lan", "boat", "khaosok-pier", 0.78, "Cheow Lan", "5", [34, 14]],
+  ["⛵", "Barca sul lago Cheow Lan", "boat", "khaosok-pier", 0.78, "Cheow Lan", "5", [20, -32]],
   ["⛴️", "Traghetto per Phi Phi", "boat", "krabi-phiphi", 0.56, "Phi Phi", "6", [-26, -12]],
-  ["🚌", "Bus notturno per Bangkok", "transit", "surat-bangkok", 0, "Surat–Bangkok", "7", [20, -2]],
+  ["🚌", "Bus notturno per Bangkok", "transit", "surat-bangkok", 0, "Surat–Bangkok", "7", [-30, 30]],
 ];
 
 export const overviewSegments = [

@@ -32,7 +32,9 @@ param(
   [switch]$DownloadArchiveUi,
   [switch]$PublishUi,
   [switch]$ActivitySync,
-  [switch]$ActivitySyncUi
+  [switch]$ActivitySyncUi,
+  [switch]$MobileVideoFormatsUi,
+  [switch]$DeviceRevocationNoticeUi
 )
 
 $ErrorActionPreference = "Stop"
@@ -153,7 +155,13 @@ try {
   $env:QA_UI_DEVICE_KEY = $ownerDeviceKey
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
-  if ($ActivitySyncUi) {
+  if ($DeviceRevocationNoticeUi) {
+    & npx playwright test "tests/ui-device-revocation-notice.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($MobileVideoFormatsUi) {
+    & npx playwright test "tests/ui-mobile-video-formats.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($ActivitySyncUi) {
     & npx playwright test "tests/ui-activity-sync.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
   }
   elseif ($SlowActivationUi) {

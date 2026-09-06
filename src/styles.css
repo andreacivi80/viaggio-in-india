@@ -2057,6 +2057,40 @@ footer small {
   background: transparent;
   cursor: zoom-in;
 }
+.sessionNotice {
+  position: fixed;
+  z-index: 1000;
+  top: max(10px, env(safe-area-inset-top));
+  left: 50%;
+  width: min(calc(100% - 24px), 520px);
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 10px 10px 13px;
+  border: 1px solid #f1b8ae;
+  border-radius: 14px;
+  background: #fff7f4;
+  color: #762a1e;
+  box-shadow: 0 10px 30px #27120d38;
+  transform: translateX(-50%);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.sessionNotice > svg { width: 19px; height: 19px; }
+.sessionNotice > button {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+}
+.sessionNotice > button svg { width: 18px; height: 18px; }
 .postMediaOpen > img {
   display: block;
   width: auto;
@@ -5746,6 +5780,46 @@ mark.mention {
 .routeMapSummary em { padding: 4px 7px; border-radius: 999px; background: #15382f; color: #fff; font-size: 9px; font-style: normal; font-weight: 900; }
 .routeMapSummary span:last-child { text-align: right; }
 .overviewRouteMap .vectorMarker { width: 18px; height: 18px; border-width: 2px; font-size: 7px; }
+.overviewStageAnchor {
+  width: 1px;
+  height: 1px;
+  overflow: visible;
+  pointer-events: none;
+}
+.overviewStageAnchor .vectorMarker {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  transform: translate(calc(-50% + var(--stage-x)), calc(-50% + var(--stage-y)));
+  pointer-events: auto;
+}
+.overviewStageConnector {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: var(--stage-distance);
+  height: 3px;
+  border-radius: 999px;
+  background: #102d25;
+  box-shadow: 0 0 0 1px #fff9;
+  transform: translateY(-50%) rotate(var(--stage-angle));
+  transform-origin: left center;
+}
+.overviewStageRoutePoint {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  top: 0;
+  width: 7px;
+  height: 7px;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  background: #102d25;
+  box-shadow: 0 1px 4px #0008;
+  transform: translate(-50%, -50%);
+}
 .tripCityNameLabel {
   min-width: max-content;
   padding: 3px 6px;

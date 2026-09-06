@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.16",
+const VERSION = "1.48.18",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -1067,10 +1067,27 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       const overviewOffset = selectedDay == null
         ? overviewStageOffsets[i] || [0, 0]
         : [0, 0];
+      let markerElement = node;
+      if (selectedDay == null && (overviewOffset[0] || overviewOffset[1])) {
+        const [offsetX, offsetY] = overviewOffset;
+        const markerRoot = document.createElement("span");
+        markerRoot.className = "overviewStageAnchor";
+        markerRoot.dataset.stageIndex = String(i + 1);
+        markerRoot.style.setProperty("--stage-x", `${offsetX}px`);
+        markerRoot.style.setProperty("--stage-y", `${offsetY}px`);
+        markerRoot.style.setProperty("--stage-distance", `${Math.hypot(offsetX, offsetY)}px`);
+        markerRoot.style.setProperty("--stage-angle", `${Math.atan2(offsetY, offsetX)}rad`);
+        const connector = document.createElement("span");
+        connector.className = "overviewStageConnector";
+        const routeAnchor = document.createElement("span");
+        routeAnchor.className = "overviewStageRoutePoint";
+        routeAnchor.setAttribute("aria-hidden", "true");
+        markerRoot.append(connector, routeAnchor, node);
+        markerElement = markerRoot;
+      }
       const marker = new maplibregl.Marker({
-        element: node,
+        element: markerElement,
         anchor: "center",
-        offset: overviewOffset,
       })
         .setLngLat([lng, lat])
         .setPopup(
@@ -1611,6 +1628,7 @@ function App() {
     [weatherByDate, setWeatherByDate] = useState({}),
     [indiaClock, setIndiaClock] = useState(() => Date.now()),
     [quickStatus, setQuickStatus] = useState(""),
+    [sessionNotice, setSessionNotice] = useState(""),
     [accessCode, setAccessCode] = useState(""),
     [groupCode, setGroupCode] = useState(""),
     [sessionToken, setSessionToken] = useState(
@@ -2095,6 +2113,7 @@ function App() {
           return;
         }
         if (![401, 403].includes(response.status)) return;
+        setSessionNotice("Accesso terminato: questo dispositivo è stato revocato oppure la sessione è scaduta.");
         localStorage.removeItem("india-session-token");
         localStorage.removeItem("india-profile-id");
         localStorage.removeItem("india-visitor-name");
@@ -2106,6 +2125,7 @@ function App() {
         setSessionProfile(null);
       } catch (error) {
         if (error?.invalidSession) {
+          setSessionNotice("Accesso terminato: questo dispositivo è stato revocato oppure la sessione è scaduta.");
           localStorage.removeItem("india-session-token");
           localStorage.removeItem("india-profile-id");
           localStorage.removeItem("india-visitor-name");
@@ -2483,6 +2503,15 @@ function App() {
   };
   return (
     <div className="app">
+      {sessionNotice && (
+        <div className="sessionNotice" role="alert">
+          <ShieldCheck aria-hidden="true" />
+          <span>{sessionNotice}</span>
+          <button type="button" aria-label="Chiudi avviso accesso" onClick={() => setSessionNotice("")}>
+            <X aria-hidden="true" />
+          </button>
+        </div>
+      )}
       <header className={`hero ${tab === "diary" ? "heroFeed" : ""}`}>
         <div className="heroShade" />
         <div className="top">
