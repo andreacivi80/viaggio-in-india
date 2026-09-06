@@ -35,7 +35,8 @@ param(
   [switch]$ActivitySyncUi,
   [switch]$MobileVideoFormatsUi,
   [switch]$DeviceRevocationNoticeUi,
-  [switch]$ProfileMultideviceUi
+  [switch]$ProfileMultideviceUi,
+  [switch]$ProfileCreationUi
 )
 
 $ErrorActionPreference = "Stop"
@@ -161,6 +162,9 @@ try {
   }
   elseif ($ProfileMultideviceUi) {
     & npx playwright test "tests/ui-profile-multidevice.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($ProfileCreationUi) {
+    & npx playwright test "tests/ui-profile-creation.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
   }
   elseif ($MobileVideoFormatsUi) {
     & npx playwright test "tests/ui-mobile-video-formats.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
