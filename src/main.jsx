@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.19",
+const VERSION = "1.48.20",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -3986,7 +3986,7 @@ function Diary({
               <div className="profileChooser composerProfileChooser personalLinkRequired">
                 <b>Completa il tuo accesso</b>
                 <small>
-                  Crea il tuo profilo personale per pubblicare senza ripetere la password.
+                  Per pubblicare devi prima collegare questo dispositivo al tuo profilo.
                 </small>
                 <button className="chooseProfileButton" onClick={onGroupUnlocked}>
                   Crea il mio profilo
@@ -4001,7 +4001,7 @@ function Diary({
                   if (unlocked) await onGroupUnlocked?.();
                   return unlocked;
                 }}
-                text="Inserisci la password comune. Subito dopo creerai il tuo profilo personale."
+                text="Per pubblicare devi prima collegare questo dispositivo al tuo profilo. Inserisci la password comune; subito dopo creerai il tuo profilo personale."
                 successText="Password corretta. Ora crea il tuo profilo."
               />
             )}

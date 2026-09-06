@@ -37,6 +37,7 @@ test("senza sessione il compositore resta chiuso", async ({ page }) => {
   await page.getByRole("button", { name: "Pubblica", exact: true }).tap();
   const sheet = page.locator(".uploadSheet");
   await expect(sheet.getByText("Accesso privato", { exact: true })).toBeVisible();
+  await expect(sheet.getByText(/Per pubblicare devi prima collegare questo dispositivo al tuo profilo/)).toBeVisible();
   await expect(sheet.getByText("Pubblicazione del gruppo")).toHaveCount(0);
   await expect(sheet.getByPlaceholder("Racconta questo momento…")).toHaveCount(0);
 });
