@@ -12,6 +12,8 @@ test("mappa generale: numeri piccoli, mezzi distinti e nessuna sovrapposizione",
   await page.goto("/?view=map", { waitUntil: "networkidle" });
   await waitForMap(page);
   await expect(page.locator(".overviewRouteMap .vectorMarker")).toHaveCount(8);
+  await expect(page.locator('.overviewRouteMap .overviewStageAnchor[data-stage-index="6"] .overviewStageConnector')).toBeVisible();
+  await expect(page.locator('.overviewRouteMap .overviewStageAnchor[data-stage-index="7"]')).toHaveCount(0);
   await expect(page.locator(".overviewRouteMap .tripCityNameLabel")).toHaveCount(7);
   for (const city of ["Bangkok", "Hua Hin", "Chumphon", "Khao Sok", "Cheow Lan Lake", "Phi Phi Island", "Krabi"])
     await expect(page.locator(`.tripCityNameLabel[data-city-name="${city}"]`)).toBeVisible();

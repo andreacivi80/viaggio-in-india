@@ -5820,6 +5820,14 @@ mark.mention {
   box-shadow: 0 1px 4px #0008;
   transform: translate(-50%, -50%);
 }
+.overviewStageAnchor[data-stage-index="6"] .overviewStageConnector {
+  height: 4px;
+  background: #007f86;
+  box-shadow: 0 0 0 1px #fff, 0 2px 5px #102d2566;
+}
+.overviewStageAnchor[data-stage-index="6"] .overviewStageRoutePoint {
+  background: #007f86;
+}
 .tripCityNameLabel {
   min-width: max-content;
   padding: 3px 6px;

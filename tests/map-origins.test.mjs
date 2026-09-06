@@ -42,7 +42,7 @@ test("i simboli dei mezzi restano separati dai nomi di Phi Phi e delle tappe vic
 test("le tappe 2-7 restano sul percorso o a contatto col relativo tratto", () => {
   assert.match(
     itinerary,
-    /overviewStageOffsets\s*=\s*\[\s*\[-6,\s*-6\],\s*\[0,\s*0\],\s*\[0,\s*0\],\s*\[-8,\s*-6\],\s*\[8,\s*-6\],\s*\[-13,\s*10\],\s*\[13,\s*-10\],\s*\[6,\s*6\]/s,
+    /overviewStageOffsets\s*=\s*\[\s*\[-6,\s*-6\],\s*\[0,\s*0\],\s*\[0,\s*0\],\s*\[-8,\s*-6\],\s*\[8,\s*-6\],\s*\[-22,\s*18\],\s*\[0,\s*0\],\s*\[6,\s*6\]/s,
   );
   for (const city of ["Hua Hin", "Chumphon", "Khao Sok", "Cheow Lan Lake", "Phi Phi Island", "Krabi"])
     assert.ok(placesOnRoute(itinerary, city), `${city} deve appartenere a una tratta della mappa generale`);

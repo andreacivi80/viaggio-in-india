@@ -61,6 +61,15 @@ CREATE TABLE IF NOT EXISTS reactions (
   created_at TEXT NOT NULL,
   UNIQUE(post_id, visitor_id)
 );
+CREATE TABLE IF NOT EXISTS post_bookmarks (
+  profile_id TEXT NOT NULL,
+  post_id TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  PRIMARY KEY(profile_id, post_id),
+  FOREIGN KEY(profile_id) REFERENCES profiles(id) ON DELETE CASCADE,
+  FOREIGN KEY(post_id) REFERENCES posts(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS post_bookmarks_post_idx ON post_bookmarks(post_id);
 CREATE TABLE IF NOT EXISTS document_status (
   profile_id TEXT NOT NULL,
   doc_type TEXT NOT NULL,

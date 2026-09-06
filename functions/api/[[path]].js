@@ -676,6 +676,7 @@ async function deleteProfileData(env, profileId) {
     ...uploads.results.map((row) => row.media_key),
   ].filter(Boolean));
   const statements = [
+    env.DB.prepare("DELETE FROM post_bookmarks WHERE profile_id=? OR post_id IN (SELECT id FROM posts WHERE profile_id=?)").bind(profileId, profileId),
     env.DB.prepare("DELETE FROM post_media WHERE post_id IN (SELECT id FROM posts WHERE profile_id=?)").bind(profileId),
     env.DB.prepare("DELETE FROM comments WHERE post_id IN (SELECT id FROM posts WHERE profile_id=?) OR profile_id=?").bind(profileId, profileId),
     env.DB.prepare("DELETE FROM reactions WHERE post_id IN (SELECT id FROM posts WHERE profile_id=?) OR visitor_id=?").bind(profileId, profileId),
@@ -832,7 +833,7 @@ async function chunkedMedia(env, request, key, headers) {
 }
 
 async function readState(env, session = null, guest = null) {
-  const [profiles, posts, comments, reactions, postMedia, tripChecks, syncState, activityState] = await Promise.all([
+  const [profiles, posts, comments, reactions, postMedia, tripChecks, syncState, activityState, bookmarks] = await Promise.all([
     env.DB.prepare("SELECT * FROM profiles ORDER BY created_at").all(),
     env.DB.prepare("SELECT * FROM posts ORDER BY created_at DESC").all(),
     env.DB.prepare("SELECT * FROM comments ORDER BY created_at").all(),
@@ -846,6 +847,10 @@ async function readState(env, session = null, guest = null) {
       ? env.DB.prepare("SELECT last_read_at,updated_at FROM activity_state WHERE profile_id=?")
           .bind(session.profile_id).first()
       : Promise.resolve(null),
+    session
+      ? env.DB.prepare("SELECT post_id FROM post_bookmarks WHERE profile_id=?")
+          .bind(session.profile_id).all()
+      : Promise.resolve({ results: [] }),
   ]);
   const profileById = new Map(profiles.results.map((profile) => [profile.id, profile]));
   const publicName = (profileId, fallback) => {
@@ -898,6 +903,7 @@ async function readState(env, session = null, guest = null) {
       // Every authenticated member of the travel group may remove shared
       // posts. Public visitors never receive this capability.
       can_manage: Boolean(session),
+      saved: Boolean(session && bookmarks.results.some((bookmark) => bookmark.post_id === p.id)),
       author_name: publicName(postProfileId, p.author_name),
       media_url: mediaUrl(legacyMediaKey),
       media: [
@@ -1378,6 +1384,23 @@ export async function onRequest(context) {
         "SELECT last_read_at,updated_at FROM activity_state WHERE profile_id=?",
       ).bind(session.profile_id).first();
       return json({ ok: true, ...stored });
+    }
+    const bookmarkMatch = path.match(/^bookmarks\/([^/]+)$/);
+    if (bookmarkMatch && ["PUT", "DELETE"].includes(request.method)) {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 403);
+      const postId = decodeURIComponent(bookmarkMatch[1]);
+      const post = await env.DB.prepare("SELECT * FROM posts WHERE id=?").bind(postId).first();
+      if (!post || !canViewPost(post, session, null))
+        return json({ error: "Pubblicazione non disponibile" }, 404);
+      if (request.method === "PUT")
+        await env.DB.prepare(
+          "INSERT INTO post_bookmarks(profile_id,post_id,created_at) VALUES(?,?,?) ON CONFLICT(profile_id,post_id) DO NOTHING",
+        ).bind(session.profile_id, postId, now()).run();
+      else
+        await env.DB.prepare("DELETE FROM post_bookmarks WHERE profile_id=? AND post_id=?")
+          .bind(session.profile_id, postId).run();
+      return json({ ok: true, post_id: postId, saved: request.method === "PUT" });
     }
     if (request.method === "PUT" && path.startsWith("trip-checks/")) {
       const session = await sessionFromRequest(request, env);
@@ -2105,6 +2128,7 @@ export async function onRequest(context) {
         commentMediaRows.results.map((media) => deleteStoredMedia(env, media.media_key)),
       );
       await env.DB.batch([
+        env.DB.prepare("DELETE FROM post_bookmarks WHERE post_id=?").bind(postId),
         env.DB.prepare("DELETE FROM post_media WHERE post_id=?").bind(postId),
         env.DB.prepare("DELETE FROM comments WHERE post_id=?").bind(postId),
         env.DB.prepare("DELETE FROM reactions WHERE post_id=?").bind(postId),

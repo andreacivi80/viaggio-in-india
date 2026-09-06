@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.22",
+const VERSION = "1.48.23",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -4445,7 +4445,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
   const [comment, setComment] = useState(""),
     [replyFile, setReplyFile] = useState(null),
     [menuOpen, setMenuOpen] = useState(false),
-    [saved, setSaved] = useState(false),
+    [saved, setSaved] = useState(Boolean(p.saved)),
     [confirmDelete, setConfirmDelete] = useState(false),
     [sendingComment, setSendingComment] = useState(false),
     [commentStatus, setCommentStatus] = useState(""),
@@ -4458,6 +4458,26 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
   const replyInputRef = useRef(null);
   const commentOperationRef = useRef("");
   const reactionOperationRef = useRef({});
+  useEffect(() => setSaved(Boolean(p.saved)), [p.saved]);
+  const toggleSaved = async () => {
+    if (!sessionToken) {
+      setCommentStatus("Collega il tuo profilo per salvare questo ricordo.");
+      return;
+    }
+    const next = !saved;
+    setSaved(next);
+    try {
+      const response = await fetch(`${API}/bookmarks/${encodeURIComponent(p.id)}`, {
+        method: next ? "PUT" : "DELETE",
+        headers: sessionHeaders(sessionToken),
+      });
+      if (!response.ok) throw Error("Preferito non aggiornato.");
+      await refresh();
+    } catch (error) {
+      setSaved(!next);
+      setCommentStatus(error.message || "Preferito non aggiornato.");
+    }
+  };
   const visitor = () => {
     let v = localStorage.getItem("india-visitor-id");
     if (!v) {
@@ -4758,8 +4778,9 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
         </button>
         <button
           className={saved ? "saved" : ""}
-          aria-label="Salva"
-          onClick={() => setSaved(!saved)}
+          aria-label={saved ? "Rimuovi dai salvati" : "Salva"}
+          aria-pressed={saved}
+          onClick={toggleSaved}
         >
           <Bookmark />
         </button>

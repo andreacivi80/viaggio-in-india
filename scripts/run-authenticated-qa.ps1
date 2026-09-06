@@ -36,7 +36,8 @@ param(
   [switch]$MobileVideoFormatsUi,
   [switch]$DeviceRevocationNoticeUi,
   [switch]$ProfileMultideviceUi,
-  [switch]$ProfileCreationUi
+  [switch]$ProfileCreationUi,
+  [switch]$FavoritesSyncUi
 )
 
 $ErrorActionPreference = "Stop"
@@ -165,6 +166,9 @@ try {
   }
   elseif ($ProfileCreationUi) {
     & npx playwright test "tests/ui-profile-creation.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($FavoritesSyncUi) {
+    & npx playwright test "tests/ui-favorites-sync.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
   }
   elseif ($MobileVideoFormatsUi) {
     & npx playwright test "tests/ui-mobile-video-formats.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line

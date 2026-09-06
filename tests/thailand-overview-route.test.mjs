@@ -18,12 +18,9 @@ test("le tappe 6 e 7 restano collegate agli estremi reali della rotta Phi Phi–
   assert.equal(krabiIndex + 1, 7);
   const phiPhiOffset = overviewStageOffsets[phiPhiIndex];
   const krabiOffset = overviewStageOffsets[krabiIndex];
-  assert.ok(phiPhiOffset[0] < 0 && phiPhiOffset[1] > 0, "il punto 6 va separato verso sud-ovest");
-  assert.ok(krabiOffset[0] > 0 && krabiOffset[1] < 0, "il punto 7 va separato verso nord-est");
-  assert.ok(Math.hypot(...phiPhiOffset) >= 10, "il numero 6 deve essere leggibile e separato dal 7");
-  assert.ok(Math.hypot(...krabiOffset) >= 10, "il numero 7 deve essere leggibile e separato dal 6");
-  assert.ok(Math.hypot(...phiPhiOffset) <= 20, "il punto 6 deve restare visivamente vicino alla rotta");
-  assert.ok(Math.hypot(...krabiOffset) <= 20, "il punto 7 deve restare visivamente vicino alla rotta");
+  assert.ok(phiPhiOffset[0] < 0 && phiPhiOffset[1] > 0, "il punto 6 va separato con un richiamo visibile alla rotta");
+  assert.ok(Math.hypot(...phiPhiOffset) <= 30, "il punto 6 deve restare vicino all’estremo della rotta");
+  assert.deepEqual(krabiOffset, [0, 0], "il punto 7 deve stare esattamente sull’estremo della rotta");
 
   const segment = overviewSegments.find(({ path }) => path === "phiphi-krabi");
   assert.ok(segment, "la rotta generale deve contenere il tratto 6→7");

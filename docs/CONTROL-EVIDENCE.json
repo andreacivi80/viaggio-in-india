@@ -342,4 +342,8 @@
   ,{ "control": "nessun contenuto completo del documento;", "evidence": "security-audit 3/3 + authorization-matrix 86/86: schema whitelist e risposta coordinatore escludono contenuto e nome del PDF" }
   ,{ "control": "nessun token;", "evidence": "security-audit 3/3 + authorization-matrix 86/86: token di sessione e invito non compaiono nel registro" }
   ,{ "control": "nessuna password.", "evidence": "security-audit 3/3 + authorization-matrix 86/86: password del gruppo non compare nel registro" }
+  ,{ "control": "Preferiti salvati nel database.", "evidence": "ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: PUT autenticato salva il post nel database, lo stato personale lo restituisce come salvato e DELETE lo rimuove; il pubblico non riceve preferiti." }
+  ,{ "control": "Preferiti sincronizzati tra dispositivi.", "evidence": "ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: due sessioni reali dello stesso profilo su due telefoni sincronizzano salvataggio e rimozione in entrambe le direzioni senza refresh manuale; pulizia QA completata." }
+  ,{ "control": "preferiti;", "evidence": "ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: comando Salva/Rimuovi verificato con touch e stato persistente personale sincronizzato tra due telefoni." }
+  ,{ "control": "Verificare preferiti.", "evidence": "ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: ciclo completo salva, sincronizza, rimuove e risincronizza sul secondo dispositivo." }
 ]
