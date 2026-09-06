@@ -353,4 +353,5 @@
   ,{ "control": "Mappa con longitudine -180.", "evidence": "P0_LOCATION Thailandia 1.48.23 QA 30/30: limite geografico -180 accettato e persistito esattamente; valore -180.0001 respinto con HTTP 400." }
   ,{ "control": "Mappa con una persona fuori dall’India.", "evidence": "P0_LOCATION Thailandia 1.48.23 QA 30/30: coordinate reali esterne alla Thailandia 45.4642,9.19 salvate e restituite senza errore o perdita dello stato." }
   ,{ "control": "Verificare cancellazione immediata dalla mappa.", "evidence": "ui-location Thailandia 1.48.22 Samsung S20 FE QA 1/1: DELETE touch restituisce 200, messaggio Posizione cancellata visibile e posizione rimossa in tempo reale dal secondo telefono; retry e pulizia verificati." }
+  ,{ "control": "Verificare mappa quando OpenFreeMap non risponde.", "evidence": "ui-maps Thailandia 1.48.24 Galaxy mobile QA 2/2: richiesta dello stile OpenFreeMap interrotta realmente; sparisce il caricamento, compare il fallback leggibile con Bangkok, Phi Phi Island e Krabi, mentre la cartina normale conserva geometria e assenza di sovrapposizioni." }
 ]

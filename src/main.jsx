@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.23",
+const VERSION = "1.48.24",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -934,10 +934,19 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
     markers = useRef([]);
   const [ready, setReady] = useState(false);
   const [visualReady, setVisualReady] = useState(false);
+  const [mapFailed, setMapFailed] = useState(false);
   const day = selectedDay == null ? null : days[selectedDay];
   useEffect(() => {
     if (!el.current || map.current) return;
     let cancelled = false;
+    let didLoad = false;
+    const showFallback = () => {
+      if (cancelled || didLoad) return;
+      setMapFailed(true);
+      setVisualReady(true);
+      onReady?.();
+    };
+    const loadTimer = window.setTimeout(showFallback, 12_000);
     import("maplibre-gl").then(({ default: maplibregl }) => {
       if (cancelled || !el.current) return;
       maplibre.current = maplibregl;
@@ -960,7 +969,11 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         new maplibregl.ScaleControl({ unit: "metric", maxWidth: 90 }),
         "bottom-left",
       );
+      map.current.on("error", showFallback);
       map.current.on("load", () => {
+        didLoad = true;
+        window.clearTimeout(loadTimer);
+        setMapFailed(false);
         map.current.addSource("trip-route", {
           type: "geojson",
           data: { type: "FeatureCollection", features: [] },
@@ -1028,9 +1041,10 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
           onReady?.();
         });
       });
-    });
+    }).catch(showFallback);
     return () => {
       cancelled = true;
+      window.clearTimeout(loadTimer);
       map.current?.remove();
       map.current = null;
     };
@@ -1273,7 +1287,19 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         ref={el}
         aria-label="Mappa interattiva reale dell’itinerario in Thailandia"
       />
-      {day && (
+      {mapFailed && (
+        <div className="mapUnavailable" role="status">
+          <MapPinned />
+          <b>Cartina momentaneamente non disponibile</b>
+          <small>Il percorso resta consultabile e puoi riprovare aggiornando la pagina.</small>
+          <ol>
+            {(day ? [day.from, day.to] : routeSequence).map((placeName, index) => (
+              <li key={`${placeName}-${index}`}>{placeName}</li>
+            ))}
+          </ol>
+        </div>
+      )}
+      {day && !mapFailed && (
         <div
           className={`transportMapBadge transport-${transportPresentation(day.transport).mode}`}
           aria-label={`Mezzi del giorno: ${day.transport}`}
@@ -1282,7 +1308,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
           <b>{day.transport}</b>
         </div>
       )}
-      {!day && (
+      {!day && !mapFailed && (
         <div className="overviewRouteLegend" aria-label="Legenda dei mezzi">
           <span className="road">🚐 Van</span>
           <span className="transit">🚌 Bus notturno</span>
@@ -1290,14 +1316,14 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
           <span className="walk">👣 Piedi</span>
         </div>
       )}
-      {day && (
+      {day && !mapFailed && (
         <div className="routeMapSummary" aria-label={`Percorso da ${day.from} a ${day.to}`}>
           <span><i className="start">▶</i><small>Partenza</small><b>{day.from}</b></span>
           <em>{day.km} km</em>
           <span><i className="finish">●</i><small>Arrivo</small><b>{day.to}</b></span>
         </div>
       )}
-      {!visualReady && (
+      {!visualReady && !mapFailed && (
         <div className="mapLoading">
           <MapPinned />
           <b>Disegno il percorso sulla cartina…</b>

@@ -1,7 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
-Controlli selezionati: **42** tra 42 controlli P0–P2 ancora privi di evidenza conclusiva.
-Stato del pacchetto: **0 superati**, **42 pendenti**.
+Controlli selezionati: **41** tra 41 controlli P0–P2 ancora privi di evidenza conclusiva.
+Stato del pacchetto: **0 superati**, **41 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -81,22 +81,20 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-1659`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
 - [ ] **K-035 · mappe-posizione** — Verificare mappa quando Google Maps non risponde.
   Sorgente: `globale:T-0961`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-036 · mappe-posizione** — Verificare mappa quando OpenFreeMap non risponde.
-  Sorgente: `globale:T-0962`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-037 · altro** — Disattivazione completa delle notifiche.
+- [ ] **K-036 · altro** — Disattivazione completa delle notifiche.
   Sorgente: `globale:T-0077`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-038 · altro** — Inviare due notifiche con lo stesso tag.
+- [ ] **K-037 · altro** — Inviare due notifiche con lo stesso tag.
   Sorgente: `globale:T-0861`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-039 · altro** — Misurare batteria con notifiche attive.
+- [ ] **K-038 · altro** — Misurare batteria con notifiche attive.
   Sorgente: `globale:T-1660`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-040 · altro** — Notifiche durante la prova.
+- [ ] **K-039 · altro** — Notifiche durante la prova.
   Sorgente: `globale:T-1127`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
+- [ ] **K-040 · altro** — Tutti attivano le notifiche.
+  Sorgente: `globale:T-1731`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
 
 ## K1
 
-- [ ] **K-041 · altro** — Tutti attivano le notifiche.
-  Sorgente: `globale:T-1731`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-042 · altro** — Verificare raggruppamento delle notifiche.
+- [ ] **K-041 · altro** — Verificare raggruppamento delle notifiche.
   Sorgente: `globale:T-0880`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
 
 ## K2

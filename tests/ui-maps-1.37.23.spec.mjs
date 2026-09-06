@@ -49,6 +49,17 @@ test("mappa generale: numeri piccoli, mezzi distinti e nessuna sovrapposizione",
   expect(geometry.legendScaleOverlap).toBe(false);
 });
 
+test("la cartina resta utilizzabile se OpenFreeMap non risponde", async ({ page }) => {
+  await page.route("**/styles/liberty*", (route) => route.abort("failed"));
+  await page.goto("/?view=map", { waitUntil: "domcontentloaded" });
+  const fallback = page.getByRole("status").filter({ hasText: "Cartina momentaneamente non disponibile" });
+  await expect(fallback).toBeVisible({ timeout: 20_000 });
+  await expect(fallback).toContainText("Bangkok");
+  await expect(fallback).toContainText("Phi Phi Island");
+  await expect(fallback).toContainText("Krabi");
+  await expect(page.locator(".mapLoading")).toHaveCount(0);
+});
+
 test("cartina provenienze: Mantova è riconosciuta e i gruppi restano compatti", async ({ page }) => {
   const profiles = [
     { id: "mantova-1", name: "Viaggiatore", surname: "Mantova", origin_city: "Mantova", role: "traveler" },
