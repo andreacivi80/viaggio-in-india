@@ -34,7 +34,8 @@ param(
   [switch]$ActivitySync,
   [switch]$ActivitySyncUi,
   [switch]$MobileVideoFormatsUi,
-  [switch]$DeviceRevocationNoticeUi
+  [switch]$DeviceRevocationNoticeUi,
+  [switch]$ProfileMultideviceUi
 )
 
 $ErrorActionPreference = "Stop"
@@ -157,6 +158,9 @@ try {
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
   if ($DeviceRevocationNoticeUi) {
     & npx playwright test "tests/ui-device-revocation-notice.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($ProfileMultideviceUi) {
+    & npx playwright test "tests/ui-profile-multidevice.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
   }
   elseif ($MobileVideoFormatsUi) {
     & npx playwright test "tests/ui-mobile-video-formats.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
