@@ -1024,11 +1024,11 @@ P2,mappe-posizione,passed,Correggere i popup della mappa per impedire inseriment
 P2,mappe-posizione,passed,Descrizione dei marker della mappa.,globale:T-1063,ui-maps + ui-navigation Thailandia 1.48.23 QA mobile: tutti gli 8 marker espongono numero e nome della tappa nell’etichetta accessibile; i 7 nomi città sono visibili e il touch apre il giorno corrispondente.
 P2,mappe-posizione,passed,Itinerario → giorno → mappa → indietro.,globale:T-1414,"ui-navigation Thailandia 1.48.23 QA mobile 2/2: apertura Percorso con touch dal giorno 7, ritorno alla stessa giornata e identica posizione di scorrimento; l’intero itinerario seleziona tutte le 11 tappe e torna alla Bacheca."
 P2,mappe-posizione,pending,Mappa → Google Maps → ritorno all’app.,globale:T-1416,
-P2,mappe-posizione,pending,"Mappa con coordinate 0,0.",globale:T-0945,
+P2,mappe-posizione,passed,"Mappa con coordinate 0,0.",globale:T-0945,"P0_LOCATION Thailandia 1.48.23 QA 30/30: coordinate 0,0 inviate con sessione reale, accettate dal server e rilette esattamente dallo stato privato; pulizia completata."
 P2,mappe-posizione,pending,Mappa con dieci persone nello stesso punto.,globale:T-0946,
-P2,mappe-posizione,pending,Mappa con latitudine -90.,globale:T-0948;globale:T-0949,
-P2,mappe-posizione,pending,Mappa con longitudine -180.,globale:T-0950;globale:T-0951,
-P2,mappe-posizione,pending,Mappa con una persona fuori dall’India.,globale:T-0953,
+P2,mappe-posizione,passed,Mappa con latitudine -90.,globale:T-0948;globale:T-0949,P0_LOCATION Thailandia 1.48.23 QA 30/30: limite geografico -90 accettato e persistito esattamente; valore 90.0001 respinto con HTTP 400.
+P2,mappe-posizione,passed,Mappa con longitudine -180.,globale:T-0950;globale:T-0951,P0_LOCATION Thailandia 1.48.23 QA 30/30: limite geografico -180 accettato e persistito esattamente; valore -180.0001 respinto con HTTP 400.
+P2,mappe-posizione,passed,Mappa con una persona fuori dall’India.,globale:T-0953,"P0_LOCATION Thailandia 1.48.23 QA 30/30: coordinate reali esterne alla Thailandia 45.4642,9.19 salvate e restituite senza errore o perdita dello stato."
 P2,mappe-posizione,passed,Mappa.,usabilita:U0080,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P2,mappe-posizione,pending,menu non nascosto dietro la mappa;,addendum:A0240,
 P2,mappe-posizione,pending,Misurare apertura mappa.,globale:T-0583,
@@ -1042,7 +1042,7 @@ P2,mappe-posizione,passed,Verificare che il collegamento riapra la stessa mappa.
 P2,mappe-posizione,pending,Verificare mappa quando Google Maps non risponde.,globale:T-0961,
 P2,mappe-posizione,pending,Verificare mappa quando OpenFreeMap non risponde.,globale:T-0962,
 P2,media-upload,pending,un cambio di ruolo viene applicato immediatamente;,addendum:A0452,
-P2,media-upload,pending,Verificare cancellazione immediata dalla mappa.,globale:T-1463,
+P2,media-upload,passed,Verificare cancellazione immediata dalla mappa.,globale:T-1463,"ui-location Thailandia 1.48.22 Samsung S20 FE QA 1/1: DELETE touch restituisce 200, messaggio Posizione cancellata visibile e posizione rimossa in tempo reale dal secondo telefono; retry e pulizia verificati."
 P2,profili-ruoli,passed,"A modifica profilo, B vede modifica.",usabilita:U0562,ui-people Thailandia 1.48.4 Samsung S20 FE 1/1: il coordinatore aggiorna origine e biografia; il secondo telefono vede subito il profilo aggiornato e i permessi corretti.
 P2,profili-ruoli,passed,Accedere come Viaggiatore A.,globale:T-0321;addendum:A0066,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P2,profili-ruoli,pending,accedere come Viaggiatore B;,addendum:A0069,

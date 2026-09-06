@@ -348,4 +348,9 @@
   ,{ "control": "Verificare preferiti.", "evidence": "ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: ciclo completo salva, sincronizza, rimuove e risincronizza sul secondo dispositivo." }
   ,{ "control": "Itinerario → giorno → mappa → indietro.", "evidence": "ui-navigation Thailandia 1.48.23 QA mobile 2/2: apertura Percorso con touch dal giorno 7, ritorno alla stessa giornata e identica posizione di scorrimento; l’intero itinerario seleziona tutte le 11 tappe e torna alla Bacheca." }
   ,{ "control": "Descrizione dei marker della mappa.", "evidence": "ui-maps + ui-navigation Thailandia 1.48.23 QA mobile: tutti gli 8 marker espongono numero e nome della tappa nell’etichetta accessibile; i 7 nomi città sono visibili e il touch apre il giorno corrispondente." }
+  ,{ "control": "Mappa con coordinate 0,0.", "evidence": "P0_LOCATION Thailandia 1.48.23 QA 30/30: coordinate 0,0 inviate con sessione reale, accettate dal server e rilette esattamente dallo stato privato; pulizia completata." }
+  ,{ "control": "Mappa con latitudine -90.", "evidence": "P0_LOCATION Thailandia 1.48.23 QA 30/30: limite geografico -90 accettato e persistito esattamente; valore 90.0001 respinto con HTTP 400." }
+  ,{ "control": "Mappa con longitudine -180.", "evidence": "P0_LOCATION Thailandia 1.48.23 QA 30/30: limite geografico -180 accettato e persistito esattamente; valore -180.0001 respinto con HTTP 400." }
+  ,{ "control": "Mappa con una persona fuori dall’India.", "evidence": "P0_LOCATION Thailandia 1.48.23 QA 30/30: coordinate reali esterne alla Thailandia 45.4642,9.19 salvate e restituite senza errore o perdita dello stato." }
+  ,{ "control": "Verificare cancellazione immediata dalla mappa.", "evidence": "ui-location Thailandia 1.48.22 Samsung S20 FE QA 1/1: DELETE touch restituisce 200, messaggio Posizione cancellata visibile e posizione rimossa in tempo reale dal secondo telefono; retry e pulizia verificati." }
 ]
