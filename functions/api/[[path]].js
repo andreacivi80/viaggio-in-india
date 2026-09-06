@@ -2386,6 +2386,10 @@ export async function onRequest(context) {
       const b = await request.json();
       const latitude = Number(b.latitude);
       const longitude = Number(b.longitude);
+      const suppliedAccuracy = Number(b.accuracy);
+      const accuracy = Number.isFinite(suppliedAccuracy) && suppliedAccuracy >= 0 && suppliedAccuracy <= 100000
+        ? suppliedAccuracy
+        : null;
       if (
         !Number.isFinite(latitude) || latitude < -90 || latitude > 90 ||
         !Number.isFinite(longitude) || longitude < -180 || longitude > 180
@@ -2395,13 +2399,14 @@ export async function onRequest(context) {
         return json({ error: "Puoi aggiornare soltanto la tua posizione" }, 403);
       const safeDisplayName = `${session.name || ""} ${session.surname || ""}`.trim() || "Viaggiatore";
       await env.DB.prepare(
-        "INSERT INTO locations(profile_id,display_name,latitude,longitude,updated_at) VALUES(?,?,?,?,?) ON CONFLICT(profile_id) DO UPDATE SET display_name=excluded.display_name,latitude=excluded.latitude,longitude=excluded.longitude,updated_at=excluded.updated_at",
+        "INSERT INTO locations(profile_id,display_name,latitude,longitude,accuracy,updated_at) VALUES(?,?,?,?,?,?) ON CONFLICT(profile_id) DO UPDATE SET display_name=excluded.display_name,latitude=excluded.latitude,longitude=excluded.longitude,accuracy=excluded.accuracy,updated_at=excluded.updated_at",
       )
         .bind(
           b.profile_id,
           safeDisplayName,
           latitude,
           longitude,
+          accuracy,
           now(),
         )
         .run();

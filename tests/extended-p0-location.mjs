@@ -17,9 +17,9 @@ const privateState = async (headers) => {
 assert.equal((await request("/api/locations", {
   method: "POST",
   headers: { ...owner, "content-type": "application/json" },
-  body: JSON.stringify({ profile_id: ownerId, latitude: 28.6139, longitude: 77.209 }),
+  body: JSON.stringify({ profile_id: ownerId, latitude: 28.6139, longitude: 77.209, accuracy: 3500 }),
 })).status, 200);
-assert.ok((await privateState(owner)).locations.some((location) => location.profile_id === ownerId));
+assert.ok((await privateState(owner)).locations.some((location) => location.profile_id === ownerId && location.accuracy === 3500));
 assert.ok((await privateState(other)).locations.some((location) => location.profile_id === ownerId));
 assert.ok((await privateState(coordinator)).locations.some((location) => location.profile_id === ownerId));
 const retryResponses = await Promise.all(Array.from({ length: 10 }, (_, index) => request("/api/locations", {

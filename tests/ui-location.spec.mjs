@@ -33,7 +33,7 @@ test("GPS volontario, mappa Thailandia, Google Maps, rimozione e sincronizzazion
   test.slow();
   const travelerContext = await browser.newContext({
     ...devices["Galaxy S9+"],
-    geolocation: { latitude: 28.6139, longitude: 77.2090 },
+    geolocation: { latitude: 28.6139, longitude: 77.2090, accuracy: 3500 },
     permissions: ["geolocation"],
   });
   const coordinatorContext = await browser.newContext({
@@ -66,6 +66,7 @@ test("GPS volontario, mappa Thailandia, Google Maps, rimozione e sincronizzazion
     const travelerLocation = travelerPage.locator(".locationList article").filter({ hasText: travelerName });
     await expect(travelerLocation).toContainText("28.6139, 77.2090");
     await expect(travelerLocation).toContainText("Posizione fornita dal dispositivo · non certificata");
+    await expect(travelerLocation).toContainText("Precisione stimata · ±3500 m · segnale GPS debole");
     await expect(travelerLocation).toContainText("Ultimo aggiornamento ·");
     await expect(travelerLocation.getByRole("link", { name: "Google Maps" })).toHaveAttribute(
       "href",
@@ -79,9 +80,12 @@ test("GPS volontario, mappa Thailandia, Google Maps, rimozione e sincronizzazion
       "aria-label",
       "Posizioni del gruppo sulla cartina della Thailandia",
     );
-    await expect(travelerPage.locator(".personMapMarker").filter({ hasText: travelerName[0] }).first()).toBeVisible({
+    const travelerMarker = travelerPage.locator(".personMapMarker").filter({ hasText: travelerName[0] }).first();
+    await expect(travelerMarker).toBeVisible({
       timeout: 20_000,
     });
+    await travelerMarker.tap();
+    await expect(travelerPage.locator(".maplibregl-popup")).toContainText(travelerName);
     await travelerPage.getByRole("button", { name: /Chiudi mappa posizioni/ }).tap();
     await expect(travelerPage.locator(".peopleLocationMap")).toHaveCount(0);
 

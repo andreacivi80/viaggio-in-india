@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS locations (
   display_name TEXT NOT NULL,
   latitude REAL NOT NULL,
   longitude REAL NOT NULL,
+  accuracy REAL,
   updated_at TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS posts_created_idx ON posts(created_at DESC);

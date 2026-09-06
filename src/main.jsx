@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.20",
+const VERSION = "1.48.21",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -2293,6 +2293,7 @@ function App() {
               `${currentProfile.name} ${currentProfile.surname || ""}`.trim(),
             latitude: position.coords.latitude,
             longitude: position.coords.longitude,
+            accuracy: position.coords.accuracy,
           }),
         });
         setQuickStatus(
@@ -5596,6 +5597,7 @@ function VaultOnline({
               profile_id: viewerProfileId,
               latitude: p.coords.latitude,
               longitude: p.coords.longitude,
+              accuracy: p.coords.accuracy,
             }),
           });
           const result = await response.json().catch(() => ({}));
@@ -6014,6 +6016,12 @@ function VaultOnline({
                     {Number(x.latitude).toFixed(4)}, {Number(x.longitude).toFixed(4)}
                   </span>
                   <small>Posizione fornita dal dispositivo · non certificata</small>
+                  {x.accuracy != null && Number.isFinite(Number(x.accuracy)) && (
+                    <small>
+                      Precisione stimata · ±{Math.round(Number(x.accuracy))} m
+                      {Number(x.accuracy) > 1000 ? " · segnale GPS debole" : ""}
+                    </small>
+                  )}
                   <small>
                     Ultimo aggiornamento · {new Date(x.updated_at).toLocaleString("it-IT")}
                   </small>
