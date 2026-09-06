@@ -929,7 +929,7 @@ P1,sync-rete,pending,Album HTML offline.,globale:T-0233,
 P1,sync-rete,passed,Aprire Emergenza senza rete.,globale:T-1183,ui-p0-cache-recovery Thailandia 1.48.4 Samsung S20 FE 1/1: dopo eliminazione di cache vecchie/difettose l’app si riapre offline e rende disponibili numeri di emergenza thailandesi e tappe essenziali.
 P1,sync-rete,passed,Aprire il dominio senza cache.,globale:T-0305,"ui-cache-recovery Samsung S20 FE 1/1: dominio aperto senza cache valida, vecchia cache e cache difettosa eliminate; nuova shell caricata e riaperta realmente offline."
 P1,sync-rete,passed,Attivazione automatica su rete lenta.,globale:T-1644,"ui-slow-activation Thailandia 1.48.8 Samsung S20 FE 1/1: ogni chiamata API ritardata di 1,5 secondi; apertura del link personale, consumo automatico dell’invito, sessione viaggiatore persistita, URL ripulito e nessuna promozione di ruolo."
-P1,sync-rete,pending,Badge sincronizzato dei contenuti non letti.,globale:T-0076,
+P1,sync-rete,passed,Badge sincronizzato dei contenuti non letti.,globale:T-0076,"activity-sync Thailandia 1.48.16: integrazione API QA 1/1 e Playwright touch Samsung S20 FE 1/1 con due telefoni distinti dello stesso profilo; badge inizialmente visibile su entrambi, apertura Attività recenti sul primo, stato letto persistito in D1 e badge rimosso automaticamente sul secondo entro il polling. Un aggiornamento più vecchio non regredisce lo stato; aggiornamento inverso converge sul primo dispositivo. Regressione locale 166/166 applicabili, QA autenticata 18/18 e produzione read-only 8/8; backup pre-migrazione verificato SHA-256 2ED6F5DA…204259."
 P1,sync-rete,pending,Cache-Control corretto.,globale:T-1469,
 P1,sync-rete,pending,Centro “Pronto per l’offline”.,globale:T-0116,
 P1,sync-rete,pending,Centro sincronizzazione visibile.,globale:T-0098,
@@ -983,7 +983,7 @@ P1,sync-rete,pending,sincronizzazione fallita;,usabilita:U0510,
 P1,sync-rete,pending,sincronizzazione incrementale;,globale:T-1802,
 P1,sync-rete,passed,Sincronizzazione sul secondo telefono.,usabilita:U0314,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P1,sync-rete,pending,sono stati superati i test di rete lenta;,globale:T-0688,
-P1,sync-rete,pending,Stato letto/non letto sincronizzato tra dispositivi.,globale:T-0091,
+P1,sync-rete,passed,Stato letto/non letto sincronizzato tra dispositivi.,globale:T-0091,"activity-sync Thailandia 1.48.16: integrazione API QA 1/1 e Playwright touch Samsung S20 FE 1/1 con due telefoni distinti dello stesso profilo; badge inizialmente visibile su entrambi, apertura Attività recenti sul primo, stato letto persistito in D1 e badge rimosso automaticamente sul secondo entro il polling. Un aggiornamento più vecchio non regredisce lo stato; aggiornamento inverso converge sul primo dispositivo. Regressione locale 166/166 applicabili, QA autenticata 18/18 e produzione read-only 8/8; backup pre-migrazione verificato SHA-256 2ED6F5DA…204259."
 P1,sync-rete,passed,test automatico del Service Worker.,globale:T-0013,production-smoke: revisione e Service Worker verificati sul dominio live
 P1,sync-rete,passed,test di idempotenza;,globale:T-0023,"production-smoke: retry idempotenti di commenti, reazioni, post e documenti"
 P1,sync-rete,passed,test offline;,globale:T-0026;usabilita:U0726,offline-queue: due prove automatiche su coda e allegati

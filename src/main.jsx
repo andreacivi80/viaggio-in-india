@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.15",
+const VERSION = "1.48.16",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -1785,6 +1785,12 @@ function App() {
       setPeople(d.profiles || []);
       setDone(d.trip_checks || {});
       syncVersionRef.current = Number(d.sync_version || 0);
+      if (sessionTokenRef.current) {
+        const serverLastRead = d.activity_state?.last_read_at || "";
+        setLastActivityRead(serverLastRead);
+        if (serverLastRead) localStorage.setItem("india-activity-read", serverLastRead);
+        else localStorage.removeItem("india-activity-read");
+      }
       localStorage.setItem(
         "india-posts",
         JSON.stringify(sanitizePostsForPublicCache(d.posts || [])),
@@ -2431,6 +2437,24 @@ function App() {
   const unreadActivityCount = activityItems.filter(
     (item) => !lastActivityRead || item.createdAt > lastActivityRead,
   ).length;
+  const persistActivityRead = async (lastReadAt) => {
+    if (!sessionTokenRef.current) return;
+    try {
+      const response = await fetch(`${API}/activity/read`, {
+        method: "PUT",
+        headers: sessionHeaders(sessionTokenRef.current, { "content-type": "application/json" }),
+        body: JSON.stringify({ last_read_at: lastReadAt }),
+      });
+      if (!response.ok) return;
+      const result = await response.json();
+      if (result.last_read_at && result.last_read_at !== lastReadAt) {
+        setLastActivityRead(result.last_read_at);
+        localStorage.setItem("india-activity-read", result.last_read_at);
+      }
+    } catch {
+      // La lettura locale resta valida; il prossimo accesso riproverà senza bloccare l'utente.
+    }
+  };
   const toggleActivityPanel = () => {
     const opening = !notificationOpen;
     setNotificationOpen(opening);
@@ -2440,6 +2464,7 @@ function App() {
       const readAt = new Date().toISOString();
       setLastActivityRead(readAt);
       localStorage.setItem("india-activity-read", readAt);
+      persistActivityRead(readAt);
     }
   };
   const dismissActivity = (id) => {

@@ -30,7 +30,9 @@ param(
   [switch]$SocialConcurrency,
   [switch]$SocialComments,
   [switch]$DownloadArchiveUi,
-  [switch]$PublishUi
+  [switch]$PublishUi,
+  [switch]$ActivitySync,
+  [switch]$ActivitySyncUi
 )
 
 $ErrorActionPreference = "Stop"
@@ -151,7 +153,10 @@ try {
   $env:QA_UI_DEVICE_KEY = $ownerDeviceKey
   $env:RUN_LOAD = if ($RunLoad) { "true" } else { "false" }
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
-  if ($SlowActivationUi) {
+  if ($ActivitySyncUi) {
+    & npx playwright test "tests/ui-activity-sync.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($SlowActivationUi) {
     & npx playwright test "tests/ui-slow-activation.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
   }
   elseif ($PhotoDeepLinkUi) {
@@ -231,6 +236,9 @@ try {
   }
   elseif ($ExtendedSync) {
     & node tests\extended-p0-sync-delete.mjs
+  }
+  elseif ($ActivitySync) {
+    & node --test --test-concurrency=1 tests\extended-p0-activity-sync.mjs
   }
   elseif ($ExtendedDocuments) {
     & node tests\extended-p0-documents.mjs

@@ -832,7 +832,7 @@ async function chunkedMedia(env, request, key, headers) {
 }
 
 async function readState(env, session = null, guest = null) {
-  const [profiles, posts, comments, reactions, postMedia, tripChecks, syncState] = await Promise.all([
+  const [profiles, posts, comments, reactions, postMedia, tripChecks, syncState, activityState] = await Promise.all([
     env.DB.prepare("SELECT * FROM profiles ORDER BY created_at").all(),
     env.DB.prepare("SELECT * FROM posts ORDER BY created_at DESC").all(),
     env.DB.prepare("SELECT * FROM comments ORDER BY created_at").all(),
@@ -842,6 +842,10 @@ async function readState(env, session = null, guest = null) {
     env.DB.prepare("SELECT * FROM post_media ORDER BY position").all(),
     env.DB.prepare("SELECT check_key,checked FROM trip_checks ORDER BY check_key").all(),
     env.DB.prepare("SELECT version,updated_at FROM sync_state WHERE id=1").first(),
+    session
+      ? env.DB.prepare("SELECT last_read_at,updated_at FROM activity_state WHERE profile_id=?")
+          .bind(session.profile_id).first()
+      : Promise.resolve(null),
   ]);
   const profileById = new Map(profiles.results.map((profile) => [profile.id, profile]));
   const publicName = (profileId, fallback) => {
@@ -854,6 +858,12 @@ async function readState(env, session = null, guest = null) {
   return {
     sync_version: Number(syncState?.version || 0),
     sync_updated_at: syncState?.updated_at || null,
+    activity_state: session
+      ? {
+          last_read_at: activityState?.last_read_at || "",
+          updated_at: activityState?.updated_at || null,
+        }
+      : null,
     trip_checks: Object.fromEntries(
       tripChecks.results.map((item) => [item.check_key, Boolean(item.checked)]),
     ),
@@ -1347,6 +1357,27 @@ export async function onRequest(context) {
       const session = await sessionFromRequest(request, env);
       const guest = session ? null : await guestFromRequest(request, env);
       return json(await readState(env, session, guest));
+    }
+    if (request.method === "PUT" && path === "activity/read") {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 403);
+      const body = await request.json().catch(() => ({}));
+      const parsed = new Date(String(body.last_read_at || ""));
+      if (!Number.isFinite(parsed.getTime()))
+        return json({ error: "Data di lettura non valida" }, 400);
+      const lastReadAt = parsed.toISOString();
+      const updatedAt = now();
+      await env.DB.prepare(
+        `INSERT INTO activity_state(profile_id,last_read_at,updated_at)
+         VALUES(?,?,?)
+         ON CONFLICT(profile_id) DO UPDATE SET
+           last_read_at=excluded.last_read_at,updated_at=excluded.updated_at
+         WHERE excluded.last_read_at > activity_state.last_read_at`,
+      ).bind(session.profile_id, lastReadAt, updatedAt).run();
+      const stored = await env.DB.prepare(
+        "SELECT last_read_at,updated_at FROM activity_state WHERE profile_id=?",
+      ).bind(session.profile_id).first();
+      return json({ ok: true, ...stored });
     }
     if (request.method === "PUT" && path.startsWith("trip-checks/")) {
       const session = await sessionFromRequest(request, env);

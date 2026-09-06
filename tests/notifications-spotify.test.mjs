@@ -5,6 +5,8 @@ import { spotifyLink, splitSpotifyCaption } from "../src/spotify.js";
 
 const ui = await readFile(new URL("../src/main.jsx", import.meta.url), "utf8");
 const headers = await readFile(new URL("../public/_headers", import.meta.url), "utf8");
+const api = await readFile(new URL("../functions/api/[[path]].js", import.meta.url), "utf8");
+const migration = await readFile(new URL("../db/migrations/0027_activity_state.sql", import.meta.url), "utf8");
 
 test("il centro notifiche distingue nuove e viste e consente eliminazione singola o totale", () => {
   assert.match(ui, /india-activity-dismissed/);
@@ -15,6 +17,16 @@ test("il centro notifiche distingue nuove e viste e consente eliminazione singol
   assert.match(ui, /Elimina notifica di/);
   assert.match(ui, /<b>Nell’app<\/b><small>Sempre attivi<\/small>/);
   assert.match(ui, /pushEnabled \? "Attive" : "Non attive"/);
+});
+
+test("badge e stato letto sono sincronizzati per profilo tra dispositivi", () => {
+  assert.match(migration, /profile_id TEXT PRIMARY KEY/);
+  assert.match(migration, /sync_activity_state_update/);
+  assert.match(api, /path === "activity\/read"/);
+  assert.match(api, /WHERE excluded\.last_read_at > activity_state\.last_read_at/);
+  assert.match(api, /activity_state: session/);
+  assert.match(ui, /persistActivityRead\(readAt\)/);
+  assert.match(ui, /d\.activity_state\?\.last_read_at/);
 });
 
 test("gli avvisi nell'app scadono dopo trenta giorni e le menzioni sono riconoscibili", () => {

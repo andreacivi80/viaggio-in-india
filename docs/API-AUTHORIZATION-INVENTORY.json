@@ -82,6 +82,11 @@
       "access": "public-filtered"
     },
     {
+      "method": "PUT",
+      "path": "activity/read",
+      "access": "profile"
+    },
+    {
       "method": "GET",
       "path": "sync/version",
       "access": "public"

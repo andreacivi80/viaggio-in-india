@@ -52,6 +52,7 @@ Il test `endpoint-authorization-inventory.test.mjs` confronta tutte le rotte dic
 | Crea profilo o invito | Coordinatore | `POST /profiles` e `POST /auth/invites`: ruolo coordinatore |
 | Elimina contenuto condiviso | Tutti i viaggiatori e coordinatore | `DELETE /posts`: sessione personale verificata; pubblico e ospiti respinti |
 | Spunta attività del diario | Tutti i viaggiatori e coordinatore | `PUT /trip-checks/*`: sessione personale; stato condiviso tramite D1 |
+| Segna notifiche come lette | Profilo autenticato | `PUT /activity/read`: il server usa il profilo della sessione e sincronizza la data più recente tra dispositivi |
 | Commenta/reagisce | Profilo o familiare identificato | sessione personale o ospite valida e autorizzata alla visibilità del post |
 | Consulta registro di sicurezza | Coordinatore | `GET /security/audit`: ruolo coordinatore; risposta limitata ai campi non sensibili |
 

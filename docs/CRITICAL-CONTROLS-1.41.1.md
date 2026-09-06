@@ -1,7 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
-Controlli selezionati: **71** tra 71 controlli P0–P2 ancora privi di evidenza conclusiva.
-Stato del pacchetto: **0 superati**, **71 pendenti**.
+Controlli selezionati: **69** tra 69 controlli P0–P2 ancora privi di evidenza conclusiva.
+Stato del pacchetto: **0 superati**, **69 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -11,150 +11,146 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
 
 ## K0
 
-- [ ] **K-001 · sync-rete** — Badge sincronizzato dei contenuti non letti.
-  Sorgente: `globale:T-0076`. Più telefoni e reti instabili devono convergere senza perdita o duplicazione.
-- [ ] **K-002 · sync-rete** — Stato letto/non letto sincronizzato tra dispositivi.
-  Sorgente: `globale:T-0091`. Più telefoni e reti instabili devono convergere senza perdita o duplicazione.
-- [ ] **K-003 · media-upload** — Misurare batteria durante upload video.
+- [ ] **K-001 · media-upload** — Misurare batteria durante upload video.
   Sorgente: `globale:T-1664`. Foto, audio e video reali devono caricarsi, riaprirsi e riprendere dopo un errore.
-- [ ] **K-004 · media-upload** — Selezionare un video MOV.
+- [ ] **K-002 · media-upload** — Selezionare un video MOV.
   Sorgente: `usabilita:U0200`. Foto, audio e video reali devono caricarsi, riaprirsi e riprendere dopo un errore.
-- [ ] **K-005 · media-upload** — Selezionare un video MP4.
+- [ ] **K-003 · media-upload** — Selezionare un video MP4.
   Sorgente: `usabilita:U0201`. Foto, audio e video reali devono caricarsi, riaprirsi e riprendere dopo un errore.
-- [ ] **K-006 · altro** — Ricevere una notifica dopo revoca del dispositivo.
+- [ ] **K-004 · altro** — Ricevere una notifica dopo revoca del dispositivo.
   Sorgente: `globale:T-0870`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-007 · profili-ruoli** — Cambiare profilo sullo stesso dispositivo.
+- [ ] **K-005 · profili-ruoli** — Cambiare profilo sullo stesso dispositivo.
   Sorgente: `globale:T-0858`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-008 · profili-ruoli** — Confrontare numero di profili.
+- [ ] **K-006 · profili-ruoli** — Confrontare numero di profili.
   Sorgente: `globale:T-1162`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-009 · profili-ruoli** — Creare il profilo del Viaggiatore A.
+- [ ] **K-007 · profili-ruoli** — Creare il profilo del Viaggiatore A.
   Sorgente: `globale:T-0698`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-010 · profili-ruoli** — Creare il profilo del Viaggiatore B.
+- [ ] **K-008 · profili-ruoli** — Creare il profilo del Viaggiatore B.
   Sorgente: `globale:T-0699`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-011 · profili-ruoli** — Deep link del profilo.
+- [ ] **K-009 · profili-ruoli** — Deep link del profilo.
   Sorgente: `globale:T-0242`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-012 · profili-ruoli** — Modificare contemporaneamente lo stesso profilo da due dispositivi.
+- [ ] **K-010 · profili-ruoli** — Modificare contemporaneamente lo stesso profilo da due dispositivi.
   Sorgente: `globale:T-0797`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-013 · profili-ruoli** — Modificare il profilo dalla seconda.
+- [ ] **K-011 · profili-ruoli** — Modificare il profilo dalla seconda.
   Sorgente: `globale:T-1591`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-014 · profili-ruoli** — Mostrare un messaggio preciso: “Per pubblicare devi prima collegare questo dispositivo al tuo profilo”.
+- [ ] **K-012 · profili-ruoli** — Mostrare un messaggio preciso: “Per pubblicare devi prima collegare questo dispositivo al tuo profilo”.
   Sorgente: `usabilita:U0007`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-015 · profili-ruoli** — Tutti controllano il proprio profilo.
+- [ ] **K-013 · profili-ruoli** — Tutti controllano il proprio profilo.
   Sorgente: `globale:T-1733`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-016 · profili-ruoli** — Verificare che il nome del marker corrisponda al profilo A.
+- [ ] **K-014 · profili-ruoli** — Verificare che il nome del marker corrisponda al profilo A.
   Sorgente: `globale:T-0711`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-017 · profili-ruoli** — Verificare comportamento dopo cambio profilo.
+- [ ] **K-015 · profili-ruoli** — Verificare comportamento dopo cambio profilo.
   Sorgente: `globale:T-1361`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-018 · mappe-posizione** — Aggiornamento con segnale GPS debole.
+- [ ] **K-016 · mappe-posizione** — Aggiornamento con segnale GPS debole.
   Sorgente: `globale:T-1456`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-019 · mappe-posizione** — Visualizzazione della precisione GPS.
+- [ ] **K-017 · mappe-posizione** — Visualizzazione della precisione GPS.
   Sorgente: `globale:T-0215`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-020 · sync-rete** — Preferiti sincronizzati tra dispositivi.
+- [ ] **K-018 · sync-rete** — Preferiti sincronizzati tra dispositivi.
   Sorgente: `globale:T-0267`. Più telefoni e reti instabili devono convergere senza perdita o duplicazione.
-- [ ] **K-021 · usabilita-mobile** — Attivarle su iPhone PWA.
+- [ ] **K-019 · usabilita-mobile** — Attivarle su iPhone PWA.
   Sorgente: `globale:T-0518`. I flussi fondamentali devono restare raggiungibili e azionabili tramite touch.
-- [ ] **K-022 · usabilita-mobile** — Installare la PWA su iPhone.
+- [ ] **K-020 · usabilita-mobile** — Installare la PWA su iPhone.
   Sorgente: `globale:T-0308`. I flussi fondamentali devono restare raggiungibili e azionabili tramite touch.
-- [ ] **K-023 · usabilita-mobile** — iPhone con schermo piccolo.
+- [ ] **K-021 · usabilita-mobile** — iPhone con schermo piccolo.
   Sorgente: `globale:T-1090`. I flussi fondamentali devono restare raggiungibili e azionabili tramite touch.
-- [ ] **K-024 · usabilita-mobile** — iPhone con versione iOS minima supportata.
+- [ ] **K-022 · usabilita-mobile** — iPhone con versione iOS minima supportata.
   Sorgente: `globale:T-1091`. I flussi fondamentali devono restare raggiungibili e azionabili tramite touch.
-- [ ] **K-025 · usabilita-mobile** — iPhone con versione iOS più recente.
+- [ ] **K-023 · usabilita-mobile** — iPhone con versione iOS più recente.
   Sorgente: `globale:T-1092`. I flussi fondamentali devono restare raggiungibili e azionabili tramite touch.
-- [ ] **K-026 · usabilita-mobile** — Test Push su iPhone con PWA installata.
+- [ ] **K-024 · usabilita-mobile** — Test Push su iPhone con PWA installata.
   Sorgente: `globale:T-0097`. I flussi fondamentali devono restare raggiungibili e azionabili tramite touch.
-- [ ] **K-027 · usabilita-mobile** — Utilizzare l’app in automobile come passeggero.
+- [ ] **K-025 · usabilita-mobile** — Utilizzare l’app in automobile come passeggero.
   Sorgente: `globale:T-0597`. I flussi fondamentali devono restare raggiungibili e azionabili tramite touch.
-- [ ] **K-028 · usabilita-mobile** — Verificare Live Photo iPhone.
+- [ ] **K-026 · usabilita-mobile** — Verificare Live Photo iPhone.
   Sorgente: `globale:T-1435`. I flussi fondamentali devono restare raggiungibili e azionabili tramite touch.
-- [ ] **K-029 · altro** — Produrre un resoconto dei dati eliminati.
+- [ ] **K-027 · altro** — Produrre un resoconto dei dati eliminati.
   Sorgente: `globale:T-1350`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-030 · altro** — Verificare incremento della versione per eliminazione.
+- [ ] **K-028 · altro** — Verificare incremento della versione per eliminazione.
   Sorgente: `globale:T-1033`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-031 · media-upload** — Verificare cancellazione immediata dalla mappa.
+- [ ] **K-029 · media-upload** — Verificare cancellazione immediata dalla mappa.
   Sorgente: `globale:T-1463`. Foto, audio e video reali devono caricarsi, riaprirsi e riprendere dopo un errore.
-- [ ] **K-032 · altro** — Notifica → post → indietro.
+- [ ] **K-030 · altro** — Notifica → post → indietro.
   Sorgente: `globale:T-1417`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-033 · altro** — Notifica automatica al responsabile tecnico.
+- [ ] **K-031 · altro** — Notifica automatica al responsabile tecnico.
   Sorgente: `globale:T-1552`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-034 · altro** — Notifica con apertura del post preciso.
+- [ ] **K-032 · altro** — Notifica con apertura del post preciso.
   Sorgente: `globale:T-0083`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-035 · altro** — Ricevere una notifica dopo logout.
+- [ ] **K-033 · altro** — Ricevere una notifica dopo logout.
   Sorgente: `globale:T-0869`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-036 · altro** — Toccando la notifica mostrare “Contenuto non più disponibile”.
+- [ ] **K-034 · altro** — Toccando la notifica mostrare “Contenuto non più disponibile”.
   Sorgente: `globale:T-0872`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-037 · altro** — Toccare la notifica e verificare apertura del post preciso.
+- [ ] **K-035 · altro** — Toccare la notifica e verificare apertura del post preciso.
   Sorgente: `globale:T-0707`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-038 · altro** — Verificare che il contenuto venga ricontrollato dal server quando la notifica viene aperta.
+- [ ] **K-036 · altro** — Verificare che il contenuto venga ricontrollato dal server quando la notifica viene aperta.
   Sorgente: `globale:T-1360`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-039 · altro** — Verificare che il telefono B riceva la notifica.
+- [ ] **K-037 · altro** — Verificare che il telefono B riceva la notifica.
   Sorgente: `globale:T-0715`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-040 · altro** — Verificare ricezione della notifica.
+- [ ] **K-038 · altro** — Verificare ricezione della notifica.
   Sorgente: `usabilita:U0022`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
+- [ ] **K-039 · altro** — Verificare una notifica con telefono bloccato.
+  Sorgente: `globale:T-1364`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
+- [ ] **K-040 · altro** — Verificare una notifica con telefono sbloccato.
+  Sorgente: `globale:T-1365`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
 
 ## K1
 
-- [ ] **K-041 · altro** — Verificare una notifica con telefono bloccato.
-  Sorgente: `globale:T-1364`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-042 · altro** — Verificare una notifica con telefono sbloccato.
-  Sorgente: `globale:T-1365`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-043 · profili-ruoli** — Moltiplicare per tutti i Viaggiatori e familiari.
+- [ ] **K-041 · profili-ruoli** — Moltiplicare per tutti i Viaggiatori e familiari.
   Sorgente: `globale:T-1537`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-044 · profili-ruoli** — Passare a vista Viaggiatore.
+- [ ] **K-042 · profili-ruoli** — Passare a vista Viaggiatore.
   Sorgente: `usabilita:U0453`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-045 · profili-ruoli** — Verificare numero dei Viaggiatori.
+- [ ] **K-043 · profili-ruoli** — Verificare numero dei Viaggiatori.
   Sorgente: `usabilita:U0444`. Identità e ruolo devono determinare esattamente ciò che ogni persona può fare.
-- [ ] **K-046 · social** — Aggiungere reazioni ai commenti.
+- [ ] **K-044 · social** — Aggiungere reazioni ai commenti.
   Sorgente: `globale:T-0058`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-047 · social** — Aggiungere risposte ai commenti.
+- [ ] **K-045 · social** — Aggiungere risposte ai commenti.
   Sorgente: `globale:T-0059`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-048 · social** — Commenti periodici durante la prova.
+- [ ] **K-046 · social** — Commenti periodici durante la prova.
   Sorgente: `globale:T-1126`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-049 · social** — Copiare il collegamento del commento.
+- [ ] **K-047 · social** — Copiare il collegamento del commento.
   Sorgente: `globale:T-0968`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-050 · social** — Errore durante creazione del post con 10 allegati.
+- [ ] **K-048 · social** — Errore durante creazione del post con 10 allegati.
   Sorgente: `globale:T-1148`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-051 · social** — Espandere tutti i commenti.
+- [ ] **K-049 · social** — Espandere tutti i commenti.
   Sorgente: `globale:T-1398`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-052 · social** — Iniziare a scrivere un commento.
+- [ ] **K-050 · social** — Iniziare a scrivere un commento.
   Sorgente: `globale:T-1399`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-053 · mappe-posizione** — Copiare il collegamento della mappa.
+- [ ] **K-051 · mappe-posizione** — Copiare il collegamento della mappa.
   Sorgente: `globale:T-0971`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-054 · mappe-posizione** — Correggere i popup della mappa per impedire inserimento di HTML o script nei nomi.
+- [ ] **K-052 · mappe-posizione** — Correggere i popup della mappa per impedire inserimento di HTML o script nei nomi.
   Sorgente: `globale:T-0186`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-055 · mappe-posizione** — Descrizione dei marker della mappa.
+- [ ] **K-053 · mappe-posizione** — Descrizione dei marker della mappa.
   Sorgente: `globale:T-1063`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-056 · mappe-posizione** — Itinerario → giorno → mappa → indietro.
+- [ ] **K-054 · mappe-posizione** — Itinerario → giorno → mappa → indietro.
   Sorgente: `globale:T-1414`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-057 · mappe-posizione** — Mappa → Google Maps → ritorno all’app.
+- [ ] **K-055 · mappe-posizione** — Mappa → Google Maps → ritorno all’app.
   Sorgente: `globale:T-1416`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-058 · mappe-posizione** — Mappa con coordinate 0,0.
+- [ ] **K-056 · mappe-posizione** — Mappa con coordinate 0,0.
   Sorgente: `globale:T-0945`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-059 · mappe-posizione** — Mappa con dieci persone nello stesso punto.
+- [ ] **K-057 · mappe-posizione** — Mappa con dieci persone nello stesso punto.
   Sorgente: `globale:T-0946`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-060 · mappe-posizione** — Mappa con latitudine -90.
+- [ ] **K-058 · mappe-posizione** — Mappa con latitudine -90.
   Sorgente: `globale:T-0948;globale:T-0949`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-061 · mappe-posizione** — Mappa con longitudine -180.
+- [ ] **K-059 · mappe-posizione** — Mappa con longitudine -180.
   Sorgente: `globale:T-0950;globale:T-0951`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-062 · mappe-posizione** — Mappa con una persona fuori dall’India.
+- [ ] **K-060 · mappe-posizione** — Mappa con una persona fuori dall’India.
   Sorgente: `globale:T-0953`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-063 · mappe-posizione** — Misurare batteria con mappa aperta.
+- [ ] **K-061 · mappe-posizione** — Misurare batteria con mappa aperta.
   Sorgente: `globale:T-1659`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-064 · mappe-posizione** — Verificare mappa quando Google Maps non risponde.
+- [ ] **K-062 · mappe-posizione** — Verificare mappa quando Google Maps non risponde.
   Sorgente: `globale:T-0961`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-065 · mappe-posizione** — Verificare mappa quando OpenFreeMap non risponde.
+- [ ] **K-063 · mappe-posizione** — Verificare mappa quando OpenFreeMap non risponde.
   Sorgente: `globale:T-0962`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-066 · altro** — Disattivazione completa delle notifiche.
+- [ ] **K-064 · altro** — Disattivazione completa delle notifiche.
   Sorgente: `globale:T-0077`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-067 · altro** — Inviare due notifiche con lo stesso tag.
+- [ ] **K-065 · altro** — Inviare due notifiche con lo stesso tag.
   Sorgente: `globale:T-0861`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-068 · altro** — Misurare batteria con notifiche attive.
+- [ ] **K-066 · altro** — Misurare batteria con notifiche attive.
   Sorgente: `globale:T-1660`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-069 · altro** — Notifiche durante la prova.
+- [ ] **K-067 · altro** — Notifiche durante la prova.
   Sorgente: `globale:T-1127`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-070 · altro** — Tutti attivano le notifiche.
+- [ ] **K-068 · altro** — Tutti attivano le notifiche.
   Sorgente: `globale:T-1731`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-071 · altro** — Verificare raggruppamento delle notifiche.
+- [ ] **K-069 · altro** — Verificare raggruppamento delle notifiche.
   Sorgente: `globale:T-0880`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
 
 ## K2
