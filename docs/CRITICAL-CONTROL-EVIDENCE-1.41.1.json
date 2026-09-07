@@ -257,4 +257,6 @@
   ,"globale:T-0872": "ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: dopo eliminazione server del post, il deep link mostra l'avviso accessibile «Contenuto non più disponibile.» senza schermata bianca."
   ,"globale:T-0707": "ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: notifica e commento aprono post_id e comment_id esatti e scorrono al contenuto richiesto."
   ,"globale:T-1360": "ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: il contenuto eliminato viene ricontrollato tramite /api/state e non resta disponibile dalla copia locale; l'interfaccia restituisce l'avviso controllato."
+  ,"globale:T-0077": "P0_PUSH_UNSUBSCRIBE Thailandia 1.48.27 QA isolato 14/14: la disattivazione elimina esclusivamente la sottoscrizione appartenente alla sessione, il retry resta idempotente, un altro viaggiatore non può rimuoverla e un endpoint non valido viene respinto."
+  ,"globale:T-0869": "P0_PUSH_UNSUBSCRIBE Thailandia 1.48.27 QA isolato 14/14: il logout revoca la sessione e rimuove tutte le sottoscrizioni push del profilo; il vecchio token non può inviare il test push e la verifica con una seconda identità conferma che l'endpoint non esiste più."
 }

@@ -38,7 +38,8 @@ param(
   [switch]$ProfileMultideviceUi,
   [switch]$ProfileCreationUi,
   [switch]$FavoritesSyncUi,
-  [switch]$NotificationDeepLinkUi
+  [switch]$NotificationDeepLinkUi,
+  [switch]$PushUnsubscribe
 )
 
 $ErrorActionPreference = "Stop"
@@ -162,6 +163,9 @@ try {
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
   if ($DeviceRevocationNoticeUi) {
     & npx playwright test "tests/ui-device-revocation-notice.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($PushUnsubscribe) {
+    & node "tests/extended-p0-push-unsubscribe.mjs"
   }
   elseif ($NotificationDeepLinkUi) {
     & npx playwright test "tests/ui-notification-deep-link.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line

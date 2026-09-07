@@ -617,7 +617,7 @@ P1,altro,pending,attivare le notifiche;,globale:T-1770,
 P1,altro,pending,Attivare notifiche.,usabilita:U0062,
 P1,altro,pending,Attivazione notifiche.,globale:T-1205,
 P1,altro,pending,Dieci notifiche contemporanee.,globale:T-0571,
-P1,altro,pending,Disattivazione completa delle notifiche.,globale:T-0077,
+P1,altro,passed,Disattivazione completa delle notifiche.,globale:T-0077,"P0_PUSH_UNSUBSCRIBE Thailandia 1.48.27 QA isolato 14/14: la disattivazione elimina esclusivamente la sottoscrizione appartenente alla sessione, il retry resta idempotente, un altro viaggiatore non può rimuoverla e un endpoint non valido viene respinto."
 P1,altro,pending,Disattivazione notifiche.,globale:T-0520,
 P1,altro,pending,Inviare due notifiche con lo stesso tag.,globale:T-0861,
 P1,altro,passed,Inviare notifica con caratteri speciali.,globale:T-0862,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
@@ -642,7 +642,7 @@ P1,altro,pending,notifiche non lette;,addendum:A0078,
 P1,altro,pending,notifiche;,globale:T-1762;usabilita:U0647,
 P1,altro,pending,prima dell’invio della notifica;,addendum:A0117,
 P1,altro,passed,"Rendere reali le menzioni: attualmente “@nome” viene evidenziato, ma non genera una notifica specifica.",globale:T-0065,notifications-spotify 5/5 + ui-notifications-spotify 1/1: @nome viene riconosciuto come menzione personale e compare come attività specifica nel centro notifiche.
-P1,altro,pending,Ricevere una notifica dopo logout.,globale:T-0869,
+P1,altro,passed,Ricevere una notifica dopo logout.,globale:T-0869,P0_PUSH_UNSUBSCRIBE Thailandia 1.48.27 QA isolato 14/14: il logout revoca la sessione e rimuove tutte le sottoscrizioni push del profilo; il vecchio token non può inviare il test push e la verifica con una seconda identità conferma che l'endpoint non esiste più.
 P1,altro,passed,Ricevere una notifica dopo revoca del dispositivo.,globale:T-0870,"ui-device-revocation-notice Thailandia 1.48.17 Samsung S20 FE QA 1/1: il secondo telefono dello stesso profilo revoca realmente il primo; entro il controllo sessione il dispositivo revocato riceve un avviso role=alert chiaro e chiudibile, perde token e comandi privati e torna alla vista pubblica, mentre il secondo resta autorizzato. Regressione locale 167/167 applicabili, QA autenticata 18/18 e produzione read-only 8/8."
 P1,altro,pending,Ricezione notifica consentita.,globale:T-1234,
 P1,altro,pending,stabilità delle notifiche;,globale:T-1119,
