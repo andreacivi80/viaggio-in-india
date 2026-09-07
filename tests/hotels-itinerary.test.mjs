@@ -1,29 +1,24 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
+import { days, places, roadPaths } from "../src/tripThailand.js";
 
 const source = readFileSync(new URL("../src/main.jsx", import.meta.url), "utf8");
 
-test("i cinque nuovi hotel sono collegati a indirizzi, coordinate e giornate", () => {
-  const hotels = [
-    ["Akshay Niwas Boutique Hotel by Amantra", "24.5793118, 73.6692829"],
-    ["Hotel Rajwara Palace", "26.277971, 73.033025"],
-    ["The Wall Street Beacon Hotel", "26.917646, 75.8116579"],
-    ["Hotel Taj Vilas", "27.1580309, 78.0592253"],
-    ["Costa River Varanasi", "25.3385012, 82.9795559"],
-  ];
-  for (const [name, coordinates] of hotels) {
-    assert.match(source, new RegExp(name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.ok(source.includes(`[${coordinates}]`), `Coordinate mancanti per ${name}`);
+test("le undici giornate Thailandia sono collegate a percorsi validi", () => {
+  assert.equal(days.length, 11);
+  for (const [index, day] of days.entries()) {
+    assert.ok(day.date && day.city && day.title, `Giorno ${index + 1}: intestazione incompleta`);
+    assert.ok(places[day.city], `Giorno ${index + 1}: città senza coordinate`);
+    const segments = day.segments || [{ path: day.path }];
+    for (const segment of segments) {
+      const route = roadPaths[segment.path];
+      assert.ok(Array.isArray(route) && route.length >= 2, `Giorno ${index + 1}: percorso ${segment.path} mancante`);
+      for (const coordinates of route)
+        assert.ok(Array.isArray(coordinates) && coordinates.length === 2 && coordinates.every(Number.isFinite));
+    }
   }
-  assert.equal((source.match(/name: "Akshay Niwas Boutique Hotel by Amantra"/g) || []).length, 2);
-  assert.equal((source.match(/name: "Hotel Rajwara Palace"/g) || []).length, 2);
-  assert.equal((source.match(/name: "The Wall Street Beacon Hotel"/g) || []).length, 2);
-  assert.equal((source.match(/name: "Hotel Taj Vilas"/g) || []).length, 2);
-  assert.equal((source.match(/name: "Costa River Varanasi"/g) || []).length, 3);
-  assert.equal((source.match(/name: "Rockland Hotel C\.R\. Park"/g) || []).length, 2);
-  assert.match(source, /overnight: "Notte in treno · Agra → Varanasi"/);
-  assert.match(source, /overnight: "Notte in treno · Varanasi → Delhi"/);
+  assert.equal(days[8].overnight, "Notte in bus · Surat Thani → Bangkok");
 });
 
 test("lo zoom giornaliero privilegia gli spostamenti brevi", () => {
@@ -33,10 +28,13 @@ test("lo zoom giornaliero privilegia gli spostamenti brevi", () => {
   assert.match(source, /specialStops\.map\(\(\[, , coordinates\]\) => coordinates\)/);
 });
 
-test("le linee di trasferimento usano gli hotel come estremi", () => {
-  assert.match(source, /"Delhi-Udaipur-hotel"[\s\S]*?28\.5429119, 77\.2428399[\s\S]*?24\.5793118, 73\.6692829/);
-  assert.match(source, /"Udaipur-Jodhpur"[\s\S]*?24\.5793118, 73\.6692829[\s\S]*?26\.277971, 73\.033025/);
-  assert.match(source, /"Jodhpur-Jaipur"[\s\S]*?26\.277971, 73\.033025[\s\S]*?26\.917646, 75\.8116579/);
-  assert.match(source, /"Jaipur-Agra"[\s\S]*?26\.917646, 75\.8116579[\s\S]*?27\.1580309, 78\.0592253/);
-  assert.match(source, /"Agra-Varanasi-hotel"[\s\S]*?27\.1580309, 78\.0592253[\s\S]*?25\.3385012, 82\.9795559/);
+test("le tratte Thailandia restano continue nei trasferimenti composti", () => {
+  for (const day of days.filter((item) => item.segments)) {
+    for (let index = 1; index < day.segments.length; index += 1) {
+      const previous = roadPaths[day.segments[index - 1].path];
+      const current = roadPaths[day.segments[index].path];
+      const gap = Math.hypot(previous.at(-1)[0] - current[0][0], previous.at(-1)[1] - current[0][1]);
+      assert.ok(gap < 1.5, `${day.date}: discontinuità eccessiva tra ${day.segments[index - 1].path} e ${day.segments[index].path}`);
+    }
+  }
 });

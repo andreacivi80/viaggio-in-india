@@ -25,3 +25,16 @@ test("il pacchetto pubblico non contiene testi visibili del vecchio viaggio in I
   assert.match(bundle, /26 DICEMBRE 2026/);
   assert.match(bundle, /da Bangkok al Mare delle Andamane/);
 });
+
+test("sorgente attivo e seed non conservano contenuti del vecchio itinerario", () => {
+  const activeSources = [
+    "src/main.jsx",
+    "src/tripThailand.js",
+    "functions/api/[[path]].js",
+    "db/schema.sql",
+    "db/reset-for-release.sql",
+  ].map((file) => readFileSync(file, "utf8")).join("\n");
+  for (const pattern of visibleLegacyCopy) assert.doesNotMatch(activeSources, pattern);
+  assert.match(activeSources, /Thailandia insieme/);
+  assert.match(activeSources, /Bangkok/);
+});
