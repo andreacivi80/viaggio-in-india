@@ -619,7 +619,7 @@ P1,altro,pending,Attivazione notifiche.,globale:T-1205,
 P1,altro,pending,Dieci notifiche contemporanee.,globale:T-0571,
 P1,altro,passed,Disattivazione completa delle notifiche.,globale:T-0077,"P0_PUSH_UNSUBSCRIBE Thailandia 1.48.27 QA isolato 14/14: la disattivazione elimina esclusivamente la sottoscrizione appartenente alla sessione, il retry resta idempotente, un altro viaggiatore non può rimuoverla e un endpoint non valido viene respinto."
 P1,altro,pending,Disattivazione notifiche.,globale:T-0520,
-P1,altro,pending,Inviare due notifiche con lo stesso tag.,globale:T-0861,
+P1,altro,passed,Inviare due notifiche con lo stesso tag.,globale:T-0861,"service-worker-push-grouping Thailandia 1.48.27 runtime isolato 2/2: due eventi push reali eseguiti dal Service Worker con tag post-42 confluiscono in un unico avviso, il secondo contenuto sostituisce il primo e renotify resta attivo."
 P1,altro,passed,Inviare notifica con caratteri speciali.,globale:T-0862,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
 P1,altro,passed,Inviare notifica con emoji.,globale:T-0863,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
 P1,altro,passed,Inviare notifica con testo molto lungo.,globale:T-0864,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
@@ -657,7 +657,7 @@ P1,altro,passed,Verificare che il contenuto venga ricontrollato dal server quand
 P1,altro,pending,Verificare che il telefono B riceva la notifica.,globale:T-0715,
 P1,altro,passed,Verificare che una notifica “Solo io” non venga inviata a nessun altro.,globale:T-0876,"push-audience 5/5: un contenuto Solo io non viene inviato ad anonimi, familiari, altri profili né allo stesso autore."
 P1,altro,pending,Verificare preferenze notifiche.,globale:T-1608,
-P1,altro,pending,Verificare raggruppamento delle notifiche.,globale:T-0880,
+P1,altro,passed,Verificare raggruppamento delle notifiche.,globale:T-0880,"service-worker-push-grouping Thailandia 1.48.27 runtime isolato 2/2: tag uguali mantengono un solo gruppo, mentre tag post e commento differenti restano due avvisi distinti conservando i deep link esatti."
 P1,altro,pending,Verificare ricezione della notifica.,usabilita:U0022,
 P1,altro,pending,Verificare una notifica con telefono bloccato.,globale:T-1364,
 P1,altro,pending,Verificare una notifica con telefono sbloccato.,globale:T-1365,

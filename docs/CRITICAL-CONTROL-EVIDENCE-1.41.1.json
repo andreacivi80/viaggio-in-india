@@ -259,4 +259,6 @@
   ,"globale:T-1360": "ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: il contenuto eliminato viene ricontrollato tramite /api/state e non resta disponibile dalla copia locale; l'interfaccia restituisce l'avviso controllato."
   ,"globale:T-0077": "P0_PUSH_UNSUBSCRIBE Thailandia 1.48.27 QA isolato 14/14: la disattivazione elimina esclusivamente la sottoscrizione appartenente alla sessione, il retry resta idempotente, un altro viaggiatore non può rimuoverla e un endpoint non valido viene respinto."
   ,"globale:T-0869": "P0_PUSH_UNSUBSCRIBE Thailandia 1.48.27 QA isolato 14/14: il logout revoca la sessione e rimuove tutte le sottoscrizioni push del profilo; il vecchio token non può inviare il test push e la verifica con una seconda identità conferma che l'endpoint non esiste più."
+  ,"globale:T-0861": "service-worker-push-grouping Thailandia 1.48.27 runtime isolato 2/2: due eventi push reali eseguiti dal Service Worker con tag post-42 confluiscono in un unico avviso, il secondo contenuto sostituisce il primo e renotify resta attivo."
+  ,"globale:T-0880": "service-worker-push-grouping Thailandia 1.48.27 runtime isolato 2/2: tag uguali mantengono un solo gruppo, mentre tag post e commento differenti restano due avvisi distinti conservando i deep link esatti."
 }
