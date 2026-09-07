@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { readFileSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 
 const visibleLegacyCopy = [
@@ -37,4 +37,20 @@ test("sorgente attivo e seed non conservano contenuti del vecchio itinerario", (
   for (const pattern of visibleLegacyCopy) assert.doesNotMatch(activeSources, pattern);
   assert.match(activeSources, /Thailandia insieme/);
   assert.match(activeSources, /Bangkok/);
+});
+
+test("gli asset pubblici del vecchio itinerario sono stati rimossi", () => {
+  for (const path of [
+    "public/cities/agra.jpg",
+    "public/cities/delhi.jpg",
+    "public/cities/india-flag-real.png",
+    "public/cities/india-insieme-collage.png",
+    "public/cities/jaipur.jpg",
+    "public/cities/jodhpur.jpg",
+    "public/cities/ranakpur.jpg",
+    "public/cities/taj-hero-v2.webp",
+    "public/cities/udaipur.jpg",
+    "public/cities/varanasi.jpg",
+    "public/cities/SOURCES.md",
+  ]) assert.equal(existsSync(path), false, `${path} non deve essere pubblicato`);
 });

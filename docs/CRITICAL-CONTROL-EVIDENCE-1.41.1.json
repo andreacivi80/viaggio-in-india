@@ -263,4 +263,5 @@
   ,"globale:T-0880": "service-worker-push-grouping Thailandia 1.48.27 runtime isolato 2/2: tag uguali mantengono un solo gruppo, mentre tag post e commento differenti restano due avvisi distinti conservando i deep link esatti."
   ,"globale:T-1398": "ui-comment-deep-link Thailandia 1.48.27 Galaxy S9+ touch 1/1: una discussione con cinque commenti viene espansa integralmente, ridotta agli ultimi elementi e riaperta; sincronizzazione, reload e ritorno mantengono il commento bersaglio leggibile."
   ,"globale:T-1399": "ui-social Thailandia 1.48.27 Samsung S20 FE QA reale 1/1: il visitatore tocca il campo Scrivi un commento, digita, invia, riceve HTTP 201 e vede autore e testo; un secondo telefono riceve il commento, mentre modifica ed eliminazione restano riservate all'autore."
+  ,"globale:T-0968": "ui-social Thailandia 1.48.28 Samsung S20 FE QA reale 1/1: un visitatore copia con gesto touch il collegamento del proprio commento; l'URL contiene l'identificativo esatto della pubblicazione e un identificativo commento valido, mentre modifica ed eliminazione restano negate a un osservatore non proprietario."
 }

@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.27",
+const VERSION = "1.48.28",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -4079,6 +4079,17 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
     setCommentStatus("Commento eliminato.");
     await refresh();
   };
+  const copyCommentLink = async (commentId) => {
+    const url = new URL(location.origin);
+    url.searchParams.set("post", p.id);
+    url.searchParams.set("comment", commentId);
+    try {
+      await navigator.clipboard.writeText(url.href);
+      setCommentStatus("Collegamento del commento copiato.");
+    } catch {
+      setCommentStatus("Impossibile copiare il collegamento su questo dispositivo.");
+    }
+  };
   const remove = async () => {
     const r = await fetch(`${API}/posts/${p.id}`, {
       method: "DELETE",
@@ -4279,8 +4290,14 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
               ) : (
                 <>
                   {x.text && <span>{renderCommentText(x.text)}</span>}
-                  {(x.can_manage || x.can_delete) && x.text && (
+                  {x.text && (
                     <div className="commentCommands">
+                      <button
+                        aria-label={`Copia collegamento del commento di ${x.author_name || "Ospite"}`}
+                        onClick={() => copyCommentLink(x.id)}
+                      >
+                        Copia link
+                      </button>
                       {x.can_manage && (
                         <button
                           onClick={() => {
@@ -4292,7 +4309,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
                         </button>
                       )}
                       {(x.can_delete ?? x.can_manage) && (
-                        <button onClick={() => setDeletingCommentId(x.id)}>
+                        <button className="commentDelete" onClick={() => setDeletingCommentId(x.id)}>
                           Elimina
                         </button>
                       )}

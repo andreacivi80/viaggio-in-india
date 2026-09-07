@@ -66,7 +66,7 @@ test("ogni membro del gruppo può eliminare i contenuti condivisi ma il pubblico
   assert.match(deletePost, /if \(!session\).*Accesso personale richiesto/);
   assert.doesNotMatch(deletePost, /p\.profile_id !== session\.profile_id/);
   assert.match(deleteComment, /session \|\| \(guest && existing\.visitor_id === guest\.visitor_id\)/);
-  assert.match(ui, /x\.can_manage \|\| x\.can_delete/);
+  assert.match(ui, /x\.can_delete \?\? x\.can_manage/);
 });
 
 test("le spunte del diario sono condivise e modificabili solo dal gruppo", async () => {

@@ -10,7 +10,11 @@ test.skip(!profileName || !inviteToken || !coordinatorInviteToken || !baseUrl, "
 test("visitatore e viaggiatore interagiscono senza ereditare comandi non autorizzati", async ({ browser }) => {
   test.slow();
   const travelerContext = await browser.newContext({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
-  const guestContext = await browser.newContext({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
+  const guestContext = await browser.newContext({
+    ...devices["Galaxy S9+"],
+    serviceWorkers: "block",
+    permissions: ["clipboard-read", "clipboard-write"],
+  });
   const observerContext = await browser.newContext({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
   const coordinatorContext = await browser.newContext({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
   const travelerPage = await travelerContext.newPage();
@@ -105,9 +109,16 @@ test("visitatore e viaggiatore interagiscono senza ereditare comandi non autoriz
     );
     await guestPost.getByPlaceholder("Scrivi un commento…").fill(commentText);
     await guestPost.getByRole("button", { name: "Invia commento" }).tap();
-    expect((await commentResponse).status()).toBe(201);
+    const createdCommentResponse = await commentResponse;
+    expect(createdCommentResponse.status()).toBe(201);
     const ownComment = guestPost.locator(".comment").filter({ hasText: commentText });
     await expect(ownComment).toContainText(guestName);
+    await ownComment.getByRole("button", { name: `Copia collegamento del commento di ${guestName}` }).tap();
+    const copiedCommentUrl = await guestPage.evaluate(() => navigator.clipboard.readText());
+    const copiedCommentLink = new URL(copiedCommentUrl);
+    expect(copiedCommentLink.searchParams.get("post")).toBe(createdPostId);
+    expect(copiedCommentLink.searchParams.get("comment")).toMatch(/^[a-z0-9-]{8,}$/i);
+    await expect(guestPost.getByText("Collegamento del commento copiato.")).toBeVisible();
     await observerPage.bringToFront();
     await expect(observerPost.getByText(commentText)).toBeVisible({ timeout: 15_000 });
 

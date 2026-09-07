@@ -759,8 +759,8 @@ test("health API risponde e non usa il computer locale", async () => {
 });
 
 test("tutte le fotografie delle città sono locali e disponibili", async () => {
-  for (const city of ["delhi", "udaipur", "ranakpur", "jodhpur", "jaipur", "agra", "varanasi"]) {
-    const response = await request(`/cities/${city}.jpg`);
+  for (const city of ["bangkok", "railway-market", "kui-buri", "khao-sok", "cheow-lan", "phi-phi", "krabi"]) {
+    const response = await request(`/thailand/${city}.jpg`);
     assert.equal(response.status, 200, `foto ${city} non disponibile`);
     assert.match(response.headers.get("content-type") || "", /^image\/jpeg/);
     const bytes = new Uint8Array(await response.arrayBuffer());
