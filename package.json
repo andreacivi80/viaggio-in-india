@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build && node scripts/inject-sw-precache.mjs && node scripts/scan-client-secrets.mjs",
-    "test": "node scripts/run-static-tests.mjs && npm run build",
+    "test": "npm run build && node scripts/run-static-tests.mjs",
     "test:smoke": "node --test tests/production-smoke.test.mjs",
     "deploy:qa": "npm run build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/deploy-qa.ps1",
     "test:ui-bootstrap": "playwright test tests/ui-bootstrap.spec.mjs",
