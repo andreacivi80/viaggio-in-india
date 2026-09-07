@@ -1,7 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
-Controlli selezionati: **24** tra 24 controlli P0–P2 ancora privi di evidenza conclusiva.
-Stato del pacchetto: **0 superati**, **24 pendenti**.
+Controlli selezionati: **23** tra 23 controlli P0–P2 ancora privi di evidenza conclusiva.
+Stato del pacchetto: **0 superati**, **23 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -49,15 +49,13 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-1126`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
 - [ ] **K-019 · social** — Errore durante creazione del post con 10 allegati.
   Sorgente: `globale:T-1148`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-020 · mappe-posizione** — Mappa con dieci persone nello stesso punto.
-  Sorgente: `globale:T-0946`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-021 · mappe-posizione** — Misurare batteria con mappa aperta.
+- [ ] **K-020 · mappe-posizione** — Misurare batteria con mappa aperta.
   Sorgente: `globale:T-1659`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-022 · altro** — Misurare batteria con notifiche attive.
+- [ ] **K-021 · altro** — Misurare batteria con notifiche attive.
   Sorgente: `globale:T-1660`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-023 · altro** — Notifiche durante la prova.
+- [ ] **K-022 · altro** — Notifiche durante la prova.
   Sorgente: `globale:T-1127`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-024 · altro** — Tutti attivano le notifiche.
+- [ ] **K-023 · altro** — Tutti attivano le notifiche.
   Sorgente: `globale:T-1731`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
 
 ## K1

@@ -43,7 +43,7 @@ import { validateMediaSelection } from "./mediaValidation.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 import { createTravelArchive, visibleArchiveMedia } from "./travelArchive.js";
-import { buildGoogleMapsDirectionsUrl, buildMapShareUrl } from "./mapLink.js";
+import { buildGoogleMapsDirectionsUrl, buildMapShareUrl, groupLocationsByCoordinate } from "./mapLink.js";
 import {
   cityFacts,
   cityImages,
@@ -60,7 +60,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.30",
+const VERSION = "1.48.31",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -865,39 +865,45 @@ function PeopleLocationMap({ locations }) {
     const render = async () => {
       const { default: maplibregl } = await import("maplibre-gl");
       markersRef.current.forEach((marker) => marker.remove());
-      markersRef.current = locations.map((location) => {
+      const locationGroups = groupLocationsByCoordinate(locations);
+      markersRef.current = locationGroups.map((group) => {
         const node = document.createElement("div");
-        node.className = "personMapMarker";
-        node.textContent = location.display_name?.[0]?.toUpperCase() || "•";
+        node.className = `personMapMarker${group.people.length > 1 ? " personMapMarkerGroup" : ""}`;
+        node.textContent = group.people.length > 1
+          ? String(group.people.length)
+          : group.people[0].display_name?.[0]?.toUpperCase() || "•";
+        node.setAttribute("aria-label", group.people.length > 1
+          ? `${group.people.length} viaggiatori in questa posizione`
+          : `Posizione di ${group.people[0].display_name || "un viaggiatore"}`);
         const popupContent = document.createElement("div");
-        const popupName = document.createElement("strong");
-        const popupTime = document.createElement("small");
-        popupName.textContent = location.display_name || "Viaggiatore";
-        popupTime.textContent = new Date(location.updated_at).toLocaleString("it-IT");
-        popupContent.append(popupName, document.createElement("br"), popupTime);
+        popupContent.className = "personMapPopup";
+        group.people.forEach((location, index) => {
+          if (index) popupContent.append(document.createElement("hr"));
+          const popupName = document.createElement("strong");
+          const popupTime = document.createElement("small");
+          popupName.textContent = location.display_name || "Viaggiatore";
+          popupTime.textContent = new Date(location.updated_at).toLocaleString("it-IT");
+          popupContent.append(popupName, document.createElement("br"), popupTime);
+        });
         return new maplibregl.Marker({ element: node })
-          .setLngLat([Number(location.longitude), Number(location.latitude)])
+          .setLngLat([group.longitude, group.latitude])
           .setPopup(
             new maplibregl.Popup({ offset: 18 }).setDOMContent(popupContent),
           )
           .addTo(map);
       });
       map.resize();
-      if (!locations.length) {
+      if (!locationGroups.length) {
         map.easeTo({ center: [99.75, 10.8], zoom: 5.2, duration: 500 });
-      } else if (locations.length === 1) {
+      } else if (locationGroups.length === 1) {
         map.easeTo({
-          center: [Number(locations[0].longitude), Number(locations[0].latitude)],
+          center: [locationGroups[0].longitude, locationGroups[0].latitude],
           zoom: 10,
           duration: 700,
         });
       } else {
-        const bounds = locations.reduce(
-          (value, location) =>
-            value.extend([
-              Number(location.longitude),
-              Number(location.latitude),
-            ]),
+        const bounds = locationGroups.reduce(
+          (value, group) => value.extend([group.longitude, group.latitude]),
           new maplibregl.LngLatBounds(),
         );
         map.fitBounds(bounds, { padding: 55, maxZoom: 10, duration: 700 });

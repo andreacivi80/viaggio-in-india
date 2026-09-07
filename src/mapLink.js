@@ -23,3 +23,17 @@ export function buildGoogleMapsDirectionsUrl(day) {
   }
   return url.href;
 }
+
+export function groupLocationsByCoordinate(locations = []) {
+  const groups = new Map();
+  for (const location of locations) {
+    const latitude = Number(location.latitude);
+    const longitude = Number(location.longitude);
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) continue;
+    const key = `${latitude.toFixed(6)},${longitude.toFixed(6)}`;
+    const current = groups.get(key) || { latitude, longitude, people: [] };
+    current.people.push(location);
+    groups.set(key, current);
+  }
+  return [...groups.values()];
+}

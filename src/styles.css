@@ -5822,6 +5822,26 @@ mark.mention {
   overflow: visible;
   pointer-events: none;
 }
+
+.personMapMarkerGroup {
+  min-width: 34px;
+  width: auto;
+  padding: 0 8px;
+  background: #152f71;
+  border: 3px solid #fff;
+  box-shadow: 0 3px 12px rgba(8, 23, 58, 0.38);
+}
+
+.personMapPopup {
+  max-height: 220px;
+  overflow-y: auto;
+  min-width: 160px;
+}
+
+.personMapPopup small {
+  display: inline-block;
+  margin-top: 2px;
+}
 .mapUnavailable {
   position: absolute;
   z-index: 520;

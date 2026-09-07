@@ -267,4 +267,5 @@
   ,"globale:T-0971": "ui-map-copy-link Thailandia 1.48.29 Samsung S20 FE QA reale 1/1: con gesto touch viene copiata la giornata 04 della cartina; il collegamento elimina parametri estranei e, aperto su un secondo telefono, mostra direttamente la stessa tratta e la stessa giornata selezionata. QA autenticata di regressione 18/18."
   ,"globale:T-1416": "ui-google-maps-return Thailandia 1.48.30 Samsung S20 FE locale e QA remoto 2/2: il touch apre Google Maps con origine e destinazione della giornata 5; al ritorno l'app conserva la giornata e la mappa resta utilizzabile. QA autenticata 18/18 e produzione read-only 16/16."
   ,"globale:T-0961": "ui-google-maps-return Thailandia 1.48.30 Samsung S20 FE locale e produzione 2/2: Google Maps irraggiungibile non blocca né resetta l'app; la giornata 7 resta selezionata e un successivo touch cambia correttamente tappa."
+  ,"globale:T-0946": "ui-location-cluster Thailandia 1.48.31 Samsung S20 FE locale e QA 2/2: dieci viaggiatori nello stesso punto sono raggruppati in un indicatore 10 accessibile; il popup touch contiene tutti i dieci nomi."
 }
