@@ -1,7 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
-Controlli selezionati: **30** tra 30 controlli P0–P2 ancora privi di evidenza conclusiva.
-Stato del pacchetto: **0 superati**, **30 pendenti**.
+Controlli selezionati: **28** tra 28 controlli P0–P2 ancora privi di evidenza conclusiva.
+Stato del pacchetto: **0 superati**, **28 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -51,25 +51,21 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-0968`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
 - [ ] **K-020 · social** — Errore durante creazione del post con 10 allegati.
   Sorgente: `globale:T-1148`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-021 · social** — Espandere tutti i commenti.
-  Sorgente: `globale:T-1398`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-022 · social** — Iniziare a scrivere un commento.
-  Sorgente: `globale:T-1399`. Commenti e reazioni devono rispettare identità, proprietà e sincronizzazione.
-- [ ] **K-023 · mappe-posizione** — Copiare il collegamento della mappa.
+- [ ] **K-021 · mappe-posizione** — Copiare il collegamento della mappa.
   Sorgente: `globale:T-0971`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-024 · mappe-posizione** — Mappa → Google Maps → ritorno all’app.
+- [ ] **K-022 · mappe-posizione** — Mappa → Google Maps → ritorno all’app.
   Sorgente: `globale:T-1416`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-025 · mappe-posizione** — Mappa con dieci persone nello stesso punto.
+- [ ] **K-023 · mappe-posizione** — Mappa con dieci persone nello stesso punto.
   Sorgente: `globale:T-0946`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-026 · mappe-posizione** — Misurare batteria con mappa aperta.
+- [ ] **K-024 · mappe-posizione** — Misurare batteria con mappa aperta.
   Sorgente: `globale:T-1659`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-027 · mappe-posizione** — Verificare mappa quando Google Maps non risponde.
+- [ ] **K-025 · mappe-posizione** — Verificare mappa quando Google Maps non risponde.
   Sorgente: `globale:T-0961`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-028 · altro** — Misurare batteria con notifiche attive.
+- [ ] **K-026 · altro** — Misurare batteria con notifiche attive.
   Sorgente: `globale:T-1660`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-029 · altro** — Notifiche durante la prova.
+- [ ] **K-027 · altro** — Notifiche durante la prova.
   Sorgente: `globale:T-1127`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-030 · altro** — Tutti attivano le notifiche.
+- [ ] **K-028 · altro** — Tutti attivano le notifiche.
   Sorgente: `globale:T-1731`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
 
 ## K1
