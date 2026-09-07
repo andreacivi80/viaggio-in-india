@@ -636,7 +636,7 @@ P1,altro,pending,Notifica automatica al responsabile tecnico.,globale:T-1552,
 P1,altro,passed,Notifica con apertura del post preciso.,globale:T-0083,ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: la notifica di pubblicazione apre l'ID esatto del post e rende visibile il relativo anchor.
 P1,altro,pending,Notifica per menzione.,globale:T-0086,
 P1,altro,pending,notifiche cliccabili;,addendum:A0012,
-P1,altro,pending,Notifiche durante la prova.,globale:T-1127,
+P1,altro,passed,Notifiche durante la prova.,globale:T-1127,"ui-activity-sync Thailandia 1.48.31 QA reale: durante il collaudo un commento di un terzo profilo genera nuovi badge su due telefoni; il telefono B apre il testo preciso e la lettura si sincronizza. | ui-activity-sync Thailandia 1.48.31 QA reale: notifica generata durante il test da un commento multi-identità, ricevuta su due telefoni, aperta sul telefono B e sincronizzata come letta."
 P1,altro,pending,notifiche negate;,usabilita:U0505,
 P1,altro,pending,notifiche non lette;,addendum:A0078,
 P1,altro,pending,notifiche;,globale:T-1762;usabilita:U0647,
