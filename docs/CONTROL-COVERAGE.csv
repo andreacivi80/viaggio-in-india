@@ -1177,7 +1177,7 @@ P2,social,pending,commentare un post;,globale:T-1772,
 P2,social,pending,"Commentare, se consentito.",usabilita:U0617,
 P2,social,pending,Commentare.,usabilita:U0627,
 P2,social,pending,commenti e reazioni non sono manipolabili;,globale:T-0664,
-P2,social,pending,Commenti periodici durante la prova.,globale:T-1126,
+P2,social,passed,Commenti periodici durante la prova.,globale:T-1126,"P1_SOCIAL_COMMENTS Thailandia 1.48.31 QA reale 18/18: commenti periodici di identità distinte creati, riletti e rimossi nell'ambiente isolato senza duplicazioni o residui. | P1_SOCIAL_COMMENTS Thailandia 1.48.31 QA reale 18/18: commenti periodici multi-identità creati e riletti senza duplicazioni, quindi eliminati con pulizia isolata verificata."
 P2,social,pending,Commento con emoji.,usabilita:U0305,
 P2,social,pending,Commento con menzione.,usabilita:U0306,
 P2,social,pending,Commento molto lungo.,usabilita:U0304,
