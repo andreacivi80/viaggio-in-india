@@ -8,7 +8,7 @@ const sessionToken = process.env.QA_UI_SESSION_TOKEN;
 const profileId = process.env.QA_UI_PROFILE_ID;
 const profileName = process.env.QA_UI_PROFILE_NAME;
 const deviceKey = process.env.QA_UI_DEVICE_KEY;
-const photoPath = fileURLToPath(new URL("../public/cities/agra.jpg", import.meta.url));
+const photoPath = fileURLToPath(new URL("../public/thailand/bangkok.jpg", import.meta.url));
 const videoPath = fileURLToPath(new URL("../public/video/india-insieme-demo.webm", import.meta.url));
 
 test.skip(

@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { isSafeMutationTarget } from "./helpers/qa-mutation-target.mjs";
 
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
-const photoPath = fileURLToPath(new URL("../public/cities/agra.jpg", import.meta.url));
+const photoPath = fileURLToPath(new URL("../public/thailand/bangkok.jpg", import.meta.url));
 const members = [
   {
     label: "Viaggiatore A",

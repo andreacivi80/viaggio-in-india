@@ -7,7 +7,7 @@ const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 const sessionToken = process.env.QA_UI_SESSION_TOKEN;
 const profileId = process.env.QA_UI_PROFILE_ID;
 const deviceKey = process.env.QA_UI_DEVICE_KEY;
-const photoPath = fileURLToPath(new URL("../public/cities/agra.jpg", import.meta.url));
+const photoPath = fileURLToPath(new URL("../public/thailand/bangkok.jpg", import.meta.url));
 
 test.skip(!baseUrl || !sessionToken || !profileId || !deviceKey || !isSafeMutationTarget(baseUrl), "Sessione e URL QA richiesti");
 test.use({ serviceWorkers: "block" });

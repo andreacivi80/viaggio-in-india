@@ -17,7 +17,7 @@ test.skip(
 
 const protectedPdfPath = fileURLToPath(new URL("./fixtures/documento-prova-protetto.pdf", import.meta.url));
 const protectedPdf = await readFile(protectedPdfPath);
-const verticalPassportPath = fileURLToPath(new URL("../public/cities/jaipur.jpg", import.meta.url));
+const verticalPassportPath = fileURLToPath(new URL("../public/thailand/phi-phi.jpg", import.meta.url));
 const verticalPassport = await readFile(verticalPassportPath);
 const phone = { ...devices["Galaxy S9+"], viewport: { width: 412, height: 915 } };
 

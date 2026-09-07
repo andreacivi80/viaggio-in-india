@@ -5,7 +5,7 @@ import { isSafeMutationTarget } from "./helpers/qa-mutation-target.mjs";
 const profileName = process.env.QA_UI_PROFILE_NAME;
 const inviteToken = process.env.QA_UI_INVITE_TOKEN;
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
-const photoPath = fileURLToPath(new URL("../public/cities/agra.jpg", import.meta.url));
+const photoPath = fileURLToPath(new URL("../public/thailand/bangkok.jpg", import.meta.url));
 
 test.skip(!profileName || !inviteToken || !isSafeMutationTarget(baseUrl), "Profilo QA, invito e URL locale/QA richiesti");
 

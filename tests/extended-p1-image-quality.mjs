@@ -12,7 +12,7 @@ if (!base || !process.env.QA_SESSION_TOKEN || !process.env.QA_OWNER_DEVICE_KEY)
   throw new Error("Ambiente QA P1 qualità immagini incompleto");
 
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
-const sourcePath = fileURLToPath(new URL("../public/cities/agra.jpg", import.meta.url));
+const sourcePath = fileURLToPath(new URL("../public/thailand/bangkok.jpg", import.meta.url));
 let postId = "";
 
 const tinyCanvas = createCanvas(12, 8);

@@ -6,7 +6,7 @@ test.use({ serviceWorkers: "block" });
 
 const inviteToken = process.env.QA_UI_INVITE_TOKEN;
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
-const photoPath = fileURLToPath(new URL("../public/cities/jaipur.jpg", import.meta.url));
+const photoPath = fileURLToPath(new URL("../public/thailand/phi-phi.jpg", import.meta.url));
 
 test.skip(!inviteToken || !isSafeMutationTarget(baseUrl), "Invito QA e URL locale/QA richiesti");
 
