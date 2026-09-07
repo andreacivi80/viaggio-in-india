@@ -43,6 +43,7 @@ import { validateMediaSelection } from "./mediaValidation.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 import { createTravelArchive, visibleArchiveMedia } from "./travelArchive.js";
+import { buildMapShareUrl } from "./mapLink.js";
 import {
   cityFacts,
   cityImages,
@@ -59,8 +60,24 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.28",
+const VERSION = "1.48.29",
   API = "/api";
+const copyPlainText = async (value) => {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+  const field = document.createElement("textarea");
+  field.value = value;
+  field.setAttribute("readonly", "");
+  field.style.position = "fixed";
+  field.style.opacity = "0";
+  document.body.appendChild(field);
+  field.select();
+  const copied = document.execCommand?.("copy");
+  field.remove();
+  if (!copied) throw new Error("Clipboard non disponibile");
+};
 const safeWebStorage = (name) => {
   const fallback = new Map();
   let nativeStorage = null;
@@ -2744,6 +2761,7 @@ function MapSection({ selectedDay, setSelectedDay, currentDayIndex, onBack }) {
   const d = selectedDay == null ? null : days[selectedDay];
   const mapShellRef = useRef(null);
   const positionedDayRef = useRef(Symbol("not-positioned"));
+  const [shareStatus, setShareStatus] = useState("");
   const placeMapInUsableViewport = () => {
     const shell = mapShellRef.current;
     if (!shell) return;
@@ -2770,6 +2788,14 @@ function MapSection({ selectedDay, setSelectedDay, currentDayIndex, onBack }) {
     positionedDayRef.current = selectedDay;
     placeMapInUsableViewport();
   };
+  const copyMapLink = async () => {
+    try {
+      await copyPlainText(buildMapShareUrl(location.href, selectedDay));
+      setShareStatus("Collegamento della mappa copiato.");
+    } catch {
+      setShareStatus("Impossibile copiare il collegamento su questo dispositivo.");
+    }
+  };
   return (
     <section className="mapSection">
       {onBack && (
@@ -2782,8 +2808,14 @@ function MapSection({ selectedDay, setSelectedDay, currentDayIndex, onBack }) {
           <span className="eyebrow">CARTINA REALE DELLA THAILANDIA</span>
           <h2>{d ? `${d.from} → ${d.to}` : "Tutto l’itinerario"}</h2>
         </div>
-        {d && <button onClick={() => focusMap(null)}>Vedi tutto</button>}
+        <div className="mapHeadingActions">
+          {d && <button onClick={() => focusMap(null)}>Vedi tutto</button>}
+          <button aria-label="Copia collegamento della mappa" onClick={copyMapLink}>
+            <Link aria-hidden="true" /> Copia link
+          </button>
+        </div>
       </div>
+      <small className="mapShareStatus" role="status" aria-live="polite">{shareStatus}</small>
       {d && (
         <div className="mapTrip mapTripOutside">
           <span>
@@ -4084,7 +4116,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
     url.searchParams.set("post", p.id);
     url.searchParams.set("comment", commentId);
     try {
-      await navigator.clipboard.writeText(url.href);
+      await copyPlainText(url.href);
       setCommentStatus("Collegamento del commento copiato.");
     } catch {
       setCommentStatus("Impossibile copiare il collegamento su questo dispositivo.");
