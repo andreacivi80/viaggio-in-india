@@ -66,6 +66,11 @@ jobs:
             sleep 2
           done
           exit 1
+      - name: Smoke test remoto QA
+        if: env.CLOUDFLARE_CONFIGURED == 'true'
+        run: TEST_EXPECTED_VERSION=$(node -p "require('./package.json').version") npm run test:smoke
+        env:
+          TEST_BASE_URL: https://viaggio-in-india-2026-qa.pages.dev
       - name: Browser Chromium
         if: env.CLOUDFLARE_CONFIGURED == 'true'
         run: npx playwright install --with-deps chromium
