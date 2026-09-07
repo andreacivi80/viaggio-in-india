@@ -645,7 +645,7 @@ async function deleteStoredMedia(env, key) {
   await env.DB.prepare("DELETE FROM upload_sessions WHERE id=?").bind(upload.id).run();
 }
 async function deleteProfileData(env, profileId) {
-  const [profile, postMedia, commentMedia, documents, uploads, uploadParts] = await Promise.all([
+  const [profile, postMedia, commentMedia, documents, uploads, uploadParts, deletionCounts] = await Promise.all([
     env.DB.prepare("SELECT id,role,avatar_key FROM profiles WHERE id=?").bind(profileId).first(),
     env.DB.prepare(
       `SELECT media_key FROM posts WHERE profile_id=? AND media_key IS NOT NULL
@@ -666,6 +666,21 @@ async function deleteProfileData(env, profileId) {
        FROM upload_parts p JOIN upload_sessions u ON u.id=p.upload_session_id
        WHERE u.profile_id=?`,
     ).bind(profileId).all(),
+    env.DB.prepare(
+      `SELECT
+         (SELECT COUNT(*) FROM posts WHERE profile_id=?) AS posts_removed,
+         (SELECT COUNT(*) FROM comments WHERE profile_id=? OR post_id IN (SELECT id FROM posts WHERE profile_id=?)) AS comments_removed,
+         (SELECT COUNT(*) FROM reactions WHERE visitor_id=? OR post_id IN (SELECT id FROM posts WHERE profile_id=?)) AS reactions_removed,
+         (SELECT COUNT(*) FROM document_status WHERE profile_id=?) AS documents_removed,
+         (SELECT COUNT(*) FROM locations WHERE profile_id=?) AS locations_removed,
+         (SELECT COUNT(*) FROM push_subscriptions WHERE profile_id=?) AS push_subscriptions_removed,
+         (SELECT COUNT(*) FROM auth_sessions WHERE profile_id=?) AS sessions_removed,
+         (SELECT COUNT(*) FROM profile_invites WHERE profile_id=? OR created_by=?) AS invites_removed,
+         (SELECT COUNT(*) FROM post_bookmarks WHERE profile_id=? OR post_id IN (SELECT id FROM posts WHERE profile_id=?)) AS bookmarks_removed`,
+    ).bind(
+      profileId, profileId, profileId, profileId, profileId, profileId, profileId,
+      profileId, profileId, profileId, profileId, profileId, profileId,
+    ).first(),
   ]);
   if (!profile) return null;
   const mediaKeys = new Set([
@@ -702,6 +717,20 @@ async function deleteProfileData(env, profileId) {
     profile,
     media_removed: cleanup.filter((result) => result.status === "fulfilled").length,
     media_cleanup_failed: cleanup.filter((result) => result.status === "rejected").length,
+    deletion_summary: {
+      profile_removed: profile ? 1 : 0,
+      posts_removed: Number(deletionCounts?.posts_removed || 0),
+      comments_removed: Number(deletionCounts?.comments_removed || 0),
+      reactions_removed: Number(deletionCounts?.reactions_removed || 0),
+      documents_removed: Number(deletionCounts?.documents_removed || 0),
+      locations_removed: Number(deletionCounts?.locations_removed || 0),
+      push_subscriptions_removed: Number(deletionCounts?.push_subscriptions_removed || 0),
+      sessions_removed: Number(deletionCounts?.sessions_removed || 0),
+      invites_removed: Number(deletionCounts?.invites_removed || 0),
+      bookmarks_removed: Number(deletionCounts?.bookmarks_removed || 0),
+      media_removed: cleanup.filter((result) => result.status === "fulfilled").length,
+      media_cleanup_failed: cleanup.filter((result) => result.status === "rejected").length,
+    },
   };
 }
 let profileGenderSchemaReady = false;
@@ -1958,6 +1987,7 @@ export async function onRequest(context) {
         session_revoked: true,
         media_removed: deleted.media_removed,
         media_cleanup_failed: deleted.media_cleanup_failed,
+        deletion_summary: deleted.deletion_summary,
       });
     }
     if (request.method === "POST" && path === "posts") {

@@ -75,21 +75,30 @@ try {
   const before = await (await request("/api/state", { headers: owner })).json();
   assert.ok(before.profiles.some((profile) => profile.id === profileId));
   assert.ok(before.posts.some((entry) => entry.id === post.id));
+  const versionBefore = Number(before.sync_version);
 
   const deletedResponse = await request(`/api/profiles/${profileId}`, { method: "DELETE", headers: owner });
   assert.equal(deletedResponse.status, 200);
   const deleted = await deletedResponse.json();
   assert.equal(deleted.session_revoked, true);
   assert.equal(deleted.media_cleanup_failed, 0);
+  assert.equal(deleted.deletion_summary.profile_removed, 1);
+  assert.equal(deleted.deletion_summary.posts_removed, 1);
+  assert.equal(deleted.deletion_summary.documents_removed, 1);
+  assert.equal(deleted.deletion_summary.locations_removed, 1);
+  assert.equal(deleted.deletion_summary.push_subscriptions_removed, 1);
+  assert.ok(deleted.deletion_summary.sessions_removed >= 1);
+  assert.ok(deleted.deletion_summary.media_removed >= 2);
   assert.equal((await request("/api/auth/session", { headers: owner })).status, 401);
 
   const after = await (await request("/api/state")).json();
+  assert.ok(Number(after.sync_version) > versionBefore);
   assert.ok(!after.profiles.some((profile) => profile.id === profileId));
   assert.ok(!after.posts.some((entry) => entry.id === post.id));
   assert.notEqual((await request(`/api/media/${document.file_key}`, { method: "HEAD", headers: owner })).status, 200);
   assert.equal((await request(post.media[0].media_url, { method: "HEAD" })).status, 404);
   profileId = "";
-  console.log("QA_LIVE_PROFILE_DELETION=17/17");
+  console.log("QA_LIVE_PROFILE_DELETION=25/25");
 }
 finally {
   if (profileId && token) {

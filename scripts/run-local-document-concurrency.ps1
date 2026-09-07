@@ -32,6 +32,11 @@ $otherToken = New-QaToken
 $coordinatorToken = New-QaToken
 $coordinatorSecondaryToken = New-QaToken
 $deleteProfileToken = New-QaToken
+$ownerDeviceKey = New-QaToken
+$otherDeviceKey = New-QaToken
+$coordinatorDeviceKey = New-QaToken
+$coordinatorSecondaryDeviceKey = New-QaToken
+$deleteProfileDeviceKey = New-QaToken
 $coordinatorSecondaryDeviceId = "local-coordinator-secondary-device"
 $uiTravelerId = "local-ui-traveler-$runId"
 $uiCoordinatorId = "local-ui-coordinator-$runId"
@@ -63,6 +68,10 @@ try {
   if ($LASTEXITCODE -ne 0) { throw "Vincoli profilo documenti D1 locali non riusciti" }
   & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file db\migrations\0022_location_profile_integrity.sql | Out-Null
   if ($LASTEXITCODE -ne 0) { throw "Vincoli profilo posizioni D1 locali non riusciti" }
+  & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file db\migrations\0025_shared_trip_checks.sql | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw "Spunte condivise D1 locali non riuscite" }
+  & npx --yes wrangler@4.118.0 d1 execute viaggio-in-india-qa-db --local --config wrangler.qa.jsonc --persist-to $persistRoot --file db\migrations\0029_post_bookmarks.sql | Out-Null
+  if ($LASTEXITCODE -ne 0) { throw "Preferiti D1 locali non riusciti" }
 
   if ($Suite -in @("all", "auth-lifecycle")) {
     $invalidSessionSql = "INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES('invalid-session-$runId','missing-profile-$runId','invalid-device-$runId','Non valido','$created','$created','$expires',NULL);"
@@ -99,12 +108,12 @@ INSERT INTO profiles(id,name,surname,role,created_at) VALUES
 ('$coordinatorId','Coordinatore','Locale','coordinator','$created'),
 ('$unclaimedId','Invitato','Locale','traveler','$created'),
 ('$deleteProfileId','Da eliminare','Locale','traveler','$created');
-INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at) VALUES
-('$(Get-TokenHash $ownerToken)','$ownerId','local-owner-device','Telefono proprietario locale','$created','$created','$expires',NULL),
-('$(Get-TokenHash $otherToken)','$otherId','local-other-device','Secondo telefono locale','$created','$created','$expires',NULL),
-('$(Get-TokenHash $coordinatorToken)','$coordinatorId','local-coordinator-device','Telefono coordinatore locale','$created','$created','$expires',NULL),
-('$(Get-TokenHash $coordinatorSecondaryToken)','$coordinatorId','$coordinatorSecondaryDeviceId','Secondo telefono coordinatore locale','$created','$created','$expires',NULL),
-('$(Get-TokenHash $deleteProfileToken)','$deleteProfileId','local-delete-device','Telefono profilo da eliminare','$created','$created','$expires',NULL);
+INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,created_at,last_used_at,expires_at,revoked_at,device_key_hash) VALUES
+('$(Get-TokenHash $ownerToken)','$ownerId','local-owner-device','Telefono proprietario locale','$created','$created','$expires',NULL,'$(Get-TokenHash $ownerDeviceKey)'),
+('$(Get-TokenHash $otherToken)','$otherId','local-other-device','Secondo telefono locale','$created','$created','$expires',NULL,'$(Get-TokenHash $otherDeviceKey)'),
+('$(Get-TokenHash $coordinatorToken)','$coordinatorId','local-coordinator-device','Telefono coordinatore locale','$created','$created','$expires',NULL,'$(Get-TokenHash $coordinatorDeviceKey)'),
+('$(Get-TokenHash $coordinatorSecondaryToken)','$coordinatorId','$coordinatorSecondaryDeviceId','Secondo telefono coordinatore locale','$created','$created','$expires',NULL,'$(Get-TokenHash $coordinatorSecondaryDeviceKey)'),
+('$(Get-TokenHash $deleteProfileToken)','$deleteProfileId','local-delete-device','Telefono profilo da eliminare','$created','$created','$expires',NULL,'$(Get-TokenHash $deleteProfileDeviceKey)');
 "@
   if ($Suite -in @("all", "location-retention")) {
     $staleLocationAt = [DateTime]::UtcNow.AddHours(-25).ToString("o")
@@ -220,6 +229,11 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
   $env:QA_COORDINATOR_PROFILE_ID = $coordinatorId
   $env:QA_COORDINATOR_SECOND_TOKEN = $coordinatorSecondaryToken
   $env:QA_COORDINATOR_SECOND_DEVICE_ID = $coordinatorSecondaryDeviceId
+  $env:QA_OWNER_DEVICE_KEY = $ownerDeviceKey
+  $env:QA_OTHER_DEVICE_KEY = $otherDeviceKey
+  $env:QA_COORDINATOR_DEVICE_KEY = $coordinatorDeviceKey
+  $env:QA_COORDINATOR_SECOND_DEVICE_KEY = $coordinatorSecondaryDeviceKey
+  $env:QA_DELETE_PROFILE_DEVICE_KEY = $deleteProfileDeviceKey
   $env:QA_UNCLAIMED_PROFILE_ID = $unclaimedId
   $env:QA_EXPIRED_INVITE_TOKEN = $expiredInviteToken
   $env:QA_EXPIRED_SESSION_TOKEN = $expiredSessionToken
@@ -297,6 +311,14 @@ VALUES('$(Get-TokenHash $expiredInviteToken)','$unclaimedId','$coordinatorId','$
 }
 finally {
   if ($server -and -not $server.HasExited) { Stop-ProcessTree $server.Id }
+  if ($null -ne $suiteExit -and $suiteExit -ne 0) {
+    foreach ($diagnosticLog in @($serverErr, $serverOut)) {
+      if ($diagnosticLog -and (Test-Path -LiteralPath $diagnosticLog)) {
+        Write-Host "P0_DIAGNOSTIC_LOG=$diagnosticLog"
+        Get-Content -LiteralPath $diagnosticLog -Tail 120 -ErrorAction SilentlyContinue | Write-Host
+      }
+    }
+  }
   Get-NetTCPConnection -LocalPort $port -State Listen -ErrorAction SilentlyContinue |
     Select-Object -ExpandProperty OwningProcess -Unique |
     ForEach-Object { Stop-Process -Id $_ -Force -ErrorAction SilentlyContinue }

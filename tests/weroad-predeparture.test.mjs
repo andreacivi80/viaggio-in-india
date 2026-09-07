@@ -7,9 +7,11 @@ const migration = await readFile(new URL("../db/migrations/0015_weroad_predepart
 const source = await readFile(new URL("../src/main.jsx", import.meta.url), "utf8");
 const api = await readFile(new URL("../functions/api/[[path]].js", import.meta.url), "utf8");
 
-test("la pubblicazione WEROAD storica resta idempotente negli schemi", () => {
+test("la pubblicazione WEROAD nuova nasce in Thailandia e la migrazione storica resta applicabile", () => {
+  assert.match(schema, /'weroad-predeparture', 'Thailandia insieme', '', -1, 'public'/);
+  assert.match(schema, /static:\/thailand\/thailandia-insieme\.png/);
+  assert.match(migration, /'weroad-predeparture', 'India insieme', '', -1, 'public'/);
   for (const sql of [schema, migration]) {
-    assert.match(sql, /'weroad-predeparture', 'India insieme', '', -1, 'public'/);
     assert.match(sql, /Il gruppo si sta formando/);
     assert.match(sql, /INSERT OR IGNORE INTO post_media/);
   }

@@ -7,6 +7,11 @@ const visibleLegacyCopy = [
   /dal\s+Rajasthan\s+al\s+Gange/i,
   /India\s+insieme/i,
   /Viaggio\s+in\s+India/i,
+  /Rajasthan/i,
+  /Gange|Ganga|Ganja/i,
+  /New\s+Delhi|Nuova\s+Delhi|\bDelhi\b/i,
+  /\bAgra\b|\bJaipur\b|\bVaranasi\b/i,
+  /Taj\s+Mahal/i,
 ];
 
 test("il pacchetto pubblico non contiene testi visibili del vecchio viaggio in India", () => {

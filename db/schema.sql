@@ -188,6 +188,27 @@ CREATE TABLE IF NOT EXISTS sync_state (
   version INTEGER NOT NULL DEFAULT 0,
   updated_at TEXT NOT NULL
 );
+CREATE TABLE IF NOT EXISTS trip_checks (
+  check_key TEXT PRIMARY KEY,
+  checked INTEGER NOT NULL DEFAULT 0 CHECK (checked IN (0, 1)),
+  updated_by TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+CREATE TRIGGER IF NOT EXISTS sync_trip_checks_insert AFTER INSERT ON trip_checks BEGIN
+  UPDATE sync_state SET version=version+1, updated_at=CURRENT_TIMESTAMP WHERE id=1;
+END;
+CREATE TRIGGER IF NOT EXISTS sync_trip_checks_update AFTER UPDATE ON trip_checks BEGIN
+  UPDATE sync_state SET version=version+1, updated_at=CURRENT_TIMESTAMP WHERE id=1;
+END;
+CREATE TRIGGER IF NOT EXISTS sync_trip_checks_delete AFTER DELETE ON trip_checks BEGIN
+  UPDATE sync_state SET version=version+1, updated_at=CURRENT_TIMESTAMP WHERE id=1;
+END;
+CREATE TRIGGER IF NOT EXISTS sync_post_bookmarks_insert AFTER INSERT ON post_bookmarks BEGIN
+  UPDATE sync_state SET version=version+1, updated_at=CURRENT_TIMESTAMP WHERE id=1;
+END;
+CREATE TRIGGER IF NOT EXISTS sync_post_bookmarks_delete AFTER DELETE ON post_bookmarks BEGIN
+  UPDATE sync_state SET version=version+1, updated_at=CURRENT_TIMESTAMP WHERE id=1;
+END;
 CREATE TABLE IF NOT EXISTS push_subscriptions (
   id TEXT PRIMARY KEY,
   endpoint TEXT NOT NULL UNIQUE,
@@ -234,28 +255,15 @@ INSERT OR IGNORE INTO posts(
   id, author_name, profile_id, day_index, visibility, text, place_name,
   media_key, media_type, media_name, media_size, created_at
 ) VALUES(
-  'india-welcome', 'India insieme', '', -1, 'public',
-  'Il viaggio comincia qui. Foto, voci e ricordi del gruppo, tutti insieme.',
-  '', NULL, NULL, NULL, 0, CURRENT_TIMESTAMP
-);
-INSERT OR IGNORE INTO post_media(
-  id, post_id, media_key, media_type, media_name, media_size, position, created_at
-) VALUES
-  ('india-welcome-photo', 'india-welcome', 'static:/cities/india-insieme-collage.png', 'image/png', 'India insieme', 0, 0, CURRENT_TIMESTAMP),
-  ('india-welcome-audio', 'india-welcome', 'static:/audio/india-insieme-demo.wav', 'audio/wav', 'Il suono dell’India', 0, 1, CURRENT_TIMESTAMP);
-INSERT OR IGNORE INTO posts(
-  id, author_name, profile_id, day_index, visibility, text, place_name,
-  media_key, media_type, media_name, media_size, created_at
-) VALUES(
-  'weroad-predeparture', 'India insieme', '', -1, 'public',
-  'Il gruppo si sta formando: preparativi in corso, valigie quasi pronte e l’India sempre più vicina. Si parte insieme con WEROAD!',
-  '', NULL, NULL, NULL, 0, '2026-08-04 13:30:16'
+  'weroad-predeparture', 'Thailandia insieme', '', -1, 'public',
+  'Il gruppo si sta formando: preparativi in corso, zaini quasi pronti e la Thailandia sempre più vicina. Da Bangkok a Khao Sok, Phi Phi e Krabi: si parte insieme con WEROAD!',
+  '', NULL, NULL, NULL, 0, '2026-09-05 12:00:00'
 );
 INSERT OR IGNORE INTO post_media(
   id, post_id, media_key, media_type, media_name, media_size, position, created_at
 ) VALUES(
-  'weroad-predeparture-photo', 'weroad-predeparture', 'static:/ui/weroad-logo.png',
-  'image/png', 'WEROAD · Preparativi per l’India', 55812, 0, '2026-08-04 13:30:16'
+  'weroad-predeparture-photo', 'weroad-predeparture', 'static:/thailand/thailandia-insieme.png',
+  'image/png', 'Thailandia Insieme · preparativi WEROAD', 2615298, 0, '2026-09-05 12:00:00'
 );
 CREATE INDEX IF NOT EXISTS profile_invites_profile_idx
   ON profile_invites(profile_id, expires_at);

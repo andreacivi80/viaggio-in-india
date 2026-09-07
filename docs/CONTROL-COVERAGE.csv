@@ -343,7 +343,7 @@ P0,altro,pending,Permettere all’utente di eliminare elementi dalla coda.,globa
 P0,altro,pending,possibilità di eliminarli.,addendum:A0372,
 P0,altro,passed,post eliminato;,globale:T-1574,extended-p0-sync-delete: post eliminato e stato finale senza residui
 P0,altro,passed,prima dell’eliminazione;,addendum:A0115,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
-P0,altro,pending,Produrre un resoconto dei dati eliminati.,globale:T-1350,
+P0,altro,passed,Produrre un resoconto dei dati eliminati.,globale:T-1350,"P0_PROFILE_DELETION Thailandia 1.48.25 locale e QA isolato 52/52: la risposta server restituisce un resoconto numerico di profilo, post, commenti, reazioni, documenti, posizione, notifiche, sessioni, inviti, preferiti e file eliminati; la rilettura di database e storage conferma l'assenza di ogni dato collegato."
 P0,altro,passed,Protezione contro eliminazione di post altrui.,globale:T-0223,QA 1.31.0: secondo viaggiatore non puo eliminare il post altrui
 P0,altro,passed,reinviarla dopo eliminazione della risorsa.,addendum:A0330,Authenticated deleted-upload retry 404; preview a4b05356; 2026-08-04
 P0,altro,passed,Tentare clickjacking sui pulsanti Elimina.,globale:T-1488,production-smoke live: l’app non è incorporabile da origini esterne e le API non sono incorporabili
@@ -361,7 +361,7 @@ P0,altro,passed,Verificare eliminazione della subscription Push.,globale:T-1619,
 P0,altro,passed,Verificare eliminazione della subscription.,globale:T-0878,profile-deletion 40/40: record push_subscriptions rimosso dalla cascata atomica
 P0,altro,passed,Verificare eliminazione di tutti i file collegati.,globale:T-0418,"extended-p0-media-delete: JPEG, MP3 e MP4 collegati al post tutti rimossi"
 P0,altro,passed,Verificare eliminazione su tutti i dispositivi.,globale:T-0419,extended-p0-sync-delete: eliminazione propagata e verificata su tre viste separate
-P0,altro,pending,Verificare incremento della versione per eliminazione.,globale:T-1033,
+P0,altro,passed,Verificare incremento della versione per eliminazione.,globale:T-1033,P0_PROFILE_DELETION Thailandia 1.48.25 locale e QA isolato 52/52: sync_version viene letto prima dell'eliminazione e risulta strettamente maggiore dopo la cancellazione completa; sessione revocata e stato aggiornato sono verificati dal server reale QA.
 P0,altro,passed,Verificare log di eliminazione.,globale:T-1004,"security-audit 3/3 + P0_AUTHORIZATION_MATRIX 86/86: eliminazioni di documento, post, commento, profilo e posizione producono eventi con attore, dispositivo e ora server, consultabili soltanto dal coordinatore."
 P0,altro,passed,Verificare se i metadati vengono conservati o eliminati.,globale:T-1439,"security-audit 3/3 + P0_MEDIA_DELETE 14/14: il registro conserva solo metadati tecnici minimi ammessi; nome file, contenuto, password e token sono esclusi e lo storage eliminato non resta raggiungibile."
 P0,documenti,pending,"Aggiornare README e documentazione, ancora riferiti a versioni precedenti.",globale:T-0001,

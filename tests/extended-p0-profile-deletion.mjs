@@ -49,7 +49,11 @@ assert.equal((await request(`/api/profiles/${disposableProfile.id}`, {
   method: "DELETE",
   headers: coordinator,
 })).status, 200);
-assert.ok(!(await (await request("/api/state")).json()).profiles.some((profile) => profile.id === disposableProfile.id));
+const disposableStateResponse = await request("/api/state");
+const disposableStateText = await disposableStateResponse.text();
+assert.equal(disposableStateResponse.status, 200, `stato dopo eliminazione: ${disposableStateText}`);
+const disposableState = JSON.parse(disposableStateText);
+assert.ok(!disposableState.profiles.some((profile) => profile.id === disposableProfile.id));
 
 const concurrentProfileForm = new FormData();
 concurrentProfileForm.set("name", "Profilo eliminazione concorrente");
@@ -154,6 +158,7 @@ assert.equal((await request("/api/reactions", {
 })).status, 200);
 
 const stateBefore = await (await request("/api/state", { headers: owner })).json();
+const versionBefore = Number(stateBefore.sync_version);
 assert.ok(stateBefore.profiles.some((profile) => profile.id === profileId));
 assert.ok(stateBefore.posts.some((entry) => entry.id === post.id));
 const welcomeBefore = stateBefore.posts.find((entry) => entry.id === "weroad-predeparture");
@@ -169,6 +174,13 @@ const deleted = await deleteResponse.json();
 assert.equal(deleted.profile_id, profileId);
 assert.equal(deleted.session_revoked, true);
 assert.equal(deleted.media_cleanup_failed, 0);
+assert.equal(deleted.deletion_summary.profile_removed, 1);
+assert.equal(deleted.deletion_summary.posts_removed, 1);
+assert.equal(deleted.deletion_summary.documents_removed, 1);
+assert.equal(deleted.deletion_summary.locations_removed, 1);
+assert.equal(deleted.deletion_summary.push_subscriptions_removed, 1);
+assert.ok(deleted.deletion_summary.sessions_removed >= 1);
+assert.ok(deleted.deletion_summary.media_removed >= 3);
 
 assert.equal((await request("/api/auth/session", { headers: owner })).status, 401);
 assert.ok([403, 404].includes((await request("/api/auth/claim", {
@@ -177,6 +189,7 @@ assert.ok([403, 404].includes((await request("/api/auth/claim", {
   body: JSON.stringify({ invite_token: pendingInvite.invite_token }),
 })).status));
 const stateAfter = await (await request("/api/state")).json();
+assert.ok(Number(stateAfter.sync_version) > versionBefore);
 assert.ok(!stateAfter.profiles.some((profile) => profile.id === profileId));
 assert.ok(!stateAfter.posts.some((entry) => entry.id === post.id));
 const welcomeAfter = stateAfter.posts.find((entry) => entry.id === "weroad-predeparture");
@@ -190,4 +203,4 @@ assert.equal((await request(post.media[0].media_url, { method: "HEAD" })).status
 assert.equal((await request(avatarUrl, { method: "HEAD" })).status, 404);
 assert.equal((await request(`/api/profiles/${profileId}`, { method: "DELETE", headers: coordinator })).status, 404);
 
-console.log("P0_PROFILE_DELETION=44/44");
+console.log("P0_PROFILE_DELETION=52/52");
