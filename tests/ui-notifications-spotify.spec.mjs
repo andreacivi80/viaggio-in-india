@@ -53,6 +53,18 @@ test("campanella mobile gestisce nuove, viste, eliminazione e Spotify", async ({
   await expect(page.getByText("Nuova", { exact: true })).toHaveCount(3);
   await expect(page.getByText("Ha messo Mi piace a un ricordo")).toBeVisible();
 
+  await page.locator(".notificationItem").filter({ hasText: "Nuovo ricordo" }).locator(".notificationOpenItem").tap();
+  await expect(page).toHaveURL(/post=post-notifiche/);
+  await expect(page.locator('[data-scroll-anchor="post-post-notifiche"]')).toBeVisible();
+  await page.goBack();
+  await expect(page.locator(".notificationPanel")).toBeVisible();
+
+  await page.locator(".notificationItem").filter({ hasText: "Valentina" }).locator(".notificationOpenItem").tap();
+  await expect(page).toHaveURL(/post=post-notifiche.*comment=commento-notifiche/);
+  await expect(page.locator('[data-comment-id="commento-notifiche"]')).toBeVisible();
+  await page.goBack();
+  await expect(page.locator(".notificationPanel")).toBeVisible();
+
   await page.getByRole("button", { name: "Elimina notifica di Sara" }).tap();
   await expect(page.locator(".notificationItem")).toHaveCount(2);
   await page.getByRole("button", { name: "Cancella tutte" }).tap();
@@ -62,4 +74,20 @@ test("campanella mobile gestisce nuove, viste, eliminazione e Spotify", async ({
   await page.getByRole("button", { name: "Chiudi notifiche" }).tap();
   await page.getByRole("button", { name: "Attività recenti" }).tap();
   await expect(page.locator(".notificationItem")).toHaveCount(0);
+});
+
+test("un collegamento di notifica eliminato mostra un messaggio chiaro", async ({ page }) => {
+  await page.addInitScript(() => localStorage.clear());
+  await page.route("**/api/state*", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ sync_version: 2, profiles: [], posts: [] }),
+  }));
+  await page.route("**/api/weather", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ forecasts: [] }),
+  }));
+  await page.goto("/?post=ricordo-eliminato", { waitUntil: "networkidle" });
+  await expect(page.getByRole("alert")).toContainText("Contenuto non più disponibile.");
 });

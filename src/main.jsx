@@ -59,7 +59,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.25",
+const VERSION = "1.48.26",
   API = "/api";
 const safeWebStorage = (name) => {
   const fallback = new Map();
@@ -1658,6 +1658,7 @@ function App() {
     [weatherByDate, setWeatherByDate] = useState({}),
     [indiaClock, setIndiaClock] = useState(() => Date.now()),
     [quickStatus, setQuickStatus] = useState(""),
+    [stateLoaded, setStateLoaded] = useState(false),
     [sessionNotice, setSessionNotice] = useState(""),
     [accessCode, setAccessCode] = useState(""),
     [groupCode, setGroupCode] = useState(""),
@@ -1830,6 +1831,7 @@ function App() {
       if (!r.ok) throw Error();
       const d = await r.json();
       setPosts(d.posts || []);
+      setStateLoaded(true);
       setPeople(d.profiles || []);
       setDone(d.trip_checks || {});
       syncVersionRef.current = Number(d.sync_version || 0);
@@ -1948,7 +1950,11 @@ function App() {
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const postId = params.get("post");
-    if (!postId || !posts.some((post) => post.id === postId)) return;
+    if (!postId) return;
+    if (!posts.some((post) => post.id === postId)) {
+      if (stateLoaded) setSessionNotice("Contenuto non più disponibile.");
+      return;
+    }
     const commentId = params.get("comment");
     const key = `${postId}:${commentId || ""}`;
     if (deepLinkHandledRef.current === key) return;
@@ -1962,7 +1968,7 @@ function App() {
       );
       target?.scrollIntoView({ behavior: "smooth", block: "center" });
     });
-  }, [posts]);
+  }, [posts, stateLoaded]);
   useEffect(() => {
     const timer = setInterval(() => setIndiaToday(indiaDateKey()), 60000);
     return () => clearInterval(timer);
@@ -1999,6 +2005,9 @@ function App() {
         );
         setMapDay(dayIndex);
         setTab("map");
+      } else if (history.state?.view === "notifications") {
+        setTab("diary");
+        setNotificationOpen(true);
       } else {
         restoreNavigationOrigin(navigationOriginRef.current);
       }
@@ -2467,6 +2476,7 @@ function App() {
             text: `Nuovo ricordo · ${days[post.day_index]?.city || "Thailandia"}`,
             createdAt: post.created_at,
             dayIndex: Number(post.day_index) || 0,
+            postId: post.id,
           },
           ...(post.comments || []).map((comment) => {
             const handle = currentProfile ? `@${mentionHandle(currentProfile)}` : "";
@@ -2478,6 +2488,8 @@ function App() {
               text: mentioned ? "Ti ha menzionato in un commento" : `Nuovo commento · ${comment.text || "Allegato"}`,
               createdAt: comment.created_at,
               dayIndex: Number(post.day_index) || 0,
+              postId: post.id,
+              commentId: comment.id,
             };
           }),
           ...(post.reactions || []).map((reaction) => ({
@@ -2487,6 +2499,7 @@ function App() {
             text: reaction.kind === "heart" ? "Ha messo Mi piace a un ricordo" : "Ha reagito a un ricordo",
             createdAt: reaction.created_at,
             dayIndex: Number(post.day_index) || 0,
+            postId: post.id,
           })),
         ])
         .filter((item) => !dismissedActivityIds.includes(item.id))
@@ -2539,6 +2552,25 @@ function App() {
       const next = [...new Set([...activityItems.map((item) => item.id), ...current])].slice(0, 200);
       localStorage.setItem("india-activity-dismissed", JSON.stringify(next));
       return next;
+    });
+  };
+  const openActivityItem = (item) => {
+    const url = new URL(location.href);
+    url.searchParams.set("post", item.postId);
+    if (item.commentId) url.searchParams.set("comment", item.commentId);
+    else url.searchParams.delete("comment");
+    history.replaceState({ ...(history.state || {}), view: "notifications" }, "", location.href);
+    history.pushState({ view: "activity", post: item.postId }, "", url);
+    setSelectedDay(item.dayIndex);
+    setTab("diary");
+    setNotificationOpen(false);
+    requestAnimationFrame(() => {
+      const target = document.querySelector(
+        item.commentId
+          ? `[data-comment-id="${CSS.escape(item.commentId)}"]`
+          : `[data-scroll-anchor="post-${CSS.escape(item.postId)}"]`,
+      );
+      target?.scrollIntoView({ behavior: "smooth", block: "center" });
     });
   };
   return (
@@ -2640,11 +2672,7 @@ function App() {
               <div className="notificationItem" key={item.id}>
                 <button
                   className="notificationOpenItem"
-                  onClick={() => {
-                    setSelectedDay(item.dayIndex);
-                    setTab("diary");
-                    setNotificationOpen(false);
-                  }}
+                  onClick={() => openActivityItem(item)}
                 >
                   <span className="avatar">{item.author?.[0]?.toUpperCase() || "I"}</span>
                   <span>

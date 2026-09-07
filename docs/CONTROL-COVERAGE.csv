@@ -631,9 +631,9 @@ P1,altro,pending,nessuna notifica deve essere inviata;,addendum:A0036,
 P1,altro,pending,nessuna notifica inviata;,globale:T-0749;usabilita:U0586,
 P1,altro,pending,non esistono notifiche;,addendum:A0303,
 P1,altro,passed,Non inviare all’autore la notifica della propria operazione.,globale:T-0081,push-audience 5/5: la subscription con profile_id o guest_id dell’autore viene esclusa prima dell’invio.
-P1,altro,pending,Notifica → post → indietro.,globale:T-1417,
+P1,altro,passed,Notifica → post → indietro.,globale:T-1417,"ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: tocco sulla notifica, apertura del post preciso e gesto Indietro riaprono il centro notifiche senza perdere il contesto."
 P1,altro,pending,Notifica automatica al responsabile tecnico.,globale:T-1552,
-P1,altro,pending,Notifica con apertura del post preciso.,globale:T-0083,
+P1,altro,passed,Notifica con apertura del post preciso.,globale:T-0083,ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: la notifica di pubblicazione apre l'ID esatto del post e rende visibile il relativo anchor.
 P1,altro,pending,Notifica per menzione.,globale:T-0086,
 P1,altro,pending,notifiche cliccabili;,addendum:A0012,
 P1,altro,pending,Notifiche durante la prova.,globale:T-1127,
@@ -647,13 +647,13 @@ P1,altro,passed,Ricevere una notifica dopo revoca del dispositivo.,globale:T-087
 P1,altro,pending,Ricezione notifica consentita.,globale:T-1234,
 P1,altro,pending,stabilità delle notifiche;,globale:T-1119,
 P1,altro,pending,test delle notifiche;,globale:T-0019,
-P1,altro,pending,Toccando la notifica mostrare “Contenuto non più disponibile”.,globale:T-0872,
-P1,altro,pending,Toccare la notifica e verificare apertura del post preciso.,globale:T-0707,
+P1,altro,passed,Toccando la notifica mostrare “Contenuto non più disponibile”.,globale:T-0872,"ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: dopo eliminazione server del post, il deep link mostra l'avviso accessibile «Contenuto non più disponibile.» senza schermata bianca."
+P1,altro,passed,Toccare la notifica e verificare apertura del post preciso.,globale:T-0707,ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: notifica e commento aprono post_id e comment_id esatti e scorrono al contenuto richiesto.
 P1,altro,pending,Tutti attivano le notifiche.,globale:T-1731,
 P1,altro,pending,una notifica mostra dati riservati;,usabilita:U0697,
 P1,altro,passed,Utilizzare una notifica generica quando il contenuto è sensibile.,globale:T-1357,"push-payload-privacy 4/4: per contenuti e commenti il push usa titolo e corpo generici e non include testo, identità, documenti o metadati sensibili."
 P1,altro,pending,Verifica notifiche Push.,globale:T-0660,
-P1,altro,pending,Verificare che il contenuto venga ricontrollato dal server quando la notifica viene aperta.,globale:T-1360,
+P1,altro,passed,Verificare che il contenuto venga ricontrollato dal server quando la notifica viene aperta.,globale:T-1360,ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: il contenuto eliminato viene ricontrollato tramite /api/state e non resta disponibile dalla copia locale; l'interfaccia restituisce l'avviso controllato.
 P1,altro,pending,Verificare che il telefono B riceva la notifica.,globale:T-0715,
 P1,altro,passed,Verificare che una notifica “Solo io” non venga inviata a nessun altro.,globale:T-0876,"push-audience 5/5: un contenuto Solo io non viene inviato ad anonimi, familiari, altri profili né allo stesso autore."
 P1,altro,pending,Verificare preferenze notifiche.,globale:T-1608,

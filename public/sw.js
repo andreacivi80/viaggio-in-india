@@ -1,4 +1,4 @@
-const CACHE = "thailandia-insieme-v1.48.25";
+const CACHE = "thailandia-insieme-v1.48.26";
 const PRECACHE = [
   "./",
   "./manifest.webmanifest",

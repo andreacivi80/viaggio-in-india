@@ -37,7 +37,8 @@ param(
   [switch]$DeviceRevocationNoticeUi,
   [switch]$ProfileMultideviceUi,
   [switch]$ProfileCreationUi,
-  [switch]$FavoritesSyncUi
+  [switch]$FavoritesSyncUi,
+  [switch]$NotificationDeepLinkUi
 )
 
 $ErrorActionPreference = "Stop"
@@ -143,6 +144,7 @@ try {
   $env:QA_SECOND_DEVICE_ID = $secondaryDeviceId
   $env:QA_SECOND_DEVICE_TOKEN = $secondaryDeviceToken
   $env:QA_RUN_ID = $runId
+  $env:QA_REFERENCE_POST_ID = $referencePostId
   $env:QA_DELETE_PROFILE_ID = $deleteProfileId
   $env:QA_DELETE_PROFILE_TOKEN = $deleteProfileToken
   $env:QA_OWNER_DEVICE_KEY = $ownerDeviceKey
@@ -160,6 +162,9 @@ try {
   $env:RUN_ABUSE = if ($AbuseOnly) { "true" } else { "false" }
   if ($DeviceRevocationNoticeUi) {
     & npx playwright test "tests/ui-device-revocation-notice.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($NotificationDeepLinkUi) {
+    & npx playwright test "tests/ui-notification-deep-link.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
   }
   elseif ($ProfileMultideviceUi) {
     & npx playwright test "tests/ui-profile-multidevice.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
