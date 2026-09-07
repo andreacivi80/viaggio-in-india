@@ -39,7 +39,8 @@ param(
   [switch]$ProfileCreationUi,
   [switch]$FavoritesSyncUi,
   [switch]$NotificationDeepLinkUi,
-  [switch]$PushUnsubscribe
+  [switch]$PushUnsubscribe,
+  [switch]$TenAttachments
 )
 
 $ErrorActionPreference = "Stop"
@@ -181,6 +182,9 @@ try {
   }
   elseif ($MobileVideoFormatsUi) {
     & npx playwright test "tests/ui-mobile-video-formats.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+  }
+  elseif ($TenAttachments) {
+    & node "tests/extended-p0-ten-attachments.mjs"
   }
   elseif ($ActivitySyncUi) {
     & npx playwright test "tests/ui-activity-sync.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line

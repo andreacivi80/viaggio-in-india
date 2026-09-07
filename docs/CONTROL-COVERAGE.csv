@@ -1192,7 +1192,7 @@ P2,social,passed,Deep link del singolo commento.,globale:T-0243,"ui-comment-deep
 P2,social,pending,Definire cosa accade ai commenti.,globale:T-1317,
 P2,social,pending,Definire cosa accade alle reazioni.,globale:T-1319,
 P2,social,pending,Definire per quanto tempo vengono conservati i commenti.,globale:T-1342,
-P2,social,pending,Errore durante creazione del post con 10 allegati.,globale:T-1148,
+P2,social,passed,Errore durante creazione del post con 10 allegati.,globale:T-1148,"P0_TEN_ATTACHMENTS Thailandia 1.48.31 QA reale: un post con dieci JPEG distinti restituisce HTTP 201, conserva nomi e ordine 10/10, riapre 10/10 file e viene eliminato senza lasciare la pubblicazione nel database. | P0_TEN_ATTACHMENTS Thailandia 1.48.31 QA reale: creazione HTTP 201 con dieci JPEG distinti, persistenza e riapertura 10/10, ordine e nomi integri, eliminazione finale verificata."
 P2,social,passed,Espandere tutti i commenti.,globale:T-1398,"ui-comment-deep-link Thailandia 1.48.27 Galaxy S9+ touch 1/1: una discussione con cinque commenti viene espansa integralmente, ridotta agli ultimi elementi e riaperta; sincronizzazione, reload e ritorno mantengono il commento bersaglio leggibile."
 P2,social,passed,Il commento non deve rimanere orfano.,globale:T-0794,verify-d1-backup: zero commenti orfani dopo il ripristino
 P2,social,passed,Iniziare a scrivere un commento.,globale:T-1399,"ui-social Thailandia 1.48.27 Samsung S20 FE QA reale 1/1: il visitatore tocca il campo Scrivi un commento, digita, invia, riceve HTTP 201 e vede autore e testo; un secondo telefono riceve il commento, mentre modifica ed eliminazione restano riservate all'autore."

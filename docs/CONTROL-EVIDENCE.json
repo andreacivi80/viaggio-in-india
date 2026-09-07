@@ -360,4 +360,5 @@
   ,{ "control": "Verificare che il telefono B riceva la notifica.", "evidence": "ui-activity-sync Thailandia 1.48.31 QA reale 1/1: un terzo profilo pubblica un commento; due telefoni dello stesso destinatario ricevono il nuovo badge e il telefono B apre il testo esatto, poi la lettura si sincronizza tra dispositivi." }
   ,{ "control": "Verificare ricezione della notifica.", "evidence": "ui-activity-sync Thailandia 1.48.31 QA reale 1/1: notifica in-app generata da un commento reale, ricevuta e aperta con gesto touch sul secondo telefono." }
   ,{ "control": "Verificare una notifica con telefono sbloccato.", "evidence": "ui-activity-sync Thailandia 1.48.31 Samsung S20 FE QA 1/1: con entrambi i telefoni attivi e sbloccati il badge compare entro il limite, il pannello mostra il contenuto corretto e lo stato letto si propaga." }
+  ,{ "control": "Errore durante creazione del post con 10 allegati.", "evidence": "P0_TEN_ATTACHMENTS Thailandia 1.48.31 QA reale: un post con dieci JPEG distinti restituisce HTTP 201, conserva nomi e ordine 10/10, riapre 10/10 file e viene eliminato senza lasciare la pubblicazione nel database." }
 ]
