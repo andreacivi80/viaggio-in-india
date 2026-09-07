@@ -1106,7 +1106,7 @@ P2,profili-ruoli,pending,non deve poter scegliere il profilo di un Viaggiatore;,
 P2,profili-ruoli,pending,non esistono profili;,addendum:A0297,
 P2,profili-ruoli,passed,Non modificare profili altrui.,usabilita:U0373,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,passed,Non modificare profili.,usabilita:U0368,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
-P2,profili-ruoli,pending,Passare a vista Viaggiatore.,usabilita:U0453,
+P2,profili-ruoli,passed,Passare a vista Viaggiatore.,usabilita:U0453,"ui-traveler-view Thailandia 1.48.31 Samsung S20 FE QA reale 1/1: una sessione Viaggiatore parte con ruolo coordinator e profile_id manipolati nel telefono; il server ripristina identità e ruolo traveler, la UI touch mostra Gruppo, Documenti e Scarica dati, non monta la Griglia coordinatore e l'endpoint riservato agli inviti risponde 403."
 P2,profili-ruoli,passed,profile_id;,addendum:A0073,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P2,profili-ruoli,passed,profilo corretto;,usabilita:U0590;usabilita:U0599;usabilita:U0604;usabilita:U0640,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P2,profili-ruoli,pending,profilo creato;,globale:T-1575,

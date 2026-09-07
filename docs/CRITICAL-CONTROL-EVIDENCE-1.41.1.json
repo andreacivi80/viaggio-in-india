@@ -274,4 +274,5 @@
   ,"globale:T-1148": "P0_TEN_ATTACHMENTS Thailandia 1.48.31 QA reale: creazione HTTP 201 con dieci JPEG distinti, persistenza e riapertura 10/10, ordine e nomi integri, eliminazione finale verificata."
   ,"globale:T-1126": "P1_SOCIAL_COMMENTS Thailandia 1.48.31 QA reale 18/18: commenti periodici multi-identità creati e riletti senza duplicazioni, quindi eliminati con pulizia isolata verificata."
   ,"globale:T-1127": "ui-activity-sync Thailandia 1.48.31 QA reale: notifica generata durante il test da un commento multi-identità, ricevuta su due telefoni, aperta sul telefono B e sincronizzata come letta."
+  ,"usabilita:U0453": "ui-traveler-view Thailandia 1.48.31 Samsung S20 FE QA reale 1/1: una sessione Viaggiatore parte con ruolo coordinator e profile_id manipolati nel telefono; il server ripristina identità e ruolo traveler, la UI touch mostra Gruppo, Documenti e Scarica dati, non monta la Griglia coordinatore e l'endpoint riservato agli inviti risponde 403."
 }
