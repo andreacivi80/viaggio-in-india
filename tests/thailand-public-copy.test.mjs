@@ -3,7 +3,10 @@ import { existsSync, readFileSync, readdirSync } from "node:fs";
 import test from "node:test";
 
 const visibleLegacyCopy = [
+  /\bIndia\b/,
+  /\bindian[oaie]\b/i,
   /10\s*[—-]\s*23\s*agosto/i,
+  /\b10\s+agosto\b|\b23\s+agosto\b/i,
   /dal\s+Rajasthan\s+al\s+Gange/i,
   /India\s+insieme/i,
   /Viaggio\s+in\s+India/i,
@@ -11,7 +14,10 @@ const visibleLegacyCopy = [
   /Gange|Ganga|Ganja/i,
   /New\s+Delhi|Nuova\s+Delhi|\bDelhi\b/i,
   /\bAgra\b|\bJaipur\b|\bVaranasi\b/i,
+  /\bJodhpur\b|\bUdaipur\b|\bRanakpur\b/i,
   /Taj\s+Mahal/i,
+  /Rockland|Rajwara|Akshay\s+Niwas|Wall\s+Street\s+Beacon|Taj\s+Vilas|Costa\s+River/i,
+  /Asia\/Kolkata|Ora\s+India/i,
 ];
 
 test("il pacchetto pubblico non contiene testi visibili del vecchio viaggio in India", () => {

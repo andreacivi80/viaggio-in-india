@@ -2632,12 +2632,22 @@ h2 {
   align-items: stretch;
   gap: 6px;
 }
-.mapHeadingActions button {
+.mapHeadingActions button,
+.mapHeadingActions a {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
   min-height: 36px;
+  box-sizing: border-box;
+  border: 0;
+  border-radius: 99px;
+  padding: 8px 10px;
+  background: #f0dfca;
+  color: #8c451f;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
   white-space: nowrap;
 }
 .mapHeadingActions svg { width: 14px; height: 14px; }

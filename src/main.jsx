@@ -43,7 +43,7 @@ import { validateMediaSelection } from "./mediaValidation.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 import { createTravelArchive, visibleArchiveMedia } from "./travelArchive.js";
-import { buildMapShareUrl } from "./mapLink.js";
+import { buildGoogleMapsDirectionsUrl, buildMapShareUrl } from "./mapLink.js";
 import {
   cityFacts,
   cityImages,
@@ -60,7 +60,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.29",
+const VERSION = "1.48.30",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -2759,6 +2759,7 @@ function App() {
 
 function MapSection({ selectedDay, setSelectedDay, currentDayIndex, onBack }) {
   const d = selectedDay == null ? null : days[selectedDay];
+  const googleMapsUrl = buildGoogleMapsDirectionsUrl(d);
   const mapShellRef = useRef(null);
   const positionedDayRef = useRef(Symbol("not-positioned"));
   const [shareStatus, setShareStatus] = useState("");
@@ -2813,6 +2814,14 @@ function MapSection({ selectedDay, setSelectedDay, currentDayIndex, onBack }) {
           <button aria-label="Copia collegamento della mappa" onClick={copyMapLink}>
             <Link aria-hidden="true" /> Copia link
           </button>
+          <a
+            href={googleMapsUrl}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Apri questo percorso in Google Maps"
+          >
+            <MapPin aria-hidden="true" /> Google Maps
+          </a>
         </div>
       </div>
       <small className="mapShareStatus" role="status" aria-live="polite">{shareStatus}</small>

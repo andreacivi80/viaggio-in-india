@@ -493,7 +493,7 @@ async function notifySubscribers(env, payload) {
   if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY)
     return { configured: false, sent: 0, failed: 0, errors: ["Chiavi push mancanti"] };
   const vapid = {
-    subject: "https://viaggio-in-india-2026.pages.dev/",
+    subject: "https://viaggio-in-thailandia-2026.pages.dev/",
     publicKey: env.VAPID_PUBLIC_KEY,
     privateKey: env.VAPID_PRIVATE_KEY,
   };
