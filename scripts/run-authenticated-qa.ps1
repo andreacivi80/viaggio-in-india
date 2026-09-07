@@ -100,13 +100,21 @@ $deleteProfileDeviceKey = "7" * 64
 $secondaryDeviceId = "device-owner-secondary-$runId"
 $coordinatorSecondaryDeviceId = "device-coordinator-secondary-$runId"
 $created = [DateTime]::UtcNow.ToString("o")
-$expires = [DateTime]::UtcNow.AddHours(3).ToString("o")
+# Le prove UI del ruolo devono osservare la vista, non innescare nello stesso
+# istante anche la rotazione di una sessione prossima alla scadenza.
+$expires = if ($TravelerViewUi) {
+  [DateTime]::UtcNow.AddDays(30).ToString("o")
+} else {
+  [DateTime]::UtcNow.AddHours(3).ToString("o")
+}
 $oldLastUse = [DateTime]::UtcNow.AddDays(-30).ToString("o")
 $ids = @($ownerId, $otherId, $coordinatorId, $unclaimedId, $deleteProfileId)
 $quotedIds = ($ids | ForEach-Object { "'$_'" }) -join ","
 
 $setupSql = @"
 DELETE FROM rate_limits;
+UPDATE profiles SET role='traveler'
+WHERE role='coordinator' AND id LIKE 'qa-%';
 INSERT OR IGNORE INTO profiles(id,name,surname,role,created_at) VALUES
 ('$ownerId','Proprietario','QA','traveler','$created'),
 ('$otherId','Secondo','QA','traveler','$created'),

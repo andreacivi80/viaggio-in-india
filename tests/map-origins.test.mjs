@@ -17,6 +17,12 @@ test("i punti italiani rimangono compatti anche con conteggi a due cifre", () =>
   assert.match(styles, /\.italyOriginMarker\s*\{[^}]*width:\s*28px;[^}]*height:\s*28px;[^}]*font-size:\s*11px;/s);
 });
 
+test("la cartina WEROAD mantiene sempre l'Italia intera anche con una sola provenienza", () => {
+  assert.match(source, /const ITALY_OVERVIEW_BOUNDS = \[\[6\.4, 35\.4\], \[18\.9, 47\.2\]\]/);
+  assert.match(source, /map\.fitBounds\(ITALY_OVERVIEW_BOUNDS, \{ padding: 24, maxZoom: 5\.2, duration: 0 \}\)/);
+  assert.doesNotMatch(source, /groups\.length === 1\) map\.easeTo/);
+});
+
 test("le icone della mappa generale sono ancorate a tratte reali", () => {
   for (const reference of ["Bangkok–Hua Hin", "Kui Buri", "Cheow Lan", "Phi Phi", "Surat–Bangkok"])
     assert.ok(itinerary.includes(`"${reference}"`), `riferimento mancante: ${reference}`);

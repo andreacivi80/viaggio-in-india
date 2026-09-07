@@ -126,7 +126,17 @@ test("GPS volontario, mappa Thailandia, Google Maps, rimozione e sincronizzazion
     const coordinatorLocation = coordinatorPage.locator(".locationList article").filter({ hasText: coordinatorName });
     await expect(coordinatorLocation).toContainText("28.6139, 77.2090");
     await expect(coordinatorPage.locator(".locationList article")).toHaveCount(2);
-    await expect(coordinatorPage.locator(".personMapMarker")).toHaveCount(2);
+    const groupedMarker = coordinatorPage.locator(".personMapMarkerGroup");
+    await expect(coordinatorPage.locator(".personMapMarker")).toHaveCount(1);
+    await expect(groupedMarker).toHaveText("2");
+    await expect(groupedMarker).toHaveAttribute(
+      "aria-label",
+      "2 viaggiatori in questa posizione",
+    );
+    await groupedMarker.tap();
+    const groupedPopup = coordinatorPage.locator(".maplibregl-popup");
+    await expect(groupedPopup).toContainText(markerName);
+    await expect(groupedPopup).toContainText(coordinatorName);
     const coordinatorDeleteResponse = coordinatorPage.waitForResponse(
       (response) => response.url().includes("/api/locations/") && response.request().method() === "DELETE",
     );

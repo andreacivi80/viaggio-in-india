@@ -1,6 +1,12 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import {
+  AUTHENTICATED_SYNC_INTERVAL_MS,
+  PRIVATE_SYNC_INTERVAL_MS,
+  PUBLIC_SYNC_INTERVAL_MS,
+  SESSION_VERIFICATION_INTERVAL_MS,
+} from "../src/syncIntervals.js";
 
 const source = await readFile(new URL("../src/main.jsx", import.meta.url), "utf8");
 const serviceWorker = await readFile(new URL("../public/sw.js", import.meta.url), "utf8");
@@ -45,7 +51,14 @@ test("K0: un aggiornamento non ricarica la pagina durante scrittura, registrazio
 });
 
 test("K1: la sincronizzazione riduce il polling e accelera soltanto su ritorno online o in primo piano", () => {
-  assert.match(source, /setInterval\(checkVersion, 5000\)/);
+  assert.equal(AUTHENTICATED_SYNC_INTERVAL_MS, 7_500);
+  assert.equal(PUBLIC_SYNC_INTERVAL_MS, 15_000);
+  assert.equal(PRIVATE_SYNC_INTERVAL_MS, 10_000);
+  assert.equal(SESSION_VERIFICATION_INTERVAL_MS, 60_000);
+  assert.match(source, /effectiveSessionToken \? AUTHENTICATED_SYNC_INTERVAL_MS : PUBLIC_SYNC_INTERVAL_MS/);
+  assert.match(source, /document\.removeEventListener\("visibilitychange", onReturn\);\s*};\s*}, \[effectiveSessionToken\]\);/);
+  assert.match(source, /setInterval\(checkPrivateUpdates, PRIVATE_SYNC_INTERVAL_MS\)/);
+  assert.match(source, /setInterval\(verifySession, SESSION_VERIFICATION_INTERVAL_MS\)/);
   assert.match(source, /if \(document\.hidden \|\| !navigator\.onLine\) return/);
   assert.match(source, /addEventListener\("online", checkVersion\)/);
   assert.match(source, /document\.addEventListener\("visibilitychange", onReturn\)/);

@@ -11,14 +11,14 @@ const phones = [
 const intersects = (a, b) =>
   a.x < b.x + b.width && a.x + a.width > b.x && a.y < b.y + b.height && a.y + a.height > b.y;
 
-test("bacheca armonica: i comandi non coprono il Taj Mahal", async ({ browser }, testInfo) => {
+test("bacheca armonica: i comandi non coprono la foto di Khao Sok", async ({ browser }, testInfo) => {
   for (const [name, device] of phones) {
     const context = await browser.newContext({ ...device });
     const page = await context.newPage();
     await page.goto(baseUrl, { waitUntil: "networkidle" });
     const hero = page.locator(".hero");
     await expect(hero).toBeVisible();
-    expect(await hero.evaluate((element) => getComputedStyle(element).backgroundImage)).toContain("taj-hero-v2.webp");
+    expect(await hero.evaluate((element) => getComputedStyle(element).backgroundImage)).toContain("thailand/khao-sok.jpg");
 
     const heroBox = await hero.boundingBox();
     const controlLocators = [

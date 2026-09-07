@@ -43,6 +43,12 @@ import { validateMediaSelection } from "./mediaValidation.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 import { createTravelArchive, visibleArchiveMedia } from "./travelArchive.js";
+import {
+  AUTHENTICATED_SYNC_INTERVAL_MS,
+  PRIVATE_SYNC_INTERVAL_MS,
+  PUBLIC_SYNC_INTERVAL_MS,
+  SESSION_VERIFICATION_INTERVAL_MS,
+} from "./syncIntervals.js";
 import { buildGoogleMapsDirectionsUrl, buildMapShareUrl, groupLocationsByCoordinate } from "./mapLink.js";
 import {
   cityFacts,
@@ -60,7 +66,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.31",
+const VERSION = "1.48.32",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -137,6 +143,7 @@ const ITALIAN_CITY_COORDINATES = {
   lecce: [18.172, 40.352], messina: [15.554, 38.193], catania: [15.087, 37.503],
   siracusa: [15.293, 37.075], sassari: [8.56, 40.726], rimini: [12.568, 44.067],
 };
+const ITALY_OVERVIEW_BOUNDS = [[6.4, 35.4], [18.9, 47.2]];
 const normalizeItalianCity = (value = "") => String(value).trim().toLocaleLowerCase("it-IT")
   .normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z]+/g, "_").replace(/^_|_$/g, "");
 const conciseWeather = (description = "") => {
@@ -990,7 +997,6 @@ function ItalyTravelerMap({ people }) {
       });
       map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
       map.on("load", () => {
-        const bounds = new maplibregl.LngLatBounds();
         groups.forEach((group) => {
           const markerNode = document.createElement("button");
           markerNode.className = "italyOriginMarker";
@@ -1002,11 +1008,11 @@ function ItalyTravelerMap({ people }) {
               `<strong>${group.city}</strong><br><small>${group.people.map((person) => `${person.name} ${person.surname || ""}`.trim()).join(" · ")}</small>`,
             ))
             .addTo(map);
-          bounds.extend(group.coordinates);
         });
         map.resize();
-        if (groups.length === 1) map.easeTo({ center: groups[0].coordinates, zoom: 7, duration: 500 });
-        else if (groups.length > 1) map.fitBounds(bounds, { padding: 58, maxZoom: 7, duration: 600 });
+        // La panoramica resta sempre nazionale: un solo iscritto non deve
+        // trasformare la cartina WEROAD in una mappa della sua sola città.
+        map.fitBounds(ITALY_OVERVIEW_BOUNDS, { padding: 24, maxZoom: 5.2, duration: 0 });
       });
     });
     return () => { cancelled = true; map?.remove(); };
@@ -1250,8 +1256,10 @@ function App() {
       syncVersionRef.current = Number(d.sync_version || 0);
       if (sessionTokenRef.current) {
         const serverLastRead = d.activity_state?.last_read_at || "";
-        setLastActivityRead(serverLastRead);
-        if (serverLastRead) localStorage.setItem("india-activity-read", serverLastRead);
+        const localLastRead = localStorage.getItem("india-activity-read") || "";
+        const mergedLastRead = serverLastRead > localLastRead ? serverLastRead : localLastRead;
+        setLastActivityRead(mergedLastRead);
+        if (mergedLastRead) localStorage.setItem("india-activity-read", mergedLastRead);
         else localStorage.removeItem("india-activity-read");
       }
       localStorage.setItem(
@@ -1338,7 +1346,10 @@ function App() {
     const onReturn = () => {
       if (!document.hidden) checkVersion();
     };
-    const timer = setInterval(checkVersion, 5000);
+    const timer = setInterval(
+      checkVersion,
+      effectiveSessionToken ? AUTHENTICATED_SYNC_INTERVAL_MS : PUBLIC_SYNC_INTERVAL_MS,
+    );
     const silentRepair = setInterval(async () => {
       if (document.hidden || !navigator.onLine) return;
       try {
@@ -1358,7 +1369,7 @@ function App() {
       removeEventListener("online", checkVersion);
       document.removeEventListener("visibilitychange", onReturn);
     };
-  }, []);
+  }, [effectiveSessionToken]);
   const deepLinkHandledRef = useRef("");
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -1603,7 +1614,7 @@ function App() {
       if (!document.hidden) verifySession();
     };
     verifySession();
-    const timer = setInterval(verifySession, 2500);
+    const timer = setInterval(verifySession, SESSION_VERIFICATION_INTERVAL_MS);
     addEventListener("online", verifySession);
     document.addEventListener("visibilitychange", onReturn);
     return () => {
@@ -4914,7 +4925,7 @@ function VaultOnline({
         checking = false;
       }
     };
-    const timer = setInterval(checkPrivateUpdates, 2500);
+    const timer = setInterval(checkPrivateUpdates, PRIVATE_SYNC_INTERVAL_MS);
     return () => clearInterval(timer);
   }, [sessionToken]);
   useEffect(() => {

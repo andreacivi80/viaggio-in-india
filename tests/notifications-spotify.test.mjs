@@ -27,6 +27,7 @@ test("badge e stato letto sono sincronizzati per profilo tra dispositivi", () =>
   assert.match(api, /activity_state: session/);
   assert.match(ui, /persistActivityRead\(readAt\)/);
   assert.match(ui, /d\.activity_state\?\.last_read_at/);
+  assert.match(ui, /serverLastRead > localLastRead \? serverLastRead : localLastRead/);
 });
 
 test("gli avvisi nell'app scadono dopo trenta giorni e le menzioni sono riconoscibili", () => {

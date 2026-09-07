@@ -66,6 +66,7 @@ test("il database impedisce posizioni orfane e le elimina con il profilo", async
 test("il runner QA usa identificativi isolati e pulizie circoscritte", async () => {
   const runner = await readFile(new URL("../scripts/run-authenticated-qa.ps1", import.meta.url), "utf8");
   assert.match(runner, /qa-owner-\$runId/);
+  assert.match(runner, /UPDATE profiles SET role='traveler'[\s\S]*?id LIKE 'qa-%'/);
   assert.match(runner, /WHERE profile_id IN \(\$quotedIds\)/);
   assert.doesNotMatch(runner, /DELETE FROM guest_sessions[^\n]*LIKE/i);
   assert.doesNotMatch(runner, /DELETE FROM profiles\s*;/i);
