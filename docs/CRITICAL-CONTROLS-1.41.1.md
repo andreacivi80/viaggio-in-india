@@ -1,7 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
-Controlli selezionati: **25** tra 25 controlli P0–P2 ancora privi di evidenza conclusiva.
-Stato del pacchetto: **0 superati**, **25 pendenti**.
+Controlli selezionati: **24** tra 24 controlli P0–P2 ancora privi di evidenza conclusiva.
+Stato del pacchetto: **0 superati**, **24 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -53,13 +53,11 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-0946`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
 - [ ] **K-021 · mappe-posizione** — Misurare batteria con mappa aperta.
   Sorgente: `globale:T-1659`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-022 · mappe-posizione** — Verificare mappa quando Google Maps non risponde.
-  Sorgente: `globale:T-0961`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-023 · altro** — Misurare batteria con notifiche attive.
+- [ ] **K-022 · altro** — Misurare batteria con notifiche attive.
   Sorgente: `globale:T-1660`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-024 · altro** — Notifiche durante la prova.
+- [ ] **K-023 · altro** — Notifiche durante la prova.
   Sorgente: `globale:T-1127`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
-- [ ] **K-025 · altro** — Tutti attivano le notifiche.
+- [ ] **K-024 · altro** — Tutti attivano le notifiche.
   Sorgente: `globale:T-1731`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
 
 ## K1
