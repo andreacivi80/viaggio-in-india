@@ -3,6 +3,10 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const source = await readFile(new URL("../scripts/run-authenticated-qa-node.mjs", import.meta.url), "utf8");
+const rateLimitDimensionsSource = await readFile(
+  new URL("./extended-p0-rate-limit-dimensions.mjs", import.meta.url),
+  "utf8",
+);
 
 test("il runner Node limita ogni scrittura al database QA", () => {
   assert.match(source, /viaggio-in-india-2026-qa\.pages\.dev/);
@@ -40,4 +44,10 @@ test("il runner prepara le posizioni di scadenza solo per il relativo controllo"
 test("il runner distingue il secondo telefono proprio dal telefono di un altro profilo", () => {
   assert.match(source, /QA_SECOND_DEVICE_ID: value\("device-owner-secondary"\)/);
   assert.match(source, /QA_OTHER_DEVICE_ID: value\("device-other"\)/);
+});
+
+test("il collaudo dei limiti usa l'IP reale senza falsificare intestazioni Cloudflare", () => {
+  assert.doesNotMatch(rateLimitDimensionsSource, /cf-connecting-ip/i);
+  assert.match(rateLimitDimensionsSource, /QA_OWNER_DEVICE_KEY/);
+  assert.match(rateLimitDimensionsSource, /QA_COORDINATOR_SECOND_DEVICE_KEY/);
 });
