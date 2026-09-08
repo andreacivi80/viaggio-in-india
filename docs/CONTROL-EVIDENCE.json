@@ -460,4 +460,8 @@
   ,{ "control": "notifiche non lette;", "evidence": "extended-p0-activity-sync su QA: stato letto sincronizzato tra due dispositivi dello stesso profilo; un timestamp arretrato non fa ricomparire notifiche gia lette e il piu recente raggiunge entrambi i telefoni." }
   ,{ "control": "Fotografie.", "evidence": "TEN_ATTACHMENTS su QA: 10/10 fotografie create nello stesso post, nomi e ordine conservati, 10/10 riaperte con MIME image/jpeg e pulizia finale verificata." }
   ,{ "control": "Solo fotografia.", "evidence": "TEN_ATTACHMENTS su QA: pubblicazione composta esclusivamente da dieci fotografie accettata, persistita, riaperta e rimossa correttamente." }
+  ,{ "control": "Controllo database", "evidence": "database-unavailable + migration-safety + LOCAL_BACKUP_CONTENT_COMPLETE 2/2: schema e vincoli verificati, indisponibilita gestita con 503, contenuti D1 e MEDIA ripristinati e riaperti senza perdita." }
+  ,{ "control": "controlli database;", "evidence": "database-unavailable + migration-safety + LOCAL_BACKUP_CONTENT_COMPLETE 2/2: query, vincoli d'integrita, errore controllato e ripristino completo verificati in ambiente locale isolato." }
+  ,{ "control": "Query database", "evidence": "suite statica 199/199 e LOCAL_BACKUP_CONTENT_COMPLETE 2/2: query reali di profili, sessioni, post, documenti e media eseguite prima e dopo il ripristino; risultati riaperti e confrontati." }
+  ,{ "control": "test del database;", "evidence": "migration-safety, database-unavailable, vincoli d'integrita e LOCAL_BACKUP_CONTENT_COMPLETE 2/2: catena D1, errori, contenuti e ripristino verificati senza dati ufficiali." }
 ]

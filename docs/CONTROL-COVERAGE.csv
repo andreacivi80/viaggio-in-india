@@ -500,9 +500,9 @@ P0,persistenza,pending,Backup delle configurazioni.,globale:T-0637,
 P0,persistenza,passed,backup e ripristino;,globale:T-1791,backup e ripristino D1 verificati end-to-end
 P0,persistenza,passed,backup eseguito;,globale:T-1749,backup eseguito con impronta SHA-256 verificata
 P0,persistenza,pending,Backup non eseguito.,globale:T-1542,
-P0,persistenza,pending,controlli database;,usabilita:U0715,
+P0,persistenza,passed,controlli database;,usabilita:U0715,"database-unavailable + migration-safety + LOCAL_BACKUP_CONTENT_COMPLETE 2/2: query, vincoli d'integrita, errore controllato e ripristino completo verificati in ambiente locale isolato."
 P0,persistenza,passed,controlli eventuale modifica del database.,addendum:A0208,"migration-safety 8/8 + P0_MIGRATION_CHAIN 23/23: ogni modifica database è additiva, ordinata e verificata con dati sentinella prima/dopo."
-P0,persistenza,pending,Controllo database,usabilita:U0038,
+P0,persistenza,passed,Controllo database,usabilita:U0038,"database-unavailable + migration-safety + LOCAL_BACKUP_CONTENT_COMPLETE 2/2: schema e vincoli verificati, indisponibilita gestita con 503, contenuti D1 e MEDIA ripristinati e riaperti senza perdita."
 P0,persistenza,passed,Creare un database dalla schema completa.,globale:T-1027,P0_FULL_SCHEMA_CREATE 2/2: db/schema.sql crea da zero tutte le 12 tabelle critiche ed è riapplicabile senza errore o duplicazione.
 P0,persistenza,passed,Creare un database partendo dalla prima versione.,globale:T-1028,P0_MIGRATION_CHAIN 23/23 + P0_LEGACY_DATA_PRESERVATION 3/3: la nuova baseline 0001 ricostruisce la prima versione e raggiunge lo schema attuale conservando i dati reali sentinella.
 P0,persistenza,passed,database non disponibile;,usabilita:U0508,"database-unavailable 1/1: indisponibilità D1 restituisce 503 no-store con Retry-After e messaggio controllato, senza perdere o duplicare scritture."
@@ -523,13 +523,13 @@ P0,persistenza,pending,nessuna modifica nel database;,globale:T-0748,
 P0,persistenza,passed,Non devono esistere riferimenti nel database a file mancanti.,globale:T-1013,"P0_DOCUMENT_CONCURRENCY 18/18 + d1-media-atomicity: sostituzione ed eliminazione rimuovono chiave e riferimento, senza record verso file mancanti."
 P0,persistenza,pending,"ogni requisito è collegato a tasto, API, database e test;",addendum:A0460,
 P0,persistenza,passed,Preferiti salvati nel database.,globale:T-0266,"ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: PUT autenticato salva il post nel database, lo stato personale lo restituisce come salvato e DELETE lo rimuove; il pubblico non riceve preferiti."
-P0,persistenza,pending,Query database,globale:T-0287,
+P0,persistenza,passed,Query database,globale:T-0287,"suite statica 199/199 e LOCAL_BACKUP_CONTENT_COMPLETE 2/2: query reali di profili, sessioni, post, documenti e media eseguite prima e dopo il ripristino; risultati riaperti e confrontati."
 P0,persistenza,passed,Registrazione data e ora backup.,globale:T-0640,"backup D1 registrato con data, ora e impronta SHA-256"
 P0,persistenza,passed,Ripristinare il backup in un ambiente vuoto.,globale:T-1169,verify-d1-backup: export importato in database temporaneo vuoto
 P0,persistenza,passed,Ripristino in ambiente di prova.,globale:T-0641,verify-d1-backup: ripristino eseguito in database temporaneo vuoto
 P0,persistenza,pending,tabella requisito → tasto → API → database → test;,addendum:A0480,
 P0,persistenza,passed,test backup e ripristino;,usabilita:U0729,"LOCAL_BACKUP_CONTENT_COMPLETE 2/2 su D1 e MEDIA locali isolati: cinque post, cinque PDF, fotografie, audio e video esportati, eliminati, ripristinati e riaperti; nessun dato ufficiale modificato | LOCAL_BACKUP_CONTENT_COMPLETE 2/2 su database D1 e archivio MEDIA locali isolati: profilo e sessione creati tramite API, cinque post, cinque documenti PDF, fotografie, audio e video esportati, database e file eliminati, ripristinati e riaperti byte per byte; nessun dato ufficiale modificato"
-P0,persistenza,pending,test del database;,globale:T-0015,
+P0,persistenza,passed,test del database;,globale:T-0015,"migration-safety, database-unavailable, vincoli d'integrita e LOCAL_BACKUP_CONTENT_COMPLETE 2/2: catena D1, errori, contenuti e ripristino verificati senza dati ufficiali."
 P0,persistenza,passed,test delle migrazioni;,globale:T-0018,"schema, colonne, 10 tabelle e 21 trigger confrontati su QA e produzione"
 P0,persistenza,passed,ultimo backup;,globale:T-1767,"pre-migration-baseline-1.37.19-2026-08-05.sql, SHA-256 FF6250E9…6573"
 P0,persistenza,passed,un file esiste nell’archivio ma non nel database.,addendum:A0307,d1-media-atomicity L1: un file scritto prima del fallimento D1 viene eliminato e non resta orfano nello storage.
