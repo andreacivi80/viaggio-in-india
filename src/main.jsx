@@ -71,7 +71,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.33",
+const VERSION = "1.48.34",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -712,9 +712,27 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
           <b>Cartina momentaneamente non disponibile</b>
           <small>Il percorso resta consultabile e puoi riprovare aggiornando la pagina.</small>
           <ol>
-            {(day ? [day.from, day.to] : routeSequence).map((placeName, index) => (
-              <li key={`${placeName}-${index}`}>{placeName}</li>
-            ))}
+            {(day ? [day.from, day.to] : routeSequence).map((placeName, index) => {
+              const selectedIndexes = day ? (dayMarkerIndexes[selectedDay] || []) : [];
+              const stageIndex = day
+                ? (selectedIndexes[Math.min(index, selectedIndexes.length - 1)] ?? selectedDay)
+                : index;
+              return (
+                <li key={`${placeName}-${index}`}>
+                  <button
+                    type="button"
+                    className="fallbackStageButton"
+                    aria-label={`Tappa ${stageIndex + 1}: ${placeName}`}
+                    onClick={() => onSelect?.(
+                      day ? selectedDay : dayMarkerIndexes.findIndex((indexes) => indexes.includes(stageIndex)),
+                    )}
+                  >
+                    <b>{stageIndex + 1}</b>
+                    <span>{placeName}</span>
+                  </button>
+                </li>
+              );
+            })}
           </ol>
         </div>
       )}

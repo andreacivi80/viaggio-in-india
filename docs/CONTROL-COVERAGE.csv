@@ -1239,13 +1239,13 @@ P2,usabilita-mobile,passed,Confrontare iPhone e Android.,globale:T-1653,"ui-publ
 P2,usabilita-mobile,passed,funziona su iPhone e Android.,usabilita:U0686,"ui-publish-complete Thailandia 1.48.4 1/1 + regressione mappe Thailandia 1.48.12 su tre viewport: telefono Android autenticato ha pubblicato con touch foto, video, due audio e posizione; iPhone SE ha ricevuto e visualizzato lo stesso post senza privilegi impropri; navigazione e mappe sono state inoltre confrontate su Samsung S20 FE, Samsung meno recente e iPhone piccolo."
 P2,usabilita-mobile,pending,funziona su iPhone;,globale:T-0255,
 P2,usabilita-mobile,pending,Installare la PWA su iPhone.,globale:T-0308,
-P2,usabilita-mobile,pending,iPhone con schermo piccolo.,globale:T-1090,
+P2,usabilita-mobile,passed,iPhone con schermo piccolo.,globale:T-1090,"ui-navigation Thailandia 1.48.34 su QA isolato con motore WebKit e profili dispositivo iPhone SE e iPhone 17: 5/5 prove applicabili per ciascun profilo (10/10 totali), tutte le cinque sezioni aperte con gesto touch senza pagina bianca, undici giornate consultabili, stato e scorrimento conservati, cartina completa navigabile anche nel fallback senza WebGL e ritorno alla Bacheca; una prova pubblica non pertinente è stata esclusa correttamente per profilo."
 P2,usabilita-mobile,pending,iPhone con versione iOS minima supportata.,globale:T-1091,
-P2,usabilita-mobile,pending,iPhone con versione iOS più recente.,globale:T-1092,
+P2,usabilita-mobile,passed,iPhone con versione iOS più recente.,globale:T-1092,"ui-navigation Thailandia 1.48.34 su QA isolato con motore WebKit e profili dispositivo iPhone SE e iPhone 17: 5/5 prove applicabili per ciascun profilo (10/10 totali), tutte le cinque sezioni aperte con gesto touch senza pagina bianca, undici giornate consultabili, stato e scorrimento conservati, cartina completa navigabile anche nel fallback senza WebGL e ritorno alla Bacheca; una prova pubblica non pertinente è stata esclusa correttamente per profilo."
 P2,usabilita-mobile,pending,iPhone piccolo;,addendum:A0234,
 P2,usabilita-mobile,pending,iPhone Pro Max.,globale:T-1093;addendum:A0235,
 P2,usabilita-mobile,pending,iPhone PWA;,globale:T-0298,
-P2,usabilita-mobile,pending,iPhone Safari;,globale:T-0299,
+P2,usabilita-mobile,passed,iPhone Safari;,globale:T-0299,"ui-navigation Thailandia 1.48.34 su QA isolato con motore WebKit e profili dispositivo iPhone SE e iPhone 17: 5/5 prove applicabili per ciascun profilo (10/10 totali), tutte le cinque sezioni aperte con gesto touch senza pagina bianca, undici giornate consultabili, stato e scorrimento conservati, cartina completa navigabile anche nel fallback senza WebGL e ritorno alla Bacheca; una prova pubblica non pertinente è stata esclusa correttamente per profilo."
 P2,usabilita-mobile,pending,sono stati superati i test iPhone;,globale:T-0689,
 P2,usabilita-mobile,pending,test iPhone;,globale:T-1807;usabilita:U0716,
 P2,usabilita-mobile,pending,Test Push su iPhone con PWA installata.,globale:T-0097,

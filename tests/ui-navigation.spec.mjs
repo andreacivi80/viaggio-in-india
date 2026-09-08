@@ -148,9 +148,23 @@ test("la mappa seleziona automaticamente tutte le tappe e torna alla bacheca", a
   await openApp(page);
   await tapCenter(page, page.locator(".tabs").getByRole("button", { name: "Mappa" }));
   await expect(page.locator(".maplibregl-map")).toBeVisible({ timeout: 20_000 });
-  await expect(page.locator('.vectorMarker[aria-label="Tappa 1: Bangkok"]')).toBeVisible();
-  await expect(page.locator('.vectorMarker[aria-label="Tappa 4: Khao Sok"]')).toBeVisible();
-  await expect(page.locator('.vectorMarker[aria-label="Tappa 8: Bangkok"]')).toBeVisible();
+  const stage = (number, name) => page.locator(`[aria-label="Tappa ${number}: ${name}"]`);
+  await expect(stage(1, "Bangkok")).toBeVisible({ timeout: 20_000 });
+  await expect(stage(4, "Khao Sok")).toBeVisible();
+  await expect(stage(8, "Bangkok")).toBeVisible();
+  const fallback = page.locator(".mapUnavailable");
+  if (await fallback.isVisible()) {
+    await expect(fallback.locator(".fallbackStageButton")).toHaveCount(8);
+    await tapCenter(page, stage(6, "Phi Phi Island"));
+    await expect(page.locator(".mapTrip")).toContainText(/Giorno \d+/);
+    await expect(page.locator(".routeChips button.active")).toHaveCount(1);
+    await page.getByRole("button", { name: "Vedi tutto" }).tap();
+    await expect(page.getByRole("heading", { name: "Tutto l’itinerario" })).toBeVisible();
+    await expect(fallback.locator(".fallbackStageButton")).toHaveCount(8);
+    await page.getByRole("button", { name: /Torna alla Bacheca/ }).tap();
+    await expect(page.getByRole("heading", { name: "Raccontiamocele insieme" })).toBeVisible();
+    return;
+  }
   await expect(page.locator(".vectorMarker")).toHaveCount(8);
   const routeButtons = page.locator(".routeChips button");
   await expect(routeButtons).toHaveCount(11);

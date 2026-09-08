@@ -5907,12 +5907,29 @@ mark.mention {
   list-style: none;
 }
 .mapUnavailable li {
-  padding: 4px 7px;
+  display: contents;
+}
+.fallbackStageButton {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
   border: 1px solid #15382f38;
   border-radius: 999px;
   background: #fffdf6;
-  font-size: 10px;
+  color: var(--ink);
+  font-size: 12px;
   font-weight: 850;
+}
+.fallbackStageButton b {
+  min-width: 22px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--orange);
+  color: white;
 }
 .overviewStageAnchor .vectorMarker {
   position: absolute;

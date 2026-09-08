@@ -39,6 +39,10 @@ export default defineConfig({
       name: "iPhone-piccolo",
       use: { ...devices["iPhone SE"] },
     },
+    {
+      name: "iPhone-recente",
+      use: { ...devices["iPhone 17"] },
+    },
   ],
   webServer: remoteBaseURL ? undefined : {
     command: "npx vite preview --host 127.0.0.1 --port 4186",
