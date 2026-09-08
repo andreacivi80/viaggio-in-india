@@ -410,4 +410,9 @@
   ,{ "control": "Pubblicare più fotografie.", "evidence": "P1_MEDIA_ROBUSTNESS su QA 1.48.37: ciascuno dei 20 post contiene cinque fotografie distinte; totale 100/100 media, ordine e URL unici verificati nello stato condiviso." }
   ,{ "control": "Pubblicare una fotografia.", "evidence": "P1_MEDIA_ROBUSTNESS 100/100 + P1_IMAGE_QUALITY 2/2 su QA 1.48.37: creazione autenticata HTTP 201, persistenza, riapertura e pulizia finale verificate con fotografie reali." }
   ,{ "control": "Verifica caricamento foto.", "evidence": "P1_MEDIA_ROBUSTNESS 100/100 su QA 1.48.37: 20 post concorrenti a raffiche, 100 fotografie rilette byte per byte con content-type image/jpeg e 100 URL rimossi dopo la pulizia." }
+  ,{ "control": "Aggiungere protezione antispam.", "evidence": "P1_SOCIAL_FLOOD 204/204 su QA 1.48.37: dopo 10 commenti e 30 richieste di reazione nella finestra prevista, le successive 160 richieste sono respinte con HTTP 429 senza corrompere lo stato." }
+  ,{ "control": "esistono rate limiting e protezioni antispam;", "evidence": "P1_SOCIAL_FLOOD 204/204 + rate-limit-dimensions: limiti reali distinti per sessione e profilo verificati; il post conserva soltanto i 10 commenti ammessi e una reazione corrente." }
+  ,{ "control": "Protezione antispam.", "evidence": "P1_SOCIAL_FLOOD 204/204 su QA 1.48.37: raffica autenticata di 100 commenti e 100 reazioni contenuta con risposte 429 deterministiche e pulizia finale completa." }
+  ,{ "control": "rate limit raggiunto;", "evidence": "P1_SOCIAL_FLOOD 204/204 su QA 1.48.37: raggiunta realmente la soglia, 90 commenti e 70 reazioni successive ricevono HTTP 429; nessun elemento oltre soglia viene persistito." }
+  ,{ "control": "Verifica antispam.", "evidence": "P1_SOCIAL_FLOOD 204/204 su QA 1.48.37: verifica server su 200 operazioni sociali, conteggio finale esatto e cancellazione del solo post di prova." }
 ]

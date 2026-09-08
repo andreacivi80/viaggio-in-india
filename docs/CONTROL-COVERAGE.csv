@@ -1305,7 +1305,7 @@ P3,altro,pending,Aggiungere informativa sul trattamento dei dati.,globale:T-0047
 P3,altro,pending,Aggiungere nuovamente un file rimosso.,usabilita:U0212,
 P3,altro,pending,Aggiungere precisione della geolocalizzazione.,globale:T-0185,
 P3,altro,pending,Aggiungere procedura periodica di controllo integrità.,globale:T-1147,
-P3,altro,pending,Aggiungere protezione antispam.,globale:T-0057,
+P3,altro,passed,Aggiungere protezione antispam.,globale:T-0057,"P1_SOCIAL_FLOOD 204/204 su QA 1.48.37: dopo 10 commenti e 30 richieste di reazione nella finestra prevista, le successive 160 richieste sono respinte con HTTP 429 senza corrompere lo stato."
 P3,altro,pending,Aggiungere pulsante “Cancella dati da questo dispositivo”.,globale:T-1621,
 P3,altro,passed,Aggiungere revoca del singolo dispositivo.,globale:T-0031,production-smoke: revoca del dispositivo secondario e lista aggiornata
 P3,altro,passed,Aggiungere scadenza per inattività.,globale:T-0033,QA 1.31.0: sessione inattiva da 30 giorni respinta con HTTP 401
@@ -1621,7 +1621,7 @@ P3,altro,pending,esiste evidenza del collaudo manuale su dispositivi reali.,adde
 P3,altro,pending,esiste il registro completo di tutti gli elementi interattivi;,addendum:A0443,
 P3,altro,pending,esiste una suite automatica per tutti i ruoli;,addendum:A0461,
 P3,altro,pending,esistono file o record orfani;,usabilita:U0702,
-P3,altro,pending,esistono rate limiting e protezioni antispam;,globale:T-0668,
+P3,altro,passed,esistono rate limiting e protezioni antispam;,globale:T-0668,P1_SOCIAL_FLOOD 204/204 + rate-limit-dimensions: limiti reali distinti per sessione e profilo verificati; il post conserva soltanto i 10 commenti ammessi e una reazione corrente.
 P3,altro,pending,esistono test automatici reali;,globale:T-0669,
 P3,altro,pending,Esportazione CSV.,globale:T-0250,
 P3,altro,pending,Esportazione JSON.,globale:T-0251,
@@ -2013,7 +2013,7 @@ P3,altro,passed,prima della modifica;,addendum:A0114,Authenticated remote QA + m
 P3,altro,passed,prima di restituire qualsiasi metadato.,addendum:A0118,"API pubblica minimizzata + Playwright tre telefoni: chiavi e ID interni assenti, permessi can_manage dal server, comandi vietati nascosti e sync automatica; preview c9d82d89; 2026-08-04"
 P3,altro,pending,produce un risultato persistente;,globale:T-0268,
 P3,altro,pending,progressivi;,addendum:A0348,
-P3,altro,pending,Protezione antispam.,globale:T-0221,
+P3,altro,passed,Protezione antispam.,globale:T-0221,P1_SOCIAL_FLOOD 204/204 su QA 1.48.37: raffica autenticata di 100 commenti e 100 reazioni contenuta con risposte 429 deterministiche e pulizia finale completa.
 P3,altro,pending,Protezione contro richieste automatiche.,globale:T-0227,
 P3,altro,pending,Protezione dal doppio clic.,globale:T-0136,
 P3,altro,pending,Protezione dal doppio tocco.,globale:T-0137,
@@ -2044,7 +2044,7 @@ P3,altro,passed,raccolga tutti gli input;,addendum:A0200,"TypeScript JSX invento
 P3,altro,passed,raccolga tutti i collegamenti;,addendum:A0199,"TypeScript JSX inventory: 115 interactive elements, zero missing handlers/empty links; Playwright credential flow"
 P3,altro,passed,raccolga tutti i pulsanti;,addendum:A0198,"TypeScript JSX inventory: 115 interactive elements, zero missing handlers/empty links; Playwright credential flow"
 P3,altro,pending,Raggiungere la fine del feed.,globale:T-1685,
-P3,altro,pending,rate limit raggiunto;,globale:T-1578,
+P3,altro,passed,rate limit raggiunto;,globale:T-1578,"P1_SOCIAL_FLOOD 204/204 su QA 1.48.37: raggiunta realmente la soglia, 90 commenti e 70 reazioni successive ricevono HTTP 429; nessun elemento oltre soglia viene persistito."
 P3,altro,pending,Rate limiting.,globale:T-0229,
 P3,altro,pending,"Reagire, se consentito.",usabilita:U0618,
 P3,altro,pending,Reagire.,usabilita:U0628,
@@ -2338,7 +2338,7 @@ P3,altro,pending,valori null;,globale:T-1314,
 P3,altro,pending,valori undefined;,globale:T-1315,
 P3,altro,pending,vecchie chiavi localStorage;,addendum:A0406,
 P3,altro,pending,Verifica aggiornamento sul secondo telefono.,globale:T-0473,
-P3,altro,pending,Verifica antispam.,globale:T-0474,
+P3,altro,passed,Verifica antispam.,globale:T-0474,"P1_SOCIAL_FLOOD 204/204 su QA 1.48.37: verifica server su 200 operazioni sociali, conteggio finale esatto e cancellazione del solo post di prova."
 P3,altro,pending,Verifica Cloudflare raggiungibile.,globale:T-0655,
 P3,altro,pending,Verifica consumo dati.,globale:T-0656,
 P3,altro,pending,Verifica della firma reale del file.,globale:T-0180,
