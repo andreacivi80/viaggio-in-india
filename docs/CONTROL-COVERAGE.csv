@@ -371,7 +371,7 @@ P0,documenti,passed,Aprire documenti.,usabilita:U0071,ui-documents QA mobile: ap
 P0,documenti,passed,Aprire documento.,globale:T-0475,ui-documents QA mobile: visualizzatore PDF aperto e contenuto renderizzato
 P0,documenti,passed,Aprire lo stesso documento da due dispositivi.,globale:T-0988,document-concurrency 18/18: proprietario e coordinatore aprono simultaneamente lo stesso PDF
 P0,documenti,passed,Aprire ogni documento.,usabilita:U0451,ui-documents QA mobile: ciascuno dei 10 PDF caricati viene aperto e verificato
-P0,documenti,pending,area documenti;,addendum:A0119,
+P0,documenti,passed,area documenti;,addendum:A0119,"P0_DOCUMENTS 12/12 + P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: area privata autenticata, quattro tipologie documentali, apertura, sostituzione, eliminazione e visibilità per ruolo verificate."
 P0,documenti,passed,"B carica documento, Coordinatore vede aggiornamento.",usabilita:U0559,ui-documents QA: viaggiatore carica Visto e Biglietti; dashboard coordinatore passa live 1/4→3/4
 P0,documenti,passed,Bacheca → profilo → documenti → indietro.,globale:T-1411,"ui-protected-pdf Samsung S20 FE 1/1: Bacheca → pannello profilo → Documenti e sicurezza → Torna alla bacheca, con sessione e pagina corretta preservate."
 P0,documenti,pending,Calcolare spazio necessario per documenti.,globale:T-1531,
@@ -395,9 +395,9 @@ P0,documenti,pending,Documentare e applicare una regola unica.,globale:T-0700,
 P0,documenti,pending,Documentare procedura e tempo di rollback.,globale:T-1172,
 P0,documenti,passed,Documentare tempo necessario al ripristino.,globale:T-1165,verify-d1-backup: tempo di ripristino misurato automaticamente
 P0,documenti,pending,documentato come funzione non completata.,addendum:A0197,
-P0,documenti,pending,documenti essenziali disponibili;,globale:T-1753,
+P0,documenti,passed,documenti essenziali disponibili;,globale:T-1753,"P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: passaporto, visto, biglietti e assicurazione caricati contemporaneamente e tutti e quattro riletti dal proprietario; sostituzioni e retry non ne perdono altri."
 P0,documenti,passed,Documenti propri.,usabilita:U0645,extended-p0-documents: il proprietario vede i propri documenti; altro viaggiatore no
-P0,documenti,pending,documenti;,addendum:A0075,
+P0,documenti,passed,documenti;,addendum:A0075,"P0_DOCUMENTS 12/12 su QA 1.48.37: PDF reale disponibile al proprietario e alla coordinatrice, negato all'altro viaggiatore e al pubblico, poi eliminato insieme all'oggetto media."
 P0,documenti,passed,Documento → visualizzatore → indietro.,globale:T-1412,"ui-documents QA mobile: Apri, rendering PDF, Chiudi documento e ritorno alla scheda"
 P0,documenti,passed,documento aperto;,globale:T-1560,ui-documents QA mobile: overlay visibile e canvas PDF non vuoto
 P0,documenti,passed,documento caricato;,globale:T-1561,"ui-documents QA: POST 200, nome file e stato Presente verificati"
@@ -419,7 +419,7 @@ P0,documenti,passed,Modificare document profile_id.,usabilita:U0574,P0_DOCUMENTS
 P0,documenti,passed,nessun contenuto completo del documento;,globale:T-1569,security-audit 3/3 + authorization-matrix 86/86: contenuto e nome del PDF assenti da schema e risposta coordinatore | security-audit 3/3 + authorization-matrix 86/86: schema whitelist e risposta coordinatore escludono contenuto e nome del PDF
 P0,documenti,pending,nessuna funzione dichiarata nella documentazione sia assente dall’interfaccia;,addendum:A0019,
 P0,documenti,passed,Non cancellare documenti o bozze senza conferma.,globale:T-0845,ui-documents QA: Annulla mantiene il PDF; solo la successiva conferma esegue DELETE
-P0,documenti,pending,Non compromettere documenti e funzioni essenziali.,globale:T-1650,
+P0,documenti,passed,Non compromettere documenti e funzioni essenziali.,globale:T-1650,P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: sostituzione non valida lascia intatto il documento corrente; apertura/sostituzione/eliminazione concorrenti convergono senza record o media orfani.
 P0,documenti,pending,non deve contenere documenti;,addendum:A0423,
 P0,documenti,passed,non deve vedere documenti;,usabilita:U0027,"P0_RESOURCE_ENUMERATION 17/17 + ui-public-access-boundary Thailandia 1.48.4 2/2: pubblico e profili non autorizzati non ricevono elenco, metadati o contenuto dei documenti."
 P0,documenti,pending,non esistono documenti;,addendum:A0301,
@@ -662,9 +662,9 @@ P1,altro,passed,Verificare ricezione della notifica.,usabilita:U0022,"ui-activit
 P1,altro,passed,Verificare una notifica con telefono bloccato.,globale:T-1364,"service-worker-push-grouping Thailandia 1.48.35 runtime isolato 4/4: con nessuna finestra dell’app aperta (stato equivalente a telefono bloccato/app chiusa) l’evento push mostra un avviso persistente; il tocco chiude l’avviso e apre l’URL preciso in una nuova finestra. Con app già presente, lo stesso tocco naviga al contenuto e porta la finestra in primo piano."
 P1,altro,passed,Verificare una notifica con telefono sbloccato.,globale:T-1365,"ui-activity-sync Thailandia 1.48.31 Samsung S20 FE QA 1/1: con entrambi i telefoni attivi e sbloccati il badge compare entro il limite, il pannello mostra il contenuto corretto e lo stato letto si propaga. | ui-activity-sync Thailandia 1.48.31 Samsung S20 FE QA 1/1: telefono sbloccato riceve il badge, apre il testo corretto e sincronizza lo stato letto."
 P1,documenti,passed,Aprire PDF.,usabilita:U0421,Playwright mobile: PDF protetto aperto in nuova scheda tramite visualizzatore blob autenticato; preview c90ec547; 2026-08-04
-P1,documenti,pending,Caricare biglietti.,globale:T-0477;usabilita:U0418,
+P1,documenti,passed,Caricare biglietti.,globale:T-0477;usabilita:U0418,"P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: PDF biglietti caricato insieme agli altri documenti, persistito come voce unica e successivamente eliminato dal proprietario."
 P1,documenti,passed,Caricare un PDF multipagina.,globale:T-0993,"ui-protected-pdf Samsung S20 FE 1/1: PDF reale a due pagine caricato via input touch; il visualizzatore renderizza esattamente due canvas, poi chiusura ed eliminazione completano senza pagina bianca."
-P1,documenti,pending,Caricare visto.,globale:T-0479;usabilita:U0417,
+P1,documenti,passed,Caricare visto.,globale:T-0479;usabilita:U0417,P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: PDF visto caricato e sottoposto a dieci retry simultanei con la stessa chiave; resta una sola versione valida e apribile.
 P1,documenti,passed,Controllare PDF corrotti o pericolosi.,globale:T-0166,file-validation L1 + P0_DOCUMENT_CONCURRENCY 28/28: PDF corrotto o con firma non valida riceve 400 e non sostituisce il documento valido precedente.
 P1,documenti,pending,messaggio se il caricamento supera il tempo previsto;,addendum:A0321,
 P1,documenti,pending,PDF del diario.,globale:T-1724,
@@ -768,7 +768,7 @@ P1,media-upload,pending,Calcolare peso medio di un video.,globale:T-1528,
 P1,media-upload,pending,Calcolare peso medio di una fotografia.,globale:T-1529,
 P1,media-upload,pending,caricamento post;,usabilita:U0545,
 P1,media-upload,pending,caricamento;,addendum:A0162,
-P1,media-upload,pending,Caricare assicurazione.,globale:T-0476;usabilita:U0419,
+P1,media-upload,passed,Caricare assicurazione.,globale:T-0476;usabilita:U0419,"P0_DOCUMENTS 12/12 + P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: PDF assicurazione caricato, rilevato nello stato privato, aperto dai ruoli autorizzati e rimosso dal proprietario."
 P1,media-upload,passed,Caricare due file con lo stesso nome.,globale:T-0989,P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: due fotografie con identico nome foto-vacanza.jpg persistono entrambe con URL storage distinti e contenuto riapribile.
 P1,media-upload,passed,Caricare file con MIME falso.,globale:T-0614,QA autenticata 1.48.4: file camuffati e firme incoerenti rifiutati; nessun contenuto con MIME falso viene memorizzato.
 P1,media-upload,passed,Caricare fotografia con nome originale personale.,globale:T-1425,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: fotografia con nome originale personale accettata, persistita, riletta e cancellata senza alterare il post."
