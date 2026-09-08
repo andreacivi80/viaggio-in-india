@@ -322,8 +322,8 @@ P0,altro,passed,Avvisare gli utenti prima dell’eliminazione.,globale:T-1336,ui
 P0,altro,passed,Confermare eliminazione.,usabilita:U0283,"ui-documents QA: Annulla conserva il file, Elimina conferma la rimozione"
 P0,altro,passed,contenuto eliminato;,usabilita:U0511,"extended-p0-sync-delete: contenuto rimosso e assente su pubblico, proprietario e secondo dispositivo"
 P0,altro,pending,Definire se i contenuti vengono eliminati o anonimizzati.,globale:T-1320,
-P0,altro,pending,"Eliminare dallo ZIP le cartelle node_modules, .git, .wrangler e dist, se deve essere ricostruita automaticamente.",globale:T-0005,
-P0,altro,pending,Eliminare dallo ZIP le cartelle:,globale:T-0006,
+P0,altro,passed,"Eliminare dallo ZIP le cartelle node_modules, .git, .wrangler e dist, se deve essere ricostruita automaticamente.",globale:T-0005,"clean-source-archive 2/2: allowlist di radice e verifica di tutte le entry escludono node_modules, .git, .wrangler, dist, artifacts, report e file .env."
+P0,altro,passed,Eliminare dallo ZIP le cartelle:,globale:T-0006,"clean-source-archive 2/2: archivio costruito da allowlist e ispezionato dopo la decompressione; nessuna cartella generata, dipendenza, backup o segreto incluso."
 P0,altro,pending,Eliminare i dati del browser.,globale:T-0859,
 P0,altro,passed,Eliminare il post.,globale:T-0400,extended-p0-sync-delete: eliminazione reale propagata
 P0,altro,pending,Eliminare subscription inattive.,globale:T-1349,
@@ -364,7 +364,7 @@ P0,altro,passed,Verificare eliminazione su tutti i dispositivi.,globale:T-0419,e
 P0,altro,passed,Verificare incremento della versione per eliminazione.,globale:T-1033,P0_PROFILE_DELETION Thailandia 1.48.25 locale e QA isolato 52/52: sync_version viene letto prima dell'eliminazione e risulta strettamente maggiore dopo la cancellazione completa; sessione revocata e stato aggiornato sono verificati dal server reale QA.
 P0,altro,passed,Verificare log di eliminazione.,globale:T-1004,"security-audit 3/3 + P0_AUTHORIZATION_MATRIX 86/86: eliminazioni di documento, post, commento, profilo e posizione producono eventi con attore, dispositivo e ora server, consultabili soltanto dal coordinatore."
 P0,altro,passed,Verificare se i metadati vengono conservati o eliminati.,globale:T-1439,"security-audit 3/3 + P0_MEDIA_DELETE 14/14: il registro conserva solo metadati tecnici minimi ammessi; nome file, contenuto, password e token sono esclusi e lo storage eliminato non resta raggiungibile."
-P0,documenti,pending,"Aggiornare README e documentazione, ancora riferiti a versioni precedenti.",globale:T-0001,
+P0,documenti,passed,"Aggiornare README e documentazione, ancora riferiti a versioni precedenti.",globale:T-0001,"README 1.48.37 verificato: Thailandia, architettura Cloudflare, accessi, privacy, gate, URL ufficiale e creazione archivio allineati allo stato corrente."
 P0,documenti,passed,apertura documento altrui;,globale:T-0724,extended-p0-documents: media privata negata ad altro viaggiatore
 P0,documenti,passed,apertura documento proprio;,globale:T-0725,extended-p0-documents: proprietario apre il PDF
 P0,documenti,passed,Aprire documenti.,usabilita:U0071,ui-documents QA mobile: apertura ripetuta di 10 PDF reali con rendering canvas verificato
@@ -384,7 +384,7 @@ P0,documenti,passed,Caricare passaporto.,globale:T-0478;usabilita:U0416,Playwrig
 P0,documenti,passed,Caricare quattro documenti dal telefono B.,globale:T-0695,"document-concurrency 18/18: sessione mobile isolata carica Passaporto, Visto, Biglietti e Assicurazione"
 P0,documenti,passed,Caricare una fotografia del passaporto verticale.,globale:T-0995,"ui-protected-pdf Samsung S20 FE 1/1: fotografia JPEG verticale reale caricata tramite input touch, aperta interamente con object-fit contain, poi eliminata senza residui."
 P0,documenti,passed,Confrontare numero di documenti.,globale:T-1160,document-concurrency 18/18: stato privato contiene esattamente quattro slot dopo quattro upload
-P0,documenti,pending,"Consegnare uno ZIP pulito contenente sorgenti, configurazioni, migrazioni e documentazione.",globale:T-0004,
+P0,documenti,passed,"Consegnare uno ZIP pulito contenente sorgenti, configurazioni, migrazioni e documentazione.",globale:T-0004,"clean-source-archive 2/2: ZIP 1.48.37 generato e riaperto; sorgenti, Worker, schema, migrazioni, configurazioni, test e documentazione presenti con manifesto."
 P0,documenti,passed,Controllo documenti del gruppo.,globale:T-1212,ui-documents QA: dashboard coordinatore mostra lo stato documentale del viaggiatore
 P0,documenti,passed,Dashboard documenti.,usabilita:U0658,ui-documents QA: dashboard coordinatore visibile e aggiornata senza refresh
 P0,documenti,passed,Deep link del documento.,globale:T-0241,"ui-protected-pdf Samsung S20 FE 1/1: il deep link riapre il documento sul dispositivo autenticato; URL contiene soltanto profilo e tipo, mai nome file, chiave storage o contenuto."

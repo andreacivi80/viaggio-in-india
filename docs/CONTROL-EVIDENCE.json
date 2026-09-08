@@ -378,4 +378,8 @@
   ,{ "control": "Definire per quanto tempo vengono conservati i log.", "evidence": "data-retention-policy 3/3: registro tecnico eliminato automaticamente oltre 180 giorni e limitato a metadati non sensibili." }
   ,{ "control": "Definire per quanto tempo vengono conservati i post.", "evidence": "data-retention-policy 3/3: nessuna scadenza automatica dei post validi; eliminazione esplicita o cancellazione del profilo." }
   ,{ "control": "Definire se l’originale deve essere conservato.", "evidence": "data-retention-policy 3/3: originale nel formato caricato conservato finché il contenuto è valido; sostituzione o eliminazione rimuove l'oggetto precedente." }
+  ,{ "control": "Aggiornare README e documentazione, ancora riferiti a versioni precedenti.", "evidence": "README 1.48.37 verificato: Thailandia, architettura Cloudflare, accessi, privacy, gate, URL ufficiale e creazione archivio allineati allo stato corrente." }
+  ,{ "control": "Consegnare uno ZIP pulito contenente sorgenti, configurazioni, migrazioni e documentazione.", "evidence": "clean-source-archive 2/2: ZIP 1.48.37 generato e riaperto; sorgenti, Worker, schema, migrazioni, configurazioni, test e documentazione presenti con manifesto." }
+  ,{ "control": "Eliminare dallo ZIP le cartelle node_modules, .git, .wrangler e dist, se deve essere ricostruita automaticamente.", "evidence": "clean-source-archive 2/2: allowlist di radice e verifica di tutte le entry escludono node_modules, .git, .wrangler, dist, artifacts, report e file .env." }
+  ,{ "control": "Eliminare dallo ZIP le cartelle:", "evidence": "clean-source-archive 2/2: archivio costruito da allowlist e ispezionato dopo la decompressione; nessuna cartella generata, dipendenza, backup o segreto incluso." }
 ]
