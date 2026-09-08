@@ -588,7 +588,7 @@ P0,profili-ruoli,passed,Verifica profili ripristinati.,globale:T-0648,verify-d1-
 P0,profili-ruoli,passed,Verificare che il Coordinatore visualizzi 4/4.,globale:T-0710,"ui-protected-pdf Samsung S20 FE 1/1: il viaggiatore carica Passaporto, Visto India, Biglietti e Assicurazione; la sessione coordinatore aggiornata mostra 4/4 e i quattro documenti vengono poi eliminati senza residui."
 P0,profili-ruoli,passed,Verificare che il profilo non compaia nella dashboard del Coordinatore.,globale:T-1328,P0_PROFILE_DELETION 40/40: dopo eliminazione il profilo e i documenti collegati scompaiono anche dalla vista coordinatore e non tornano al refresh.
 P0,profili-ruoli,passed,Verificare che non possa diventare Coordinatore.,globale:T-0341,extended-p0-roles: sessione riletta dal server resta traveler
-P0,profili-ruoli,pending,Verificare notifica prioritaria al Coordinatore.,globale:T-1193,
+P0,profili-ruoli,passed,Verificare notifica prioritaria al Coordinatore.,globale:T-1193,P1_TECHNICAL_ALERT=9/9 su QA: errore server con UUID e audit technical_error; test statico technical-alert verifica invio push soltanto alla subscription del coordinatore (1/1) e nessun invio al viaggiatore.
 P0,profili-ruoli,passed,Verificare profile_id corretto nel database.,globale:T-0422,P0_ROLES 20/20: il post conserva il profile_id della sessione anche quando il client invia un’identità diversa.
 P0,profili-ruoli,pending,Visualizzare contatto del Coordinatore.,globale:T-1196,
 P0,social,passed,commento eliminato;,globale:T-1556,extended-p0-social: commenti di due autori eliminati e stato finale vuoto

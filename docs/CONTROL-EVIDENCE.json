@@ -453,4 +453,5 @@
   ,{ "control": "rispetta le autorizzazioni;", "evidence": "P0_RESOURCE_ENUMERATION 17/17 su QA 1.48.37: pubblico, familiare e altro viaggiatore non distinguono risorse private esistenti da inesistenti; proprietario e coordinatrice mantengono soltanto gli accessi autorizzati." }
   ,{ "control": "Verificare informazioni autorizzate.", "evidence": "P0_RESOURCE_ENUMERATION 17/17 + P0_DOCUMENTS 12/12 su QA 1.48.37: documenti, dispositivi e inviti espongono esclusivamente le informazioni del profilo e ruolo autorizzati, senza enumerazione laterale." }
   ,{ "control": "non deve contenere documenti;", "evidence": "P0_RESOURCE_ENUMERATION 17/17 su QA 1.48.37: pubblico e sessione familiare ricevono lo stesso diniego dall'area privata; un altro viaggiatore non riceve metadati né può distinguere la chiave reale da una inesistente." }
+  ,{ "control": "Verificare notifica prioritaria al Coordinatore.", "evidence": "P1_TECHNICAL_ALERT=9/9 su QA: errore server con UUID e audit technical_error; test statico technical-alert verifica invio push soltanto alla subscription del coordinatore (1/1) e nessun invio al viaggiatore." }
 ]
