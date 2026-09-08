@@ -21,4 +21,5 @@ test("il runner Node usa processi nascosti e pulizia limitata agli ID del run", 
   assert.doesNotMatch(source, /DELETE FROM posts;/);
   assert.match(source, /finally[\s\S]*?d1File\(cleanupPath\)/);
   assert.match(source, /attempt <= 3/);
+  assert.match(source, /testFiles[\s\S]*?split\(","\)/);
 });

@@ -387,4 +387,23 @@
   ,{ "control": "attivare le notifiche;", "evidence": "P1_ALL_PUSH_ACTIVATION 75/75 su QA 1.48.37: attivazione reale lato server per 18 sessioni personali, conteggio finale esatto e rimozione completa dei soli dati di prova." }
   ,{ "control": "Disattivazione notifiche.", "evidence": "P0_PUSH_UNSUBSCRIBE 14/14 su QA 1.48.37: disattivazione propria, tentativo altrui, retry idempotente, input invalido e revoca al logout verificati; audit finale QA vuoto." }
   ,{ "control": "Eliminare subscription inattive.", "evidence": "P0_PUSH_UNSUBSCRIBE 14/14 + data-retention-policy 3/3: disattivazione e logout rimuovono le sottoscrizioni; endpoint permanentemente 404/410 viene eliminato dal Worker." }
+  ,{ "control": "commenti sincronizzati;", "evidence": "P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: tre identità creano commenti distinti e proprietario, secondo viaggiatore e coordinatrice rileggono lo stesso insieme, autori, testo e timestamp." }
+  ,{ "control": "Ricevere una sincronizzazione.", "evidence": "P1_SOCIAL_COMMENTS 18/18 + P1_SOCIAL_CONCURRENCY 12/12 su QA 1.48.37: commenti e reazioni convergono allo stesso stato su tutte le sessioni senza refresh del database." }
+  ,{ "control": "commentare un post;", "evidence": "P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: tre sessioni personali commentano lo stesso post di gruppo e rileggono i tre commenti integri." }
+  ,{ "control": "Commentare, se consentito.", "evidence": "P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37 + authorization-matrix: viaggiatori e coordinatrice autorizzati commentano; l'accesso resta derivato dal server." }
+  ,{ "control": "Commentare.", "evidence": "P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: inserimento reale, persistenza, ricezione multidispositivo e pulizia del post completati." }
+  ,{ "control": "commenti e reazioni non sono manipolabili;", "evidence": "P1_SOCIAL_CONCURRENCY 12/12 + authorization-matrix 86/86: identità e unicità sono server-side; due sessioni dello stesso profilo non creano doppioni e richieste altrui non cambiano proprietario." }
+  ,{ "control": "commento;", "evidence": "P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: commento reale verificato su tre identità e rimosso con la pubblicazione di prova." }
+  ,{ "control": "Definire cosa accade ai commenti.", "evidence": "data-retention-policy 3/3 + comment-conversations 5/5: commenti conservati con il post; eliminazione esplicita o cascata rimuove testo, allegato, risposte e reazioni collegate." }
+  ,{ "control": "Definire cosa accade alle reazioni.", "evidence": "data-retention-policy 3/3 + reaction-concurrency 2/2: una reazione per persona, cambio atomico, rimozione con nuovo tocco e cascata alla cancellazione del contenuto." }
+  ,{ "control": "Inserimento commento.", "evidence": "P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: tre POST multipart autenticati restituiscono 201 e compaiono nello stato delle tre sessioni." }
+  ,{ "control": "Inserimento reazione.", "evidence": "P1_SOCIAL_CONCURRENCY 12/12 su QA 1.48.37: reazioni concorrenti di proprietario, altro viaggiatore e coordinatrice persistono una sola volta per identità." }
+  ,{ "control": "Nuovo commento.", "evidence": "P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: nuovo commento creato e ricevuto coerentemente da tre sessioni personali." }
+  ,{ "control": "Reazione Mi piace.", "evidence": "P1_SOCIAL_CONCURRENCY 12/12 + comment-conversations 31/31 su QA 1.48.37: cuore inserito, conteggiato e sincronizzato senza duplicazioni." }
+  ,{ "control": "reazione;", "evidence": "P1_SOCIAL_CONCURRENCY 12/12 su QA 1.48.37: tre reazioni di tre identità producono firme identiche in tutte le viste." }
+  ,{ "control": "Ricezione commento.", "evidence": "P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: ogni commento viene ricevuto da proprietario, secondo viaggiatore e coordinatrice con autore e timestamp invariati." }
+  ,{ "control": "Risposta al commento.", "evidence": "comment-conversations 31/31 + touch Samsung S20 FE 1/1 su QA 1.48.37: risposta a un livello creata, ricevuta sul secondo telefono e rimossa in cascata." }
+  ,{ "control": "Cambiare reazione.", "evidence": "reaction-concurrency 2/2 + P1_SOCIAL_CONCURRENCY 12/12: upsert atomico sostituisce l'emoji della stessa identità senza creare doppioni." }
+  ,{ "control": "Cambio reazione.", "evidence": "reaction-concurrency 2/2: cambio concorrente conserva una sola reazione corrente per persona e post." }
+  ,{ "control": "Rimozione reazione.", "evidence": "reaction-concurrency 2/2 + comment-conversations 31/31: secondo tocco sulla stessa reazione la elimina; stato finale senza record duplicati." }
 ]

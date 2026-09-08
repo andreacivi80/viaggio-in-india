@@ -6,11 +6,12 @@ import { spawnSync } from "node:child_process";
 const root = resolve(import.meta.dirname, "..");
 const option = (name, fallback = "") => process.argv.find((item) => item.startsWith(`--${name}=`))?.slice(name.length + 3) || fallback;
 const baseUrl = option("base-url", "https://viaggio-in-india-2026-qa.pages.dev").replace(/\/$/, "");
-const testFile = option("test");
+const testFiles = option("test").split(",").filter(Boolean);
 const pushMemberCount = Number(option("push-members", "0"));
 if (!/^https:\/\/([a-z0-9-]+\.)?viaggio-in-india-2026-qa\.pages\.dev$/i.test(baseUrl))
   throw new Error("Protezione dati: i test scriventi possono usare soltanto QA");
-if (!testFile || !/^[a-z0-9._-]+\.mjs$/i.test(testFile)) throw new Error("Specificare --test=<file.mjs>");
+if (!testFiles.length || testFiles.some((file) => !/^[a-z0-9._-]+\.mjs$/i.test(file)))
+  throw new Error("Specificare --test=<file.mjs>[,<file.mjs>]");
 if (![0, 18].includes(pushMemberCount)) throw new Error("--push-members può essere soltanto 18");
 
 const runId = randomUUID().replaceAll("-", "");
@@ -140,10 +141,10 @@ try {
     QA_DELETE_PROFILE_DEVICE_KEY: deviceKeys.deleting,
     QA_PUSH_MEMBERS: JSON.stringify(pushMembers),
   };
-  executeNode(join(root, "tests", testFile), [], environment);
+  for (const testFile of testFiles) executeNode(join(root, "tests", testFile), [], environment);
   succeeded = true;
 } finally {
   d1File(cleanupPath);
   rmSync(temporaryDirectory, { recursive: true, force: true });
 }
-if (succeeded) console.log(`QA_NODE_COMPLETE=${testFile}`);
+if (succeeded) console.log(`QA_NODE_COMPLETE=${testFiles.join(",")}`);

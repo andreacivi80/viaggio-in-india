@@ -935,7 +935,7 @@ P1,sync-rete,pending,Centro “Pronto per l’offline”.,globale:T-0116,
 P1,sync-rete,pending,Centro sincronizzazione visibile.,globale:T-0098,
 P1,sync-rete,passed,Cercare segreti nel Service Worker.,globale:T-1500,"suite 1.48.4 163/163 eseguiti (150 passati, 13 skip condizionati, 0 errori): scansione sorgente e Service Worker senza password, token o segreti incorporati."
 P1,sync-rete,pending,coda offline vuota oppure correttamente registrata;,globale:T-1750,
-P1,sync-rete,pending,commenti sincronizzati;,globale:T-1751,
+P1,sync-rete,passed,commenti sincronizzati;,globale:T-1751,"P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: tre identità creano commenti distinti e proprietario, secondo viaggiatore e coordinatrice rileggono lo stesso insieme, autori, testo e timestamp."
 P1,sync-rete,pending,continuazione dopo perdita della rete;,globale:T-0149,
 P1,sync-rete,pending,controlli richieste di rete;,addendum:A0205,
 P1,sync-rete,passed,dati di emergenza disponibili offline.,globale:T-1752,ui-cache-recovery Samsung S20 FE 1/1: con rete disattivata il pannello Emergenza e dati offline resta apribile e offre chiamata diretta al 112 e alla reperibilità dell’Ambasciata.
@@ -970,7 +970,7 @@ P1,sync-rete,pending,Riapertura offline.,globale:T-1231,
 P1,sync-rete,pending,Riaprire offline.,globale:T-0549,
 P1,sync-rete,pending,Riattivare la rete.,globale:T-0550,
 P1,sync-rete,pending,Ricerca offline sui dati disponibili.,globale:T-1696,
-P1,sync-rete,pending,Ricevere una sincronizzazione.,globale:T-1400,
+P1,sync-rete,passed,Ricevere una sincronizzazione.,globale:T-1400,P1_SOCIAL_COMMENTS 18/18 + P1_SOCIAL_CONCURRENCY 12/12 su QA 1.48.37: commenti e reazioni convergono allo stesso stato su tutte le sessioni senza refresh del database.
 P1,sync-rete,passed,Ridurre frequenza di sincronizzazione.,globale:T-1651,"runtime-resilience 6/6: polling visibile ridotto da 2,5 a 5 secondi, completamente sospeso quando pagina nascosta o offline, con controllo immediato agli eventi online e visibilitychange."
 P1,sync-rete,passed,Ripresa dopo perdita della rete.,globale:T-1725,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: perdita rete, chiusura pagina, riapertura e ripresa automatica verificate con coda IndexedDB reale."
 P1,sync-rete,pending,Ritorno della rete.,globale:T-1237,
@@ -1169,14 +1169,14 @@ P2,social,passed,Aggiungere risposte ai commenti.,globale:T-0059,"1.48.37: API Q
 P2,social,passed,Archivio di post e commenti.,globale:T-1710,"travel-archive Thailandia 1.48.13 3/3: lo ZIP contiene pubblicazioni.json con ID, autore, data, giorno, visibilità, luogo e testo di ogni post, più autore, data e testo di ogni commento; foto, audio, video e allegati commento sono inclusi quando visibili, senza documenti privati."
 P2,social,passed,"B commenta, A riceve.",usabilita:U0556,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P2,social,passed,Bacheca → post → commenti → indietro.,globale:T-1410,"ui-comment-deep-link Thailandia 1.48.14 Samsung Galaxy S9+ locale e pacchetto QA 2/2: il test touch ha prima riprodotto il difetto sul commento vecchio non renderizzato; dopo la correzione il link apre il commento preciso, la sincronizzazione aggiunge un nuovo commento senza richiudere la discussione, i comandi touch chiudono e riaprono tutti i commenti, il reload conserva il bersaglio e il ritorno alla bacheca mantiene il post. Regressione locale 164/164 applicabili, gate QA autenticato completato e produzione read-only 8/8."
-P2,social,pending,Cambiare reazione.,usabilita:U0251,
-P2,social,pending,Cambio reazione.,globale:T-0459,
+P2,social,passed,Cambiare reazione.,usabilita:U0251,reaction-concurrency 2/2 + P1_SOCIAL_CONCURRENCY 12/12: upsert atomico sostituisce l'emoji della stessa identità senza creare doppioni.
+P2,social,passed,Cambio reazione.,globale:T-0459,reaction-concurrency 2/2: cambio concorrente conserva una sola reazione corrente per persona e post.
 P2,social,passed,chi può moderare un commento non possa modificare l’identità dell’autore;,addendum:A0384,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P2,social,passed,Chiudi tutti i commenti.,usabilita:U0313,"ui-comment-deep-link Thailandia 1.48.14 Samsung Galaxy S9+ locale e pacchetto QA 2/2: il test touch ha prima riprodotto il difetto sul commento vecchio non renderizzato; dopo la correzione il link apre il commento preciso, la sincronizzazione aggiunge un nuovo commento senza richiudere la discussione, i comandi touch chiudono e riaprono tutti i commenti, il reload conserva il bersaglio e il ritorno alla bacheca mantiene il post. Regressione locale 164/164 applicabili, gate QA autenticato completato e produzione read-only 8/8."
-P2,social,pending,commentare un post;,globale:T-1772,
-P2,social,pending,"Commentare, se consentito.",usabilita:U0617,
-P2,social,pending,Commentare.,usabilita:U0627,
-P2,social,pending,commenti e reazioni non sono manipolabili;,globale:T-0664,
+P2,social,passed,commentare un post;,globale:T-1772,P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: tre sessioni personali commentano lo stesso post di gruppo e rileggono i tre commenti integri.
+P2,social,passed,"Commentare, se consentito.",usabilita:U0617,P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37 + authorization-matrix: viaggiatori e coordinatrice autorizzati commentano; l'accesso resta derivato dal server.
+P2,social,passed,Commentare.,usabilita:U0627,"P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: inserimento reale, persistenza, ricezione multidispositivo e pulizia del post completati."
+P2,social,passed,commenti e reazioni non sono manipolabili;,globale:T-0664,P1_SOCIAL_CONCURRENCY 12/12 + authorization-matrix 86/86: identità e unicità sono server-side; due sessioni dello stesso profilo non creano doppioni e richieste altrui non cambiano proprietario.
 P2,social,passed,Commenti periodici durante la prova.,globale:T-1126,"P1_SOCIAL_COMMENTS Thailandia 1.48.31 QA reale 18/18: commenti periodici di identità distinte creati, riletti e rimossi nell'ambiente isolato senza duplicazioni o residui. | P1_SOCIAL_COMMENTS Thailandia 1.48.31 QA reale 18/18: commenti periodici multi-identità creati e riletti senza duplicazioni, quindi eliminati con pulizia isolata verificata."
 P2,social,pending,Commento con emoji.,usabilita:U0305,
 P2,social,pending,Commento con menzione.,usabilita:U0306,
@@ -1184,20 +1184,20 @@ P2,social,pending,Commento molto lungo.,usabilita:U0304,
 P2,social,pending,commento non pubblico;,addendum:A0124,
 P2,social,passed,Commento testuale.,globale:T-0463;usabilita:U0299,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P2,social,pending,Commento vuoto.,usabilita:U0303,
-P2,social,pending,commento;,globale:T-0730;usabilita:U0546;usabilita:U0642,
+P2,social,passed,commento;,globale:T-0730;usabilita:U0546;usabilita:U0642,P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: commento reale verificato su tre identità e rimosso con la pubblicazione di prova.
 P2,social,passed,Confrontare numero di commenti.,globale:T-1159,"P1_SOCIAL_COMMENTS Thailandia 1.48.13 su QA isolato 18/18: viaggiatore A, viaggiatore B e coordinatrice inseriscono un commento ciascuno; tre dispositivi leggono gli stessi tre ID, tre autori, testi e timestamp server validi, con conteggio identico; post e commenti vengono eliminati a fine prova."
 P2,social,passed,Confrontare numero di reazioni.,globale:T-1163,"P1_SOCIAL_CONCURRENCY Thailandia 1.48.13 su QA isolato 12/12 + L1/L2 autenticato 18/18 applicabili + produzione read-only 8/8: due dispositivi dello stesso profilo modificano contemporaneamente la stessa reazione e convergono a una sola riga; due viaggiatori e la coordinatrice aggiungono una reazione ciascuno e tutti e tre i dispositivi leggono identico conteggio, autori e tipi. Il difetto concorrente trovato su 1.48.12 è stato corretto con vincolo unico persona/post e upsert; backup D1 eseguito prima della migrazione e rilascio ufficiale 1.48.13 verificato."
 P2,social,passed,Copiare il collegamento del commento.,globale:T-0968,"ui-social Thailandia 1.48.28 Samsung S20 FE QA reale 1/1: un visitatore copia con gesto touch il collegamento del proprio commento; l'URL contiene l'identificativo esatto della pubblicazione e un identificativo commento valido, mentre modifica ed eliminazione restano negate a un osservatore non proprietario."
 P2,social,passed,Deep link del singolo commento.,globale:T-0243,"ui-comment-deep-link Thailandia 1.48.14 Samsung Galaxy S9+ locale e pacchetto QA 2/2: il test touch ha prima riprodotto il difetto sul commento vecchio non renderizzato; dopo la correzione il link apre il commento preciso, la sincronizzazione aggiunge un nuovo commento senza richiudere la discussione, i comandi touch chiudono e riaprono tutti i commenti, il reload conserva il bersaglio e il ritorno alla bacheca mantiene il post. Regressione locale 164/164 applicabili, gate QA autenticato completato e produzione read-only 8/8."
-P2,social,pending,Definire cosa accade ai commenti.,globale:T-1317,
-P2,social,pending,Definire cosa accade alle reazioni.,globale:T-1319,
+P2,social,passed,Definire cosa accade ai commenti.,globale:T-1317,"data-retention-policy 3/3 + comment-conversations 5/5: commenti conservati con il post; eliminazione esplicita o cascata rimuove testo, allegato, risposte e reazioni collegate."
+P2,social,passed,Definire cosa accade alle reazioni.,globale:T-1319,"data-retention-policy 3/3 + reaction-concurrency 2/2: una reazione per persona, cambio atomico, rimozione con nuovo tocco e cascata alla cancellazione del contenuto."
 P2,social,passed,Definire per quanto tempo vengono conservati i commenti.,globale:T-1342,data-retention-policy 3/3: nessuna scadenza automatica dei commenti validi; rimozione esplicita o cascata da pubblicazione/profilo.
 P2,social,passed,Errore durante creazione del post con 10 allegati.,globale:T-1148,"P0_TEN_ATTACHMENTS Thailandia 1.48.31 QA reale: un post con dieci JPEG distinti restituisce HTTP 201, conserva nomi e ordine 10/10, riapre 10/10 file e viene eliminato senza lasciare la pubblicazione nel database. | P0_TEN_ATTACHMENTS Thailandia 1.48.31 QA reale: creazione HTTP 201 con dieci JPEG distinti, persistenza e riapertura 10/10, ordine e nomi integri, eliminazione finale verificata."
 P2,social,passed,Espandere tutti i commenti.,globale:T-1398,"ui-comment-deep-link Thailandia 1.48.27 Galaxy S9+ touch 1/1: una discussione con cinque commenti viene espansa integralmente, ridotta agli ultimi elementi e riaperta; sincronizzazione, reload e ritorno mantengono il commento bersaglio leggibile."
 P2,social,passed,Il commento non deve rimanere orfano.,globale:T-0794,verify-d1-backup: zero commenti orfani dopo il ripristino
 P2,social,passed,Iniziare a scrivere un commento.,globale:T-1399,"ui-social Thailandia 1.48.27 Samsung S20 FE QA reale 1/1: il visitatore tocca il campo Scrivi un commento, digita, invia, riceve HTTP 201 e vede autore e testo; un secondo telefono riceve il commento, mentre modifica ed eliminazione restano riservate all'autore."
-P2,social,pending,Inserimento commento.,globale:T-1220,
-P2,social,pending,Inserimento reazione.,globale:T-1221,
+P2,social,passed,Inserimento commento.,globale:T-1220,P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: tre POST multipart autenticati restituiscono 201 e compaiono nello stato delle tre sessioni.
+P2,social,passed,Inserimento reazione.,globale:T-1221,"P1_SOCIAL_CONCURRENCY 12/12 su QA 1.48.37: reazioni concorrenti di proprietario, altro viaggiatore e coordinatrice persistono una sola volta per identità."
 P2,social,passed,Inviare commento.,usabilita:U0260,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
 P2,social,pending,Moderazione commenti.,usabilita:U0662,
 P2,social,passed,modifica commento altrui;,globale:T-0740,QA 1.31.0: attacco modifica commento altrui respinto
@@ -1205,18 +1205,18 @@ P2,social,passed,modifica commento proprio;,globale:T-0741;usabilita:U0307,QA 1.
 P2,social,passed,Modifica commento.,globale:T-0468,QA 1.31.0: proprietario modifica correttamente il proprio commento
 P2,social,passed,Modificare contemporaneamente la stessa reazione.,globale:T-0796,"P1_SOCIAL_CONCURRENCY Thailandia 1.48.13 su QA isolato 12/12 + L1/L2 autenticato 18/18 applicabili + produzione read-only 8/8: due dispositivi dello stesso profilo modificano contemporaneamente la stessa reazione e convergono a una sola riga; due viaggiatori e la coordinatrice aggiungono una reazione ciascuno e tutti e tre i dispositivi leggono identico conteggio, autori e tipi. Il difetto concorrente trovato su 1.48.12 è stato corretto con vincolo unico persona/post e upsert; backup D1 eseguito prima della migrazione e rilascio ufficiale 1.48.13 verificato."
 P2,social,pending,non esistono commenti;,addendum:A0300,
-P2,social,pending,Nuovo commento.,globale:T-0526,
+P2,social,passed,Nuovo commento.,globale:T-0526,P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: nuovo commento creato e ricevuto coerentemente da tre sessioni personali.
 P2,social,passed,Ogni commento deve essere collegato a un post esistente.,globale:T-1015,P0_RATE_LIMIT_DIMENSIONS 10/10 su QA isolato: trenta reazioni e dieci commenti riferiti ogni volta a post inesistenti sono stati rifiutati con 404 prima di qualsiasi inserimento; nessun commento o reazione orfano è stato creato.
 P2,social,passed,Ogni reazione deve essere collegata a un post esistente.,globale:T-1020,P0_RATE_LIMIT_DIMENSIONS 10/10 su QA isolato: trenta reazioni e dieci commenti riferiti ogni volta a post inesistenti sono stati rifiutati con 404 prima di qualsiasi inserimento; nessun commento o reazione orfano è stato creato.
 P2,social,pending,Paginazione dei commenti.,globale:T-0108,
 P2,social,passed,Protezione contro modifica di commenti altrui.,globale:T-0224,QA 1.31.0: secondo viaggiatore non puo modificare il commento altrui
-P2,social,pending,Reazione Mi piace.,globale:T-0469,
-P2,social,pending,reazione;,globale:T-0751;usabilita:U0643,
+P2,social,passed,Reazione Mi piace.,globale:T-0469,"P1_SOCIAL_CONCURRENCY 12/12 + comment-conversations 31/31 su QA 1.48.37: cuore inserito, conteggiato e sincronizzato senza duplicazioni."
+P2,social,passed,reazione;,globale:T-0751;usabilita:U0643,P1_SOCIAL_CONCURRENCY 12/12 su QA 1.48.37: tre reazioni di tre identità producono firme identiche in tutte le viste.
 P2,social,pending,Ricerca per commento.,globale:T-1698,
-P2,social,pending,Ricezione commento.,globale:T-1232,
-P2,social,pending,Rimozione reazione.,globale:T-0470,
+P2,social,passed,Ricezione commento.,globale:T-1232,"P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: ogni commento viene ricevuto da proprietario, secondo viaggiatore e coordinatrice con autore e timestamp invariati."
+P2,social,passed,Rimozione reazione.,globale:T-0470,reaction-concurrency 2/2 + comment-conversations 31/31: secondo tocco sulla stessa reazione la elimina; stato finale senza record duplicati.
 P2,social,passed,Rimuovere reazione.,usabilita:U0252,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
-P2,social,pending,Risposta al commento.,globale:T-1235,
+P2,social,passed,Risposta al commento.,globale:T-1235,"comment-conversations 31/31 + touch Samsung S20 FE 1/1 su QA 1.48.37: risposta a un livello creata, ricevuta sul secondo telefono e rimossa in cascata."
 P2,social,passed,Scrivere commento.,usabilita:U0259,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
 P2,social,passed,Tentare modifica commento altrui.,globale:T-0626,QA 1.31.0: modifica commento altrui negata con HTTP 403
 P2,social,passed,Tentare modifica diretta di commenti altrui.,usabilita:U0582,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
