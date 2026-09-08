@@ -561,7 +561,7 @@ P0,profili-ruoli,passed,Avvisare il Coordinatore in caso di abuso ripetuto.,glob
 P0,profili-ruoli,passed,Cambiare il ruolo da Coordinatore a Viaggiatore.,globale:T-0755,extended-p0-roles: retrocessione immediata sul token già aperto
 P0,profili-ruoli,passed,Commento come Coordinatore.,usabilita:U0298,P0_SOCIAL 12/12 + ui-social Thailandia 1.48.4 1/1: commento coordinatore autenticato salvato con identità server corretta e visibile agli utenti ammessi.
 P0,profili-ruoli,passed,Controllare author_name e profile_id nel database.,usabilita:U0175,P0_ROLES 20/20: author_name e profile_id falsificati vengono ignorati e derivati dalla sessione server.
-P0,profili-ruoli,pending,Coordinatore,globale:T-0278;addendum:A0133;addendum:A0212,
+P0,profili-ruoli,passed,Coordinatore,globale:T-0278;addendum:A0133;addendum:A0212,"P0_ROLES_AND_SHARED_CONTROLS 30/30 su QA 1.48.37: la coordinatrice assegnata conserva il ruolo server, può svolgere soltanto le operazioni previste e non può essere sostituita o impersonata tramite campi client."
 P0,profili-ruoli,passed,Coordinatore sulla risorsa A;,addendum:A0108,P0 locale ruoli 18/18: post creato e rimosso con identità della sessione coordinatore
 P0,profili-ruoli,pending,da Coordinatore a Pubblico;,addendum:A0086,
 P0,profili-ruoli,passed,da Coordinatore a Viaggiatore;,addendum:A0084,extended-p0-roles: inviti negati immediatamente dopo retrocessione
@@ -577,7 +577,7 @@ P0,profili-ruoli,passed,non riceve dati amministrativi del Coordinatore;,addendu
 P0,profili-ruoli,passed,Promuovere l’utente a Coordinatore da un altro dispositivo.,addendum:A0090,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P0,profili-ruoli,passed,Revocare il dispositivo dal Coordinatore.,globale:T-0763,"P0_AUTH_LIFECYCLE 68/68: il coordinatore revoca il dispositivo scelto, la relativa sessione riceve 401 e le altre sessioni autorizzate restano attive."
 P0,profili-ruoli,passed,Richiedere eliminazione del proprio profilo.,globale:T-1324,"P0_PROFILE_DELETION 40/40: richiesta ed eliminazione del profilo rimuovono sessioni, inviti, documenti, posizione e contenuti collegati."
-P0,profili-ruoli,pending,se è Coordinatore;,addendum:A0430,
+P0,profili-ruoli,passed,se è Coordinatore;,addendum:A0430,"P0_ROLES_AND_SHARED_CONTROLS 30/30 su QA 1.48.37: ruolo riletto dalla sessione server; creazione profili e operazioni condivise seguono il ruolo effettivo, mentre auto-promozione e autore falsificato vengono ignorati o respinti."
 P0,profili-ruoli,passed,telefono A – Coordinatore;,globale:T-0301,P0 locale ruoli: sessione coordinatore separata su dispositivo A simulato e vincolata al relativo profilo
 P0,profili-ruoli,passed,test come Coordinatore;,usabilita:U0722,P0 locale ruoli 18/18 più documenti/posizione: operazioni coordinatore eseguite con token dedicato
 P0,profili-ruoli,passed,test del percorso completo del Coordinatore;,globale:T-1805,"ui-role-live Thailandia 1.48.4 1/1 + ui-people 1/1 + ui-documents 1/1: accesso, ruolo unico, gestione profilo, griglia e revoca coordinatore verificati nel percorso mobile completo."
