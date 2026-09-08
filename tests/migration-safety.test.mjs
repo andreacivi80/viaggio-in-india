@@ -67,10 +67,19 @@ test("il runner QA usa identificativi isolati e pulizie circoscritte", async () 
   const runner = await readFile(new URL("../scripts/run-authenticated-qa.ps1", import.meta.url), "utf8");
   assert.match(runner, /qa-owner-\$runId/);
   assert.match(runner, /UPDATE profiles SET role='traveler'[\s\S]*?id LIKE 'qa-%'/);
+  assert.match(runner, /DELETE FROM security_audit_log[\s\S]*?created_at >= '\$created'/);
   assert.match(runner, /WHERE profile_id IN \(\$quotedIds\)/);
   assert.doesNotMatch(runner, /DELETE FROM guest_sessions[^\n]*LIKE/i);
   assert.doesNotMatch(runner, /DELETE FROM profiles\s*;/i);
   assert.doesNotMatch(runner, /DELETE FROM posts\s*;/i);
+});
+
+test("il gate elimina soltanto il seed QA noto e i log creati durante il proprio run", async () => {
+  const gate = await readFile(new URL("../scripts/run-level1-gate.ps1", import.meta.url), "utf8");
+  assert.match(gate, /\$gateStartedAt = \[DateTime\]::UtcNow\.ToString\("o"\)/);
+  assert.match(gate, /DELETE FROM posts WHERE id='weroad-predeparture'/);
+  assert.match(gate, /DELETE FROM security_audit_log WHERE created_at >= '\$gateStartedAt'/);
+  assert.doesNotMatch(gate, /DELETE FROM (?:profiles|posts|comments|document_status|locations|auth_sessions)\s*;/i);
 });
 
 test("il collaudo UI usa soltanto la coppia QA isolata", async () => {

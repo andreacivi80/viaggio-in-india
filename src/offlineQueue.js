@@ -2,6 +2,11 @@ const DB_NAME = "india-insieme-offline";
 const DB_VERSION = 1;
 const STORE = "requests";
 
+function signalQueueChanged() {
+  if (typeof globalThis.dispatchEvent === "function" && typeof globalThis.Event === "function")
+    globalThis.dispatchEvent(new Event("offline-queue-changed"));
+}
+
 function openQueue() {
   return new Promise((resolve, reject) => {
     if (!globalThis.indexedDB) return reject(new Error("Archivio offline non disponibile"));
@@ -63,6 +68,7 @@ export async function queueFormRequest({
     attempts: 0,
     createdAt: new Date().toISOString(),
   }));
+  signalQueueChanged();
   return id;
 }
 
@@ -74,8 +80,27 @@ async function allRequests() {
   return (await transact("readonly", (store) => store.getAll())) || [];
 }
 
+export async function queuedRequests() {
+  return (await allRequests())
+    .sort((left, right) => String(left.createdAt).localeCompare(String(right.createdAt)))
+    .map((item) => ({
+      id: item.id,
+      endpoint: item.endpoint,
+      attempts: Number(item.attempts || 0),
+      createdAt: item.createdAt,
+      attachmentCount: item.entries.filter((entry) => entry.isFile).length,
+    }));
+}
+
 async function removeRequest(id) {
   await transact("readwrite", (store) => store.delete(id));
+}
+
+export async function removeQueuedRequest(id) {
+  if (!id) return false;
+  await removeRequest(id);
+  signalQueueChanged();
+  return true;
 }
 
 async function updateRequest(item) {
@@ -136,6 +161,7 @@ export async function flushOfflineQueue() {
       });
       if (response.ok) {
         await removeRequest(item.id);
+        signalQueueChanged();
         sent += 1;
       } else if (response.status >= 400 && response.status < 500 && response.status !== 409) {
         item.attempts += 1;

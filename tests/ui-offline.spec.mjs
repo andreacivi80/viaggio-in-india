@@ -32,9 +32,36 @@ test("invio offline sopravvive alla chiusura e parte una sola volta al ritorno d
   const deviceKey = await page.evaluate(() => localStorage.getItem("india-device-key"));
   expect(sessionToken).toBeTruthy();
   const marker = `Offline QA ${Date.now()}`;
+  const discardedMarker = `Offline eliminato QA ${Date.now()}`;
   try {
     await page.getByRole("button", { name: "Pubblica", exact: true }).tap();
-    const sheet = page.locator(".uploadSheet");
+    let sheet = page.locator(".uploadSheet");
+    await sheet.getByPlaceholder("Racconta questo momento…").fill(discardedMarker);
+    await sheet.locator('input[accept^="image"]').first().setInputFiles(photoPath);
+    await context.setOffline(true);
+    await sheet.locator(".composerActions > button").tap();
+    await expect.poll(() => offlineCount(page)).toBe(1);
+    await page.locator("button.accessPill").tap();
+    const queuePanel = page.getByRole("region", { name: "Invii in attesa" });
+    await expect(queuePanel).toContainText("1 invio in attesa");
+    await queuePanel.getByRole("button", { name: "Elimina" }).tap();
+    const queueConfirm = page.getByRole("dialog", { name: "Eliminare l’invio in attesa?" });
+    await expect(queueConfirm).toContainText("Nessun contenuto già pubblicato sarà eliminato.");
+    await page.goBack();
+    await expect(queueConfirm).toHaveCount(0);
+    await expect.poll(() => offlineCount(page)).toBe(1);
+    await queuePanel.getByRole("button", { name: "Elimina" }).tap();
+    await queueConfirm.getByRole("button", { name: "Annulla" }).tap();
+    await expect(queueConfirm).toHaveCount(0);
+    await expect.poll(() => offlineCount(page)).toBe(1);
+    await queuePanel.getByRole("button", { name: "Elimina" }).tap();
+    await queueConfirm.getByRole("button", { name: "Elimina dalla coda" }).tap();
+    await expect.poll(() => offlineCount(page)).toBe(0);
+    await expect(page.getByText("Invio in attesa eliminato dal telefono.")).toBeVisible();
+    await page.locator("button.accessPill").tap();
+
+    await page.getByRole("button", { name: "Pubblica", exact: true }).tap();
+    sheet = page.locator(".uploadSheet");
     await sheet.getByPlaceholder("Racconta questo momento…").fill(marker);
     await sheet.locator('input[accept^="image"]').first().setInputFiles(photoPath);
     await context.setOffline(true);
@@ -64,6 +91,7 @@ test("invio offline sopravvive alla chiusura e parte una sola volta al ritorno d
     const state = await stateResponse.json();
     const matches = state.posts.filter((item) => item.text === marker);
     expect(matches).toHaveLength(1);
+    expect(state.posts.filter((item) => item.text === discardedMarker)).toHaveLength(0);
     createdPostId = matches[0].id;
     await page.reload({ waitUntil: "domcontentloaded" });
     await expect(page.locator(".post").filter({ hasText: marker })).toHaveCount(1);

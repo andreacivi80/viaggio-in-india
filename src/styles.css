@@ -671,6 +671,8 @@ html.travelerDirectoryOpen body {
   background: var(--color-surface);
   color: var(--color-text-primary);
   box-shadow: var(--shadow-medium);
+  max-height: calc(100dvh - 80px);
+  overflow-y: auto;
 }
 .quickProfileHead {
   display: grid;
@@ -2057,6 +2059,40 @@ footer small {
   background: transparent;
   cursor: zoom-in;
 }
+.offlineQueuePanel {
+  display: grid;
+  gap: 7px;
+  margin-top: 9px;
+  padding: 10px;
+  border: 1px solid #e4a861;
+  border-radius: var(--radius-medium);
+  background: #fff5e7;
+  color: var(--color-text-primary);
+}
+.offlineQueuePanel > small { color: var(--color-text-secondary); }
+.offlineQueuePanel > div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding-top: 7px;
+  border-top: 1px solid #ebd3b4;
+}
+.offlineQueuePanel span { display: flex; min-width: 0; flex-direction: column; }
+.offlineQueuePanel span small { color: var(--color-text-secondary); }
+.offlineQueuePanel button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 9px;
+  border: 1px solid #c64232;
+  border-radius: var(--radius-small);
+  background: #fff;
+  color: #a52f22;
+  font-weight: 800;
+}
+.offlineQueuePanel button svg { width: 16px; height: 16px; }
 .sessionNotice {
   position: fixed;
   z-index: 1000;

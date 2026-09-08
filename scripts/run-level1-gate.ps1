@@ -6,6 +6,7 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$gateStartedAt = [DateTime]::UtcNow.ToString("o")
 
 if ($SmokeOnly) {
   $env:TEST_BASE_URL = $BaseUrl
@@ -79,15 +80,25 @@ Assert-LastExit "carico concorrente"
 Assert-LastExit "antispam e rate limit"
 
 Write-Host "[L1] Verifica pulizia database QA"
-$countsJson = & npx wrangler d1 execute viaggio-in-india-qa-db --remote --config wrangler.qa.jsonc --json --command "SELECT COUNT(*) AS profiles FROM profiles; SELECT COUNT(*) AS posts FROM posts; SELECT COUNT(*) AS comments FROM comments; SELECT COUNT(*) AS documents FROM document_status; SELECT COUNT(*) AS locations FROM locations; SELECT COUNT(*) AS sessions FROM auth_sessions; SELECT COUNT(*) AS audit_events FROM security_audit_log;"
-Assert-LastExit "lettura pulizia QA"
-$counts = $countsJson | ConvertFrom-Json
-$dirty = @()
-foreach ($result in $counts) {
-  foreach ($property in $result.results[0].PSObject.Properties) {
-    if ([int]$property.Value -ne 0) { $dirty += "$($property.Name)=$($property.Value)" }
+$cleanupSql = "DELETE FROM reactions WHERE post_id='weroad-predeparture'; DELETE FROM post_media WHERE post_id='weroad-predeparture'; DELETE FROM comments WHERE post_id='weroad-predeparture'; DELETE FROM posts WHERE id='weroad-predeparture'; DELETE FROM security_audit_log WHERE created_at >= '$gateStartedAt';"
+for ($cleanupAttempt = 1; $cleanupAttempt -le 3; $cleanupAttempt += 1) {
+  & npx wrangler d1 execute viaggio-in-india-qa-db --remote --config wrangler.qa.jsonc --command $cleanupSql | Out-Null
+  Assert-LastExit "pulizia circoscritta dati gate"
+  $countsJson = & npx wrangler d1 execute viaggio-in-india-qa-db --remote --config wrangler.qa.jsonc --json --command "SELECT COUNT(*) AS profiles FROM profiles; SELECT COUNT(*) AS posts FROM posts; SELECT COUNT(*) AS comments FROM comments; SELECT COUNT(*) AS documents FROM document_status; SELECT COUNT(*) AS locations FROM locations; SELECT COUNT(*) AS sessions FROM auth_sessions; SELECT COUNT(*) AS audit_events FROM security_audit_log;"
+  Assert-LastExit "lettura pulizia QA"
+  $counts = $countsJson | ConvertFrom-Json
+  $dirty = @()
+  foreach ($result in $counts) {
+    foreach ($property in $result.results[0].PSObject.Properties) {
+      if ([int]$property.Value -ne 0) { $dirty += "$($property.Name)=$($property.Value)" }
+    }
   }
+  if ($dirty.Count -eq 0) { break }
+  if ($cleanupAttempt -lt 3 -and $dirty.Count -eq 1 -and $dirty[0] -match '^audit_events=') {
+    Start-Sleep -Seconds 1
+    continue
+  }
+  throw "Database QA non pulito: $($dirty -join ', ')"
 }
-if ($dirty.Count -gt 0) { throw "Database QA non pulito: $($dirty -join ', ')" }
 Write-Host "[L1 PASS] database QA pulito"
 Write-Host "[L1 COMPLETE] 109/109"

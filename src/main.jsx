@@ -33,7 +33,12 @@ import {
 } from "./icons.jsx";
 import "./styles.css";
 import { publicationAccessStep, publicationEntryState } from "./accessFlow.js";
-import { flushOfflineQueue, queueFormRequest } from "./offlineQueue.js";
+import {
+  flushOfflineQueue,
+  queuedRequests,
+  queueFormRequest,
+  removeQueuedRequest,
+} from "./offlineQueue.js";
 import { shouldUseResumableUpload, uploadFileResumable } from "./resumableUpload.js";
 import {
   sanitizePostsForPublicCache,
@@ -66,7 +71,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.32",
+const VERSION = "1.48.33",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -1077,6 +1082,8 @@ function App() {
     [weatherByDate, setWeatherByDate] = useState({}),
     [indiaClock, setIndiaClock] = useState(() => Date.now()),
     [quickStatus, setQuickStatus] = useState(""),
+    [offlineItems, setOfflineItems] = useState([]),
+    [pendingOfflineDelete, setPendingOfflineDelete] = useState(null),
     [stateLoaded, setStateLoaded] = useState(false),
     [sessionNotice, setSessionNotice] = useState(""),
     [accessCode, setAccessCode] = useState(""),
@@ -1223,6 +1230,16 @@ function App() {
   const sessionCheckPending = Boolean(sessionToken && !sessionProfile);
   const effectiveSessionToken = verifiedSessionToken;
   const sessionTokenRef = useRef(effectiveSessionToken);
+  const refreshOfflineItems = async () => {
+    try { setOfflineItems(await queuedRequests()); }
+    catch { setOfflineItems([]); }
+  };
+  useEffect(() => {
+    const onQueueChanged = () => refreshOfflineItems();
+    refreshOfflineItems();
+    addEventListener("offline-queue-changed", onQueueChanged);
+    return () => removeEventListener("offline-queue-changed", onQueueChanged);
+  }, []);
   useEffect(() => {
     sessionTokenRef.current = effectiveSessionToken;
     refresh();
@@ -1952,6 +1969,20 @@ function App() {
       // La lettura locale resta valida; il prossimo accesso riproverà senza bloccare l'utente.
     }
   };
+  const askToRemoveOfflineItem = (item) => {
+    history.pushState({ ...(history.state || {}), offlineQueueDialog: true }, "", location.href);
+    setPendingOfflineDelete(item);
+  };
+  const closeOfflineDelete = () => {
+    if (history.state?.offlineQueueDialog) history.back();
+    else setPendingOfflineDelete(null);
+  };
+  useEffect(() => {
+    if (!pendingOfflineDelete) return undefined;
+    const cancelOnBack = () => setPendingOfflineDelete(null);
+    addEventListener("popstate", cancelOnBack);
+    return () => removeEventListener("popstate", cancelOnBack);
+  }, [pendingOfflineDelete]);
   const toggleActivityPanel = () => {
     const opening = !notificationOpen;
     setNotificationOpen(opening);
@@ -2256,6 +2287,26 @@ function App() {
               </div>
             )}
             {quickStatus && <small className="quickStatus">{quickStatus}</small>}
+            {offlineItems.length > 0 && (
+              <section className="offlineQueuePanel" aria-label="Invii in attesa">
+                <b>{offlineItems.length} {offlineItems.length === 1 ? "invio in attesa" : "invii in attesa"}</b>
+                <small>Restano soltanto su questo telefono finché non torna la rete.</small>
+                {offlineItems.map((item) => (
+                  <div key={item.id}>
+                    <span>
+                      <b>{item.endpoint.includes("comments") ? "Commento" : item.endpoint.includes("documents") ? "Documento" : "Pubblicazione"}</b>
+                      <small>
+                        {item.attachmentCount ? `${item.attachmentCount} allegat${item.attachmentCount === 1 ? "o" : "i"}` : "Solo testo"}
+                        {item.attempts ? ` · ${item.attempts} tentativ${item.attempts === 1 ? "o" : "i"}` : ""}
+                      </small>
+                    </span>
+                    <button type="button" onClick={() => askToRemoveOfflineItem(item)}>
+                      <Trash2 aria-hidden="true" /> Elimina
+                    </button>
+                  </div>
+                ))}
+              </section>
+            )}
           </div>
         )}
         <div className="heroCopy">
@@ -2275,6 +2326,26 @@ function App() {
           </button>
         </div>
       </header>
+      {pendingOfflineDelete && (
+        <div className="confirmOverlay" role="dialog" aria-modal="true" aria-labelledby="offline-delete-title">
+          <div className="confirmCard">
+            <Trash2 aria-hidden="true" />
+            <h3 id="offline-delete-title">Eliminare l’invio in attesa?</h3>
+            <p>Verrà rimosso soltanto dal telefono. Nessun contenuto già pubblicato sarà eliminato.</p>
+            <div>
+              <button type="button" onClick={closeOfflineDelete}>Annulla</button>
+              <button
+                type="button"
+                onClick={async () => {
+                  await removeQueuedRequest(pendingOfflineDelete.id);
+                  closeOfflineDelete();
+                  setQuickStatus("Invio in attesa eliminato dal telefono.");
+                }}
+              >Elimina dalla coda</button>
+            </div>
+          </div>
+        </div>
+      )}
       <nav className="tabs">
         {[
           ["diary", House, "Bacheca"],

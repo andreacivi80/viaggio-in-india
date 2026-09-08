@@ -338,9 +338,9 @@ P0,altro,pending,indicare esattamente cosa verrà eliminato;,addendum:A0252,
 P0,altro,pending,Inviare notifica relativa a un contenuto successivamente eliminato.,globale:T-0866,
 P0,altro,passed,Mostrare chiaramente quali dati verranno eliminati.,globale:T-1321,"deletion-confirmation 1/1 + UI documenti/social: prima dell’azione l’interfaccia distingue chiaramente post e allegati, testo e allegato del commento, oppure documento privato, con Annulla ed Elimina separati."
 P0,altro,pending,nessuna funzione esistente è stata eliminata;,globale:T-0684,
-P0,altro,pending,nessuna pressione del tasto Indietro confermi l’eliminazione;,addendum:A0263,
-P0,altro,pending,Permettere all’utente di eliminare elementi dalla coda.,globale:T-0847,
-P0,altro,pending,possibilità di eliminarli.,addendum:A0372,
+P0,altro,passed,nessuna pressione del tasto Indietro confermi l’eliminazione;,addendum:A0263,"ui-offline Thailandia 1.48.33 Samsung S20 FE QA 1/1: dopo l'apertura della conferma, il tasto Indietro del browser chiude il dialogo e il conteggio della coda resta 1; anche Annulla conserva l'invio."
+P0,altro,passed,Permettere all’utente di eliminare elementi dalla coda.,globale:T-0847,"ui-offline Thailandia 1.48.33 Samsung S20 FE QA 1/1: il pannello mostra gli invii locali in attesa; il touch su Elimina apre la conferma e soltanto Elimina dalla coda rimuove l'elemento selezionato, lasciando intatti gli altri."
+P0,altro,passed,possibilità di eliminarli.,addendum:A0372,"ui-documents Thailandia 1.48.33 Samsung S20 FE QA 1/1: il proprietario carica e apre 10 PDF reali, elimina esplicitamente il proprio documento e il coordinatore ne verifica la scomparsa; gli altri viaggiatori non possono eliminarlo."
 P0,altro,passed,post eliminato;,globale:T-1574,extended-p0-sync-delete: post eliminato e stato finale senza residui
 P0,altro,passed,prima dell’eliminazione;,addendum:A0115,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,altro,passed,Produrre un resoconto dei dati eliminati.,globale:T-1350,"P0_PROFILE_DELETION Thailandia 1.48.25 locale e QA isolato 52/52: la risposta server restituisce un resoconto numerico di profilo, post, commenti, reazioni, documenti, posizione, notifiche, sessioni, inviti, preferiti e file eliminati; la rilettura di database e storage conferma l'assenza di ogni dato collegato."
@@ -1860,7 +1860,7 @@ P3,altro,pending,Mostrare spazio utilizzato dall’app.,globale:T-0843,
 P3,altro,pending,mostrare stato dell’operazione;,addendum:A0256,
 P3,altro,pending,Mostrare tempo prima di poter riprovare.,globale:T-1054,
 P3,altro,pending,mostrare un errore comprensibile;,globale:T-1139,
-P3,altro,pending,Mostrare un messaggio comprensibile.,globale:T-0844,
+P3,altro,passed,Mostrare un messaggio comprensibile.,globale:T-0844,ui-offline Thailandia 1.48.33 QA: la conferma chiarisce che viene rimosso soltanto l'invio dal telefono e che nessun contenuto già pubblicato viene eliminato; il messaggio finale conferma la rimozione.
 P3,altro,pending,MOV.,globale:T-0436,
 P3,altro,pending,MP4.,globale:T-0437,
 P3,altro,pending,Negare geolocalizzazione.,globale:T-0498,
@@ -1943,7 +1943,7 @@ P3,altro,pending,Non mostrare un generico “Errore”.,usabilita:U0008,
 P3,altro,pending,non perde dati;,usabilita:U0682,
 P3,altro,pending,non perdere allegati selezionati;,addendum:A0269,
 P3,altro,pending,non perdere bozze;,globale:T-1143,
-P3,altro,pending,Non perdere le bozze già salvate.,globale:T-0846,
+P3,altro,passed,Non perdere le bozze già salvate.,globale:T-0846,"ui-offline Thailandia 1.48.33 Samsung S20 FE QA 1/1: una seconda bozza con foto sopravvive alla chiusura della pagina, riparte al ritorno della rete ed è pubblicata esattamente una volta."
 P3,altro,pending,non reagisce due volte a un doppio tocco;,usabilita:U0672,
 P3,altro,pending,non riceve dati cancellati.,addendum:A0156,
 P3,altro,passed,non riceve dati del gruppo riservato;,addendum:A0147,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04

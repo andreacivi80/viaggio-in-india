@@ -18,8 +18,10 @@ globalThis.localStorage = {
 
 const {
   flushOfflineQueue,
+  queuedRequests,
   queuedRequestCount,
   queueFormRequest,
+  removeQueuedRequest,
 } = await import("../src/offlineQueue.js");
 
 test("la coda conserva allegati e ritenta con la stessa operazione senza duplicare", async () => {
@@ -189,4 +191,38 @@ test("le bozze offline conservano 10 foto, un video e una foto singola", async (
   assert.equal(photo.name, "foto-singola.jpg");
   assert.equal(photo.type, "image/jpeg");
   assert.equal(await photo.text(), "contenuto-foto-singola");
+});
+
+test("l’utente può ispezionare ed eliminare un singolo invio senza toccare gli altri", async () => {
+  const create = async (id, endpoint, attachments) => {
+    const form = new FormData();
+    form.set("text", id);
+    for (let index = 0; index < attachments; index += 1)
+      form.append("files", new Blob([String(index)], { type: "image/jpeg" }), `${id}-${index}.jpg`);
+    await queueFormRequest({
+      id,
+      endpoint,
+      form,
+      authType: "session",
+      operationKey: `operazione-${id}-123456`,
+    });
+  };
+  await create("da-eliminare", "/api/posts", 2);
+  await create("da-conservare", "/api/comments", 0);
+
+  const listed = new Map((await queuedRequests()).map((item) => [item.id, item]));
+  assert.equal(listed.size, 2);
+  assert.deepEqual(
+    { ...listed.get("da-eliminare"), createdAt: Boolean(listed.get("da-eliminare").createdAt) },
+    { id: "da-eliminare", endpoint: "/api/posts", attempts: 0, createdAt: true, attachmentCount: 2 },
+  );
+  assert.deepEqual(
+    { ...listed.get("da-conservare"), createdAt: Boolean(listed.get("da-conservare").createdAt) },
+    { id: "da-conservare", endpoint: "/api/comments", attempts: 0, createdAt: true, attachmentCount: 0 },
+  );
+  assert.equal(await removeQueuedRequest("da-eliminare"), true);
+  assert.equal(await queuedRequestCount(), 1);
+  assert.equal((await queuedRequests())[0].id, "da-conservare");
+  await removeQueuedRequest("da-conservare");
+  assert.equal(await queuedRequestCount(), 0);
 });
