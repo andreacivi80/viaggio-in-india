@@ -23,3 +23,10 @@ test("il runner Node usa processi nascosti e pulizia limitata agli ID del run", 
   assert.match(source, /attempt <= 3/);
   assert.match(source, /testFiles[\s\S]*?split\(","\)/);
 });
+
+test("il runner Node esegue anche i collaudi touch Playwright senza shell intermedia", () => {
+  assert.match(source, /endsWith\("\.spec\.mjs"\)/);
+  assert.match(source, /"playwright", "test"/);
+  assert.match(source, /QA_UI_SESSION_TOKEN: tokens\.owner/);
+  assert.match(source, /QA_UI_DEVICE_KEY: deviceKeys\.owner/);
+});

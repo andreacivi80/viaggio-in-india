@@ -415,4 +415,18 @@
   ,{ "control": "Protezione antispam.", "evidence": "P1_SOCIAL_FLOOD 204/204 su QA 1.48.37: raffica autenticata di 100 commenti e 100 reazioni contenuta con risposte 429 deterministiche e pulizia finale completa." }
   ,{ "control": "rate limit raggiunto;", "evidence": "P1_SOCIAL_FLOOD 204/204 su QA 1.48.37: raggiunta realmente la soglia, 90 commenti e 70 reazioni successive ricevono HTTP 429; nessun elemento oltre soglia viene persistito." }
   ,{ "control": "Verifica antispam.", "evidence": "P1_SOCIAL_FLOOD 204/204 su QA 1.48.37: verifica server su 200 operazioni sociali, conteggio finale esatto e cancellazione del solo post di prova." }
+  ,{ "control": "Aprire la fotocamera.", "evidence": "ui-publish-complete su QA 1.48.37, Galaxy S9+ touch 1/1: il compositore espone l'ingresso fotocamera capture=environment, lo attiva e acquisisce una fotografia reale senza sostituire quella di galleria." }
+  ,{ "control": "fotografie e video presenti;", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: il post pubblicato contiene due fotografie e un video, presenti sia sul telefono autore sia sull'iPhone pubblico." }
+  ,{ "control": "Fotografie e video.", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: fotografie da galleria e fotocamera più video WebM vengono pubblicati nello stesso post e ricevuti dal secondo telefono." }
+  ,{ "control": "Pubblicare un audio.", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: file WAV reale selezionato, pubblicato con HTTP 201 e visibile come player sul telefono autore e sul secondo telefono pubblico." }
+  ,{ "control": "Pubblicare un video.", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: video WebM reale selezionato, pubblicato con HTTP 201 e presente sul telefono autore e sull'iPhone pubblico." }
+  ,{ "control": "registrare un audio;", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: consenso microfono simulato, tocco Registra, stato Registrazione in corso, tocco Ferma e secondo allegato audio pubblicato." }
+  ,{ "control": "registrazione audio;", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: MediaRecorder viene avviato e fermato dall'interfaccia mobile; l'allegato prodotto resta nel post condiviso." }
+  ,{ "control": "Scattare una fotografia.", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: selettore mobile capture=environment usato con una fotografia JPEG reale, conteggiata separatamente dalla galleria e pubblicata." }
+  ,{ "control": "Testo e audio.", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: testo identificativo e due audio reali persistono insieme e sono ricevuti dal secondo telefono." }
+  ,{ "control": "Testo e fotografia.", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: testo identificativo e due JPEG persistono nello stesso post e vengono visualizzati dal secondo telefono." }
+  ,{ "control": "Testo e video.", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: testo identificativo e video WebM persistono nello stesso post e vengono visualizzati dal secondo telefono." }
+  ,{ "control": "Verificare audio.", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: due elementi audio, uno caricato e uno registrato, risultano presenti su autore e pubblico dopo la risposta 201." }
+  ,{ "control": "Verificare fotografie.", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: due fotografie reali risultano presenti nel carosello su entrambi i dispositivi dopo la pubblicazione." }
+  ,{ "control": "Verificare video.", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: il video reale risulta presente nel post dell'autore e nel post ricevuto dall'iPhone pubblico." }
 ]

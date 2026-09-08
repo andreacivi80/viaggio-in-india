@@ -141,7 +141,19 @@ try {
     QA_DELETE_PROFILE_DEVICE_KEY: deviceKeys.deleting,
     QA_PUSH_MEMBERS: JSON.stringify(pushMembers),
   };
-  for (const testFile of testFiles) executeNode(join(root, "tests", testFile), [], environment);
+  const uiEnvironment = {
+    ...environment,
+    QA_UI_SESSION_TOKEN: tokens.owner,
+    QA_UI_PROFILE_ID: profiles.owner,
+    QA_UI_PROFILE_NAME: "Proprietario QA",
+    QA_UI_DEVICE_KEY: deviceKeys.owner,
+  };
+  for (const testFile of testFiles) {
+    if (testFile.endsWith(".spec.mjs"))
+      executeNode(npxCli, ["playwright", "test", `tests/${testFile}`, "--reporter=line"], uiEnvironment);
+    else
+      executeNode(join(root, "tests", testFile), [], environment);
+  }
   succeeded = true;
 } finally {
   d1File(cleanupPath);
