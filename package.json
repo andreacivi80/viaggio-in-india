@@ -8,7 +8,7 @@
     "build": "vite build && node scripts/inject-sw-precache.mjs && node scripts/scan-client-secrets.mjs",
     "test": "npm run build && node scripts/run-static-tests.mjs",
     "test:smoke": "node --test tests/production-smoke.test.mjs",
-    "deploy:qa": "npm run build && powershell -NoProfile -ExecutionPolicy Bypass -File scripts/deploy-qa.ps1",
+    "deploy:qa": "node scripts/deploy-qa.mjs",
     "test:ui-bootstrap": "playwright test tests/ui-bootstrap.spec.mjs",
     "test:ui-critical": "playwright test tests/ui-critical.spec.mjs tests/ui-navigation.spec.mjs tests/ui-social.spec.mjs tests/ui-media.spec.mjs tests/ui-documents.spec.mjs tests/ui-location.spec.mjs tests/ui-people.spec.mjs tests/ui-role-live.spec.mjs tests/ui-responsive.spec.mjs tests/ui-secondary.spec.mjs"
   },

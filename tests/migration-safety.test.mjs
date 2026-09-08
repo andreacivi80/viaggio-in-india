@@ -113,14 +113,16 @@ test("tutte le suite scriventi rifiutano il dominio ufficiale", async () => {
 test("il deploy QA usa obbligatoriamente i binding QA", async () => {
   const packageSource = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
   const command = packageSource.scripts["deploy:qa"];
-  assert.match(command, /scripts\/deploy-qa\.ps1/);
+  assert.match(command, /node scripts\/deploy-qa\.mjs/);
   assert.doesNotMatch(command, /--project-name viaggio-in-india-2026(?:\s|$)/);
-  const deployScript = await readFile(new URL("../scripts/deploy-qa.ps1", import.meta.url), "utf8");
+  const deployScript = await readFile(new URL("../scripts/deploy-qa.mjs", import.meta.url), "utf8");
   assert.match(deployScript, /wrangler\.qa\.jsonc/);
-  assert.match(deployScript, /Destination \(Join-Path \$deployRoot "wrangler\.jsonc"\)/);
-  assert.match(deployScript, /ItemType Junction[\s\S]*?\$deployRoot "node_modules"/);
+  assert.match(deployScript, /cpSync\(join\(root, "wrangler\.qa\.jsonc"\), join\(deployRoot, "wrangler\.jsonc"\)\)/);
+  assert.match(deployScript, /symlinkSync\(join\(root, "node_modules"\), join\(deployRoot, "node_modules"\), "junction"\)/);
   assert.match(deployScript, /"viaggio-in-india-qa-db"/);
-  assert.match(deployScript, /--cwd \$deployRoot/);
+  assert.match(deployScript, /"--cwd", deployRoot/);
+  assert.match(deployScript, /windowsHide: true/);
+  assert.match(deployScript, /shell: false/);
   const qaConfig = await readFile(new URL("../wrangler.qa.jsonc", import.meta.url), "utf8");
   assert.match(qaConfig, /"name": "viaggio-in-india-2026-qa"/);
   assert.match(qaConfig, /"database_name": "viaggio-in-india-qa-db"/);
