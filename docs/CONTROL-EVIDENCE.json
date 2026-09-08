@@ -450,4 +450,7 @@
   ,{ "control": "posizioni scadute o cancellate;", "evidence": "P0_LOCATION_RETENTION 5/5 + P0_LOCATION 30/30 su QA 1.48.37: scadenza automatica e cancellazione esplicita entrambe verificate, mantenendo intatta una posizione recente differente." }
   ,{ "control": "nuovi post sincronizzati;", "evidence": "P0_SYNC_DELETE 115/115 su QA 1.48.37: un nuovo post pubblico creato dall'autore compare subito nello stato pubblico e nella sessione del secondo viaggiatore con lo stesso ID." }
   ,{ "control": "sincronizzazione incrementale;", "evidence": "P0_SYNC_DELETE 115/115 su QA 1.48.37: sync_version aumenta dopo la modifica; 100 letture concorrenti restituiscono la stessa versione e non la alterano." }
+  ,{ "control": "rispetta le autorizzazioni;", "evidence": "P0_RESOURCE_ENUMERATION 17/17 su QA 1.48.37: pubblico, familiare e altro viaggiatore non distinguono risorse private esistenti da inesistenti; proprietario e coordinatrice mantengono soltanto gli accessi autorizzati." }
+  ,{ "control": "Verificare informazioni autorizzate.", "evidence": "P0_RESOURCE_ENUMERATION 17/17 + P0_DOCUMENTS 12/12 su QA 1.48.37: documenti, dispositivi e inviti espongono esclusivamente le informazioni del profilo e ruolo autorizzati, senza enumerazione laterale." }
+  ,{ "control": "non deve contenere documenti;", "evidence": "P0_RESOURCE_ENUMERATION 17/17 su QA 1.48.37: pubblico e sessione familiare ricevono lo stesso diniego dall'area privata; un altro viaggiatore non riceve metadati né può distinguere la chiave reale da una inesistente." }
 ]

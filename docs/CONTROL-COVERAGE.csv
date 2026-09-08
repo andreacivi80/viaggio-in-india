@@ -213,7 +213,7 @@ P0,accessi-privacy,passed,Richiedere l’invito personale per collegare un dispo
 P0,accessi-privacy,passed,Richiesta di nuovo accesso.,usabilita:U0488,"P0_AUTH_LIFECYCLE 68/68: nuova registrazione/invito, scadenza, rinnovo e nuovo accesso verificati con token reali."
 P0,accessi-privacy,passed,"Ridurre la durata della sessione, attualmente prevista fino a 90 giorni.",globale:T-0039,security-surface + auth-lifecycle 35/35: durata massima ridotta a 30 giorni e inattività massima a 21 giorni
 P0,accessi-privacy,passed,Riprovare dopo autorizzazione dalle impostazioni.,usabilita:U0064,ui-location touch 1/1: dopo clear e nuovo grant la riprova invia e cancella la posizione
-P0,accessi-privacy,pending,rispetta le autorizzazioni;,usabilita:U0684,
+P0,accessi-privacy,passed,rispetta le autorizzazioni;,usabilita:U0684,"P0_RESOURCE_ENUMERATION 17/17 su QA 1.48.37: pubblico, familiare e altro viaggiatore non distinguono risorse private esistenti da inesistenti; proprietario e coordinatrice mantengono soltanto gli accessi autorizzati."
 P0,accessi-privacy,passed,Risultato atteso: accesso negato.,globale:T-0331;usabilita:U0409,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Risultato atteso: nessun contenuto privato visibile.,globale:T-0871,"authorization-matrix 55/55: stato pubblico=solo public, familiare=public+family, altro viaggiatore e coordinatore non vedono il private altrui"
 P0,accessi-privacy,passed,Risultato atteso: sessione non valida.,globale:T-0765,access-session-boundaries 17/17 + auth-lifecycle 68/68: sessioni scadute alterate e revocate ricevono 401
@@ -296,7 +296,7 @@ P0,accessi-privacy,passed,Verificare eliminazione delle sessioni.,globale:T-1335
 P0,accessi-privacy,passed,Verificare emissione di un nuovo token.,addendum:A0338,auth-lifecycle 68/68: nuovo invito e refresh emettono token nuovi e differenti
 P0,accessi-privacy,passed,Verificare esecuzione dell’accesso.,usabilita:U0046,ui-role-live touch 2/2: tre inviti personali collegano due telefoni viaggiatore e uno coordinatore
 P0,accessi-privacy,passed,Verificare impossibilità di utilizzare la cronologia del browser per tornare nella dashboard autorizzata.,addendum:A0100,ui-role-live touch 2/2: indietro dopo revoca mantiene sessione nulla e gate privato
-P0,accessi-privacy,pending,Verificare informazioni autorizzate.,usabilita:U0366,
+P0,accessi-privacy,passed,Verificare informazioni autorizzate.,usabilita:U0366,"P0_RESOURCE_ENUMERATION 17/17 + P0_DOCUMENTS 12/12 su QA 1.48.37: documenti, dispositivi e inviti espongono esclusivamente le informazioni del profilo e ruolo autorizzati, senza enumerazione laterale."
 P0,accessi-privacy,passed,"Verificare intestazione private, no-store.",globale:T-0488,access-session-boundaries 17/17: no-store verificato su dinieghi stato sessione e area privata autorizzata
 P0,accessi-privacy,passed,Verificare invalidazione dell’eventuale token temporaneo precedente.,addendum:A0339,"ui-stale-password-session touch 1/1 ripetuto due volte: token scaduto e identità locale fittizia rimossi prima della password; registrazione emette token e profilo nuovi, separati e persistenti al refresh"
 P0,accessi-privacy,passed,Verificare la regola prevista per il riutilizzo del token.,globale:T-0770,ui-multi-invite-copy touch + auth-lifecycle: ciascuno dei tre inviti crea una sola sessione; il riuso riceve 403/409 e resta Pubblico
@@ -420,7 +420,7 @@ P0,documenti,passed,nessun contenuto completo del documento;,globale:T-1569,secu
 P0,documenti,pending,nessuna funzione dichiarata nella documentazione sia assente dall’interfaccia;,addendum:A0019,
 P0,documenti,passed,Non cancellare documenti o bozze senza conferma.,globale:T-0845,ui-documents QA: Annulla mantiene il PDF; solo la successiva conferma esegue DELETE
 P0,documenti,passed,Non compromettere documenti e funzioni essenziali.,globale:T-1650,P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: sostituzione non valida lascia intatto il documento corrente; apertura/sostituzione/eliminazione concorrenti convergono senza record o media orfani.
-P0,documenti,pending,non deve contenere documenti;,addendum:A0423,
+P0,documenti,passed,non deve contenere documenti;,addendum:A0423,P0_RESOURCE_ENUMERATION 17/17 su QA 1.48.37: pubblico e sessione familiare ricevono lo stesso diniego dall'area privata; un altro viaggiatore non riceve metadati né può distinguere la chiave reale da una inesistente.
 P0,documenti,passed,non deve vedere documenti;,usabilita:U0027,"P0_RESOURCE_ENUMERATION 17/17 + ui-public-access-boundary Thailandia 1.48.4 2/2: pubblico e profili non autorizzati non ricevono elenco, metadati o contenuto dei documenti."
 P0,documenti,pending,non esistono documenti;,addendum:A0301,
 P0,documenti,passed,Non mostrare dati dei documenti nella notifica.,globale:T-1353,"push-payload-privacy 3/3 + push-audience 5/5: il push contiene soltanto titolo generico, messaggio generico, URL interno e tag; contenuto e metadati dei documenti sono esclusi."

@@ -136,6 +136,7 @@ try {
     QA_COORDINATOR_SECOND_DEVICE_ID: value("device-coordinator-secondary"),
     QA_UNCLAIMED_PROFILE_ID: profiles.unclaimed, QA_EXPIRED_SESSION_TOKEN: tokens.expired,
     QA_SECOND_DEVICE_ID: value("device-owner-secondary"), QA_SECOND_DEVICE_TOKEN: tokens.secondary,
+    QA_OTHER_DEVICE_ID: value("device-other"),
     QA_RUN_ID: runId, QA_REFERENCE_POST_ID: referencePostId,
     QA_DELETE_PROFILE_ID: profiles.deleting, QA_DELETE_PROFILE_TOKEN: tokens.deleting,
     QA_OWNER_DEVICE_KEY: deviceKeys.owner, QA_OTHER_DEVICE_KEY: deviceKeys.other,
