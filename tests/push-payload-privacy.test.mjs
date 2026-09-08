@@ -55,3 +55,15 @@ test("emoji, caratteri speciali e testi molto lunghi producono sempre una notifi
   assert.doesNotMatch(JSON.stringify(result), /<script>|B{100}|T{100}/);
   assert.equal(result.url, "/?post=post-1");
 });
+
+test("l'allarme tecnico resta generico e non espone dettagli dell'errore", () => {
+  const result = sanitizePushPayload({
+    tag: "technical-errore-123",
+    body: "SQL con dati riservati",
+    url: "/documents/passaporto",
+  });
+  assert.equal(result.title, "Thailandia Insieme");
+  assert.match(result.body, /problema tecnico/);
+  assert.equal(result.body.includes("SQL"), false);
+  assert.equal(result.url, "/");
+});

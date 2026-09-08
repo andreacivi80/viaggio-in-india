@@ -308,7 +308,12 @@ export function rateLimitDimensions(request, actor = "") {
     ...(guestToken ? [`guest-session:${guestToken}`] : []),
   ];
 }
-async function rateLimit(env, request, scope, limit, windowSeconds, actor = "") {
+export function rateLimitForDimension(dimension, limit, dimensionLimits = {}) {
+  const type = String(dimension || "").split(":", 1)[0];
+  const override = Number(dimensionLimits[type]);
+  return Number.isFinite(override) && override > 0 ? override : limit;
+}
+async function rateLimit(env, request, scope, limit, windowSeconds, actor = "", dimensionLimits = {}) {
   const dimensions = [...new Set(rateLimitDimensions(request, actor))];
   const keys = await Promise.all(dimensions.map((dimension) => tokenHash(`${scope}:${dimension}`)));
   const bucket = Math.floor(Date.now() / (windowSeconds * 1000));
@@ -331,7 +336,9 @@ async function rateLimit(env, request, scope, limit, windowSeconds, actor = "") 
     const row = await env.DB.prepare("SELECT count FROM rate_limits WHERE rate_key=?")
       .bind(key)
       .first();
-    if (!blockedDimension && Number(row?.count || 0) > limit) blockedDimension = dimensions[index].split(":", 1)[0];
+    const dimensionLimit = rateLimitForDimension(dimensions[index], limit, dimensionLimits);
+    if (!blockedDimension && Number(row?.count || 0) > dimensionLimit)
+      blockedDimension = dimensions[index].split(":", 1)[0];
   }
   if (!blockedDimension) return null;
   await writeSecurityAudit(env, {
@@ -468,12 +475,16 @@ export function canNotifySubscriber(subscription, payload) {
 }
 export function sanitizePushPayload(payload = {}) {
   const tag = String(payload.tag || "activity").slice(0, 96);
-  const kind = tag.startsWith("comment-")
+  const kind = tag.startsWith("technical-")
+    ? "technical"
+    : tag.startsWith("comment-")
     ? "comment"
     : tag.startsWith("post-")
       ? "post"
       : "system";
-  const body = kind === "comment"
+  const body = kind === "technical"
+    ? "È stato rilevato un problema tecnico. Il responsabile può consultare il registro di sicurezza."
+    : kind === "comment"
     ? "È stato aggiunto un nuovo commento."
     : kind === "post"
       ? "È stato pubblicato un nuovo ricordo del viaggio."
@@ -489,19 +500,29 @@ export function sanitizePushPayload(payload = {}) {
     tag,
   };
 }
-async function notifySubscribers(env, payload) {
+async function notifySubscribers(env, payload, { recipientRole = "" } = {}) {
+  const subscriptions = await env.DB.prepare(
+    `SELECT s.id,s.endpoint,s.p256dh,s.auth,s.profile_id,s.guest_visitor_id,
+            p.role AS profile_role
+     FROM push_subscriptions s
+     LEFT JOIN profiles p ON p.id=s.profile_id`,
+  ).all();
+  const authorizedSubscriptions = subscriptions.results.filter((subscription) =>
+    canNotifySubscriber(subscription, payload) &&
+    (!recipientRole || subscription.profile_role === recipientRole));
   if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY)
-    return { configured: false, sent: 0, failed: 0, errors: ["Chiavi push mancanti"] };
+    return {
+      configured: false,
+      subscribers: authorizedSubscriptions.length,
+      sent: 0,
+      failed: 0,
+      errors: ["Chiavi push mancanti"],
+    };
   const vapid = {
     subject: "https://viaggio-in-thailandia-2026.pages.dev/",
     publicKey: env.VAPID_PUBLIC_KEY,
     privateKey: env.VAPID_PRIVATE_KEY,
   };
-  const subscriptions = await env.DB.prepare(
-    "SELECT id,endpoint,p256dh,auth,profile_id,guest_visitor_id FROM push_subscriptions",
-  ).all();
-  const authorizedSubscriptions = subscriptions.results.filter((subscription) =>
-    canNotifySubscriber(subscription, payload));
   const safePayload = sanitizePushPayload(payload);
   const deliveries = [];
   for (let offset = 0; offset < authorizedSubscriptions.length; offset += 20) {
@@ -543,6 +564,7 @@ async function notifySubscribers(env, payload) {
   const errors = deliveries.filter((delivery) => !delivery.ok);
   return {
     configured: true,
+    subscribers: authorizedSubscriptions.length,
     sent: deliveries.length - errors.length,
     failed: errors.length,
     errors: errors.slice(0, 3).map((error) => ({
@@ -550,6 +572,26 @@ async function notifySubscribers(env, payload) {
       message: error.message,
     })),
   };
+}
+
+export async function reportTechnicalFailure(env, details = {}) {
+  const errorId = auditValue(details.error_id || id(), 80);
+  const status = Number(details.status || 500);
+  const method = auditValue(details.method || "UNKNOWN", 12);
+  const path = auditValue(details.path || "unknown", 90);
+  const audit = await writeSecurityAudit(env, {
+    id: errorId,
+    event_type: "technical_error",
+    resource_type: "api_endpoint",
+    resource_id: `${method} ${path}`,
+    result: `status_${status}`,
+  });
+  const delivery = await notifySubscribers(env, {
+    visibility: "group",
+    tag: `technical-${errorId}`,
+    url: "/",
+  }, { recipientRole: "coordinator" });
+  return { error_id: errorId, audit, delivery };
 }
 
 async function saveMedia(env, file, prefix = "public") {
@@ -1590,6 +1632,9 @@ export async function onRequest(context) {
       const subscriptionLimit = await rateLimit(
         env, request, "push-subscribe", 8, 3600,
         session?.profile_id || guest?.visitor_id || "",
+        // Un gruppo può trovarsi sulla stessa Wi-Fi dell'hotel: il limite IP
+        // protegge ancora da raffiche, ma non deve bloccare il nono viaggiatore.
+        { ip: 72 },
       );
       if (subscriptionLimit) return subscriptionLimit;
       const body = await request.json();
@@ -2627,8 +2672,19 @@ export async function onRequest(context) {
     const publicMessage = status >= 500
       ? "Servizio temporaneamente non disponibile. Riprova."
       : error?.message || "Richiesta non completata";
+    const errorId = status >= 500 ? id() : "";
+    if (errorId) {
+      const reporting = reportTechnicalFailure(env, {
+        error_id: errorId,
+        method: request.method,
+        path,
+        status,
+      }).catch(() => null);
+      if (context.waitUntil) context.waitUntil(reporting);
+      else await reporting;
+    }
     return json(
-      { error: publicMessage },
+      { error: publicMessage, ...(errorId ? { error_id: errorId } : {}) },
       status,
       status === 503 ? { "retry-after": "3" } : {},
     );

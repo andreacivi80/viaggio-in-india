@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { rateLimitDimensions } from "../functions/api/[[path]].js";
+import { rateLimitDimensions, rateLimitForDimension } from "../functions/api/[[path]].js";
 
 test("i limiti autenticati distinguono IP profilo e singola sessione", () => {
   const request = new Request("https://qa.example/api/comments", {
@@ -28,4 +28,10 @@ test("i limiti ospite distinguono IP identità e sessione familiare", () => {
     "actor:familiare-uno",
     "guest-session:ospite-di-prova",
   ]);
+});
+
+test("diciotto viaggiatori sulla stessa Wi-Fi non esauriscono il limite notifiche", () => {
+  assert.equal(rateLimitForDimension("ip:203.0.113.10", 8, { ip: 72 }), 72);
+  assert.equal(rateLimitForDimension("actor:profilo-uno", 8, { ip: 72 }), 8);
+  assert.equal(rateLimitForDimension("session:token", 8, { ip: 72 }), 8);
 });

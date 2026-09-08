@@ -40,6 +40,8 @@ param(
   [switch]$FavoritesSyncUi,
   [switch]$NotificationDeepLinkUi,
   [switch]$PushUnsubscribe,
+  [switch]$AllPushActivation,
+  [switch]$TechnicalAlert,
   [switch]$TenAttachments,
   [switch]$TravelerViewUi
 )
@@ -109,6 +111,27 @@ $expires = if ($TravelerViewUi) {
 }
 $oldLastUse = [DateTime]::UtcNow.AddDays(-30).ToString("o")
 $ids = @($ownerId, $otherId, $coordinatorId, $unclaimedId, $deleteProfileId)
+$pushMembers = @()
+$pushSetupSql = ""
+if ($AllPushActivation) {
+  for ($index = 1; $index -le 18; $index += 1) {
+    $memberId = "qa-push-$index-$runId"
+    $memberToken = New-QaToken
+    $memberDeviceKey = $index.ToString("x").PadLeft(64, "a")
+    $memberDeviceId = "device-push-$index-$runId"
+    $pushMembers += [pscustomobject]@{
+      id = $memberId
+      token = $memberToken
+      deviceKey = $memberDeviceKey
+    }
+    $ids += $memberId
+    $pushSetupSql += @"
+INSERT INTO profiles(id,name,surname,role,created_at) VALUES('$memberId','Notifiche $index','QA','traveler','$created');
+INSERT INTO auth_sessions(token_hash,profile_id,device_id,device_name,device_key_hash,created_at,last_used_at,expires_at,revoked_at)
+VALUES('$(Get-TokenHash $memberToken)','$memberId','$memberDeviceId','Telefono notifiche $index','$(Get-TokenHash $memberDeviceKey)','$created','$created','$expires',NULL);
+"@
+  }
+}
 $quotedIds = ($ids | ForEach-Object { "'$_'" }) -join ","
 
 $setupSql = @"
@@ -131,6 +154,7 @@ INSERT OR IGNORE INTO auth_sessions(token_hash,profile_id,device_id,device_name,
 ('$(Get-TokenHash $expiredToken)','$ownerId','device-expired-$runId','Sessione inattiva QA','$(Get-TokenHash $expiredDeviceKey)','$oldLastUse','$oldLastUse','$expires',NULL);
 INSERT OR IGNORE INTO posts(id,author_name,profile_id,day_index,visibility,text,created_at)
 VALUES('$referencePostId','Proprietario QA','$ownerId',-1,'public','Pubblicazione di riferimento QA $runId','$created');
+$pushSetupSql
 "@
 
 $testExit = 1
@@ -165,6 +189,7 @@ try {
   $env:QA_EXPIRED_DEVICE_KEY = $expiredDeviceKey
   $env:QA_SECOND_DEVICE_KEY = $secondaryDeviceKey
   $env:QA_DELETE_PROFILE_DEVICE_KEY = $deleteProfileDeviceKey
+  $env:QA_PUSH_MEMBERS = if ($AllPushActivation) { $pushMembers | ConvertTo-Json -Compress } else { "" }
   $env:QA_UI_SESSION_TOKEN = $ownerToken
   $env:QA_UI_PROFILE_ID = $ownerId
   $env:QA_UI_PROFILE_NAME = "Proprietario QA"
@@ -179,6 +204,12 @@ try {
   }
   elseif ($PushUnsubscribe) {
     & node "tests/extended-p0-push-unsubscribe.mjs"
+  }
+  elseif ($AllPushActivation) {
+    & node "tests/extended-p1-all-push-activation.mjs"
+  }
+  elseif ($TechnicalAlert) {
+    & node "tests/extended-p1-technical-alert.mjs"
   }
   elseif ($NotificationDeepLinkUi) {
     & npx playwright test "tests/ui-notification-deep-link.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
@@ -307,6 +338,7 @@ DELETE FROM locations WHERE profile_id IN ($quotedIds);
 DELETE FROM upload_parts WHERE upload_session_id IN (SELECT id FROM upload_sessions WHERE profile_id IN ($quotedIds));
 DELETE FROM upload_sessions WHERE profile_id IN ($quotedIds);
 DELETE FROM profile_invites WHERE profile_id IN ($quotedIds) OR created_by IN ($quotedIds);
+DELETE FROM push_subscriptions WHERE profile_id IN ($quotedIds);
 DELETE FROM auth_sessions WHERE profile_id IN ($quotedIds);
 DELETE FROM profile_device_claims WHERE profile_id IN ($quotedIds);
 DELETE FROM security_audit_log

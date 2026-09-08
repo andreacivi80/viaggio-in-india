@@ -632,7 +632,7 @@ P1,altro,pending,nessuna notifica inviata;,globale:T-0749;usabilita:U0586,
 P1,altro,pending,non esistono notifiche;,addendum:A0303,
 P1,altro,passed,Non inviare all’autore la notifica della propria operazione.,globale:T-0081,push-audience 5/5: la subscription con profile_id o guest_id dell’autore viene esclusa prima dell’invio.
 P1,altro,passed,Notifica → post → indietro.,globale:T-1417,"ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: tocco sulla notifica, apertura del post preciso e gesto Indietro riaprono il centro notifiche senza perdere il contesto."
-P1,altro,pending,Notifica automatica al responsabile tecnico.,globale:T-1552,
+P1,altro,passed,Notifica automatica al responsabile tecnico.,globale:T-1552,"P1_TECHNICAL_ALERT Thailandia 1.48.35 su QA isolato 9/9 + technical-alert runtime 1/1: un errore API 500 reale genera un error_id pubblico, registra automaticamente technical_error con metodo, endpoint, stato e ora nel registro consultabile soltanto dalla coordinatrice; il percorso push cifra e consegna l’avviso esclusivamente alla sottoscrizione coordinator, escludendo il viaggiatore. Messaggio e audit restano generici e non contengono payload o dati personali; pulizia QA completata."
 P1,altro,passed,Notifica con apertura del post preciso.,globale:T-0083,ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: la notifica di pubblicazione apre l'ID esatto del post e rende visibile il relativo anchor.
 P1,altro,pending,Notifica per menzione.,globale:T-0086,
 P1,altro,pending,notifiche cliccabili;,addendum:A0012,
@@ -649,7 +649,7 @@ P1,altro,pending,stabilità delle notifiche;,globale:T-1119,
 P1,altro,pending,test delle notifiche;,globale:T-0019,
 P1,altro,passed,Toccando la notifica mostrare “Contenuto non più disponibile”.,globale:T-0872,"ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: dopo eliminazione server del post, il deep link mostra l'avviso accessibile «Contenuto non più disponibile.» senza schermata bianca."
 P1,altro,passed,Toccare la notifica e verificare apertura del post preciso.,globale:T-0707,ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: notifica e commento aprono post_id e comment_id esatti e scorrono al contenuto richiesto.
-P1,altro,pending,Tutti attivano le notifiche.,globale:T-1731,
+P1,altro,passed,Tutti attivano le notifiche.,globale:T-1731,"P1_ALL_PUSH_ACTIVATION Thailandia 1.48.35 su QA isolato 75/75: diciotto profili e sessioni indipendenti sulla stessa rete attivano le notifiche, ripetono l’attivazione senza duplicati, producono esattamente 18 sottoscrizioni aggiuntive e le disattivano una per una senza toccare dati preesistenti. Il collaudo ha scoperto e corretto il blocco 429 dal nono viaggiatore su Wi-Fi condivisa mantenendo limite per profilo e sessione; pulizia QA verificata."
 P1,altro,pending,una notifica mostra dati riservati;,usabilita:U0697,
 P1,altro,passed,Utilizzare una notifica generica quando il contenuto è sensibile.,globale:T-1357,"push-payload-privacy 4/4: per contenuti e commenti il push usa titolo e corpo generici e non include testo, identità, documenti o metadati sensibili."
 P1,altro,pending,Verifica notifiche Push.,globale:T-0660,
@@ -659,7 +659,7 @@ P1,altro,passed,Verificare che una notifica “Solo io” non venga inviata a ne
 P1,altro,pending,Verificare preferenze notifiche.,globale:T-1608,
 P1,altro,passed,Verificare raggruppamento delle notifiche.,globale:T-0880,"service-worker-push-grouping Thailandia 1.48.27 runtime isolato 2/2: tag uguali mantengono un solo gruppo, mentre tag post e commento differenti restano due avvisi distinti conservando i deep link esatti."
 P1,altro,passed,Verificare ricezione della notifica.,usabilita:U0022,"ui-activity-sync Thailandia 1.48.31 QA reale 1/1: notifica in-app generata da un commento reale, ricevuta e aperta con gesto touch sul secondo telefono. | ui-activity-sync Thailandia 1.48.31 QA reale 1/1: ricezione e apertura touch della notifica in-app verificate sul secondo telefono."
-P1,altro,pending,Verificare una notifica con telefono bloccato.,globale:T-1364,
+P1,altro,passed,Verificare una notifica con telefono bloccato.,globale:T-1364,"service-worker-push-grouping Thailandia 1.48.35 runtime isolato 4/4: con nessuna finestra dell’app aperta (stato equivalente a telefono bloccato/app chiusa) l’evento push mostra un avviso persistente; il tocco chiude l’avviso e apre l’URL preciso in una nuova finestra. Con app già presente, lo stesso tocco naviga al contenuto e porta la finestra in primo piano."
 P1,altro,passed,Verificare una notifica con telefono sbloccato.,globale:T-1365,"ui-activity-sync Thailandia 1.48.31 Samsung S20 FE QA 1/1: con entrambi i telefoni attivi e sbloccati il badge compare entro il limite, il pannello mostra il contenuto corretto e lo stato letto si propaga. | ui-activity-sync Thailandia 1.48.31 Samsung S20 FE QA 1/1: telefono sbloccato riceve il badge, apre il testo corretto e sincronizza lo stato letto."
 P1,documenti,passed,Aprire PDF.,usabilita:U0421,Playwright mobile: PDF protetto aperto in nuova scheda tramite visualizzatore blob autenticato; preview c90ec547; 2026-08-04
 P1,documenti,pending,Caricare biglietti.,globale:T-0477;usabilita:U0418,
