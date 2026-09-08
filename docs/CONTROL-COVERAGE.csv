@@ -638,7 +638,7 @@ P1,altro,pending,Notifica per menzione.,globale:T-0086,
 P1,altro,pending,notifiche cliccabili;,addendum:A0012,
 P1,altro,passed,Notifiche durante la prova.,globale:T-1127,"ui-activity-sync Thailandia 1.48.31 QA reale: durante il collaudo un commento di un terzo profilo genera nuovi badge su due telefoni; il telefono B apre il testo preciso e la lettura si sincronizza. | ui-activity-sync Thailandia 1.48.31 QA reale: notifica generata durante il test da un commento multi-identità, ricevuta su due telefoni, aperta sul telefono B e sincronizzata come letta."
 P1,altro,pending,notifiche negate;,usabilita:U0505,
-P1,altro,pending,notifiche non lette;,addendum:A0078,
+P1,altro,passed,notifiche non lette;,addendum:A0078,extended-p0-activity-sync su QA: stato letto sincronizzato tra due dispositivi dello stesso profilo; un timestamp arretrato non fa ricomparire notifiche gia lette e il piu recente raggiunge entrambi i telefoni.
 P1,altro,pending,notifiche;,globale:T-1762;usabilita:U0647,
 P1,altro,pending,prima dell’invio della notifica;,addendum:A0117,
 P1,altro,passed,"Rendere reali le menzioni: attualmente “@nome” viene evidenziato, ma non genera una notifica specifica.",globale:T-0065,notifications-spotify 5/5 + ui-notifications-spotify 1/1: @nome viene riconosciuto come menzione personale e compare come attività specifica nel centro notifiche.
@@ -811,7 +811,7 @@ P1,media-upload,passed,fotografie cliccabili;,addendum:A0010,"ui-media Thailandi
 P1,media-upload,passed,fotografie e video presenti;,globale:T-1756,"ui-publish-complete su QA 1.48.37 touch 1/1: il post pubblicato contiene due fotografie e un video, presenti sia sul telefono autore sia sull'iPhone pubblico."
 P1,media-upload,passed,Fotografie e video.,usabilita:U0148,ui-publish-complete su QA 1.48.37 touch 1/1: fotografie da galleria e fotocamera più video WebM vengono pubblicati nello stesso post e ricevuti dal secondo telefono.
 P1,media-upload,passed,"Fotografie, video e audio.",usabilita:U0149,"ui-publish-complete Thailandia 1.48.4 1/1: fotografia, video, audio caricato e audio registrato sono presenti nello stesso post reale."
-P1,media-upload,pending,Fotografie.,usabilita:U0117,
+P1,media-upload,passed,Fotografie.,usabilita:U0117,"TEN_ATTACHMENTS su QA: 10/10 fotografie create nello stesso post, nomi e ordine conservati, 10/10 riaperte con MIME image/jpeg e pulizia finale verificata."
 P1,media-upload,passed,Gestire errore nel caricamento della pagina successiva.,globale:T-1681,"ui-feed-scroll-robustness Thailandia 1.48.11 Samsung S20 FE 1/1: 18 post reali, scorrimento touch fino al più vecchio oltre 1.000 px, risposta 503 forzata al successivo aggiornamento senza perdita del feed già caricato e recupero completo al retry; pulizia finale 18/18."
 P1,media-upload,pending,gli upload riprendono dopo perdita della rete;,globale:T-0672,
 P1,media-upload,passed,il caricamento impedisce una seconda operazione incompatibile;,addendum:A0174,"Playwright Galaxy S9+: invito e sessione server, modale sopra barra, pulsante raggiungibile, stato disabilitato/invio, doppio clic=una richiesta, HTTP 201 e record confermato; preview 9913ac2c; 2026-08-04"
@@ -868,7 +868,7 @@ P1,media-upload,passed,Selezionare un video MP4.,usabilita:U0201,"ui-mobile-vide
 P1,media-upload,passed,Selezionare una fotografia.,usabilita:U0195,Playwright mobile: JPEG reale selezionato e pubblicato; preview b4f2cf13; 2026-08-04
 P1,media-upload,passed,Sincronizzazione immediata al ritorno della rete.,globale:T-0114,ui-offline Thailandia 1.48.4 1/1: l’evento online attiva subito flushPending/checkVersion; coda svuotata e post visibile senza attendere il timer periodico.
 P1,media-upload,pending,Solo audio.,usabilita:U0144,
-P1,media-upload,pending,Solo fotografia.,usabilita:U0142,
+P1,media-upload,passed,Solo fotografia.,usabilita:U0142,"TEN_ATTACHMENTS su QA: pubblicazione composta esclusivamente da dieci fotografie accettata, persistita, riaperta e rimossa correttamente."
 P1,media-upload,pending,Solo video.,usabilita:U0143,
 P1,media-upload,passed,Sostituire fotografia.,globale:T-0354,"P0_AVATAR_REPLACEMENT=7/7 su QA: caricamento foto precedente e nuova, chiavi differenti, nuova immagine leggibile, vecchia rimossa da MEDIA e profilo pubblico aggiornato."
 P1,media-upload,passed,Sostituire la propria fotografia.,usabilita:U0372,"P0_AVATAR_REPLACEMENT Thailandia 1.48.12 su QA isolato 7/7: il proprietario carica una fotografia, la sostituisce con un secondo PNG reale, ottiene una nuova chiave, riapre il nuovo file, verifica la rimozione del precedente e lo stato pubblico punta soltanto alla fotografia nuova."

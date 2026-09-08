@@ -457,4 +457,7 @@
   ,{ "control": "Sostituire fotografia.", "evidence": "P0_AVATAR_REPLACEMENT=7/7 su QA: caricamento foto precedente e nuova, chiavi differenti, nuova immagine leggibile, vecchia rimossa da MEDIA e profilo pubblico aggiornato." }
   ,{ "control": "upload multipart;", "evidence": "P0_CHUNK_RETRY=12/12 su QA: inizializzazione upload a parti, invio parte, completamento, associazione al post, lettura e cancellazione verificate." }
   ,{ "control": "upload riprendibile;", "evidence": "P0_CHUNK_RETRY=12/12 su QA: reinvio idempotente della stessa parte senza duplicazione e completamento ripetibile; gate statico verifica ripresa dalle parti gia confermate." }
+  ,{ "control": "notifiche non lette;", "evidence": "extended-p0-activity-sync su QA: stato letto sincronizzato tra due dispositivi dello stesso profilo; un timestamp arretrato non fa ricomparire notifiche gia lette e il piu recente raggiunge entrambi i telefoni." }
+  ,{ "control": "Fotografie.", "evidence": "TEN_ATTACHMENTS su QA: 10/10 fotografie create nello stesso post, nomi e ordine conservati, 10/10 riaperte con MIME image/jpeg e pulizia finale verificata." }
+  ,{ "control": "Solo fotografia.", "evidence": "TEN_ATTACHMENTS su QA: pubblicazione composta esclusivamente da dieci fotografie accettata, persistita, riaperta e rimossa correttamente." }
 ]
