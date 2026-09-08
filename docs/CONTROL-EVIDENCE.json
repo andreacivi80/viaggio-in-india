@@ -464,4 +464,15 @@
   ,{ "control": "controlli database;", "evidence": "database-unavailable + migration-safety + LOCAL_BACKUP_CONTENT_COMPLETE 2/2: query, vincoli d'integrita, errore controllato e ripristino completo verificati in ambiente locale isolato." }
   ,{ "control": "Query database", "evidence": "suite statica 199/199 e LOCAL_BACKUP_CONTENT_COMPLETE 2/2: query reali di profili, sessioni, post, documenti e media eseguite prima e dopo il ripristino; risultati riaperti e confrontati." }
   ,{ "control": "test del database;", "evidence": "migration-safety, database-unavailable, vincoli d'integrita e LOCAL_BACKUP_CONTENT_COMPLETE 2/2: catena D1, errori, contenuti e ripristino verificati senza dati ufficiali." }
+  ,{ "control": "Autorizzare notifiche.", "evidence": "ui-notification-permissions touch mobile 2/2: il tocco Attiva richiede il consenso una volta, registra una sola sottoscrizione autenticata e mostra stato Attive." }
+  ,{ "control": "Negare notifiche.", "evidence": "ui-notification-permissions touch mobile 2/2: diniego del browser produce zero richieste push, mantiene Non attive e lascia disponibile il comando per riprovare." }
+  ,{ "control": "notifiche negate;", "evidence": "ui-notification-permissions touch mobile 2/2: permission denied non crea subscription, non imposta india-push-enabled e mostra Notifiche non autorizzate." }
+  ,{ "control": "Ricezione notifica consentita.", "evidence": "ui-notification-permissions 2/2 + service-worker-push-grouping 4/4: consenso e subscription autenticata seguiti da evento push visualizzato anche senza finestre aperte." }
+  ,{ "control": "Verifica notifiche Push.", "evidence": "ui-notification-permissions 2/2 + service-worker-push-grouping 4/4 + push-audience 5/5: attivazione, ricezione, raggruppamento, apertura e destinatari autorizzati verificati." }
+  ,{ "control": "notifiche cliccabili;", "evidence": "service-worker-push-grouping 4/4: il tocco chiude l'avviso e apre il deep link; se l'app e gia aperta la naviga e la porta in primo piano." }
+  ,{ "control": "Aprire la notifica.", "evidence": "service-worker-push-grouping 4/4 + ui-notification-deep-link QA: il tocco apre la pubblicazione esatta e riusa l'app gia aperta." }
+  ,{ "control": "Aprire una notifica.", "evidence": "service-worker-push-grouping 4/4 + ui-notifications-spotify 2/2: apertura reale dal centro attivita porta al post o al commento preciso." }
+  ,{ "control": "le notifiche aprono il contenuto preciso;", "evidence": "ui-notification-deep-link QA: pubblicazione e commento reali vengono aperti tramite i rispettivi parametri; un contenuto eliminato mostra un avviso chiaro." }
+  ,{ "control": "test delle notifiche;", "evidence": "ui-notification-permissions 2/2, service-worker-push-grouping 4/4, push-audience 5/5 e push-payload-privacy: consenso, ricezione, apertura, pubblico e riservatezza coperti." }
+  ,{ "control": "una notifica mostra dati riservati;", "evidence": "push-payload-privacy 4/4 + push-audience 5/5: testo, passaporto, nomi file e identificativi non entrano nel push; visibilita group/private non raggiunge destinatari non autorizzati." }
 ]

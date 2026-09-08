@@ -37,7 +37,7 @@ P0,accessi-privacy,passed,Aumento dei tentativi di accesso errati.,globale:T-153
 P0,accessi-privacy,passed,Autorizzare GPS.,usabilita:U0235,ui-location touch 1/1: consenso GPS e coordinate Delhi condivise dal profilo autorizzato
 P0,accessi-privacy,passed,Autorizzare il microfono.,globale:T-0445;usabilita:U0215,"ui-microphone-permissions touch 1/1: consenso microfono su Samsung S20 FE, avvio e arresto MediaRecorder e allegato audio riproducibile creato localmente"
 P0,accessi-privacy,passed,Autorizzare il permesso.,usabilita:U0188,ui-location touch 1/1: grant geolocation abilita la condivisione reale
-P0,accessi-privacy,pending,Autorizzare notifiche.,globale:T-0519,
+P0,accessi-privacy,passed,Autorizzare notifiche.,globale:T-0519,"ui-notification-permissions touch mobile 2/2: il tocco Attiva richiede il consenso una volta, registra una sola sottoscrizione autenticata e mostra stato Attive."
 P0,accessi-privacy,passed,autorizzata durante l’uso;,globale:T-1370,ui-location touch 1/1: permesso geolocation limitato al contesto mobile attivo
 P0,accessi-privacy,pending,autorizzata sempre;,globale:T-1371,
 P0,accessi-privacy,pending,autorizzata una sola volta;,globale:T-1372,
@@ -611,8 +611,8 @@ P0,sync-rete,passed,Verificare eliminazione della cache difettosa.,globale:T-118
 P0,sync-rete,passed,Verificare eliminazione della vecchia cache.,globale:T-0840,"ui-p0-cache-recovery: cache 1.37.18 rimossa, resta soltanto 1.37.19"
 P1,altro,pending,“Notifiche attive” significhi subscription registrata e prova ricevuta;,addendum:A0386,
 P1,altro,passed,Aprire il pannello notifiche.,usabilita:U0056,"ui-notifications-spotify 1/1 su viewport mobile + notifications-spotify 5/5: apertura touch della campanella, pannello con tre attività, distinzione Nuova/Già vista, eliminazione singola, eliminazione totale e chiusura verificati."
-P1,altro,pending,Aprire la notifica.,globale:T-0516,
-P1,altro,pending,Aprire una notifica.,usabilita:U0065,
+P1,altro,passed,Aprire la notifica.,globale:T-0516,service-worker-push-grouping 4/4 + ui-notification-deep-link QA: il tocco apre la pubblicazione esatta e riusa l'app gia aperta.
+P1,altro,passed,Aprire una notifica.,usabilita:U0065,service-worker-push-grouping 4/4 + ui-notifications-spotify 2/2: apertura reale dal centro attivita porta al post o al commento preciso.
 P1,altro,passed,attivare le notifiche;,globale:T-1770,"P1_ALL_PUSH_ACTIVATION 75/75 su QA 1.48.37: attivazione reale lato server per 18 sessioni personali, conteggio finale esatto e rimozione completa dei soli dati di prova."
 P1,altro,passed,Attivare notifiche.,usabilita:U0062,"P1_ALL_PUSH_ACTIVATION 75/75 su QA 1.48.37: endpoint autenticato verificato per tutti i 18 viaggiatori, senza duplicazioni e senza interferenze tra dispositivi."
 P1,altro,passed,Attivazione notifiche.,globale:T-1205,P1_ALL_PUSH_ACTIVATION 75/75 su QA 1.48.37: 18 profili con sessioni e dispositivi distinti registrano 18 sottoscrizioni uniche; la ripetizione è idempotente e la pulizia torna al conteggio iniziale.
@@ -624,9 +624,9 @@ P1,altro,passed,Inviare notifica con caratteri speciali.,globale:T-0862,"push-pa
 P1,altro,passed,Inviare notifica con emoji.,globale:T-0863,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
 P1,altro,passed,Inviare notifica con testo molto lungo.,globale:T-0864,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
 P1,altro,passed,Inviare notifica con titolo molto lungo.,globale:T-0865,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
-P1,altro,pending,le notifiche aprono il contenuto preciso;,globale:T-0681,
+P1,altro,passed,le notifiche aprono il contenuto preciso;,globale:T-0681,ui-notification-deep-link QA: pubblicazione e commento reali vengono aperti tramite i rispettivi parametri; un contenuto eliminato mostra un avviso chiaro.
 P1,altro,pending,Misurare batteria con notifiche attive.,globale:T-1660,
-P1,altro,pending,Negare notifiche.,globale:T-0522;usabilita:U0063,
+P1,altro,passed,Negare notifiche.,globale:T-0522;usabilita:U0063,"ui-notification-permissions touch mobile 2/2: diniego del browser produce zero richieste push, mantiene Non attive e lascia disponibile il comando per riprovare."
 P1,altro,pending,nessuna notifica deve essere inviata;,addendum:A0036,
 P1,altro,pending,nessuna notifica inviata;,globale:T-0749;usabilita:U0586,
 P1,altro,pending,non esistono notifiche;,addendum:A0303,
@@ -635,24 +635,24 @@ P1,altro,passed,Notifica → post → indietro.,globale:T-1417,"ui-notification-
 P1,altro,passed,Notifica automatica al responsabile tecnico.,globale:T-1552,"P1_TECHNICAL_ALERT Thailandia 1.48.35 su QA isolato 9/9 + technical-alert runtime 1/1: un errore API 500 reale genera un error_id pubblico, registra automaticamente technical_error con metodo, endpoint, stato e ora nel registro consultabile soltanto dalla coordinatrice; il percorso push cifra e consegna l’avviso esclusivamente alla sottoscrizione coordinator, escludendo il viaggiatore. Messaggio e audit restano generici e non contengono payload o dati personali; pulizia QA completata."
 P1,altro,passed,Notifica con apertura del post preciso.,globale:T-0083,ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: la notifica di pubblicazione apre l'ID esatto del post e rende visibile il relativo anchor.
 P1,altro,pending,Notifica per menzione.,globale:T-0086,
-P1,altro,pending,notifiche cliccabili;,addendum:A0012,
+P1,altro,passed,notifiche cliccabili;,addendum:A0012,service-worker-push-grouping 4/4: il tocco chiude l'avviso e apre il deep link; se l'app e gia aperta la naviga e la porta in primo piano.
 P1,altro,passed,Notifiche durante la prova.,globale:T-1127,"ui-activity-sync Thailandia 1.48.31 QA reale: durante il collaudo un commento di un terzo profilo genera nuovi badge su due telefoni; il telefono B apre il testo preciso e la lettura si sincronizza. | ui-activity-sync Thailandia 1.48.31 QA reale: notifica generata durante il test da un commento multi-identità, ricevuta su due telefoni, aperta sul telefono B e sincronizzata come letta."
-P1,altro,pending,notifiche negate;,usabilita:U0505,
+P1,altro,passed,notifiche negate;,usabilita:U0505,"ui-notification-permissions touch mobile 2/2: permission denied non crea subscription, non imposta india-push-enabled e mostra Notifiche non autorizzate."
 P1,altro,passed,notifiche non lette;,addendum:A0078,extended-p0-activity-sync su QA: stato letto sincronizzato tra due dispositivi dello stesso profilo; un timestamp arretrato non fa ricomparire notifiche gia lette e il piu recente raggiunge entrambi i telefoni.
 P1,altro,pending,notifiche;,globale:T-1762;usabilita:U0647,
 P1,altro,pending,prima dell’invio della notifica;,addendum:A0117,
 P1,altro,passed,"Rendere reali le menzioni: attualmente “@nome” viene evidenziato, ma non genera una notifica specifica.",globale:T-0065,notifications-spotify 5/5 + ui-notifications-spotify 1/1: @nome viene riconosciuto come menzione personale e compare come attività specifica nel centro notifiche.
 P1,altro,passed,Ricevere una notifica dopo logout.,globale:T-0869,P0_PUSH_UNSUBSCRIBE Thailandia 1.48.27 QA isolato 14/14: il logout revoca la sessione e rimuove tutte le sottoscrizioni push del profilo; il vecchio token non può inviare il test push e la verifica con una seconda identità conferma che l'endpoint non esiste più.
 P1,altro,passed,Ricevere una notifica dopo revoca del dispositivo.,globale:T-0870,"ui-device-revocation-notice Thailandia 1.48.17 Samsung S20 FE QA 1/1: il secondo telefono dello stesso profilo revoca realmente il primo; entro il controllo sessione il dispositivo revocato riceve un avviso role=alert chiaro e chiudibile, perde token e comandi privati e torna alla vista pubblica, mentre il secondo resta autorizzato. Regressione locale 167/167 applicabili, QA autenticata 18/18 e produzione read-only 8/8."
-P1,altro,pending,Ricezione notifica consentita.,globale:T-1234,
+P1,altro,passed,Ricezione notifica consentita.,globale:T-1234,ui-notification-permissions 2/2 + service-worker-push-grouping 4/4: consenso e subscription autenticata seguiti da evento push visualizzato anche senza finestre aperte.
 P1,altro,pending,stabilità delle notifiche;,globale:T-1119,
-P1,altro,pending,test delle notifiche;,globale:T-0019,
+P1,altro,passed,test delle notifiche;,globale:T-0019,"ui-notification-permissions 2/2, service-worker-push-grouping 4/4, push-audience 5/5 e push-payload-privacy: consenso, ricezione, apertura, pubblico e riservatezza coperti."
 P1,altro,passed,Toccando la notifica mostrare “Contenuto non più disponibile”.,globale:T-0872,"ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: dopo eliminazione server del post, il deep link mostra l'avviso accessibile «Contenuto non più disponibile.» senza schermata bianca."
 P1,altro,passed,Toccare la notifica e verificare apertura del post preciso.,globale:T-0707,ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: notifica e commento aprono post_id e comment_id esatti e scorrono al contenuto richiesto.
 P1,altro,passed,Tutti attivano le notifiche.,globale:T-1731,"P1_ALL_PUSH_ACTIVATION Thailandia 1.48.35 su QA isolato 75/75: diciotto profili e sessioni indipendenti sulla stessa rete attivano le notifiche, ripetono l’attivazione senza duplicati, producono esattamente 18 sottoscrizioni aggiuntive e le disattivano una per una senza toccare dati preesistenti. Il collaudo ha scoperto e corretto il blocco 429 dal nono viaggiatore su Wi-Fi condivisa mantenendo limite per profilo e sessione; pulizia QA verificata."
-P1,altro,pending,una notifica mostra dati riservati;,usabilita:U0697,
+P1,altro,passed,una notifica mostra dati riservati;,usabilita:U0697,"push-payload-privacy 4/4 + push-audience 5/5: testo, passaporto, nomi file e identificativi non entrano nel push; visibilita group/private non raggiunge destinatari non autorizzati."
 P1,altro,passed,Utilizzare una notifica generica quando il contenuto è sensibile.,globale:T-1357,"push-payload-privacy 4/4: per contenuti e commenti il push usa titolo e corpo generici e non include testo, identità, documenti o metadati sensibili."
-P1,altro,pending,Verifica notifiche Push.,globale:T-0660,
+P1,altro,passed,Verifica notifiche Push.,globale:T-0660,"ui-notification-permissions 2/2 + service-worker-push-grouping 4/4 + push-audience 5/5: attivazione, ricezione, raggruppamento, apertura e destinatari autorizzati verificati."
 P1,altro,passed,Verificare che il contenuto venga ricontrollato dal server quando la notifica viene aperta.,globale:T-1360,ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: il contenuto eliminato viene ricontrollato tramite /api/state e non resta disponibile dalla copia locale; l'interfaccia restituisce l'avviso controllato.
 P1,altro,passed,Verificare che il telefono B riceva la notifica.,globale:T-0715,"ui-activity-sync Thailandia 1.48.31 QA reale 1/1: un terzo profilo pubblica un commento; due telefoni dello stesso destinatario ricevono il nuovo badge e il telefono B apre il testo esatto, poi la lettura si sincronizza tra dispositivi. | ui-activity-sync Thailandia 1.48.31 QA reale 1/1: un terzo profilo crea un commento e il telefono B riceve badge e testo esatto; lettura sincronizzata tra i due dispositivi del destinatario."
 P1,altro,passed,Verificare che una notifica “Solo io” non venga inviata a nessun altro.,globale:T-0876,"push-audience 5/5: un contenuto Solo io non viene inviato ad anonimi, familiari, altri profili né allo stesso autore."
