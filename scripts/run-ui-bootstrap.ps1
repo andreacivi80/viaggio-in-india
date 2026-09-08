@@ -45,6 +45,7 @@ try {
 }
 finally {
   $cleanupSql = @"
+DELETE FROM comment_reactions WHERE comment_id IN (SELECT id FROM comments WHERE post_id IN (SELECT id FROM posts WHERE text='$postMarker'));
 DELETE FROM comments WHERE post_id IN (SELECT id FROM posts WHERE text='$postMarker');
 DELETE FROM reactions WHERE post_id IN (SELECT id FROM posts WHERE text='$postMarker');
 DELETE FROM post_media WHERE post_id IN (SELECT id FROM posts WHERE text='$postMarker');
@@ -56,6 +57,7 @@ DELETE FROM profile_invites WHERE profile_id IN (SELECT id FROM profiles WHERE n
 DELETE FROM auth_sessions WHERE profile_id IN (SELECT id FROM profiles WHERE name='$coordinatorName');
 DELETE FROM profile_device_claims WHERE profile_id IN (SELECT id FROM profiles WHERE name='$coordinatorName');
 DELETE FROM profiles WHERE name='$coordinatorName';
+DELETE FROM comment_reactions WHERE comment_id IN (SELECT id FROM comments WHERE post_id IN (SELECT id FROM posts WHERE text IN ('$postMarker-Samsung-S20-FE','$postMarker-Samsung-vecchio','$postMarker-iPhone-piccolo')));
 DELETE FROM comments WHERE post_id IN (SELECT id FROM posts WHERE text IN ('$postMarker-Samsung-S20-FE','$postMarker-Samsung-vecchio','$postMarker-iPhone-piccolo'));
 DELETE FROM reactions WHERE post_id IN (SELECT id FROM posts WHERE text IN ('$postMarker-Samsung-S20-FE','$postMarker-Samsung-vecchio','$postMarker-iPhone-piccolo'));
 DELETE FROM post_media WHERE post_id IN (SELECT id FROM posts WHERE text IN ('$postMarker-Samsung-S20-FE','$postMarker-Samsung-vecchio','$postMarker-iPhone-piccolo'));

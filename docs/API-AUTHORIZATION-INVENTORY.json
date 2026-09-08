@@ -182,6 +182,11 @@
       "access": "profile-or-guest"
     },
     {
+      "method": "POST",
+      "path": "comment-reactions",
+      "access": "profile-or-guest-with-post-visibility"
+    },
+    {
       "method": "PUT",
       "path": "trip-checks/*",
       "access": "authenticated-group-member"

@@ -13,7 +13,7 @@ test("i comandi sensibili della UI dipendono dalla sessione verificata e dal ruo
   assert.match(ui, /const viewerIsCoordinator = privateData\.viewer\?\.role === "coordinator"/);
   assert.match(ui, /\{p\.can_manage && \(/);
   assert.match(ui, /aria-label=\{`Copia collegamento del commento di/);
-  assert.match(ui, /\{x\.can_manage && \(/);
+  assert.match(ui, /\{x\.can_manage && x\.text && \(/);
   assert.match(ui, /\{\(x\.can_delete \?\? x\.can_manage\) && \(/);
   assert.match(ui, /disabled=\{!verifiedSessionToken\}/);
 });

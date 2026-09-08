@@ -713,6 +713,8 @@ async function deleteProfileData(env, profileId) {
          (SELECT COUNT(*) FROM posts WHERE profile_id=?) AS posts_removed,
          (SELECT COUNT(*) FROM comments WHERE profile_id=? OR post_id IN (SELECT id FROM posts WHERE profile_id=?)) AS comments_removed,
          (SELECT COUNT(*) FROM reactions WHERE visitor_id=? OR post_id IN (SELECT id FROM posts WHERE profile_id=?)) AS reactions_removed,
+         (SELECT COUNT(*) FROM comment_reactions WHERE actor_id=? OR comment_id IN (
+           SELECT id FROM comments WHERE profile_id=? OR post_id IN (SELECT id FROM posts WHERE profile_id=?))) AS comment_reactions_removed,
          (SELECT COUNT(*) FROM document_status WHERE profile_id=?) AS documents_removed,
          (SELECT COUNT(*) FROM locations WHERE profile_id=?) AS locations_removed,
          (SELECT COUNT(*) FROM push_subscriptions WHERE profile_id=?) AS push_subscriptions_removed,
@@ -720,8 +722,10 @@ async function deleteProfileData(env, profileId) {
          (SELECT COUNT(*) FROM profile_invites WHERE profile_id=? OR created_by=?) AS invites_removed,
          (SELECT COUNT(*) FROM post_bookmarks WHERE profile_id=? OR post_id IN (SELECT id FROM posts WHERE profile_id=?)) AS bookmarks_removed`,
     ).bind(
-      profileId, profileId, profileId, profileId, profileId, profileId, profileId,
+      profileId, profileId, profileId, profileId, profileId,
+      `profile:${profileId}`, profileId, profileId,
       profileId, profileId, profileId, profileId, profileId, profileId,
+      profileId, profileId,
     ).first(),
   ]);
   if (!profile) return null;
@@ -735,6 +739,9 @@ async function deleteProfileData(env, profileId) {
   const statements = [
     env.DB.prepare("DELETE FROM post_bookmarks WHERE profile_id=? OR post_id IN (SELECT id FROM posts WHERE profile_id=?)").bind(profileId, profileId),
     env.DB.prepare("DELETE FROM post_media WHERE post_id IN (SELECT id FROM posts WHERE profile_id=?)").bind(profileId),
+    env.DB.prepare(`DELETE FROM comment_reactions WHERE actor_id=? OR comment_id IN (
+      SELECT id FROM comments WHERE profile_id=? OR post_id IN (SELECT id FROM posts WHERE profile_id=?))`)
+      .bind(`profile:${profileId}`, profileId, profileId),
     env.DB.prepare("DELETE FROM comments WHERE post_id IN (SELECT id FROM posts WHERE profile_id=?) OR profile_id=?").bind(profileId, profileId),
     env.DB.prepare("DELETE FROM reactions WHERE post_id IN (SELECT id FROM posts WHERE profile_id=?) OR visitor_id=?").bind(profileId, profileId),
     env.DB.prepare("DELETE FROM posts WHERE profile_id=?").bind(profileId),
@@ -763,7 +770,7 @@ async function deleteProfileData(env, profileId) {
       profile_removed: profile ? 1 : 0,
       posts_removed: Number(deletionCounts?.posts_removed || 0),
       comments_removed: Number(deletionCounts?.comments_removed || 0),
-      reactions_removed: Number(deletionCounts?.reactions_removed || 0),
+      reactions_removed: Number(deletionCounts?.reactions_removed || 0) + Number(deletionCounts?.comment_reactions_removed || 0),
       documents_removed: Number(deletionCounts?.documents_removed || 0),
       locations_removed: Number(deletionCounts?.locations_removed || 0),
       push_subscriptions_removed: Number(deletionCounts?.push_subscriptions_removed || 0),
@@ -904,12 +911,15 @@ async function chunkedMedia(env, request, key, headers) {
 }
 
 async function readState(env, session = null, guest = null) {
-  const [profiles, posts, comments, reactions, postMedia, tripChecks, syncState, activityState, bookmarks] = await Promise.all([
+  const [profiles, posts, comments, reactions, commentReactions, postMedia, tripChecks, syncState, activityState, bookmarks] = await Promise.all([
     env.DB.prepare("SELECT * FROM profiles ORDER BY created_at").all(),
     env.DB.prepare("SELECT * FROM posts ORDER BY created_at DESC").all(),
     env.DB.prepare("SELECT * FROM comments ORDER BY created_at").all(),
     env.DB.prepare(
       "SELECT post_id, kind, author_name, COUNT(*) AS total, MAX(created_at) AS created_at FROM reactions GROUP BY post_id, kind, author_name",
+    ).all(),
+    env.DB.prepare(
+      "SELECT comment_id,actor_id,kind,author_name,created_at FROM comment_reactions ORDER BY created_at",
     ).all(),
     env.DB.prepare("SELECT * FROM post_media ORDER BY position").all(),
     env.DB.prepare("SELECT check_key,checked FROM trip_checks ORDER BY check_key").all(),
@@ -924,6 +934,11 @@ async function readState(env, session = null, guest = null) {
       : Promise.resolve({ results: [] }),
   ]);
   const profileById = new Map(profiles.results.map((profile) => [profile.id, profile]));
+  const currentCommentActorId = session
+    ? `profile:${session.profile_id}`
+    : guest
+      ? `guest:${guest.visitor_id}`
+      : "";
   const publicName = (profileId, fallback) => {
     if (session) return fallback;
     const profile = profileById.get(profileId);
@@ -1022,6 +1037,16 @@ async function readState(env, session = null, guest = null) {
             ),
             author_name: publicName(commentProfileId, c.author_name),
             media_url: mediaUrl(commentMediaKey),
+            reactions: commentReactions.results
+              .filter((reaction) => reaction.comment_id === c.id)
+              .map((reaction) => ({
+                kind: reaction.kind,
+                author_name: reaction.actor_id.startsWith("profile:")
+                  ? publicName(reaction.actor_id.slice(8), reaction.author_name)
+                  : reaction.author_name,
+                reacted: reaction.actor_id === currentCommentActorId,
+                created_at: reaction.created_at,
+              })),
           };
         }),
       reactions: reactions.results.filter((r) => r.post_id === p.id),
@@ -2205,6 +2230,7 @@ export async function onRequest(context) {
       await env.DB.batch([
         env.DB.prepare("DELETE FROM post_bookmarks WHERE post_id=?").bind(postId),
         env.DB.prepare("DELETE FROM post_media WHERE post_id=?").bind(postId),
+        env.DB.prepare("DELETE FROM comment_reactions WHERE comment_id IN (SELECT id FROM comments WHERE post_id=?)").bind(postId),
         env.DB.prepare("DELETE FROM comments WHERE post_id=?").bind(postId),
         env.DB.prepare("DELETE FROM reactions WHERE post_id=?").bind(postId),
         env.DB.prepare("DELETE FROM posts WHERE id=?").bind(postId),
@@ -2253,6 +2279,17 @@ export async function onRequest(context) {
       if (!targetPost) return json({ error: "Contenuto non trovato" }, 404);
       if (!canViewPost(targetPost, session, guest))
         return json({ error: "Contenuto non autorizzato" }, 403);
+      const requestedParentId = String(form.get("parent_comment_id") || "").trim();
+      let parentCommentId = "";
+      if (requestedParentId) {
+        const parentComment = await env.DB.prepare(
+          "SELECT id,parent_comment_id FROM comments WHERE id=? AND post_id=?",
+        ).bind(requestedParentId, postId).first();
+        if (!parentComment)
+          return json({ error: "Commento a cui rispondere non trovato" }, 404);
+        // Le conversazioni rimangono a un solo livello anche rispondendo a una risposta.
+        parentCommentId = parentComment.parent_comment_id || parentComment.id;
+      }
       const commentText = String(form.get("text") || "");
       const commentFile = form.get("file");
       if (
@@ -2282,12 +2319,13 @@ export async function onRequest(context) {
         post_id: postId,
         author_name: author,
         profile_id: session?.profile_id || "",
+        parent_comment_id: parentCommentId,
         text: commentText,
         created_at: now(),
       };
       try {
         await env.DB.prepare(
-          "INSERT INTO comments(id,post_id,author_name,profile_id,visitor_id,text,media_key,media_type,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
+          "INSERT INTO comments(id,post_id,author_name,profile_id,visitor_id,text,media_key,media_type,parent_comment_id,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
         )
           .bind(
             row.id,
@@ -2298,6 +2336,7 @@ export async function onRequest(context) {
             row.text,
             media?.key || null,
             media?.type || null,
+            row.parent_comment_id,
             row.created_at,
           )
           .run();
@@ -2361,8 +2400,15 @@ export async function onRequest(context) {
       );
       if (!canDeleteComment)
         return json({ error: "Non puoi eliminare questo commento" }, 403);
-      await env.DB.prepare("DELETE FROM comments WHERE id=?").bind(commentId).run();
-      if (existing.media_key) await deleteStoredMedia(env, existing.media_key);
+      const relatedMedia = await env.DB.prepare(
+        "SELECT media_key FROM comments WHERE (id=? OR parent_comment_id=?) AND media_key IS NOT NULL",
+      ).bind(commentId, commentId).all();
+      await env.DB.batch([
+        env.DB.prepare("DELETE FROM comment_reactions WHERE comment_id IN (SELECT id FROM comments WHERE id=? OR parent_comment_id=?)").bind(commentId, commentId),
+        env.DB.prepare("DELETE FROM comments WHERE parent_comment_id=?").bind(commentId),
+        env.DB.prepare("DELETE FROM comments WHERE id=?").bind(commentId),
+      ]);
+      await Promise.all(relatedMedia.results.map((media) => deleteStoredMedia(env, media.media_key)));
       await writeSecurityAudit(env, {
         event_type: "comment_deleted",
         actor_profile_id: session?.profile_id || null,
@@ -2373,6 +2419,64 @@ export async function onRequest(context) {
         result: "success",
       });
       return json({ ok: true });
+    }
+    if (request.method === "POST" && path === "comment-reactions") {
+      const session = await sessionFromRequest(request, env);
+      const guest = session ? null : await guestFromRequest(request, env);
+      if (!session && !guest)
+        return json({ error: "Identità ospite richiesta" }, 401);
+      const body = await request.json();
+      const commentId = String(body.comment_id || "").trim();
+      if (!commentId) return json({ error: "Reazione non valida" }, 400);
+      const actorId = session
+        ? `profile:${session.profile_id}`
+        : `guest:${guest.visitor_id}`;
+      const authorName = session
+        ? `${session.name} ${session.surname || ""}`.trim()
+        : guest.display_name;
+      const completedReaction = await completedIdempotentResponse(
+        env, request, "toggle-comment-reaction", actorId,
+      );
+      if (completedReaction) return completedReaction;
+      const limited = await rateLimit(env, request, "comment-reactions", 30, 60, actorId);
+      if (limited) return limited;
+      const target = await env.DB.prepare(
+        `SELECT c.id,c.post_id,p.profile_id,p.visibility
+         FROM comments c JOIN posts p ON p.id=c.post_id
+         WHERE c.id=?`,
+      ).bind(commentId).first();
+      if (!target) return json({ error: "Commento non trovato" }, 404);
+      if (!canViewPost(target, session, guest))
+        return json({ error: "Contenuto non autorizzato" }, 403);
+      const kind = ["heart", "clap", "laugh"].includes(body.kind) ? body.kind : "heart";
+      const operation = await beginIdempotentOperation(
+        env, request, "toggle-comment-reaction", actorId,
+      );
+      if (operation.response) return operation.response;
+      const removed = await env.DB.prepare(
+        "DELETE FROM comment_reactions WHERE comment_id=? AND actor_id=? AND kind=?",
+      ).bind(commentId, actorId, kind).run();
+      if (Number(removed.meta?.changes || 0) > 0) {
+        const payload = { ok: true, reaction: null };
+        await completeIdempotentOperation(env, operation.operationHash, payload);
+        return json(payload);
+      }
+      try {
+        await env.DB.prepare(
+          `INSERT INTO comment_reactions(id,comment_id,actor_id,author_name,kind,created_at)
+           VALUES(?,?,?,?,?,?)
+           ON CONFLICT(comment_id,actor_id) DO UPDATE SET
+             author_name=excluded.author_name,
+             kind=excluded.kind,
+             created_at=excluded.created_at`,
+        ).bind(id(), commentId, actorId, authorName, kind, now()).run();
+      } catch (error) {
+        await abandonIdempotentOperation(env, operation.operationHash);
+        throw error;
+      }
+      const payload = { ok: true, reaction: kind };
+      await completeIdempotentOperation(env, operation.operationHash, payload);
+      return json(payload);
     }
     if (request.method === "POST" && path === "reactions") {
       const session = await sessionFromRequest(request, env);

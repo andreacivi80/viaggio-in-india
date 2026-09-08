@@ -50,8 +50,20 @@ CREATE TABLE IF NOT EXISTS comments (
   text TEXT DEFAULT '',
   media_key TEXT,
   media_type TEXT,
+  parent_comment_id TEXT DEFAULT '',
   created_at TEXT NOT NULL
 );
+CREATE INDEX IF NOT EXISTS idx_comments_parent ON comments(parent_comment_id, created_at);
+CREATE TABLE IF NOT EXISTS comment_reactions (
+  id TEXT PRIMARY KEY,
+  comment_id TEXT NOT NULL REFERENCES comments(id) ON DELETE CASCADE,
+  actor_id TEXT NOT NULL,
+  author_name TEXT DEFAULT '',
+  kind TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  UNIQUE(comment_id, actor_id)
+);
+CREATE INDEX IF NOT EXISTS idx_comment_reactions_comment ON comment_reactions(comment_id, created_at);
 CREATE TABLE IF NOT EXISTS reactions (
   id TEXT PRIMARY KEY,
   post_id TEXT NOT NULL,

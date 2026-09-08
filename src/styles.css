@@ -3643,6 +3643,21 @@ mark.mention {
   margin: 5px 0;
   font-size: 12px;
 }
+.commentReply {
+  position: relative;
+  margin-left: 24px;
+  border-left: 3px solid #e6a66e;
+  background: #fbf4ea;
+}
+.commentReply::before {
+  position: absolute;
+  top: 16px;
+  left: -17px;
+  width: 13px;
+  height: 2px;
+  background: #e6a66e;
+  content: "";
+}
 .comment b {
   color: var(--green);
 }
@@ -3666,6 +3681,7 @@ mark.mention {
 }
 .commentCommands {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin-top: 3px;
 }
@@ -3681,6 +3697,31 @@ mark.mention {
 .commentCommands .commentDelete {
   color: var(--color-error) !important;
 }
+.commentReactions {
+  display: flex;
+  gap: 5px;
+  margin-top: 3px;
+}
+.commentReactions button {
+  min-width: 38px;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 4px 7px;
+  border: 1px solid #ddcfbd;
+  border-radius: 999px;
+  background: #fffaf4;
+  color: #6f4d38;
+}
+.commentReactions button.active {
+  border-color: #e16657;
+  background: #ffe6df;
+  color: #a82c2c;
+}
+.commentReactions button span { font-size: 15px; line-height: 1; }
+.commentReactions button small { font-size: 10px; font-weight: 900; }
 .commentEditor {
   display: grid;
   grid-template-columns: 1fr auto auto;
@@ -3725,6 +3766,28 @@ mark.mention {
   align-items: center;
   gap: 5px !important;
   margin-top: 8px;
+}
+.replyTarget {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 7px 9px;
+  border-left: 3px solid var(--orange);
+  border-radius: 8px;
+  background: #fff3df;
+  color: #61442f;
+  font-size: 12px;
+}
+.replyTarget button {
+  min-height: 32px;
+  padding: 4px 7px;
+  border: 0;
+  background: transparent;
+  color: var(--color-error);
+  font-size: 11px;
+  font-weight: 850;
 }
 .reply textarea {
   width: 100%;

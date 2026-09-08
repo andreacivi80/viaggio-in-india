@@ -21,5 +21,7 @@ test("un database temporaneamente indisponibile produce una risposta 503 control
   assert.equal(response.headers.get("retry-after"), "3");
   const body = await response.json();
   assert.equal(body.error, "Servizio temporaneamente non disponibile. Riprova.");
-  assert.doesNotMatch(JSON.stringify(body), /D1|connection details/i);
+  assert.deepEqual(Object.keys(body).sort(), ["error", "error_id"]);
+  assert.doesNotMatch(body.error, /D1|connection details/i);
+  assert.match(body.error_id, /^[a-f0-9-]{36}$/i);
 });

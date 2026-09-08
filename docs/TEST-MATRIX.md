@@ -70,8 +70,8 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0055 | 5 | Aggiungere limite di reazioni al minuto. | NON ESEGUITO | — |
 | T-0056 | 5 | Aggiungere moderazione del Coordinatore. | NON ESEGUITO | — |
 | T-0057 | 5 | Aggiungere protezione antispam. | NON ESEGUITO | — |
-| T-0058 | 5 | Aggiungere reazioni ai commenti. | NON ESEGUITO | — |
-| T-0059 | 5 | Aggiungere risposte ai commenti. | NON ESEGUITO | — |
+| T-0058 | 5 | Aggiungere reazioni ai commenti. | SUPERATO | 1.48.37: API QA 31/31 + touch reale su due Galaxy S20 FE; sincronizzazione, toggle e cascata verificati |
+| T-0059 | 5 | Aggiungere risposte ai commenti. | SUPERATO | 1.48.37: API QA 31/31 + touch reale su due Galaxy S20 FE; gerarchia a un livello e sincronizzazione verificate |
 | T-0060 | 5 | Aggiungere segnalazione dei contenuti. | NON ESEGUITO | — |
 | T-0061 | 5 | Associare i commenti dei Viaggiatori alla sessione personale. | SUPERATO | QA 1.31.0: commento del viaggiatore attribuito alla sessione e non ai campi del browser |
 | T-0062 | 5 | Creare un’identità ospite controllata per i familiari. | SUPERATO | production-smoke: identita ospite creata e validata dal server |

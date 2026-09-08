@@ -1,4 +1,6 @@
 [
+  { "control": "Aggiungere reazioni ai commenti.", "evidence": "1.48.37: extended-p2-comment-conversations 31/31 e Playwright touch su due Galaxy S20 FE; cuore, applauso e risata sincronizzati, toggle idempotente e cancellazione a cascata" },
+  { "control": "Aggiungere risposte ai commenti.", "evidence": "1.48.37: extended-p2-comment-conversations 31/31 e Playwright touch su due Galaxy S20 FE; risposta a un livello, sincronizzazione tra due telefoni e cancellazione a cascata" },
   { "control": "Accesso tramite eSIM.", "evidence": "ui-network-india 18/18: profilo eSIM indiana 4G su S20 FE, Samsung vecchio e iPhone piccolo" },
   { "control": "Accesso tramite rete Wi-Fi indiana.", "evidence": "ui-network-india 18/18: Wi-Fi debole ad alta latenza su S20 FE, Samsung vecchio e iPhone piccolo" },
   { "control": "Accesso tramite roaming italiano.", "evidence": "ui-network-india 18/18: roaming congestionato a 256/96 kbps su S20 FE, Samsung vecchio e iPhone piccolo" },

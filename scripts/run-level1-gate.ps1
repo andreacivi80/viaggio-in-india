@@ -80,7 +80,7 @@ Assert-LastExit "carico concorrente"
 Assert-LastExit "antispam e rate limit"
 
 Write-Host "[L1] Verifica pulizia database QA"
-$cleanupSql = "DELETE FROM reactions WHERE post_id='weroad-predeparture'; DELETE FROM post_media WHERE post_id='weroad-predeparture'; DELETE FROM comments WHERE post_id='weroad-predeparture'; DELETE FROM posts WHERE id='weroad-predeparture'; DELETE FROM security_audit_log WHERE created_at >= '$gateStartedAt';"
+$cleanupSql = "DELETE FROM reactions WHERE post_id='weroad-predeparture'; DELETE FROM comment_reactions WHERE comment_id IN (SELECT id FROM comments WHERE post_id='weroad-predeparture'); DELETE FROM post_media WHERE post_id='weroad-predeparture'; DELETE FROM comments WHERE post_id='weroad-predeparture'; DELETE FROM posts WHERE id='weroad-predeparture'; DELETE FROM security_audit_log WHERE created_at >= '$gateStartedAt';"
 for ($cleanupAttempt = 1; $cleanupAttempt -le 3; $cleanupAttempt += 1) {
   & npx wrangler d1 execute viaggio-in-india-qa-db --remote --config wrangler.qa.jsonc --command $cleanupSql | Out-Null
   Assert-LastExit "pulizia circoscritta dati gate"

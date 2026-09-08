@@ -42,6 +42,7 @@ param(
   [switch]$PushUnsubscribe,
   [switch]$AllPushActivation,
   [switch]$TechnicalAlert,
+  [switch]$CommentConversations,
   [switch]$TenAttachments,
   [switch]$TravelerViewUi
 )
@@ -104,7 +105,7 @@ $coordinatorSecondaryDeviceId = "device-coordinator-secondary-$runId"
 $created = [DateTime]::UtcNow.ToString("o")
 # Le prove UI del ruolo devono osservare la vista, non innescare nello stesso
 # istante anche la rotazione di una sessione prossima alla scadenza.
-$expires = if ($TravelerViewUi) {
+$expires = if ($TravelerViewUi -or $CommentConversations) {
   [DateTime]::UtcNow.AddDays(30).ToString("o")
 } else {
   [DateTime]::UtcNow.AddHours(3).ToString("o")
@@ -133,6 +134,7 @@ VALUES('$(Get-TokenHash $memberToken)','$memberId','$memberDeviceId','Telefono n
   }
 }
 $quotedIds = ($ids | ForEach-Object { "'$_'" }) -join ","
+$quotedCommentActors = ($ids | ForEach-Object { "'profile:$_'" }) -join ","
 
 $setupSql = @"
 DELETE FROM rate_limits;
@@ -210,6 +212,12 @@ try {
   }
   elseif ($TechnicalAlert) {
     & node "tests/extended-p1-technical-alert.mjs"
+  }
+  elseif ($CommentConversations) {
+    & node "tests/extended-p2-comment-conversations.mjs"
+    if ($LASTEXITCODE -eq 0) {
+      & npx playwright test "tests/ui-comment-conversations.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
+    }
   }
   elseif ($NotificationDeepLinkUi) {
     & npx playwright test "tests/ui-notification-deep-link.spec.mjs" --config="playwright.release.config.mjs" --project="Samsung-S20-FE" --reporter=line
@@ -328,6 +336,9 @@ try {
 }
 finally {
   $cleanupSql = @"
+DELETE FROM comment_reactions
+WHERE actor_id IN ($quotedCommentActors)
+   OR comment_id IN (SELECT id FROM comments WHERE profile_id IN ($quotedIds));
 DELETE FROM comments WHERE profile_id IN ($quotedIds);
 DELETE FROM reactions WHERE visitor_id IN ($quotedIds);
 DELETE FROM trip_checks WHERE updated_by IN ($quotedIds);

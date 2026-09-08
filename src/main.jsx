@@ -71,7 +71,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.36",
+const VERSION = "1.48.37",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -4066,10 +4066,12 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
     [editingCommentText, setEditingCommentText] = useState(""),
     [deletingCommentId, setDeletingCommentId] = useState(""),
     [hiddenCommentIds, setHiddenCommentIds] = useState([]),
+    [replyingToComment, setReplyingToComment] = useState(null),
     [showAllComments, setShowAllComments] = useState(opensLinkedComment);
   const replyInputRef = useRef(null);
   const commentOperationRef = useRef("");
   const reactionOperationRef = useRef({});
+  const commentReactionOperationRef = useRef({});
   useEffect(() => setSaved(Boolean(p.saved)), [p.saved]);
   const toggleSaved = async () => {
     if (!sessionToken) {
@@ -4128,6 +4130,37 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
       setCommentStatus(error.message || "Reazione non inviata.");
     }
   };
+  const reactToComment = async (commentId, kind) => {
+    const reactionAuthor =
+      author.trim() || (localStorage.getItem("india-visitor-name") || "").trim();
+    if (!reactionAuthor) {
+      setCommentStatus("Inserisci il tuo nome prima di lasciare una reazione.");
+      return;
+    }
+    const operationKey = `${commentId}:${kind}`;
+    try {
+      if (!commentReactionOperationRef.current[operationKey])
+        commentReactionOperationRef.current[operationKey] = crypto.randomUUID();
+      const identityHeaders = sessionToken
+        ? sessionHeaders(sessionToken)
+        : await guestHeaders(reactionAuthor);
+      const response = await fetch(`${API}/comment-reactions`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          ...identityHeaders,
+          "x-idempotency-key": commentReactionOperationRef.current[operationKey],
+        },
+        body: JSON.stringify({ comment_id: commentId, kind }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw Error(result.error || "Reazione non inviata.");
+      delete commentReactionOperationRef.current[operationKey];
+      await refresh();
+    } catch (error) {
+      setCommentStatus(error.message || "Reazione non inviata.");
+    }
+  };
   const send = async () => {
     const commentAuthor =
       author.trim() || (localStorage.getItem("india-visitor-name") || "").trim();
@@ -4146,6 +4179,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
     f.set("author_name", commentAuthor);
     f.set("visitor_id", visitor());
     f.set("text", comment);
+    if (replyingToComment?.id) f.set("parent_comment_id", replyingToComment.id);
     if (replyFile) f.set("file", replyFile);
     try {
       if (!commentOperationRef.current)
@@ -4170,6 +4204,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
       setComment("");
       if (replyInputRef.current) replyInputRef.current.style.height = "";
       setReplyFile(null);
+      setReplyingToComment(null);
       commentOperationRef.current = "";
       await refresh();
       setCommentStatus("Commento pubblicato.");
@@ -4186,6 +4221,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
           });
           setComment("");
           setReplyFile(null);
+          setReplyingToComment(null);
           commentOperationRef.current = "";
           setCommentStatus("Commento salvato nel telefono. Invio automatico al ritorno della rete.");
         } catch {
@@ -4281,6 +4317,15 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
   const visibleComments = (p.comments || []).filter(
     (commentItem) => !hiddenCommentIds.includes(commentItem.id),
   );
+  const visibleCommentIds = new Set(visibleComments.map(({ id: commentId }) => commentId));
+  const commentThreads = visibleComments
+    .filter((commentItem) => !commentItem.parent_comment_id || !visibleCommentIds.has(commentItem.parent_comment_id))
+    .map((rootComment) => [
+      rootComment,
+      ...visibleComments.filter((commentItem) => commentItem.parent_comment_id === rootComment.id),
+    ]);
+  const threadedComments = commentThreads.flat();
+  const displayedComments = showAllComments ? threadedComments : commentThreads.slice(-2).flat();
   const postContent = splitSpotifyCaption(p.text || "");
   const mentionMatch = comment.match(/(^|\s)@([^\s@]*)$/);
   const mentionQuery = (mentionMatch?.[2] || "").toLowerCase();
@@ -4428,8 +4473,8 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
         </div>
       )}
       <div className="comments">
-        {(showAllComments ? visibleComments : visibleComments.slice(-2)).map((x) => (
-          <div className="comment" key={x.id} data-comment-id={x.id}>
+        {displayedComments.map((x) => (
+          <div className={`comment${x.parent_comment_id ? " commentReply" : ""}`} key={x.id} data-comment-id={x.id}>
             <i className="commentAvatar">
               {x.author_name?.[0]?.toUpperCase() || "?"}
             </i>
@@ -4458,31 +4503,60 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
               ) : (
                 <>
                   {x.text && <span>{renderCommentText(x.text)}</span>}
-                  {x.text && (
-                    <div className="commentCommands">
+                  <div className="commentCommands">
+                    <button
+                      onClick={() => {
+                        setReplyingToComment({ id: x.id, authorName: x.author_name || "Ospite" });
+                        requestAnimationFrame(() => replyInputRef.current?.focus());
+                      }}
+                    >
+                      Rispondi
+                    </button>
+                    <button
+                      aria-label={`Copia collegamento del commento di ${x.author_name || "Ospite"}`}
+                      onClick={() => copyCommentLink(x.id)}
+                    >
+                      Copia link
+                    </button>
+                    {x.can_manage && x.text && (
                       <button
-                        aria-label={`Copia collegamento del commento di ${x.author_name || "Ospite"}`}
-                        onClick={() => copyCommentLink(x.id)}
+                        onClick={() => {
+                          setEditingCommentId(x.id);
+                          setEditingCommentText(x.text || "");
+                        }}
                       >
-                        Copia link
+                        Modifica
                       </button>
-                      {x.can_manage && (
+                    )}
+                    {(x.can_delete ?? x.can_manage) && (
+                      <button className="commentDelete" onClick={() => setDeletingCommentId(x.id)}>
+                        Elimina
+                      </button>
+                    )}
+                  </div>
+                  <div className="commentReactions" aria-label={`Reazioni al commento di ${x.author_name || "Ospite"}`}>
+                    {[
+                      ["heart", "♥", "Cuore"],
+                      ["clap", "👏", "Applauso"],
+                      ["laugh", "😄", "Risata"],
+                    ].map(([kind, symbol, label]) => {
+                      const matching = (x.reactions || []).filter((reaction) => reaction.kind === kind);
+                      const reacted = matching.some((reaction) => reaction.reacted);
+                      return (
                         <button
-                          onClick={() => {
-                            setEditingCommentId(x.id);
-                            setEditingCommentText(x.text || "");
-                          }}
+                          key={kind}
+                          type="button"
+                          className={reacted ? "active" : ""}
+                          aria-label={`${label} al commento di ${x.author_name || "Ospite"}`}
+                          aria-pressed={reacted}
+                          onClick={() => reactToComment(x.id, kind)}
                         >
-                          Modifica
+                          <span aria-hidden="true">{symbol}</span>
+                          {matching.length > 0 && <small>{matching.length}</small>}
                         </button>
-                      )}
-                      {(x.can_delete ?? x.can_manage) && (
-                        <button className="commentDelete" onClick={() => setDeletingCommentId(x.id)}>
-                          Elimina
-                        </button>
-                      )}
-                    </div>
-                  )}
+                      );
+                    })}
+                  </div>
                 </>
               )}
             </div>
@@ -4518,6 +4592,12 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
               ? "Mostra soltanto gli ultimi commenti"
               : `Visualizza tutti i ${visibleComments.length} commenti`}
           </button>
+        )}
+        {replyingToComment && (
+          <div className="replyTarget">
+            <span>Risposta a <b>{replyingToComment.authorName}</b></span>
+            <button type="button" onClick={() => setReplyingToComment(null)} aria-label="Annulla risposta">Annulla</button>
+          </div>
         )}
         <div className="reply">
           <textarea
