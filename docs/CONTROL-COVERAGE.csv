@@ -388,7 +388,7 @@ P0,documenti,pending,"Consegnare uno ZIP pulito contenente sorgenti, configurazi
 P0,documenti,passed,Controllo documenti del gruppo.,globale:T-1212,ui-documents QA: dashboard coordinatore mostra lo stato documentale del viaggiatore
 P0,documenti,passed,Dashboard documenti.,usabilita:U0658,ui-documents QA: dashboard coordinatore visibile e aggiornata senza refresh
 P0,documenti,passed,Deep link del documento.,globale:T-0241,"ui-protected-pdf Samsung S20 FE 1/1: il deep link riapre il documento sul dispositivo autenticato; URL contiene soltanto profilo e tipo, mai nome file, chiave storage o contenuto."
-P0,documenti,pending,Definire per quanto tempo vengono conservati i documenti.,globale:T-1343,
+P0,documenti,passed,Definire per quanto tempo vengono conservati i documenti.,globale:T-1343,"data-retention-policy 3/3: documenti validi conservati per la durata del profilo; eliminazione soltanto esplicita, per sostituzione o cancellazione profilo; manutenzione priva di DELETE document_status."
 P0,documenti,passed,Descrizione dello stato dei documenti.,globale:T-1065,"ui-documents QA: stati Non ancora caricato, Presente e conteggi 0/4–3/4 verificati"
 P0,documenti,passed,deve nascondere immediatamente documenti e posizioni;,addendum:A0279,"ui-coordinator-grid touch ripetuto due volte: nel contesto Pubblico sono assenti Documenti, Condividi posizione e Cancella posizione; /api/private risponde 401"
 P0,documenti,pending,Documentare e applicare una regola unica.,globale:T-0700,
@@ -688,7 +688,7 @@ P1,mappe-posizione,pending,condivisione posizione propria;,globale:T-0731,
 P1,mappe-posizione,pending,condivisione posizione;,usabilita:U0549,
 P1,mappe-posizione,passed,Consentire posizione.,usabilita:U0456,Playwright Galaxy: permesso GPS accordato e POST autenticato 200; preview 20382a40; 2026-08-04
 P1,mappe-posizione,pending,Controllo posizioni.,globale:T-1215;usabilita:U0660,
-P1,mappe-posizione,pending,Definire per quanto tempo vengono conservate le posizioni.,globale:T-1340,
+P1,mappe-posizione,passed,Definire per quanto tempo vengono conservate le posizioni.,globale:T-1340,data-retention-policy 3/3: scadenza automatica verificata a 24 ore dall'ultimo aggiornamento; cancellazione immediata disponibile al proprietario.
 P1,mappe-posizione,pending,Indicazione “Posizione recente”.,globale:T-0207,
 P1,mappe-posizione,pending,Indicazione “Posizione scaduta”.,globale:T-0208,
 P1,mappe-posizione,pending,Indicazione “Posizione vecchia”.,globale:T-0209,
@@ -1164,8 +1164,8 @@ P2,social,pending,500 reazioni.,globale:T-1107,
 P2,social,passed,Aggiungere limite di commenti al minuto.,globale:T-0054,"P1_SOCIAL_FLOOD Thailandia 1.48.12 su QA isolato 204/204: cento commenti consecutivi producono esattamente 10 risposte 201 e 90 blocchi 429; cento reazioni producono esattamente 30 risposte 200 e 70 blocchi 429; stato finale integro con dieci commenti, al massimo una reazione per persona e cancellazione completa del post di prova."
 P2,social,passed,Aggiungere limite di reazioni al minuto.,globale:T-0055,"P1_SOCIAL_FLOOD Thailandia 1.48.12 su QA isolato 204/204: cento commenti consecutivi producono esattamente 10 risposte 201 e 90 blocchi 429; cento reazioni producono esattamente 30 risposte 200 e 70 blocchi 429; stato finale integro con dieci commenti, al massimo una reazione per persona e cancellazione completa del post di prova."
 P2,social,passed,Aggiungere reazione.,usabilita:U0250,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
-P2,social,passed,Aggiungere reazioni ai commenti.,globale:T-0058,"1.48.37: API QA 31/31 e Playwright touch su due Galaxy S20 FE; tre reazioni sincronizzate, toggle idempotente e cancellazione a cascata"
-P2,social,passed,Aggiungere risposte ai commenti.,globale:T-0059,"1.48.37: API QA 31/31 e Playwright touch su due Galaxy S20 FE; risposta a un livello, sincronizzazione tra identità e cancellazione a cascata"
+P2,social,passed,Aggiungere reazioni ai commenti.,globale:T-0058,"1.48.37: API QA 31/31 + touch reale su due Galaxy S20 FE; sincronizzazione, toggle e cascata verificati | 1.48.37: extended-p2-comment-conversations 31/31 e Playwright touch su due Galaxy S20 FE; cuore, applauso e risata sincronizzati, toggle idempotente e cancellazione a cascata"
+P2,social,passed,Aggiungere risposte ai commenti.,globale:T-0059,"1.48.37: API QA 31/31 + touch reale su due Galaxy S20 FE; gerarchia a un livello e sincronizzazione verificate | 1.48.37: extended-p2-comment-conversations 31/31 e Playwright touch su due Galaxy S20 FE; risposta a un livello, sincronizzazione tra due telefoni e cancellazione a cascata"
 P2,social,passed,Archivio di post e commenti.,globale:T-1710,"travel-archive Thailandia 1.48.13 3/3: lo ZIP contiene pubblicazioni.json con ID, autore, data, giorno, visibilità, luogo e testo di ogni post, più autore, data e testo di ogni commento; foto, audio, video e allegati commento sono inclusi quando visibili, senza documenti privati."
 P2,social,passed,"B commenta, A riceve.",usabilita:U0556,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P2,social,passed,Bacheca → post → commenti → indietro.,globale:T-1410,"ui-comment-deep-link Thailandia 1.48.14 Samsung Galaxy S9+ locale e pacchetto QA 2/2: il test touch ha prima riprodotto il difetto sul commento vecchio non renderizzato; dopo la correzione il link apre il commento preciso, la sincronizzazione aggiunge un nuovo commento senza richiudere la discussione, i comandi touch chiudono e riaprono tutti i commenti, il reload conserva il bersaglio e il ritorno alla bacheca mantiene il post. Regressione locale 164/164 applicabili, gate QA autenticato completato e produzione read-only 8/8."
@@ -1191,7 +1191,7 @@ P2,social,passed,Copiare il collegamento del commento.,globale:T-0968,"ui-social
 P2,social,passed,Deep link del singolo commento.,globale:T-0243,"ui-comment-deep-link Thailandia 1.48.14 Samsung Galaxy S9+ locale e pacchetto QA 2/2: il test touch ha prima riprodotto il difetto sul commento vecchio non renderizzato; dopo la correzione il link apre il commento preciso, la sincronizzazione aggiunge un nuovo commento senza richiudere la discussione, i comandi touch chiudono e riaprono tutti i commenti, il reload conserva il bersaglio e il ritorno alla bacheca mantiene il post. Regressione locale 164/164 applicabili, gate QA autenticato completato e produzione read-only 8/8."
 P2,social,pending,Definire cosa accade ai commenti.,globale:T-1317,
 P2,social,pending,Definire cosa accade alle reazioni.,globale:T-1319,
-P2,social,pending,Definire per quanto tempo vengono conservati i commenti.,globale:T-1342,
+P2,social,passed,Definire per quanto tempo vengono conservati i commenti.,globale:T-1342,data-retention-policy 3/3: nessuna scadenza automatica dei commenti validi; rimozione esplicita o cascata da pubblicazione/profilo.
 P2,social,passed,Errore durante creazione del post con 10 allegati.,globale:T-1148,"P0_TEN_ATTACHMENTS Thailandia 1.48.31 QA reale: un post con dieci JPEG distinti restituisce HTTP 201, conserva nomi e ordine 10/10, riapre 10/10 file e viene eliminato senza lasciare la pubblicazione nel database. | P0_TEN_ATTACHMENTS Thailandia 1.48.31 QA reale: creazione HTTP 201 con dieci JPEG distinti, persistenza e riapertura 10/10, ordine e nomi integri, eliminazione finale verificata."
 P2,social,passed,Espandere tutti i commenti.,globale:T-1398,"ui-comment-deep-link Thailandia 1.48.27 Galaxy S9+ touch 1/1: una discussione con cinque commenti viene espansa integralmente, ridotta agli ultimi elementi e riaperta; sincronizzazione, reload e ritorno mantengono il commento bersaglio leggibile."
 P2,social,passed,Il commento non deve rimanere orfano.,globale:T-0794,verify-d1-backup: zero commenti orfani dopo il ripristino
@@ -1558,11 +1558,11 @@ P3,altro,pending,Definire budget massimo del bundle.,globale:T-1666,
 P3,altro,pending,Definire comportamento quando la quota viene superata.,globale:T-1533,
 P3,altro,pending,Definire consumo massimo accettabile.,globale:T-1654,
 P3,altro,pending,Definire cosa accade ai post.,globale:T-1318,
-P3,altro,pending,Definire per quanto tempo vengono conservate le subscription Push.,globale:T-1341,
-P3,altro,pending,Definire per quanto tempo vengono conservati i log.,globale:T-1344,
-P3,altro,pending,Definire per quanto tempo vengono conservati i post.,globale:T-1345,
+P3,altro,passed,Definire per quanto tempo vengono conservate le subscription Push.,globale:T-1341,"data-retention-policy 3/3: conservazione fino a disattivazione, logout, revoca dispositivo/profilo o risposta permanente 404/410 del servizio push."
+P3,altro,passed,Definire per quanto tempo vengono conservati i log.,globale:T-1344,data-retention-policy 3/3: registro tecnico eliminato automaticamente oltre 180 giorni e limitato a metadati non sensibili.
+P3,altro,passed,Definire per quanto tempo vengono conservati i post.,globale:T-1345,data-retention-policy 3/3: nessuna scadenza automatica dei post validi; eliminazione esplicita o cancellazione del profilo.
 P3,altro,pending,Definire perdita massima accettabile dei dati.,globale:T-1164,
-P3,altro,pending,Definire se l’originale deve essere conservato.,globale:T-1430,
+P3,altro,passed,Definire se l’originale deve essere conservato.,globale:T-1430,data-retention-policy 3/3: originale nel formato caricato conservato finché il contenuto è valido; sostituzione o eliminazione rimuove l'oggetto precedente.
 P3,altro,pending,Definire se l’utente è Ospite.,usabilita:U0479,
 P3,altro,pending,Deselezionare un’attività.,usabilita:U0330,
 P3,altro,pending,deve avere un nome verificabile;,usabilita:U0025,
