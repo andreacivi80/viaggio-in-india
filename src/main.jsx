@@ -71,7 +71,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.35",
+const VERSION = "1.48.36",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -1006,6 +1006,8 @@ function ItalyTravelerMap({ people }) {
     if (!elementRef.current) return undefined;
     let map;
     let cancelled = false;
+    let settleTimer;
+    let resizeObserver;
     import("maplibre-gl").then(({ default: maplibregl }) => {
       if (cancelled || !elementRef.current) return;
       map = new maplibregl.Map({
@@ -1032,13 +1034,32 @@ function ItalyTravelerMap({ people }) {
             ))
             .addTo(map);
         });
-        map.resize();
-        // La panoramica resta sempre nazionale: un solo iscritto non deve
-        // trasformare la cartina WEROAD in una mappa della sua sola città.
-        map.fitBounds(ITALY_OVERVIEW_BOUNDS, { padding: 24, maxZoom: 5.2, duration: 0 });
+        const showAllItaly = () => {
+          if (cancelled || !map || !elementRef.current) return;
+          map.resize();
+          // La panoramica resta sempre nazionale: i punti indicano le città,
+          // ma non devono determinare lo zoom neppure quando ce n'è uno solo.
+          map.fitBounds(ITALY_OVERVIEW_BOUNDS, { padding: 24, maxZoom: 5.2, duration: 0 });
+          const visible = map.getBounds();
+          elementRef.current.dataset.viewportWest = visible.getWest().toFixed(3);
+          elementRef.current.dataset.viewportSouth = visible.getSouth().toFixed(3);
+          elementRef.current.dataset.viewportEast = visible.getEast().toFixed(3);
+          elementRef.current.dataset.viewportNorth = visible.getNorth().toFixed(3);
+        };
+        showAllItaly();
+        // Il pannello entra dal basso: una seconda misura a layout assestato
+        // evita che MapLibre conservi le dimensioni iniziali del foglio.
+        settleTimer = setTimeout(showAllItaly, 320);
+        resizeObserver = new ResizeObserver(showAllItaly);
+        resizeObserver.observe(elementRef.current);
       });
     });
-    return () => { cancelled = true; map?.remove(); };
+    return () => {
+      cancelled = true;
+      clearTimeout(settleTimer);
+      resizeObserver?.disconnect();
+      map?.remove();
+    };
   }, [groups]);
   const mappedCount = groups.reduce((total, group) => total + group.people.length, 0);
   return (

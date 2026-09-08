@@ -21,6 +21,8 @@ test("la cartina WEROAD mantiene sempre l'Italia intera anche con una sola prove
   assert.match(source, /const ITALY_OVERVIEW_BOUNDS = \[\[6\.4, 35\.4\], \[18\.9, 47\.2\]\]/);
   assert.match(source, /map\.fitBounds\(ITALY_OVERVIEW_BOUNDS, \{ padding: 24, maxZoom: 5\.2, duration: 0 \}\)/);
   assert.doesNotMatch(source, /groups\.length === 1\) map\.easeTo/);
+  assert.match(source, /resizeObserver = new ResizeObserver\(showAllItaly\)/);
+  assert.match(source, /settleTimer = setTimeout\(showAllItaly, 320\)/);
 });
 
 test("le icone della mappa generale sono ancorate a tratte reali", () => {

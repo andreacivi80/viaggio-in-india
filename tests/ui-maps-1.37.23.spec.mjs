@@ -8,6 +8,23 @@ const waitForMap = async (page) => {
   await expect(page.locator(".realMap canvas")).toBeVisible();
 };
 
+const expectFullItalyViewport = async (map) => {
+  await expect(map).toHaveAttribute("data-viewport-west", /-?\d+\.\d+/);
+  await expect(map).toHaveAttribute("data-viewport-south", /-?\d+\.\d+/);
+  await expect(map).toHaveAttribute("data-viewport-east", /-?\d+\.\d+/);
+  await expect(map).toHaveAttribute("data-viewport-north", /-?\d+\.\d+/);
+  const bounds = await map.evaluate((node) => ({
+    west: Number(node.dataset.viewportWest),
+    south: Number(node.dataset.viewportSouth),
+    east: Number(node.dataset.viewportEast),
+    north: Number(node.dataset.viewportNorth),
+  }));
+  expect(bounds.west).toBeLessThanOrEqual(6.4);
+  expect(bounds.south).toBeLessThanOrEqual(35.4);
+  expect(bounds.east).toBeGreaterThanOrEqual(18.9);
+  expect(bounds.north).toBeGreaterThanOrEqual(47.2);
+};
+
 test("mappa generale: numeri piccoli, mezzi distinti e nessuna sovrapposizione", async ({ page }) => {
   await page.goto("/?view=map", { waitUntil: "networkidle" });
   await waitForMap(page);
@@ -81,6 +98,45 @@ test("cartina provenienze: Mantova è riconosciuta e i gruppi restano compatti",
     return { width: rect.width, height: rect.height };
   }));
   expect(sizes.every(({ width, height }) => width <= 30 && height <= 30)).toBe(true);
+  await expectFullItalyViewport(page.locator(".italyOriginsMap"));
+});
+
+test("cartina provenienze: un solo viaggiatore di Milano non restringe la vista", async ({ page }) => {
+  const profiles = [
+    { id: "milano-solo", name: "Viaggiatore", surname: "Milano", origin_city: "Milano", role: "traveler" },
+  ];
+  await page.route("**/api/state", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ sync_version: 1, profiles, posts: [] }),
+  }));
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: "Apri la cartina di provenienza dei viaggiatori" }).click();
+  const map = page.locator(".italyOriginsMap");
+  await expect(page.locator('.italyOriginMarker[aria-label="1 da Milano"]')).toBeVisible();
+  await expectFullItalyViewport(map);
+  await page.setViewportSize({ width: 360, height: 740 });
+  await expectFullItalyViewport(map);
+});
+
+test("cartina provenienze: diciotto viaggiatori su più città mantengono la vista nazionale", async ({ page }) => {
+  const cities = ["Milano", "Mantova", "Roma", "Palermo", "Cagliari", "Torino"];
+  const profiles = Array.from({ length: 18 }, (_, index) => ({
+    id: `traveler-${index + 1}`,
+    name: `Viaggiatore ${index + 1}`,
+    surname: "Test",
+    origin_city: cities[index % cities.length],
+    role: "traveler",
+  }));
+  await page.route("**/api/state", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/json",
+    body: JSON.stringify({ sync_version: 1, profiles, posts: [] }),
+  }));
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: "Apri la cartina di provenienza dei viaggiatori" }).click();
+  await expect(page.locator(".italyOriginMarker")).toHaveCount(cities.length);
+  await expectFullItalyViewport(page.locator(".italyOriginsMap"));
 });
 
 test("tutte le undici mappe giornaliere mostrano cartografia, percorso e nomi delle città", async ({ page }) => {
