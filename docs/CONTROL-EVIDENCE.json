@@ -406,4 +406,8 @@
   ,{ "control": "Cambiare reazione.", "evidence": "reaction-concurrency 2/2 + P1_SOCIAL_CONCURRENCY 12/12: upsert atomico sostituisce l'emoji della stessa identità senza creare doppioni." }
   ,{ "control": "Cambio reazione.", "evidence": "reaction-concurrency 2/2: cambio concorrente conserva una sola reazione corrente per persona e post." }
   ,{ "control": "Rimozione reazione.", "evidence": "reaction-concurrency 2/2 + comment-conversations 31/31: secondo tocco sulla stessa reazione la elimina; stato finale senza record duplicati." }
+  ,{ "control": "Caricare fotografia.", "evidence": "P1_MEDIA_ROBUSTNESS su QA 1.48.37: 100/100 fotografie JPEG caricate da una sessione reale in 20 post, tutte persistite, riaperte con MIME corretto e poi eliminate senza residui." }
+  ,{ "control": "Pubblicare più fotografie.", "evidence": "P1_MEDIA_ROBUSTNESS su QA 1.48.37: ciascuno dei 20 post contiene cinque fotografie distinte; totale 100/100 media, ordine e URL unici verificati nello stato condiviso." }
+  ,{ "control": "Pubblicare una fotografia.", "evidence": "P1_MEDIA_ROBUSTNESS 100/100 + P1_IMAGE_QUALITY 2/2 su QA 1.48.37: creazione autenticata HTTP 201, persistenza, riapertura e pulizia finale verificate con fotografie reali." }
+  ,{ "control": "Verifica caricamento foto.", "evidence": "P1_MEDIA_ROBUSTNESS 100/100 su QA 1.48.37: 20 post concorrenti a raffiche, 100 fotografie rilette byte per byte con content-type image/jpeg e 100 URL rimossi dopo la pulizia." }
 ]

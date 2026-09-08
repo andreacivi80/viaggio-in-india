@@ -774,7 +774,7 @@ P1,media-upload,passed,Caricare file con MIME falso.,globale:T-0614,QA autentica
 P1,media-upload,passed,Caricare fotografia con nome originale personale.,globale:T-1425,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: fotografia con nome originale personale accettata, persistita, riletta e cancellata senza alterare il post."
 P1,media-upload,passed,Caricare fotografia contenente data e ora.,globale:T-1426,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: fotografia con data e ora nel nome accettata, persistita, riletta e cancellata correttamente."
 P1,media-upload,passed,Caricare fotografia contenente modello del telefono.,globale:T-1427,"P0_MEDIA_DELETE 14/14: JPEG contenente modello Samsung SM-G781B viene accettato e riaperto, ma il modello non viene estratto né mostrato nei dati del post."
-P1,media-upload,pending,Caricare fotografia.,globale:T-0342,
+P1,media-upload,passed,Caricare fotografia.,globale:T-0342,"P1_MEDIA_ROBUSTNESS su QA 1.48.37: 100/100 fotografie JPEG caricate da una sessione reale in 20 post, tutte persistite, riaperte con MIME corretto e poi eliminate senza residui."
 P1,media-upload,passed,Caricare i primi 20 post.,globale:T-1679,P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: i primi 20/20 post creati in sequenza a raffiche compaiono tutti nello stato finale con cinque media ciascuno.
 P1,media-upload,passed,Caricare immagini a qualità ridotta.,globale:T-1645,"P1_IMAGE_QUALITY su QA isolato 1.48.8: JPEG reale 12x8 a qualità ridotta caricato, riaperto e decodificato conservando dimensioni e MIME."
 P1,media-upload,passed,Caricare un file con accenti.,globale:T-0990,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: file città-perché-caffè.jpg caricato, conservato e riaperto correttamente."
@@ -835,10 +835,10 @@ P1,media-upload,passed,Preparare post con video offline.,globale:T-0546,"offline
 P1,media-upload,passed,presenza di indicatore di caricamento;,addendum:A0315,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P1,media-upload,passed,"Pubblicare audio, se consentito.",usabilita:U0632,ui-publish-complete Thailandia 1.48.4 1/1: audio da file e registrazione microfono pubblicati e visibili sul secondo telefono.
 P1,media-upload,passed,"Pubblicare fotografia, se consentito.",usabilita:U0630,ui-publish-complete Thailandia 1.48.4 1/1: due fotografie pubblicate tramite touch e visibili sul secondo telefono.
-P1,media-upload,pending,Pubblicare più fotografie.,globale:T-0407,
+P1,media-upload,passed,Pubblicare più fotografie.,globale:T-0407,"P1_MEDIA_ROBUSTNESS su QA 1.48.37: ciascuno dei 20 post contiene cinque fotografie distinte; totale 100/100 media, ordine e URL unici verificati nello stato condiviso."
 P1,media-upload,pending,Pubblicare un audio.,globale:T-0411;usabilita:U0014,
 P1,media-upload,pending,Pubblicare un video.,globale:T-0412;usabilita:U0013,
-P1,media-upload,pending,Pubblicare una fotografia.,globale:T-0413;globale:T-1778;usabilita:U0012,
+P1,media-upload,passed,Pubblicare una fotografia.,globale:T-0413;globale:T-1778;usabilita:U0012,"P1_MEDIA_ROBUSTNESS 100/100 + P1_IMAGE_QUALITY 2/2 su QA 1.48.37: creazione autenticata HTTP 201, persistenza, riapertura e pulizia finale verificate con fotografie reali."
 P1,media-upload,passed,"Pubblicare video, se consentito.",usabilita:U0631,ui-publish-complete Thailandia 1.48.4 1/1: video reale pubblicato tramite touch e visibile sul secondo telefono.
 P1,media-upload,passed,Pubblicazione fotografia con posizione.,globale:T-1229,ui-post-location Samsung S20 FE 1/1: una fotografia reale viene pubblicata tramite touch insieme alla posizione ottenuta dal dispositivo e resta visibile nel post.
 P1,media-upload,pending,registrare un audio;,globale:T-1781,
@@ -887,7 +887,7 @@ P1,media-upload,pending,upload interrotto;,usabilita:U0509,
 P1,media-upload,pending,upload multipart;,globale:T-0164,
 P1,media-upload,pending,upload riprendibile;,globale:T-0165,
 P1,media-upload,passed,utilizzare uno stato neutro di caricamento;,addendum:A0295,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
-P1,media-upload,pending,Verifica caricamento foto.,globale:T-0653,
+P1,media-upload,passed,Verifica caricamento foto.,globale:T-0653,"P1_MEDIA_ROBUSTNESS 100/100 su QA 1.48.37: 20 post concorrenti a raffiche, 100 fotografie rilette byte per byte con content-type image/jpeg e 100 URL rimossi dopo la pulizia."
 P1,media-upload,pending,Verifica caricamento video.,globale:T-0654,
 P1,media-upload,pending,Verificare audio.,usabilita:U0106,
 P1,media-upload,passed,Verificare caricamento di ogni immagine Unsplash.,globale:T-1634,"production-smoke Thailandia 1.48.12: nessun riferimento Unsplash o immagine remota resta nel bundle; tutte le fotografie delle città sono asset locali e hanno risposto correttamente sul dominio ufficiale, eliminando dipendenza, scadenza e blocco del fornitore esterno."
