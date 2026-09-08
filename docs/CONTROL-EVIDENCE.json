@@ -454,4 +454,7 @@
   ,{ "control": "Verificare informazioni autorizzate.", "evidence": "P0_RESOURCE_ENUMERATION 17/17 + P0_DOCUMENTS 12/12 su QA 1.48.37: documenti, dispositivi e inviti espongono esclusivamente le informazioni del profilo e ruolo autorizzati, senza enumerazione laterale." }
   ,{ "control": "non deve contenere documenti;", "evidence": "P0_RESOURCE_ENUMERATION 17/17 su QA 1.48.37: pubblico e sessione familiare ricevono lo stesso diniego dall'area privata; un altro viaggiatore non riceve metadati né può distinguere la chiave reale da una inesistente." }
   ,{ "control": "Verificare notifica prioritaria al Coordinatore.", "evidence": "P1_TECHNICAL_ALERT=9/9 su QA: errore server con UUID e audit technical_error; test statico technical-alert verifica invio push soltanto alla subscription del coordinatore (1/1) e nessun invio al viaggiatore." }
+  ,{ "control": "Sostituire fotografia.", "evidence": "P0_AVATAR_REPLACEMENT=7/7 su QA: caricamento foto precedente e nuova, chiavi differenti, nuova immagine leggibile, vecchia rimossa da MEDIA e profilo pubblico aggiornato." }
+  ,{ "control": "upload multipart;", "evidence": "P0_CHUNK_RETRY=12/12 su QA: inizializzazione upload a parti, invio parte, completamento, associazione al post, lettura e cancellazione verificate." }
+  ,{ "control": "upload riprendibile;", "evidence": "P0_CHUNK_RETRY=12/12 su QA: reinvio idempotente della stessa parte senza duplicazione e completamento ripetibile; gate statico verifica ripresa dalle parti gia confermate." }
 ]

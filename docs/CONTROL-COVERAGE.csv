@@ -870,7 +870,7 @@ P1,media-upload,passed,Sincronizzazione immediata al ritorno della rete.,globale
 P1,media-upload,pending,Solo audio.,usabilita:U0144,
 P1,media-upload,pending,Solo fotografia.,usabilita:U0142,
 P1,media-upload,pending,Solo video.,usabilita:U0143,
-P1,media-upload,pending,Sostituire fotografia.,globale:T-0354,
+P1,media-upload,passed,Sostituire fotografia.,globale:T-0354,"P0_AVATAR_REPLACEMENT=7/7 su QA: caricamento foto precedente e nuova, chiavi differenti, nuova immagine leggibile, vecchia rimossa da MEDIA e profilo pubblico aggiornato."
 P1,media-upload,passed,Sostituire la propria fotografia.,usabilita:U0372,"P0_AVATAR_REPLACEMENT Thailandia 1.48.12 su QA isolato 7/7: il proprietario carica una fotografia, la sostituisce con un secondo PNG reale, ottiene una nuova chiave, riapre il nuovo file, verifica la rimozione del precedente e lo stato pubblico punta soltanto alla fotografia nuova."
 P1,media-upload,passed,Stato caricamento comunicato allo screen reader.,globale:T-1073,ui-upload-screen-reader Thailandia 1.48.12 Samsung S20 FE 1/1: video WebM reale portato a 9 MB e caricato a parti con ritardo; regione semantica role=status individuata tramite albero accessibile e sequenza annunci osservata da 0% a 100%; pubblicazione conclusa e pulizia QA completata.
 P1,media-upload,pending,test di carico;,globale:T-0021,
@@ -884,8 +884,8 @@ P1,media-upload,passed,Tutti pubblicano una fotografia.,globale:T-1740,"ui-all-m
 P1,media-upload,passed,Tutti registrano un audio.,globale:T-1741,"ui-all-members-publish Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: due viaggiatori e la coordinatrice, ciascuno con sessione e telefono distinti, hanno pubblicato tramite touch una fotografia JPEG reale e un audio registrato dal microfono; tutti e tre i post con entrambi i media sono risultati visibili dagli altri dispositivi e sono stati eliminati al termine."
 P1,media-upload,passed,un upload interrotto non può riprendere;,usabilita:U0695,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P1,media-upload,pending,upload interrotto;,usabilita:U0509,
-P1,media-upload,pending,upload multipart;,globale:T-0164,
-P1,media-upload,pending,upload riprendibile;,globale:T-0165,
+P1,media-upload,passed,upload multipart;,globale:T-0164,"P0_CHUNK_RETRY=12/12 su QA: inizializzazione upload a parti, invio parte, completamento, associazione al post, lettura e cancellazione verificate."
+P1,media-upload,passed,upload riprendibile;,globale:T-0165,P0_CHUNK_RETRY=12/12 su QA: reinvio idempotente della stessa parte senza duplicazione e completamento ripetibile; gate statico verifica ripresa dalle parti gia confermate.
 P1,media-upload,passed,utilizzare uno stato neutro di caricamento;,addendum:A0295,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P1,media-upload,passed,Verifica caricamento foto.,globale:T-0653,"P1_MEDIA_ROBUSTNESS 100/100 su QA 1.48.37: 20 post concorrenti a raffiche, 100 fotografie rilette byte per byte con content-type image/jpeg e 100 URL rimossi dopo la pulizia."
 P1,media-upload,pending,Verifica caricamento video.,globale:T-0654,
