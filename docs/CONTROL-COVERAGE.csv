@@ -321,20 +321,20 @@ P0,altro,passed,"A elimina il post, B lo vede scomparire.",usabilita:U0558,Authe
 P0,altro,passed,Avvisare gli utenti prima dell’eliminazione.,globale:T-1336,ui-documents QA: finestra Eliminare questo documento? mostrata prima del DELETE
 P0,altro,passed,Confermare eliminazione.,usabilita:U0283,"ui-documents QA: Annulla conserva il file, Elimina conferma la rimozione"
 P0,altro,passed,contenuto eliminato;,usabilita:U0511,"extended-p0-sync-delete: contenuto rimosso e assente su pubblico, proprietario e secondo dispositivo"
-P0,altro,pending,Definire se i contenuti vengono eliminati o anonimizzati.,globale:T-1320,
+P0,altro,passed,Definire se i contenuti vengono eliminati o anonimizzati.,globale:T-1320,"data-retention-policy 3/3 + P0_MEDIA_DELETE 14/14 + P0_SYNC_DELETE 115/115 su QA 1.48.37: eliminazione esplicita rimuove record, media, commenti e reazioni; non restano copie anonimizzate raggiungibili."
 P0,altro,passed,"Eliminare dallo ZIP le cartelle node_modules, .git, .wrangler e dist, se deve essere ricostruita automaticamente.",globale:T-0005,"clean-source-archive 2/2: allowlist di radice e verifica di tutte le entry escludono node_modules, .git, .wrangler, dist, artifacts, report e file .env."
 P0,altro,passed,Eliminare dallo ZIP le cartelle:,globale:T-0006,"clean-source-archive 2/2: archivio costruito da allowlist e ispezionato dopo la decompressione; nessuna cartella generata, dipendenza, backup o segreto incluso."
 P0,altro,pending,Eliminare i dati del browser.,globale:T-0859,
 P0,altro,passed,Eliminare il post.,globale:T-0400,extended-p0-sync-delete: eliminazione reale propagata
 P0,altro,passed,Eliminare subscription inattive.,globale:T-1349,P0_PUSH_UNSUBSCRIBE 14/14 + data-retention-policy 3/3: disattivazione e logout rimuovono le sottoscrizioni; endpoint permanentemente 404/410 viene eliminato dal Worker.
 P0,altro,passed,Eliminare un proprio post.,usabilita:U0281,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P0,altro,pending,Eliminare.,globale:T-0448;usabilita:U0222,
+P0,altro,passed,Eliminare.,globale:T-0448;usabilita:U0222,"P0_MEDIA_DELETE 14/14 + P0_SOCIAL 12/12 su QA 1.48.37: eliminazione autorizzata di post, foto, audio, video e commenti completata; oggetti e record non sono più raggiungibili."
 P0,altro,passed,eliminati;,addendum:A0352,Authenticated deleted-upload retry 404; preview a4b05356; 2026-08-04
 P0,altro,passed,Eliminazione mentre un altro dispositivo legge.,globale:T-0572,extended-p0-sync-delete: post visibile sul secondo dispositivo poi rimosso
 P0,altro,passed,eliminazione post altrui;,globale:T-0736,QA 1.31.0: attacco eliminazione post altrui respinto
 P0,altro,passed,eliminazione post proprio;,globale:T-0737,extended-p0-media-delete: proprietario elimina il proprio post con tre media
 P0,altro,passed,Errore durante eliminazione multipla.,globale:T-1149,P0_PROFILE_DELETION 44/44: due cancellazioni simultanee dello stesso profilo producono un solo successo e un 404 controllato; profilo e dati collegati restano completamente assenti.
-P0,altro,pending,indicare esattamente cosa verrà eliminato;,addendum:A0252,
+P0,altro,passed,indicare esattamente cosa verrà eliminato;,addendum:A0252,"static gate 195/195 + P0_MEDIA_DELETE 14/14: le conferme distinguono elemento locale, documento e pubblicazione; la cancellazione reale coincide con quanto descritto e non coinvolge altri dati."
 P0,altro,pending,Inviare notifica relativa a un contenuto successivamente eliminato.,globale:T-0866,
 P0,altro,passed,Mostrare chiaramente quali dati verranno eliminati.,globale:T-1321,"deletion-confirmation 1/1 + UI documenti/social: prima dell’azione l’interfaccia distingue chiaramente post e allegati, testo e allegato del commento, oppure documento privato, con Annulla ed Elimina separati."
 P0,altro,pending,nessuna funzione esistente è stata eliminata;,globale:T-0684,
@@ -678,10 +678,10 @@ P1,mappe-posizione,pending,Aggiornamento posizione contemporaneo.,globale:T-0569
 P1,mappe-posizione,pending,Aggiornare la stessa posizione da due dispositivi.,globale:T-0790,
 P1,mappe-posizione,passed,Aprire la posizione del post.,globale:T-0692,ui-post-location Samsung S20 FE 1/1: la posizione del post è un collegamento Google Maps apribile con le coordinate esatte pubblicate.
 P1,mappe-posizione,passed,Cancellare la posizione dal telefono A.,globale:T-0694,ui-location-permissions Samsung S20 FE 1/1: il proprietario cancella la posizione dal pannello rapido e riceve conferma server 200.
-P1,mappe-posizione,pending,Cancellare la posizione.,globale:T-0496;globale:T-1771;usabilita:U0074,
+P1,mappe-posizione,passed,Cancellare la posizione.,globale:T-0496;globale:T-1771;usabilita:U0074,P0_LOCATION 30/30 su QA 1.48.37: DELETE autenticata del proprietario restituisce 200 e la posizione scompare immediatamente da proprietario e coordinatrice.
 P1,mappe-posizione,passed,Cancellare la propria posizione.,usabilita:U0468,Playwright mobile: DELETE del proprietario autenticato restituisce 200; preview 20382a40; 2026-08-04
-P1,mappe-posizione,pending,cancellazione posizione altrui.,globale:T-0726,
-P1,mappe-posizione,pending,cancellazione posizione propria;,globale:T-0727,
+P1,mappe-posizione,passed,cancellazione posizione altrui.,globale:T-0726,P0_LOCATION 30/30 su QA 1.48.37: secondo viaggiatore non può cancellare la posizione del proprietario e riceve HTTP 403.
+P1,mappe-posizione,passed,cancellazione posizione propria;,globale:T-0727,P0_LOCATION 30/30 su QA 1.48.37: il proprietario cancella la propria posizione e tutte le viste autorizzate ne confermano l'assenza.
 P1,mappe-posizione,passed,Condividere la posizione dal telefono A.,globale:T-0697,ui-location-permissions Samsung S20 FE 1/1: il proprietario condivide la posizione GPS tramite touch; il server salva coordinate e identità della sessione.
 P1,mappe-posizione,pending,condividere la posizione;,globale:T-1773;usabilita:U0073,
 P1,mappe-posizione,pending,condivisione posizione propria;,globale:T-0731,
@@ -708,7 +708,7 @@ P1,mappe-posizione,passed,Non rendere pubblica la posizione EXIF senza consenso.
 P1,mappe-posizione,pending,Non visualizzare posizione.,usabilita:U0364,
 P1,mappe-posizione,passed,Ogni posizione deve essere collegata a un profilo esistente.,globale:T-1018,migration-safety 8/8 + P1_LOCATION_PROFILE_INTEGRITY 1/1: trigger D1 rifiuta posizioni verso profili inesistenti e pulisce la posizione quando il profilo viene eliminato.
 P1,mappe-posizione,pending,Posizione all’interno di un edificio.,globale:T-0499,
-P1,mappe-posizione,pending,posizione cancellata;,globale:T-1572,
+P1,mappe-posizione,passed,posizione cancellata;,globale:T-1572,P0_LOCATION 30/30 + P0_LOCATION_RETENTION 5/5 su QA 1.48.37: posizione rimossa da elenco e mappa; le letture successive non restituiscono il record.
 P1,mappe-posizione,passed,Posizione con GPS impreciso.,globale:T-0500,ui-post-location Samsung S20 FE 1/1: GPS simulato con accuratezza dichiarata di 3500 metri completa il flusso senza presentare il dato come certificato.
 P1,mappe-posizione,passed,Posizione con GPS preciso.,globale:T-0501,"ui-location-permissions Samsung S20 FE 1/1: coordinate precise 28.6139, 77.2090 conservate e mostrate senza arrotondamenti fuorvianti."
 P1,mappe-posizione,pending,posizione condivisa;,globale:T-1573,
@@ -719,7 +719,7 @@ P1,mappe-posizione,pending,posizione precisa attiva;,globale:T-1386,
 P1,mappe-posizione,pending,posizione precisa disattiva;,globale:T-1387,
 P1,mappe-posizione,pending,Posizione propria.,usabilita:U0646,
 P1,mappe-posizione,pending,posizione;,addendum:A0076,
-P1,mappe-posizione,pending,posizioni scadute o cancellate;,globale:T-1764,
+P1,mappe-posizione,passed,posizioni scadute o cancellate;,globale:T-1764,"P0_LOCATION_RETENTION 5/5 + P0_LOCATION 30/30 su QA 1.48.37: scadenza automatica e cancellazione esplicita entrambe verificate, mantenendo intatta una posizione recente differente."
 P1,mappe-posizione,passed,Pubblicare con posizione GPS.,globale:T-0404,"ui-post-location Samsung S20 FE 1/1: Usa posizione, geolocalizzazione, fotografia, invio reale, persistenza e collegamento cartografico verificati nello stesso flusso touch."
 P1,mappe-posizione,pending,quali utenti hanno condiviso la posizione;,addendum:A0356,
 P1,mappe-posizione,pending,Registrare precisione GPS.,globale:T-1446,
@@ -953,7 +953,7 @@ P1,sync-rete,passed,Informazioni di emergenza offline.,globale:T-0122,ui-cache-r
 P1,sync-rete,passed,Invio automatico al ritorno della rete.,globale:T-0123,ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: il post con foto accodato senza rete parte automaticamente al ritorno online.
 P1,sync-rete,passed,l’offline conserva testo e allegati;,globale:T-0678,"offline-queue: testo, foto, audio e video conservati nella coda"
 P1,sync-rete,passed,Mappe e coordinate essenziali offline.,globale:T-0124,"ui-cache-recovery Samsung S20 FE 1/1: offline restano disponibili giornate, Rockland Hotel, indirizzo, tappe e coordinate essenziali; l’interfaccia avverte che la cartografia dettagliata può richiedere rete."
-P1,sync-rete,pending,nuovi post sincronizzati;,globale:T-1763,
+P1,sync-rete,passed,nuovi post sincronizzati;,globale:T-1763,P0_SYNC_DELETE 115/115 su QA 1.48.37: un nuovo post pubblico creato dall'autore compare subito nello stato pubblico e nella sessione del secondo viaggiatore con lo stesso ID.
 P1,sync-rete,passed,offline con allegati;,globale:T-1794,offline-queue: allegati multimediali conservati e reinviati
 P1,sync-rete,passed,Outbox offline.,globale:T-0125,"offline-queue: accodamento, persistenza e svuotamento verificati"
 P1,sync-rete,passed,Preferiti sincronizzati tra dispositivi.,globale:T-0267,ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: due sessioni reali dello stesso profilo su due telefoni sincronizzano salvataggio e rimozione in entrambe le direzioni senza refresh manuale; pulizia QA completata.
@@ -980,7 +980,7 @@ P1,sync-rete,pending,Salvataggio offline delle posizioni.,globale:T-0132,
 P1,sync-rete,pending,Simulare rete 2G.,globale:T-0553,
 P1,sync-rete,pending,Simulare rete 3G.,globale:T-0554,
 P1,sync-rete,pending,sincronizzazione fallita;,usabilita:U0510,
-P1,sync-rete,pending,sincronizzazione incrementale;,globale:T-1802,
+P1,sync-rete,passed,sincronizzazione incrementale;,globale:T-1802,P0_SYNC_DELETE 115/115 su QA 1.48.37: sync_version aumenta dopo la modifica; 100 letture concorrenti restituiscono la stessa versione e non la alterano.
 P1,sync-rete,passed,Sincronizzazione sul secondo telefono.,usabilita:U0314,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P1,sync-rete,pending,sono stati superati i test di rete lenta;,globale:T-0688,
 P1,sync-rete,passed,Stato letto/non letto sincronizzato tra dispositivi.,globale:T-0091,"activity-sync Thailandia 1.48.16: integrazione API QA 1/1 e Playwright touch Samsung S20 FE 1/1 con due telefoni distinti dello stesso profilo; badge inizialmente visibile su entrambi, apertura Attività recenti sul primo, stato letto persistito in D1 e badge rimosso automaticamente sul secondo entro il polling. Un aggiornamento più vecchio non regredisce lo stato; aggiornamento inverso converge sul primo dispositivo. Regressione locale 166/166 applicabili, QA autenticata 18/18 e produzione read-only 8/8; backup pre-migrazione verificato SHA-256 2ED6F5DA…204259."
