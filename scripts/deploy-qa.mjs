@@ -1,5 +1,5 @@
 import { cpSync, mkdtempSync, readFileSync, rmSync, symlinkSync } from "node:fs";
-import { join, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import { spawnSync } from "node:child_process";
 
@@ -36,8 +36,9 @@ try {
   if (/"database_name"\s*:\s*"viaggio-in-india-db"/.test(config))
     throw new Error("Protezione dati: rilevato un binding di produzione nel pacchetto QA");
 
-  const output = runNode(join(root, "node_modules", "wrangler", "bin", "wrangler.js"), [
-    "pages", "deploy", "dist", "--cwd", deployRoot,
+  const npxCli = join(dirname(process.execPath), "node_modules", "npm", "bin", "npx-cli.js");
+  const output = runNode(npxCli, [
+    "--yes", "wrangler@4.118.0", "pages", "deploy", "dist", "--cwd", deployRoot,
     "--project-name", "viaggio-in-india-2026-qa", "--branch", branch, "--commit-dirty=true",
   ]);
   const deploymentUrl = output.match(/https:\/\/[a-z0-9-]+\.viaggio-in-india-2026-qa\.pages\.dev/)?.[0];

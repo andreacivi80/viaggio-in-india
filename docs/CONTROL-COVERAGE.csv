@@ -326,7 +326,7 @@ P0,altro,passed,"Eliminare dallo ZIP le cartelle node_modules, .git, .wrangler e
 P0,altro,passed,Eliminare dallo ZIP le cartelle:,globale:T-0006,"clean-source-archive 2/2: archivio costruito da allowlist e ispezionato dopo la decompressione; nessuna cartella generata, dipendenza, backup o segreto incluso."
 P0,altro,pending,Eliminare i dati del browser.,globale:T-0859,
 P0,altro,passed,Eliminare il post.,globale:T-0400,extended-p0-sync-delete: eliminazione reale propagata
-P0,altro,pending,Eliminare subscription inattive.,globale:T-1349,
+P0,altro,passed,Eliminare subscription inattive.,globale:T-1349,P0_PUSH_UNSUBSCRIBE 14/14 + data-retention-policy 3/3: disattivazione e logout rimuovono le sottoscrizioni; endpoint permanentemente 404/410 viene eliminato dal Worker.
 P0,altro,passed,Eliminare un proprio post.,usabilita:U0281,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,altro,pending,Eliminare.,globale:T-0448;usabilita:U0222,
 P0,altro,passed,eliminati;,addendum:A0352,Authenticated deleted-upload retry 404; preview a4b05356; 2026-08-04
@@ -613,12 +613,12 @@ P1,altro,pending,“Notifiche attive” significhi subscription registrata e pro
 P1,altro,passed,Aprire il pannello notifiche.,usabilita:U0056,"ui-notifications-spotify 1/1 su viewport mobile + notifications-spotify 5/5: apertura touch della campanella, pannello con tre attività, distinzione Nuova/Già vista, eliminazione singola, eliminazione totale e chiusura verificati."
 P1,altro,pending,Aprire la notifica.,globale:T-0516,
 P1,altro,pending,Aprire una notifica.,usabilita:U0065,
-P1,altro,pending,attivare le notifiche;,globale:T-1770,
-P1,altro,pending,Attivare notifiche.,usabilita:U0062,
-P1,altro,pending,Attivazione notifiche.,globale:T-1205,
+P1,altro,passed,attivare le notifiche;,globale:T-1770,"P1_ALL_PUSH_ACTIVATION 75/75 su QA 1.48.37: attivazione reale lato server per 18 sessioni personali, conteggio finale esatto e rimozione completa dei soli dati di prova."
+P1,altro,passed,Attivare notifiche.,usabilita:U0062,"P1_ALL_PUSH_ACTIVATION 75/75 su QA 1.48.37: endpoint autenticato verificato per tutti i 18 viaggiatori, senza duplicazioni e senza interferenze tra dispositivi."
+P1,altro,passed,Attivazione notifiche.,globale:T-1205,P1_ALL_PUSH_ACTIVATION 75/75 su QA 1.48.37: 18 profili con sessioni e dispositivi distinti registrano 18 sottoscrizioni uniche; la ripetizione è idempotente e la pulizia torna al conteggio iniziale.
 P1,altro,pending,Dieci notifiche contemporanee.,globale:T-0571,
 P1,altro,passed,Disattivazione completa delle notifiche.,globale:T-0077,"P0_PUSH_UNSUBSCRIBE Thailandia 1.48.27 QA isolato 14/14: la disattivazione elimina esclusivamente la sottoscrizione appartenente alla sessione, il retry resta idempotente, un altro viaggiatore non può rimuoverla e un endpoint non valido viene respinto."
-P1,altro,pending,Disattivazione notifiche.,globale:T-0520,
+P1,altro,passed,Disattivazione notifiche.,globale:T-0520,"P0_PUSH_UNSUBSCRIBE 14/14 su QA 1.48.37: disattivazione propria, tentativo altrui, retry idempotente, input invalido e revoca al logout verificati; audit finale QA vuoto."
 P1,altro,passed,Inviare due notifiche con lo stesso tag.,globale:T-0861,"service-worker-push-grouping Thailandia 1.48.27 runtime isolato 2/2: due eventi push reali eseguiti dal Service Worker con tag post-42 confluiscono in un unico avviso, il secondo contenuto sostituisce il primo e renotify resta attivo."
 P1,altro,passed,Inviare notifica con caratteri speciali.,globale:T-0862,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
 P1,altro,passed,Inviare notifica con emoji.,globale:T-0863,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."

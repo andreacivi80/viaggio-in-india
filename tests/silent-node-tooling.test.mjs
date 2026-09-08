@@ -15,5 +15,6 @@ test("il deploy Node nasconde i processi e non usa una shell intermedia", () => 
   assert.match(deploy, /shell: false/);
   assert.doesNotMatch(deploy, /powershell|pwsh|cmd\.exe/i);
   assert.match(deploy, /viaggio-in-india-qa-db/);
+  assert.match(deploy, /npx-cli\.js/);
   assert.match(deploy, /rilevato un binding di produzione/);
 });
