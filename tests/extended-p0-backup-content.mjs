@@ -7,12 +7,14 @@ import { join } from "node:path";
 const base = String(process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 const token = process.env.QA_SESSION_TOKEN;
 const profileId = process.env.QA_PROFILE_ID;
+const deviceKey = process.env.QA_OWNER_DEVICE_KEY;
 const persistRoot = process.env.QA_LOCAL_PERSIST_ROOT;
 const python = process.env.QA_PYTHON_EXE || "python";
-if (!base || !token || !profileId || !persistRoot)
+if (!base || !token || !profileId || !deviceKey || !persistRoot)
   throw new Error("Ambiente QA backup contenuti incompleto");
 
 const authorization = `Bearer ${token}`;
+const authenticated = { authorization, "x-device-key": deviceKey };
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
 const pdf = new Blob(["%PDF-1.4\n1 0 obj<</Type/Catalog>>endobj\n%%EOF"], { type: "application/pdf" });
 const createdPosts = [];
@@ -28,7 +30,7 @@ const uploadDocument = async (type, name) => {
   form.set("file", pdf, name);
   const response = await request("/api/documents", {
     method: "POST",
-    headers: { authorization, "x-idempotency-key": crypto.randomUUID() },
+    headers: { ...authenticated, "x-idempotency-key": crypto.randomUUID() },
     body: form,
   });
   assert.equal(response.status, 200);
@@ -42,7 +44,7 @@ const createPost = async (index) => {
   form.set("text", `Post durante backup ${index} ${crypto.randomUUID()}`);
   const response = await request("/api/posts", {
     method: "POST",
-    headers: { authorization, "x-idempotency-key": crypto.randomUUID(), "x-qa-silent": "true" },
+    headers: { ...authenticated, "x-idempotency-key": crypto.randomUUID(), "x-qa-silent": "true" },
     body: form,
   });
   assert.equal(response.status, 201);
@@ -57,14 +59,14 @@ try {
   deletedForm.set("text", deletedMarker);
   const deletedCreate = await request("/api/posts", {
     method: "POST",
-    headers: { authorization, "x-idempotency-key": crypto.randomUUID(), "x-qa-silent": "true" },
+    headers: { ...authenticated, "x-idempotency-key": crypto.randomUUID(), "x-qa-silent": "true" },
     body: deletedForm,
   });
   assert.equal(deletedCreate.status, 201);
   const deletedPostId = (await deletedCreate.json()).id;
   assert.equal((await request(`/api/posts/${deletedPostId}`, {
     method: "DELETE",
-    headers: { authorization },
+    headers: authenticated,
   })).status, 200);
 
   for (const [type, name] of [
@@ -118,14 +120,14 @@ try {
 
   for (const document of restoredDocuments) {
     const response = await request(`/api/media/${encodeURIComponent(document.file_key)}`, {
-      headers: { authorization },
+      headers: authenticated,
     });
     assert.equal(response.status, 200, document.file_name);
     assert.match(response.headers.get("content-type") || "", /application\/pdf/i);
     assert.ok((await response.arrayBuffer()).byteLength > 20);
   }
 
-  const state = await (await request("/api/state", { headers: { authorization } })).json();
+  const state = await (await request("/api/state", { headers: authenticated })).json();
   for (const postId of createdPosts)
     assert.ok(state.posts.some((post) => post.id === postId), postId);
   assert.equal(new Set(createdPosts).size, 5);
@@ -136,8 +138,8 @@ try {
   console.log(`P0_BACKUP_CONTENT=${restoredDocuments.length + 22}/${restoredDocuments.length + 22}`);
 } finally {
   for (const postId of createdPosts)
-    await request(`/api/posts/${postId}`, { method: "DELETE", headers: { authorization } }).catch(() => {});
+    await request(`/api/posts/${postId}`, { method: "DELETE", headers: authenticated }).catch(() => {});
   for (const type of createdDocuments)
-    await request(`/api/documents/${profileId}/${type}`, { method: "DELETE", headers: { authorization } }).catch(() => {});
+    await request(`/api/documents/${profileId}/${type}`, { method: "DELETE", headers: authenticated }).catch(() => {});
   await rm(directory, { recursive: true, force: true });
 }

@@ -27,7 +27,7 @@
   { "control": "assenza di perdita dati.", "evidence": "baseline D1 2026-08-05: conteggi produzione invariati prima/dopo" },
   { "control": "dati database prima e dopo;", "evidence": "baseline D1 2026-08-05: 4 profili, 1 post, 2 documenti invariati" },
   { "control": "esistono backup e ripristino;", "evidence": "export D1 verificato e precedente backup ripristinato su SQLite temporaneo" },
-  { "control": "test backup e ripristino;", "evidence": "backup pre-1.33 ripristinato in 1,925 s; export 1.37.19 con SHA-256 registrato" },
+  { "control": "test backup e ripristino;", "evidence": "LOCAL_BACKUP_CONTENT_COMPLETE 2/2 su database D1 e archivio MEDIA locali isolati: profilo e sessione creati tramite API, cinque post, cinque documenti PDF, fotografie, audio e video esportati, database e file eliminati, ripristinati e riaperti byte per byte; nessun dato ufficiale modificato" },
   { "control": "test delle migrazioni;", "evidence": "schema, colonne, 10 tabelle e 21 trigger confrontati su QA e produzione" },
   { "control": "ultimo backup;", "evidence": "pre-migration-baseline-1.37.19-2026-08-05.sql, SHA-256 FF6250E9…6573" },
   { "control": "Verificare che ogni migrazione venga applicata una sola volta.", "evidence": "d1_migrations riallineato; Wrangler conferma nessuna migrazione pendente" },

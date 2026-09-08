@@ -727,5 +727,5 @@
 "U0726","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","test offline;","pending","","1.31.0"
 "U0727","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","test multidispositivo;","passed","Suite combinata: social su tre telefoni, documenti e posizione su due telefoni, sync API autenticata; 12/12 scenari UI e 20/20 test server applicabili; 2026-08-04","1.31.0"
 "U0728","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","test anti-duplicazione;","pending","","1.31.0"
-"U0729","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","test backup e ripristino;","pending","","1.31.0"
+"U0729","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","test backup e ripristino;","passed","LOCAL_BACKUP_CONTENT_COMPLETE 2/2 su D1 e MEDIA locali isolati: cinque post, cinque PDF, fotografie, audio e video esportati, eliminati, ripristinati e riaperti; nessun dato ufficiale modificato","1.48.37"
 "U0730","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","elenco dei difetti ancora aperti.","pending","","1.31.0"

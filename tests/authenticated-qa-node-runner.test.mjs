@@ -11,6 +11,14 @@ const backupCommentsSource = await readFile(
   new URL("./extended-p0-backup-comments.mjs", import.meta.url),
   "utf8",
 );
+const localBackupRunnerSource = await readFile(
+  new URL("../scripts/run-local-backup-content.mjs", import.meta.url),
+  "utf8",
+);
+const backupContentSource = await readFile(
+  new URL("./extended-p0-backup-content.mjs", import.meta.url),
+  "utf8",
+);
 
 test("il runner Node limita ogni scrittura al database QA", () => {
   assert.match(source, /viaggio-in-india-2026-qa\.pages\.dev/);
@@ -61,4 +69,15 @@ test("l'esportazione QA usa un processo nascosto senza shell intermedia", () => 
   assert.match(backupCommentsSource, /shell: false/);
   assert.match(backupCommentsSource, /spawn\(process\.execPath/);
   assert.doesNotMatch(backupCommentsSource, /powershell|pwsh|shell: true/i);
+});
+
+test("il backup completo usa soltanto database locale e processi invisibili", () => {
+  assert.match(localBackupRunnerSource, /"--local"/);
+  assert.doesNotMatch(localBackupRunnerSource, /"--remote"/);
+  assert.match(localBackupRunnerSource, /windowsHide: true/);
+  assert.match(localBackupRunnerSource, /shell: false/);
+  assert.match(localBackupRunnerSource, /taskkill[\s\S]*?"\/PID"[\s\S]*?String\(server\.pid\)[\s\S]*?"\/T"/);
+  assert.doesNotMatch(localBackupRunnerSource, /powershell|pwsh|cmd\.exe/i);
+  assert.match(backupContentSource, /QA_OWNER_DEVICE_KEY/);
+  assert.match(backupContentSource, /"x-device-key": deviceKey/);
 });

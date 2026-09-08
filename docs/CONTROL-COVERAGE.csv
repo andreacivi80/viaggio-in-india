@@ -528,7 +528,7 @@ P0,persistenza,passed,Registrazione data e ora backup.,globale:T-0640,"backup D1
 P0,persistenza,passed,Ripristinare il backup in un ambiente vuoto.,globale:T-1169,verify-d1-backup: export importato in database temporaneo vuoto
 P0,persistenza,passed,Ripristino in ambiente di prova.,globale:T-0641,verify-d1-backup: ripristino eseguito in database temporaneo vuoto
 P0,persistenza,pending,tabella requisito → tasto → API → database → test;,addendum:A0480,
-P0,persistenza,passed,test backup e ripristino;,usabilita:U0729,"backup pre-1.33 ripristinato in 1,925 s; export 1.37.19 con SHA-256 registrato"
+P0,persistenza,passed,test backup e ripristino;,usabilita:U0729,"LOCAL_BACKUP_CONTENT_COMPLETE 2/2 su D1 e MEDIA locali isolati: cinque post, cinque PDF, fotografie, audio e video esportati, eliminati, ripristinati e riaperti; nessun dato ufficiale modificato | LOCAL_BACKUP_CONTENT_COMPLETE 2/2 su database D1 e archivio MEDIA locali isolati: profilo e sessione creati tramite API, cinque post, cinque documenti PDF, fotografie, audio e video esportati, database e file eliminati, ripristinati e riaperti byte per byte; nessun dato ufficiale modificato"
 P0,persistenza,pending,test del database;,globale:T-0015,
 P0,persistenza,passed,test delle migrazioni;,globale:T-0018,"schema, colonne, 10 tabelle e 21 trigger confrontati su QA e produzione"
 P0,persistenza,passed,ultimo backup;,globale:T-1767,"pre-migration-baseline-1.37.19-2026-08-05.sql, SHA-256 FF6250E9…6573"
