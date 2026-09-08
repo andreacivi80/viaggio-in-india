@@ -30,3 +30,9 @@ test("il runner Node esegue anche i collaudi touch Playwright senza shell interm
   assert.match(source, /QA_UI_SESSION_TOKEN: tokens\.owner/);
   assert.match(source, /QA_UI_DEVICE_KEY: deviceKeys\.owner/);
 });
+
+test("il runner prepara le posizioni di scadenza solo per il relativo controllo", () => {
+  assert.match(source, /testFiles\.includes\("extended-p0-location-retention\.mjs"\)/);
+  assert.match(source, /Posizione scaduta QA/);
+  assert.match(source, /48 \* 86400000/);
+});

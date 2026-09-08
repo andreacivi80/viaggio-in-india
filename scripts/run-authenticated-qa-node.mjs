@@ -51,6 +51,9 @@ for (let index = 1; index <= pushMemberCount; index += 1) {
   pushSql += `${profileInsert(member.id, `Notifiche ${index}`)}\n${sessionInsert(member.id, member.token, value(`device-push-${index}`), `Telefono notifiche ${index}`, member.deviceKey)}\n`;
 }
 const referencePostId = value("qa-reference");
+const retentionFixtures = testFiles.includes("extended-p0-location-retention.mjs") ? `
+INSERT INTO locations(profile_id,display_name,latitude,longitude,accuracy,updated_at) VALUES(${sql(profiles.owner)},'Posizione scaduta QA',28.6139,77.209,50,${sql(new Date(Date.now() - 48 * 86400000).toISOString())});
+INSERT INTO locations(profile_id,display_name,latitude,longitude,accuracy,updated_at) VALUES(${sql(profiles.other)},'Posizione recente QA',13.7563,100.5018,50,${sql(created)});` : "";
 const setup = `
 UPDATE profiles SET role='traveler' WHERE role='coordinator' AND id LIKE 'qa-%';
 ${profileInsert(profiles.owner, "Proprietario")}
@@ -66,7 +69,8 @@ ${sessionInsert(profiles.coordinator, tokens.coordinatorSecond, value("device-co
 ${sessionInsert(profiles.deleting, tokens.deleting, value("device-delete"), "Telefono profilo da eliminare QA", deviceKeys.deleting)}
 ${sessionInsert(profiles.owner, tokens.expired, value("device-expired"), "Sessione inattiva QA", deviceKeys.expired, oldLastUse)}
 INSERT INTO posts(id,author_name,profile_id,day_index,visibility,text,created_at) VALUES(${sql(referencePostId)},'Proprietario QA',${sql(profiles.owner)},-1,'public',${sql(`Pubblicazione di riferimento QA ${runId}`)},${sql(created)});
-${pushSql}`;
+${pushSql}
+${retentionFixtures}`;
 const quotedIds = ids.map(sql).join(",");
 const quotedActors = ids.map((id) => sql(`profile:${id}`)).join(",");
 const cleanup = `

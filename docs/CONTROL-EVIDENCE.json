@@ -429,4 +429,6 @@
   ,{ "control": "Verificare audio.", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: due elementi audio, uno caricato e uno registrato, risultano presenti su autore e pubblico dopo la risposta 201." }
   ,{ "control": "Verificare fotografie.", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: due fotografie reali risultano presenti nel carosello su entrambi i dispositivi dopo la pubblicazione." }
   ,{ "control": "Verificare video.", "evidence": "ui-publish-complete su QA 1.48.37 touch 1/1: il video reale risulta presente nel post dell'autore e nel post ricevuto dall'iPhone pubblico." }
+  ,{ "control": "una posizione rimane visibile dopo la cancellazione;", "evidence": "P0_LOCATION 30/30 + P0_LOCATION_RETENTION 5/5 su QA 1.48.37: dopo DELETE la posizione scompare da proprietario e coordinatrice; la manutenzione rimuove anche una posizione scaduta di 48 ore, mantenendo soltanto quella recente." }
+  ,{ "control": "Verifica posizione.", "evidence": "P0_LOCATION 30/30 su QA 1.48.37: condivisione, rilettura multidispositivo, limiti geografici, precisione, dieci retry, divieti incrociati ed eliminazione immediata verificati; P0_LOCATION_RETENTION 5/5 conferma la scadenza." }
 ]
