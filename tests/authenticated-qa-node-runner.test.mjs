@@ -7,6 +7,10 @@ const rateLimitDimensionsSource = await readFile(
   new URL("./extended-p0-rate-limit-dimensions.mjs", import.meta.url),
   "utf8",
 );
+const backupCommentsSource = await readFile(
+  new URL("./extended-p0-backup-comments.mjs", import.meta.url),
+  "utf8",
+);
 
 test("il runner Node limita ogni scrittura al database QA", () => {
   assert.match(source, /viaggio-in-india-2026-qa\.pages\.dev/);
@@ -50,4 +54,11 @@ test("il collaudo dei limiti usa l'IP reale senza falsificare intestazioni Cloud
   assert.doesNotMatch(rateLimitDimensionsSource, /cf-connecting-ip/i);
   assert.match(rateLimitDimensionsSource, /QA_OWNER_DEVICE_KEY/);
   assert.match(rateLimitDimensionsSource, /QA_COORDINATOR_SECOND_DEVICE_KEY/);
+});
+
+test("l'esportazione QA usa un processo nascosto senza shell intermedia", () => {
+  assert.match(backupCommentsSource, /windowsHide: true/);
+  assert.match(backupCommentsSource, /shell: false/);
+  assert.match(backupCommentsSource, /spawn\(process\.execPath/);
+  assert.doesNotMatch(backupCommentsSource, /powershell|pwsh|shell: true/i);
 });

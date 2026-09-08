@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { spawn } from "node:child_process";
 import { mkdtemp, readFile, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { dirname, join } from "node:path";
 
 const base = String(process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 const authorization = `Bearer ${process.env.QA_SESSION_TOKEN}`;
@@ -24,10 +24,11 @@ const post = await postResponse.json();
 const directory = await mkdtemp(join(tmpdir(), "india-p0-backup-"));
 const backup = join(directory, "qa-concurrent-comments.sql");
 
-const exportProcess = spawn("npx", [
-  "wrangler", "d1", "export", "viaggio-in-india-qa-db", "--remote",
+const npxCli = join(dirname(process.execPath), "node_modules", "npm", "bin", "npx-cli.js");
+const exportProcess = spawn(process.execPath, [
+  npxCli, "wrangler", "d1", "export", "viaggio-in-india-qa-db", "--remote",
   "--config", "wrangler.qa.jsonc", "--output", backup,
-], { cwd: process.cwd(), windowsHide: true, shell: true, stdio: ["ignore", "pipe", "pipe"] });
+], { cwd: process.cwd(), windowsHide: true, shell: false, stdio: ["ignore", "pipe", "pipe"] });
 let exportOutput = "";
 exportProcess.stdout.on("data", (chunk) => { exportOutput += chunk; });
 exportProcess.stderr.on("data", (chunk) => { exportOutput += chunk; });
