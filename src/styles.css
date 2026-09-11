@@ -4387,7 +4387,7 @@ mark.mention {
 }
 .locationMapToggle span {
   min-width: 24px;
-  padding: 3px 6px;
+  padding: 3px 4px;
   border-radius: var(--radius-pill);
   background: var(--color-secondary-soft);
   font-size: 11px;
@@ -5157,8 +5157,9 @@ mark.mention {
   border-radius: 999px;
   background: #0b2e28d9;
   color: #fff;
-  font-size: clamp(7.4px, 2.2vw, 9px);
+  font-size: clamp(6.4px, 1.9vw, 8px);
   font-weight: 800;
+  letter-spacing: -0.015em;
   line-height: 1.15;
   text-overflow: clip;
   white-space: nowrap;
