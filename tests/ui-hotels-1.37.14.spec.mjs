@@ -1,22 +1,7 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, devices } from "@playwright/test";
+import { days } from "../src/tripThailand.js";
 
-test.use({ serviceWorkers: "block" });
-
-const hotelDays = [
-  [0, "Rockland Hotel C.R. Park"],
-  [1, "Rockland Hotel C.R. Park"],
-  [2, "Akshay Niwas Boutique Hotel by Amantra"],
-  [3, "Akshay Niwas Boutique Hotel by Amantra"],
-  [4, "Hotel Rajwara Palace"],
-  [5, "Hotel Rajwara Palace"],
-  [6, "The Wall Street Beacon Hotel"],
-  [7, "The Wall Street Beacon Hotel"],
-  [8, "Hotel Taj Vilas"],
-  [9, "Hotel Taj Vilas"],
-  [10, "Costa River Varanasi"],
-  [11, "Costa River Varanasi"],
-  [12, "Costa River Varanasi"],
-];
+test.use({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
 
 async function mockState(page) {
   await page.route("**/api/**", async (route) => {
@@ -34,59 +19,42 @@ async function mockState(page) {
   });
 }
 
-test("gli alloggi compaiono nelle giornate corrette e restano leggibili su mobile", async ({ page }, testInfo) => {
+test("le undici giornate non inventano hotel non ancora comunicati", async ({ page }) => {
   await mockState(page);
   await page.goto("/", { waitUntil: "networkidle" });
   await page.getByRole("button", { name: "Viaggio", exact: true }).tap();
-  for (const [dayIndex, hotelName] of hotelDays) {
-    await page.getByRole("button", { name: new RegExp(`^Giorno ${dayIndex + 1},`) }).tap();
-    const lodging = page.locator(".day .lodgingCard");
-    await expect(lodging).toBeVisible();
-    await expect(lodging).toContainText(hotelName);
-    await expect(lodging.getByRole("link", { name: "Apri" })).toBeVisible();
+
+  const dayButtons = page.getByRole("button", { name: /^Giorno \d+,/ });
+  await expect(dayButtons).toHaveCount(days.length);
+  for (let index = 0; index < days.length; index += 1) {
+    await dayButtons.nth(index).tap();
+    await expect(page.locator(".day .lodgingCard")).toHaveCount(0);
   }
-  await page.getByRole("button", { name: /^Giorno 10,/ }).tap();
-  await expect(page.locator(".day .overnightCard")).toContainText("Notte in treno · Agra → Varanasi");
-  await page.getByRole("button", { name: /^Giorno 13,/ }).tap();
-  await expect(page.locator(".day .overnightCard")).toContainText("Notte in treno · Varanasi → Delhi");
-  await page.locator(".day").nth(12).scrollIntoViewIfNeeded();
-  await page.screenshot({ path: testInfo.outputPath("hotel-varanasi-mobile.png") });
 });
 
-test("gli spostamenti brevi occupano una porzione leggibile della cartina", async ({ page }, testInfo) => {
+test("le due notti speciali compaiono soltanto nelle giornate corrette", async ({ page }) => {
   await mockState(page);
-  await page.goto("/?view=map&day=4", { waitUntil: "networkidle" });
+  await page.goto("/", { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: "Viaggio", exact: true }).tap();
+
+  const expected = new Map([
+    [4, "Notte nel floating village sul lago"],
+    [8, "Notte in bus · Surat Thani → Bangkok"],
+  ]);
+  const dayButtons = page.getByRole("button", { name: /^Giorno \d+,/ });
+  for (let index = 0; index < days.length; index += 1) {
+    await dayButtons.nth(index).tap();
+    const card = page.locator(".day .overnightCard");
+    if (expected.has(index)) await expect(card).toContainText(expected.get(index));
+    else await expect(card).toHaveCount(0);
+  }
+});
+
+test("la vista generale resta pulita da hotel finché non vengono forniti", async ({ page }) => {
+  await mockState(page);
+  await page.goto("/?view=map", { waitUntil: "networkidle" });
   await expect(page.locator(".mapLoading")).toBeHidden({ timeout: 30_000 });
-  const city = page.locator('.vectorMarker[aria-label="Tappa 2: Udaipur"]');
-  const hotel = page.locator('.specialTripMarker[aria-label="Akshay Niwas Boutique Hotel by Amantra"]');
-  const [cityBox, hotelBox] = await Promise.all([city.boundingBox(), hotel.boundingBox()]);
-  const distance = Math.hypot(
-    cityBox.x + cityBox.width / 2 - hotelBox.x - hotelBox.width / 2,
-    cityBox.y + cityBox.height / 2 - hotelBox.y - hotelBox.height / 2,
-  );
-  expect(distance).toBeGreaterThan(24);
-  await page.screenshot({ path: testInfo.outputPath("zoom-udaipur-mobile.png") });
-});
-
-test("la cartina ridistribuisce ogni giornata sull'hotel e lascia pulita la vista generale", async ({ page }, testInfo) => {
-  await mockState(page);
-  await page.goto("/?view=map&day=3", { waitUntil: "networkidle" });
-  const map = page.locator(".realMap");
-  await expect(map).toBeVisible();
-  for (const [dayIndex, hotelName] of hotelDays) {
-    await page.locator(".routeChips button").nth(dayIndex).tap();
-    await expect(page.locator(".mapLoading")).toBeHidden({ timeout: 30_000 });
-    const marker = page.locator(`.specialTripMarker[aria-label="${hotelName}"]`);
-    await expect(marker).toBeVisible({ timeout: 20_000 });
-    const [mapBox, markerBox] = await Promise.all([map.boundingBox(), marker.boundingBox()]);
-    expect(markerBox.x).toBeGreaterThanOrEqual(mapBox.x);
-    expect(markerBox.y).toBeGreaterThanOrEqual(mapBox.y);
-    expect(markerBox.x + markerBox.width).toBeLessThanOrEqual(mapBox.x + mapBox.width);
-    expect(markerBox.y + markerBox.height).toBeLessThanOrEqual(mapBox.y + mapBox.height);
-  }
-  await page.getByRole("button", { name: "Vedi tutto" }).tap();
-  await expect(page.locator(".vectorMarker")).toHaveCount(8);
+  await expect(page.locator(".overviewRouteMap .vectorMarker")).toHaveCount(8);
   await expect(page.locator(".specialTripMarker")).toHaveCount(0);
-  await expect(page.locator(".mapLoading")).toBeHidden({ timeout: 30_000 });
-  await page.screenshot({ path: testInfo.outputPath("mappa-hotel-completa.png") });
+  await expect(page.locator(".routeChips button")).toHaveCount(days.length);
 });
