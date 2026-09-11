@@ -479,4 +479,16 @@
   ,{ "control": "nessuna modifica nel database;", "evidence": "ui-clear-browser-data touch mobile 1/1: la cancellazione locale e il reload producono zero POST, PUT, PATCH o DELETE verso il server e lasciano il profilo remoto invariato." }
   ,{ "control": "da Coordinatore a Pubblico;", "evidence": "ui-clear-browser-data touch mobile 1/1: una sessione coordinatore verificata mostra la griglia; dopo la cancellazione completa dei dati browser il reload mostra Pubblico e nessun comando privato." }
   ,{ "control": "dashboard Coordinatore;", "evidence": "ui-coordinator-grid-access touch + ui-clear-browser-data 1/1: la griglia e visibile solo con sessione coordinatore verificata e scompare quando le credenziali locali vengono cancellate." }
+  ,{ "control": "Provare senza rete.", "evidence": "ui-offline e ui-offline-media-drafts su Galaxy S9+/S20 FE: invio accodato, chiusura, riapertura e consegna unica al ritorno online; tre bozze multimediali recuperate." }
+  ,{ "control": "Rete 3G.", "evidence": "ui-network-india QA: profilo SIM indiana 3G reale emulato con banda e latenza limitate; bacheca caricata senza pagina bianca." }
+  ,{ "control": "Rete lenta.", "evidence": "ui-network-india QA: Wi-Fi debole, 3G e roaming congestionato superati; ui-slow-activation collega automaticamente il telefono con rete lenta." }
+  ,{ "control": "rete assente;", "evidence": "ui-offline, ui-offline-media-drafts e ui-p0-cache-recovery QA: uso senza rete, persistenza locale e riapertura offline verificati." }
+  ,{ "control": "Riapertura offline.", "evidence": "ui-network-india e ui-p0-cache-recovery QA: dopo la prima apertura la bacheca pubblica si riapre senza rete anche dopo pulizia delle cache difettose." }
+  ,{ "control": "Riaprire offline.", "evidence": "ui-network-india e ui-p0-cache-recovery QA: riapertura mobile offline completata senza pagina bianca." }
+  ,{ "control": "Riattivare la rete.", "evidence": "ui-offline QA: al ritorno online la richiesta accodata parte una sola volta e viene sincronizzata." }
+  ,{ "control": "Ritorno della rete.", "evidence": "ui-offline QA: ritorno online, invio idempotente e stato aggiornato verificati end-to-end." }
+  ,{ "control": "Simulare rete 3G.", "evidence": "ui-network-india QA: profilo 3G indiano simulato con throttling mobile e caricamento completo della bacheca." }
+  ,{ "control": "test rete lenta;", "evidence": "ui-network-india 6/6 e ui-slow-activation 1/1: Wi-Fi debole, 3G, roaming congestionato, eSIM e attivazione lenta superati." }
+  ,{ "control": "toccare con rete lenta;", "evidence": "ui-slow-activation QA su telefono mobile: apertura invito e collegamento tramite gesti reali con rete rallentata." }
+  ,{ "control": "toccare senza rete;", "evidence": "ui-offline e ui-offline-logout QA: composizione, blocco dispositivo e riapertura mediante gesti touch senza connessione." }
 ]

@@ -958,27 +958,27 @@ P1,sync-rete,passed,offline con allegati;,globale:T-1794,offline-queue: allegati
 P1,sync-rete,passed,Outbox offline.,globale:T-0125,"offline-queue: accodamento, persistenza e svuotamento verificati"
 P1,sync-rete,passed,Preferiti sincronizzati tra dispositivi.,globale:T-0267,ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: due sessioni reali dello stesso profilo su due telefoni sincronizzano salvataggio e rimozione in entrambe le direzioni senza refresh manuale; pulizia QA completata.
 P1,sync-rete,passed,Preparare post testuale offline.,globale:T-0547,"ui-offline Samsung S20 FE 1/1: post testuale preparato senza rete, conservato dopo chiusura pagina e pubblicato una sola volta al ritorno online."
-P1,sync-rete,pending,Provare senza rete.,usabilita:U0360,
+P1,sync-rete,passed,Provare senza rete.,usabilita:U0360,"ui-offline e ui-offline-media-drafts su Galaxy S9+/S20 FE: invio accodato, chiusura, riapertura e consegna unica al ritorno online; tre bozze multimediali recuperate."
 P1,sync-rete,pending,Pulsante per cancellare i dati offline.,globale:T-0126,
-P1,sync-rete,pending,Rete 3G.,usabilita:U0521,
-P1,sync-rete,pending,rete assente;,usabilita:U0506;addendum:A0165,
+P1,sync-rete,passed,Rete 3G.,usabilita:U0521,ui-network-india QA: profilo SIM indiana 3G reale emulato con banda e latenza limitate; bacheca caricata senza pagina bianca.
+P1,sync-rete,passed,rete assente;,usabilita:U0506;addendum:A0165,"ui-offline, ui-offline-media-drafts e ui-p0-cache-recovery QA: uso senza rete, persistenza locale e riapertura offline verificati."
 P1,sync-rete,passed,Rete interrotta al 50%.,usabilita:U0528,"resumable-upload 5/5: interruzione esatta al 50%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
 P1,sync-rete,passed,Rete interrotta al 90%.,usabilita:U0529,"resumable-upload 5/5: interruzione esatta al 90%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
-P1,sync-rete,pending,Rete lenta.,usabilita:U0522,
+P1,sync-rete,passed,Rete lenta.,usabilita:U0522,"ui-network-india QA: Wi-Fi debole, 3G e roaming congestionato superati; ui-slow-activation collega automaticamente il telefono con rete lenta."
 P1,sync-rete,pending,rete utilizzata;,globale:T-1256,
-P1,sync-rete,pending,Riapertura offline.,globale:T-1231,
-P1,sync-rete,pending,Riaprire offline.,globale:T-0549,
-P1,sync-rete,pending,Riattivare la rete.,globale:T-0550,
+P1,sync-rete,passed,Riapertura offline.,globale:T-1231,ui-network-india e ui-p0-cache-recovery QA: dopo la prima apertura la bacheca pubblica si riapre senza rete anche dopo pulizia delle cache difettose.
+P1,sync-rete,passed,Riaprire offline.,globale:T-0549,ui-network-india e ui-p0-cache-recovery QA: riapertura mobile offline completata senza pagina bianca.
+P1,sync-rete,passed,Riattivare la rete.,globale:T-0550,ui-offline QA: al ritorno online la richiesta accodata parte una sola volta e viene sincronizzata.
 P1,sync-rete,pending,Ricerca offline sui dati disponibili.,globale:T-1696,
 P1,sync-rete,passed,Ricevere una sincronizzazione.,globale:T-1400,P1_SOCIAL_COMMENTS 18/18 + P1_SOCIAL_CONCURRENCY 12/12 su QA 1.48.37: commenti e reazioni convergono allo stesso stato su tutte le sessioni senza refresh del database.
 P1,sync-rete,passed,Ridurre frequenza di sincronizzazione.,globale:T-1651,"runtime-resilience 6/6: polling visibile ridotto da 2,5 a 5 secondi, completamente sospeso quando pagina nascosta o offline, con controllo immediato agli eventi online e visibilitychange."
 P1,sync-rete,passed,Ripresa dopo perdita della rete.,globale:T-1725,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: perdita rete, chiusura pagina, riapertura e ripresa automatica verificate con coda IndexedDB reale."
-P1,sync-rete,pending,Ritorno della rete.,globale:T-1237,
+P1,sync-rete,passed,Ritorno della rete.,globale:T-1237,"ui-offline QA: ritorno online, invio idempotente e stato aggiornato verificati end-to-end."
 P1,sync-rete,passed,Salvare più bozze offline.,globale:T-0849,offline-queue 3/3: due bozze post distinte restano contemporaneamente in IndexedDB con chiavi idempotenti differenti e vengono inviate una sola volta ciascuna.
 P1,sync-rete,passed,Salvataggio offline dei commenti.,globale:T-0129,"offline-queue 3/3: commento offline conserva post_id, testo e chiave idempotente come operazione separata e viene rimosso dalla coda soltanto dopo risposta positiva."
 P1,sync-rete,pending,Salvataggio offline delle posizioni.,globale:T-0132,
 P1,sync-rete,pending,Simulare rete 2G.,globale:T-0553,
-P1,sync-rete,pending,Simulare rete 3G.,globale:T-0554,
+P1,sync-rete,passed,Simulare rete 3G.,globale:T-0554,ui-network-india QA: profilo 3G indiano simulato con throttling mobile e caricamento completo della bacheca.
 P1,sync-rete,pending,sincronizzazione fallita;,usabilita:U0510,
 P1,sync-rete,passed,sincronizzazione incrementale;,globale:T-1802,P0_SYNC_DELETE 115/115 su QA 1.48.37: sync_version aumenta dopo la modifica; 100 letture concorrenti restituiscono la stessa versione e non la alterano.
 P1,sync-rete,passed,Sincronizzazione sul secondo telefono.,usabilita:U0314,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
@@ -987,9 +987,9 @@ P1,sync-rete,passed,Stato letto/non letto sincronizzato tra dispositivi.,globale
 P1,sync-rete,passed,test automatico del Service Worker.,globale:T-0013,production-smoke: revisione e Service Worker verificati sul dominio live
 P1,sync-rete,passed,test di idempotenza;,globale:T-0023,"production-smoke: retry idempotenti di commenti, reazioni, post e documenti"
 P1,sync-rete,passed,test offline;,globale:T-0026;usabilita:U0726,offline-queue: due prove automatiche su coda e allegati
-P1,sync-rete,pending,test rete lenta;,globale:T-1810;usabilita:U0725,
-P1,sync-rete,pending,toccare con rete lenta;,usabilita:U0085,
-P1,sync-rete,pending,toccare senza rete;,usabilita:U0086,
+P1,sync-rete,passed,test rete lenta;,globale:T-1810;usabilita:U0725,"ui-network-india 6/6 e ui-slow-activation 1/1: Wi-Fi debole, 3G, roaming congestionato, eSIM e attivazione lenta superati."
+P1,sync-rete,passed,toccare con rete lenta;,usabilita:U0085,ui-slow-activation QA su telefono mobile: apertura invito e collegamento tramite gesti reali con rete rallentata.
+P1,sync-rete,passed,toccare senza rete;,usabilita:U0086,"ui-offline e ui-offline-logout QA: composizione, blocco dispositivo e riapertura mediante gesti touch senza connessione."
 P1,sync-rete,pending,vecchi Service Worker;,addendum:A0407,
 P1,sync-rete,pending,verifica dall’India o da una rete con caratteristiche equivalenti;,globale:T-1811,
 P1,sync-rete,passed,Verificare aggiornamento al successivo ritorno della rete.,globale:T-0831,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: al successivo ritorno della rete la coda viene svuotata, il feed aggiornato e il post compare una sola volta."
