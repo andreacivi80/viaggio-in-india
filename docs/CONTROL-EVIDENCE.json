@@ -521,4 +521,5 @@
   ,{ "control": "continuazione dopo perdita della rete;", "evidence": "ui-offline QA 1/1: un invio iniziato senza rete sopravvive alla chiusura e viene trasmesso una sola volta al ritorno della connessione." }
   ,{ "control": "gli allegati vengono persi offline;", "evidence": "ui-offline-media-drafts QA 1/1: tre bozze multimediali reali restano disponibili offline e si riaprono dopo il retry." }
   ,{ "control": "vecchi Service Worker;", "evidence": "ui-p0-cache-recovery QA 1/1: cache vecchie e difettose vengono eliminate mantenendo disponibile l'app offline." }
+  ,{ "control": "test di accessibilità;", "evidence": "ui-upload-screen-reader QA 1/1 + static gate 199/199 + ui-maps e ui-navigation: stato upload annunciato da role=status fino al 100%, comandi touch etichettati e marker descritti nell'albero accessibile." }
 ]

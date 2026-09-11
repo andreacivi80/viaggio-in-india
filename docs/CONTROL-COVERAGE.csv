@@ -240,7 +240,7 @@ P0,accessi-privacy,passed,tentativo non autorizzato;,globale:T-1584,authorizatio
 P0,accessi-privacy,passed,test con password;,usabilita:U0718,ui-password-access touch 1/1: password corretta non emette una sessione né abilita documenti prima della registrazione
 P0,accessi-privacy,passed,test con sessione scaduta;,usabilita:U0723,access-session-boundaries 17/17 + auth-lifecycle 68/68: sessione scaduta negata su stato e area privata
 P0,accessi-privacy,passed,test delle autorizzazioni;,globale:T-0017,endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
-P0,accessi-privacy,pending,test di accessibilità;,globale:T-0020,
+P0,accessi-privacy,passed,test di accessibilità;,globale:T-0020,"ui-upload-screen-reader QA 1/1 + static gate 199/199 + ui-maps e ui-navigation: stato upload annunciato da role=status fino al 100%, comandi touch etichettati e marker descritti nell'albero accessibile."
 P0,accessi-privacy,passed,test senza password;,usabilita:U0719,"ui-password-access touch 1/1: apertura pubblica senza password, area privata 401 e nessun comando documenti"
 P0,accessi-privacy,passed,Toccare il pulsante Accesso.,usabilita:U0039,ui-password-access touch 1/1: pulsante Accedi azionato sul pannello mobile e transizione al modulo Entra nel gruppo
 P0,accessi-privacy,passed,token revocato sulla risorsa A;,addendum:A0111,Live revoke command 403 + authenticated remote QA 20/20; preview a4b05356; 2026-08-04
