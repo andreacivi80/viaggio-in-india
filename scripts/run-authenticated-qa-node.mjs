@@ -17,6 +17,8 @@ const testSources = new Map(testFiles.map((file) => {
   if (!existsSync(path)) throw new Error(`Test QA inesistente: ${file}`);
   return [file, readFileSync(path, "utf8")];
 }));
+if (testFiles.filter((file) => file.endsWith(".spec.mjs")).length > 1)
+  throw new Error("Ogni suite UI deve usare profili e inviti QA nuovi: eseguire un solo file per volta");
 if (![0, 18].includes(pushMemberCount)) throw new Error("--push-members può essere soltanto 18");
 
 const runId = randomUUID().replaceAll("-", "");

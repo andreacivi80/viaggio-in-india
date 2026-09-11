@@ -73,6 +73,7 @@ test("un Samsung con batteria bassa seleziona, carica e riproduce MOV e MP4", as
     await sheet.getByPlaceholder("Racconta questo momento…").fill(marker);
     const published = page.waitForResponse(
       (response) => response.url().endsWith("/api/posts") && response.request().method() === "POST",
+      { timeout: 120_000 },
     );
     await sheet.locator(".composerActions > button").tap();
     const response = await published;

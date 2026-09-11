@@ -52,6 +52,7 @@ test("il runner Node esegue anche i collaudi touch Playwright senza shell interm
   assert.match(source, /configurazione QA incompleta/);
   assert.match(source, /testSource\.match\(\/QA_UI_/);
   assert.match(source, /Test QA inesistente/);
+  assert.match(source, /eseguire un solo file per volta/);
   assert.match(source, /INSERT INTO profile_invites/);
 });
 

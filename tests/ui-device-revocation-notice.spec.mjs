@@ -50,6 +50,9 @@ test("il telefono revocato riceve un avviso visibile e perde i comandi privati",
     }, deviceIdA);
     expect(revoked).toBe(200);
 
+    // Il client verifica subito quando torna online/in primo piano; il controllo
+    // periodico resta volutamente a 60 secondi per non sovraccaricare 18 telefoni.
+    await pageA.evaluate(() => window.dispatchEvent(new Event("online")));
     const alert = pageA.getByRole("alert");
     await expect(alert).toContainText("questo dispositivo è stato revocato oppure la sessione è scaduta", { timeout: 12_000 });
     await expect(pageA.locator(".accessPill")).toContainText("Pubblico");
