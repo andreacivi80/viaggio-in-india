@@ -522,4 +522,6 @@
   ,{ "control": "gli allegati vengono persi offline;", "evidence": "ui-offline-media-drafts QA 1/1: tre bozze multimediali reali restano disponibili offline e si riaprono dopo il retry." }
   ,{ "control": "vecchi Service Worker;", "evidence": "ui-p0-cache-recovery QA 1/1: cache vecchie e difettose vengono eliminate mantenendo disponibile l'app offline." }
   ,{ "control": "test di accessibilità;", "evidence": "ui-upload-screen-reader QA 1/1 + static gate 199/199 + ui-maps e ui-navigation: stato upload annunciato da role=status fino al 100%, comandi touch etichettati e marker descritti nell'albero accessibile." }
+  ,{ "control": "Calcolare spazio necessario per documenti.", "evidence": "P0_DOCUMENT_CAPACITY 8/8 su QA: limite server 80 MiB per file; 18 viaggiatori × 4 documenti principali = 5.760 MiB (5,625 GiB) di capacita teorica massima, esclusi gli allegati facoltativi." }
+  ,{ "control": "Misurare caricamento documento.", "evidence": "P0_DOCUMENT_CAPACITY 8/8 su QA: PDF reale da 2 MiB caricato end-to-end in 885 ms, riletto da MEDIA con Content-Length identico, limite 80 MiB verificato e fixture eliminata." }
 ]

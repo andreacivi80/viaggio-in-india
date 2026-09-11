@@ -374,7 +374,7 @@ P0,documenti,passed,Aprire ogni documento.,usabilita:U0451,ui-documents QA mobil
 P0,documenti,passed,area documenti;,addendum:A0119,"P0_DOCUMENTS 12/12 + P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: area privata autenticata, quattro tipologie documentali, apertura, sostituzione, eliminazione e visibilità per ruolo verificate."
 P0,documenti,passed,"B carica documento, Coordinatore vede aggiornamento.",usabilita:U0559,ui-documents QA: viaggiatore carica Visto e Biglietti; dashboard coordinatore passa live 1/4→3/4
 P0,documenti,passed,Bacheca → profilo → documenti → indietro.,globale:T-1411,"ui-protected-pdf Samsung S20 FE 1/1: Bacheca → pannello profilo → Documenti e sicurezza → Torna alla bacheca, con sessione e pagina corretta preservate."
-P0,documenti,pending,Calcolare spazio necessario per documenti.,globale:T-1531,
+P0,documenti,passed,Calcolare spazio necessario per documenti.,globale:T-1531,"P0_DOCUMENT_CAPACITY 8/8 su QA: limite server 80 MiB per file; 18 viaggiatori × 4 documenti principali = 5.760 MiB (5,625 GiB) di capacita teorica massima, esclusi gli allegati facoltativi."
 P0,documenti,passed,Caricamento documenti.,globale:T-1207,ui-documents QA mobile: upload PDF reali con risposta 200 e stato Presente
 P0,documenti,passed,caricamento documento altrui;,globale:T-0728,P0_DOCUMENTS 12/12 + P0_AUTHORIZATION_MATRIX 86/86: un viaggiatore non può caricare o sostituire documenti attribuiti a un altro profilo.
 P0,documenti,passed,caricamento documento proprio;,globale:T-0729,ui-documents QA ed extended-p0-documents: proprietario carica nel proprio profilo
@@ -414,7 +414,7 @@ P0,documenti,passed,Eseguire backup mentre vengono caricati documenti.,globale:T
 P0,documenti,passed,Il Coordinatore controlla i documenti.,globale:T-1728,ui-documents QA: coordinatore apre dalla dashboard il PDF del viaggiatore
 P0,documenti,passed,Impossibilità di vedere documenti altrui.,usabilita:U0650,extended-p0-documents: stato privato e media negati all’altro viaggiatore
 P0,documenti,passed,la visualizzazione dei documenti sia separata dalla gestione dei ruoli;,addendum:A0381,ui-protected-pdf Thailandia 1.48.4 1/1 + P0_AUTHORIZATION_MATRIX 86/86: apertura documenti e amministrazione ruoli sono comandi distinti con autorizzazioni server indipendenti.
-P0,documenti,pending,Misurare caricamento documento.,globale:T-0586,
+P0,documenti,passed,Misurare caricamento documento.,globale:T-0586,"P0_DOCUMENT_CAPACITY 8/8 su QA: PDF reale da 2 MiB caricato end-to-end in 885 ms, riletto da MEDIA con Content-Length identico, limite 80 MiB verificato e fixture eliminata."
 P0,documenti,passed,Modificare document profile_id.,usabilita:U0574,P0_DOCUMENTS 12/12 + P0_ROLES 20/20: la modifica manuale di document profile_id non supera l’identità della sessione e riceve 403.
 P0,documenti,passed,nessun contenuto completo del documento;,globale:T-1569,security-audit 3/3 + authorization-matrix 86/86: contenuto e nome del PDF assenti da schema e risposta coordinatore | security-audit 3/3 + authorization-matrix 86/86: schema whitelist e risposta coordinatore escludono contenuto e nome del PDF
 P0,documenti,pending,nessuna funzione dichiarata nella documentazione sia assente dall’interfaccia;,addendum:A0019,
