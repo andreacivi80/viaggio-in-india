@@ -71,7 +71,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.38",
+const VERSION = "1.48.39",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -158,7 +158,7 @@ const conciseWeather = (description = "") => {
   if (value.includes("continuous rain") || value.includes("pioggia continua")) return "🌧️ Pioggia continua";
   if (value.includes("light rain") || value.includes("drizzle") || value.includes("pioggia leggera")) return "🌦️ Pioggia leggera";
   if (value.includes("thunder") || value.includes("temporali")) return "⛈️ Temporali";
-  if (value.includes("partly cloudy") || value.includes("parzialmente nuvoloso")) return "⛅ Parzialmente nuvoloso";
+  if (value.includes("partly cloudy") || value.includes("parzialmente nuvoloso")) return "⛅ Parz. nuvoloso";
   if (value.includes("cloud") || value.includes("nuvoloso")) return "☁️ Nuvoloso";
   if (value.includes("clear") || value.includes("sereno")) return "☀️ Sereno";
   return "🌤️ Meteo";
@@ -2541,7 +2541,7 @@ function App() {
                       </span>
                       <span className="dayWeatherLine" title={forecast?.description || "Ora locale Thailandia"}>
                         {forecast ? `${forecast.max}°/${forecast.min}° · ${conciseWeather(forecast.description)}${Number.isFinite(forecast.rain_probability) ? ` ${forecast.rain_probability}%` : ""} · ` : ""}
-                        Ora Thailandia {indiaTime}
+                        Ora locale {indiaTime}
                       </span>
                     </div>
                     <ChevronDown className={open === i ? "rot" : ""} />

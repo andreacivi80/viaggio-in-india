@@ -29,7 +29,7 @@ test("meteo e ora Thailandia restano compatti nella prima giornata disponibile",
   await expect(page.locator(".dayPickerWeather")).toHaveCount(11);
 
   const firstDay = page.locator("#day-1");
-  await expect(firstDay.locator(".dayWeatherLine")).toContainText("Ora Thailandia");
+  await expect(firstDay.locator(".dayWeatherLine")).toContainText("Ora locale");
   await expect(firstDay.locator(".dayWeatherLine")).toContainText(`${bangkok.max}°/${bangkok.min}°`);
   await expect(firstDay.locator(".dayWeatherLine")).toContainText(/Pioggia|Nuvoloso|Rovesci|Sereno|Meteo/i);
   await expect(firstDay.locator(".dayWeatherLine")).toHaveAttribute("title", bangkok.description);
@@ -107,7 +107,7 @@ test("meteo e ora non si sovrappongono sulle undici fotografie", async ({ page }
     expect(geometry.weatherHorizontalClipped, JSON.stringify(geometry)).toBe(false);
     expect(geometry.whiteSpace).toBe("nowrap");
     expect(geometry.text).toContain("84%");
-    expect(geometry.text).toContain("Ora Thailandia");
+    expect(geometry.text).toContain("Ora locale");
     expect(geometry.background).toMatch(/^rgba?\(/);
     expect(geometry.background).not.toBe("rgba(0, 0, 0, 0)");
   }
