@@ -335,7 +335,7 @@ P0,altro,passed,eliminazione post altrui;,globale:T-0736,QA 1.31.0: attacco elim
 P0,altro,passed,eliminazione post proprio;,globale:T-0737,extended-p0-media-delete: proprietario elimina il proprio post con tre media
 P0,altro,passed,Errore durante eliminazione multipla.,globale:T-1149,P0_PROFILE_DELETION 44/44: due cancellazioni simultanee dello stesso profilo producono un solo successo e un 404 controllato; profilo e dati collegati restano completamente assenti.
 P0,altro,passed,indicare esattamente cosa verrà eliminato;,addendum:A0252,"static gate 195/195 + P0_MEDIA_DELETE 14/14: le conferme distinguono elemento locale, documento e pubblicazione; la cancellazione reale coincide con quanto descritto e non coinvolge altri dati."
-P0,altro,pending,Inviare notifica relativa a un contenuto successivamente eliminato.,globale:T-0866,
+P0,altro,passed,Inviare notifica relativa a un contenuto successivamente eliminato.,globale:T-0866,ui-notification-deep-link QA 1/1 + ui-notifications-spotify 2/2: dopo l'eliminazione del contenuto il collegamento non mostra dati obsoleti e restituisce l'avviso Contenuto non più disponibile.
 P0,altro,passed,Mostrare chiaramente quali dati verranno eliminati.,globale:T-1321,"deletion-confirmation 1/1 + UI documenti/social: prima dell’azione l’interfaccia distingue chiaramente post e allegati, testo e allegato del commento, oppure documento privato, con Annulla ed Elimina separati."
 P0,altro,pending,nessuna funzione esistente è stata eliminata;,globale:T-0684,
 P0,altro,passed,nessuna pressione del tasto Indietro confermi l’eliminazione;,addendum:A0263,"ui-offline Thailandia 1.48.33 Samsung S20 FE QA 1/1: dopo l'apertura della conferma, il tasto Indietro del browser chiude il dialogo e il conteggio della coda resta 1; anche Annulla conserva l'invio."
@@ -916,7 +916,7 @@ P1,media-upload,pending,video dei percorsi completi;,usabilita:U0713,
 P1,media-upload,passed,video oltre 25 MB.,globale:T-0441,"ui-large-slow-video Thailandia 1.48.11 Samsung S20 FE 1/1: video WebM reale portato a 26 MB, caricato in 7 parti, collegato a un post pubblico, servito con richieste media ritardate di 1,2 secondi e riprodotto realmente oltre 0,2 secondi; pausa e pulizia server completate."
 P1,media-upload,pending,video orizzontale.,globale:T-0442,
 P1,media-upload,pending,video verticale.,globale:T-0443,
-P1,social,pending,Notifica con apertura del commento preciso.,globale:T-0082,
+P1,social,passed,Notifica con apertura del commento preciso.,globale:T-0082,ui-notification-deep-link QA 1/1: una notifica reale apre esattamente il post e il commento indicati e mantiene visibile la discussione corretta.
 P1,social,pending,"Notifica per reazione, se scelta dall’utente.",globale:T-0088,
 P1,social,pending,Notifica per risposta a un commento.,globale:T-0089,
 P1,social,passed,Verificare che una notifica relativa a un post Gruppo non venga inviata ai familiari pubblici.,globale:T-0877,push-audience 5/5: un contenuto Gruppo raggiunge soltanto profili autenticati e non viene inviato a familiari/visitatori pubblici.

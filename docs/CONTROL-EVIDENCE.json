@@ -511,4 +511,6 @@
   ,{ "control": "nessun upload bloccato;", "evidence": "P1_MEDIA_ROBUSTNESS 220/220 su QA 1.48.37: 100/100 upload suddivisi in 20 post completano, 100/100 media si riaprono e la pulizia termina senza sessioni residue." }
   ,{ "control": "test di carico;", "evidence": "P1_MEDIA_ROBUSTNESS 220/220 e P1_SOCIAL_FLOOD 204/204 su QA 1.48.37: raffiche di media, post, commenti e reazioni verificate con persistenza esatta e rate limit deterministico." }
   ,{ "control": "Tre upload contemporanei.", "evidence": "P1_MEDIA_ROBUSTNESS 220/220 su QA 1.48.37: il test invia 20 creazioni concorrenti, ciascuna con cinque fotografie, superando la soglia richiesta di tre senza perdita o duplicazione." }
+  ,{ "control": "Notifica con apertura del commento preciso.", "evidence": "ui-notification-deep-link QA 1/1: una notifica reale apre esattamente il post e il commento indicati e mantiene visibile la discussione corretta." }
+  ,{ "control": "Inviare notifica relativa a un contenuto successivamente eliminato.", "evidence": "ui-notification-deep-link QA 1/1 + ui-notifications-spotify 2/2: dopo l'eliminazione del contenuto il collegamento non mostra dati obsoleti e restituisce l'avviso Contenuto non più disponibile." }
 ]
