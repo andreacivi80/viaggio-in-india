@@ -763,9 +763,9 @@ P1,media-upload,passed,Archivio di video.,globale:T-1714,ui-download-archive QA 
 P1,media-upload,passed,Audio.,usabilita:U0119,"ui-media QA 1.48.40: file WAV reale selezionato, mostrato in anteprima, pubblicato, riletto con durata valida e riprodotto dal controllo touch compatto."
 P1,media-upload,passed,Aumento improvviso degli upload.,globale:T-1540,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: quattro raffiche reali da cinque richieste concorrenti completate senza errori, perdita o duplicazione."
 P1,media-upload,passed,Bloccare lo schermo durante l’audio.,globale:T-0909,"ui-media Thailandia 1.48.4 1/1: l’audio avviato con touch viene messo in pausa al pagehide, quindi non continua con schermo/app in background."
-P1,media-upload,pending,Calcolare peso medio di un audio.,globale:T-1527,
-P1,media-upload,pending,Calcolare peso medio di un video.,globale:T-1528,
-P1,media-upload,pending,Calcolare peso medio di una fotografia.,globale:T-1529,
+P1,media-upload,passed,Calcolare peso medio di un audio.,globale:T-1527,media-capacity 1/1: campione audio reale dei collaudi misurato a 617.444 byte medi; file non vuoto e sotto il limite server di 120 MiB.
+P1,media-upload,passed,Calcolare peso medio di un video.,globale:T-1528,media-capacity 1/1: tre video reali WebM/MOV/MP4 dei collaudi misurati a 715.859 byte medi; tutti sotto il limite server di 500 MiB.
+P1,media-upload,passed,Calcolare peso medio di una fotografia.,globale:T-1529,media-capacity 1/1: undici immagini reali Thailandia JPG/PNG misurate a 556.455 byte medi; tutte non vuote e sotto il limite server di 120 MiB.
 P1,media-upload,passed,caricamento post;,usabilita:U0545,"P1_MEDIA_ROBUSTNESS 220/220 su QA 1.48.37: 20 post con cinque fotografie ciascuno creati, riletti e rimossi senza residui."
 P1,media-upload,passed,caricamento;,addendum:A0162,"P1_MEDIA_ROBUSTNESS 220/220 + TEN_ATTACHMENTS 20/20 su QA 1.48.37: caricamenti autenticati multipli persistono nomi, ordine, MIME e contenuto riapribile."
 P1,media-upload,passed,Caricare assicurazione.,globale:T-0476;usabilita:U0419,"P0_DOCUMENTS 12/12 + P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: PDF assicurazione caricato, rilevato nello stato privato, aperto dai ruoli autorizzati e rimosso dal proprietario."

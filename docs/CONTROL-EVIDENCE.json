@@ -555,4 +555,7 @@
   ,{ "control": "Archivio di audio.", "evidence": "ui-download-archive QA 1.48.40 2/2 + travelArchive statico: il viaggiatore autenticato genera uno ZIP valido che include gli audio visibili; il pubblico non vede il comando." }
   ,{ "control": "Archivio di fotografie.", "evidence": "ui-download-archive QA 1.48.40 2/2 + travelArchive statico: lo ZIP contiene fotografie visibili e manifest coerente, senza includere contenuti non autorizzati." }
   ,{ "control": "Archivio di video.", "evidence": "ui-download-archive QA 1.48.40 2/2 + travelArchive statico: i video visibili entrano nell'archivio locale; un media indisponibile non annulla l'intero download." }
+  ,{ "control": "Calcolare peso medio di un audio.", "evidence": "media-capacity 1/1: campione audio reale dei collaudi misurato a 617.444 byte medi; file non vuoto e sotto il limite server di 120 MiB." }
+  ,{ "control": "Calcolare peso medio di un video.", "evidence": "media-capacity 1/1: tre video reali WebM/MOV/MP4 dei collaudi misurati a 715.859 byte medi; tutti sotto il limite server di 500 MiB." }
+  ,{ "control": "Calcolare peso medio di una fotografia.", "evidence": "media-capacity 1/1: undici immagini reali Thailandia JPG/PNG misurate a 556.455 byte medi; tutte non vuote e sotto il limite server di 120 MiB." }
 ]
