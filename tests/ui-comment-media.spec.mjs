@@ -8,10 +8,11 @@ const profileId = process.env.QA_PROFILE_ID;
 const deviceKey = process.env.QA_OWNER_DEVICE_KEY;
 const audioPath = fileURLToPath(new URL("../public/audio/india-insieme-demo.wav", import.meta.url));
 const videoPath = fileURLToPath(new URL("../public/video/india-insieme-demo.webm", import.meta.url));
+const photoPath = fileURLToPath(new URL("../public/thailand/bangkok.jpg", import.meta.url));
 
 test.skip(!sessionToken || !profileId || !deviceKey || !isSafeMutationTarget(baseUrl), "Sessione personale QA e URL locale/QA richiesti");
 
-test("commenti con audio e video reali vengono salvati e riprodotti", async ({ page }) => {
+test("commenti con audio, video e fotografia reali vengono salvati e riaperti", async ({ page }) => {
   test.slow();
   let createdPostId = "";
   await page.addInitScript(({ token, id, key }) => {
@@ -64,6 +65,11 @@ test("commenti con audio e video reali vengono salvati e riprodotti", async ({ p
     const video = videoComment.locator("video");
     await expect(video).toBeVisible();
     await expect.poll(() => video.evaluate((element) => element.duration)).toBeGreaterThan(0);
+
+    const photoComment = await sendAttachment({ text: "Risposta fotografia reale", path: photoPath });
+    const photo = photoComment.locator("img");
+    await expect(photo).toBeVisible();
+    await expect.poll(() => photo.evaluate((element) => element.complete && element.naturalWidth > 100)).toBe(true);
   } finally {
     if (createdPostId)
       await page.request.delete(`${baseUrl}/api/posts/${encodeURIComponent(createdPostId)}`, {

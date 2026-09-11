@@ -526,4 +526,13 @@
   ,{ "control": "Misurare caricamento documento.", "evidence": "P0_DOCUMENT_CAPACITY 8/8 su QA: PDF reale da 2 MiB caricato end-to-end in 885 ms, riletto da MEDIA con Content-Length identico, limite 80 MiB verificato e fixture eliminata." }
   ,{ "control": "nessuna funzione esistente è stata eliminata;", "evidence": "QA 1.48.40: static gate 199/199, ui-critical 5/5 eseguiti, ui-navigation 5/5 eseguiti e ui-maps 6/6; accesso pubblico, gruppo protetto, bacheca, diario, mappe e documenti restano raggiungibili. Le prove escluse non sono conteggiate." }
   ,{ "control": "Verificare che non vi siano differenze tra itinerario, mappe e documenti.", "evidence": "QA 1.48.40: 11/11 giornate e 11/11 mappe giornaliere confrontate tramite ui-navigation e ui-maps; documenti reali verificati con ui-documents e P0_DOCUMENT_CAPACITY, senza riferimenti al vecchio itinerario." }
+  ,{ "control": "Audio.", "evidence": "ui-media QA 1.48.40: file WAV reale selezionato, mostrato in anteprima, pubblicato, riletto con durata valida e riprodotto dal controllo touch compatto." }
+  ,{ "control": "Solo audio.", "evidence": "ui-media QA 1.48.40 + media-validation statico: il canale audio è accettato come allegato autonomo, conserva MIME e durata e viene riprodotto senza mostrare la barra nativa." }
+  ,{ "control": "Solo video.", "evidence": "ui-media QA 1.48.40: due video WebM reali vengono selezionati dal comando video, pubblicati, riletti e riprodotti uno alla volta con arresto automatico del precedente." }
+  ,{ "control": "Riprodurre video.", "evidence": "ui-media QA 1.48.40: entrambi i player video espongono durata valida, avanzano nel tempo dopo play e possono essere messi in pausa." }
+  ,{ "control": "Verifica caricamento video.", "evidence": "ui-media QA 1.48.40: POST del contenuto con due video restituisce 201, la scheda contiene entrambi i player e il contenuto viene eliminato nella pulizia finale." }
+  ,{ "control": "Video", "evidence": "ui-media QA 1.48.40: due video reali con traccia audio caricati, persistiti, riaperti e riprodotti; limite complessivo degli allegati verificato a 10." }
+  ,{ "control": "Commento con audio.", "evidence": "ui-comment-media QA 1.48.40: audio WAV reale allegato tramite interfaccia touch a un commento, POST 201, player visibile e durata valida dopo la sincronizzazione." }
+  ,{ "control": "Commento con fotografia.", "evidence": "ui-comment-media QA 1.48.40: fotografia JPEG reale allegata a un commento, salvata, riletta e decodificata con larghezza naturale superiore a 100 px." }
+  ,{ "control": "Commento con video.", "evidence": "ui-comment-media QA 1.48.40: video WebM reale allegato a un commento, salvato, riletto e riconosciuto dal player con durata valida; pubblicazione di prova poi eliminata." }
 ]

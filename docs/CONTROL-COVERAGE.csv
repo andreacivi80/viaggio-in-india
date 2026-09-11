@@ -760,7 +760,7 @@ P1,media-upload,passed,Aprire una fotografia del carosello.,globale:T-1394,"ui-m
 P1,media-upload,pending,Archivio di audio.,globale:T-1708,
 P1,media-upload,pending,Archivio di fotografie.,globale:T-1709,
 P1,media-upload,pending,Archivio di video.,globale:T-1714,
-P1,media-upload,pending,Audio.,usabilita:U0119,
+P1,media-upload,passed,Audio.,usabilita:U0119,"ui-media QA 1.48.40: file WAV reale selezionato, mostrato in anteprima, pubblicato, riletto con durata valida e riprodotto dal controllo touch compatto."
 P1,media-upload,passed,Aumento improvviso degli upload.,globale:T-1540,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: quattro raffiche reali da cinque richieste concorrenti completate senza errori, perdita o duplicazione."
 P1,media-upload,passed,Bloccare lo schermo durante l’audio.,globale:T-0909,"ui-media Thailandia 1.48.4 1/1: l’audio avviato con touch viene messo in pausa al pagehide, quindi non continua con schermo/app in background."
 P1,media-upload,pending,Calcolare peso medio di un audio.,globale:T-1527,
@@ -784,9 +784,9 @@ P1,media-upload,passed,Caricare una fotografia contenente coordinate GPS EXIF.,g
 P1,media-upload,passed,Caricare una fotografia orizzontale.,globale:T-0996,"ui-publish-complete Thailandia 1.48.4 1/1: fotografia orizzontale reale selezionata da galleria e scatto, pubblicata e resa visibile su due telefoni."
 P1,media-upload,passed,Caricare una fotografia sfocata.,globale:T-0997,"P1_IMAGE_QUALITY su QA isolato 1.48.8: fotografia reale 320x240 con sfocatura intenzionale caricata, riaperta e decodificata senza rifiuto o corruzione."
 P1,media-upload,passed,Chiudere una scheda durante un upload.,globale:T-1589,resumable-upload 5/5: una nuova istanza dopo chiusura/interruzione legge lo stato server e riparte dalla prima parte non confermata.
-P1,media-upload,pending,Commento con audio.,globale:T-0460;usabilita:U0302,
-P1,media-upload,pending,Commento con fotografia.,globale:T-0461;usabilita:U0300,
-P1,media-upload,pending,Commento con video.,globale:T-0462;usabilita:U0301,
+P1,media-upload,passed,Commento con audio.,globale:T-0460;usabilita:U0302,"ui-comment-media QA 1.48.40: audio WAV reale allegato tramite interfaccia touch a un commento, POST 201, player visibile e durata valida dopo la sincronizzazione."
+P1,media-upload,passed,Commento con fotografia.,globale:T-0461;usabilita:U0300,"ui-comment-media QA 1.48.40: fotografia JPEG reale allegata a un commento, salvata, riletta e decodificata con larghezza naturale superiore a 100 px."
+P1,media-upload,passed,Commento con video.,globale:T-0462;usabilita:U0301,"ui-comment-media QA 1.48.40: video WebM reale allegato a un commento, salvato, riletto e riconosciuto dal player con durata valida; pubblicazione di prova poi eliminata."
 P1,media-upload,pending,comportamento al ricaricamento;,addendum:A0049,
 P1,media-upload,pending,compressione fotografie;,globale:T-0146,
 P1,media-upload,pending,compressione video;,globale:T-0147,
@@ -850,7 +850,7 @@ P1,media-upload,passed,ripresa upload;,globale:T-1800,resumable-upload: ripresa 
 P1,media-upload,passed,Riprodurre il video con rete lenta.,globale:T-0915,"ui-large-slow-video Thailandia 1.48.11 Samsung S20 FE 1/1: video WebM reale portato a 26 MB, caricato in 7 parti, collegato a un post pubblico, servito con richieste media ritardate di 1,2 secondi e riprodotto realmente oltre 0,2 secondi; pausa e pulizia server completate."
 P1,media-upload,passed,Riprodurre un file audio.,globale:T-0916,"ui-media Thailandia 1.48.4 1/1 + ui-comment-media 1/1: audio reale caricato, durata valida e riproduzione avviata tramite touch."
 P1,media-upload,passed,Riprodurre un video con audio.,globale:T-0917,"ui-media Thailandia 1.48.4 1/1 + ui-comment-media 1/1: video con traccia multimediale caricato, salvato e riprodotto nel post/commento."
-P1,media-upload,pending,Riprodurre video.,usabilita:U0207,
+P1,media-upload,passed,Riprodurre video.,usabilita:U0207,"ui-media QA 1.48.40: entrambi i player video espongono durata valida, avanzano nel tempo dopo play e possono essere messi in pausa."
 P1,media-upload,pending,rotazione e ritaglio fotografie;,globale:T-0161,
 P1,media-upload,passed,Salvare una bozza con dieci fotografie.,globale:T-0850,"ui-offline-media-drafts Thailandia 1.48.12 Samsung S20 FE 1/1 + offline-queue 4/4: bozza con dieci JPEG reali, bozza con video WebM reale e bozza con fotografia singola salvate in IndexedDB senza rete; chiusura completa della pagina, riapertura online, retry automatico, tre pubblicazioni uniche con 10/1/1 media e apertura o riproduzione finale; pulizia QA completata."
 P1,media-upload,passed,Salvare una bozza con un video.,globale:T-0851,"ui-offline-media-drafts Thailandia 1.48.12 Samsung S20 FE 1/1 + offline-queue 4/4: bozza con dieci JPEG reali, bozza con video WebM reale e bozza con fotografia singola salvate in IndexedDB senza rete; chiusura completa della pagina, riapertura online, retry automatico, tre pubblicazioni uniche con 10/1/1 media e apertura o riproduzione finale; pulizia QA completata."
@@ -867,9 +867,9 @@ P1,media-upload,passed,Selezionare un video MOV.,usabilita:U0200,"ui-mobile-vide
 P1,media-upload,passed,Selezionare un video MP4.,usabilita:U0201,"ui-mobile-video-formats Thailandia 1.48.16 Samsung S20 FE QA 1/1: con Battery API simulata all’8% e non in carica, selezione touch contemporanea di MP4 H.264/AAC reale da 9 MB e MOV H.264/AAC reale da 9 MB; upload a parti di 18.874.368 byte in 22,6 s, attività CPU 5,38 s, pubblicazione 201, durata decodificata e riproduzione oltre 0,1 s per entrambi, quindi eliminazione completa del post di prova."
 P1,media-upload,passed,Selezionare una fotografia.,usabilita:U0195,Playwright mobile: JPEG reale selezionato e pubblicato; preview b4f2cf13; 2026-08-04
 P1,media-upload,passed,Sincronizzazione immediata al ritorno della rete.,globale:T-0114,ui-offline Thailandia 1.48.4 1/1: l’evento online attiva subito flushPending/checkVersion; coda svuotata e post visibile senza attendere il timer periodico.
-P1,media-upload,pending,Solo audio.,usabilita:U0144,
+P1,media-upload,passed,Solo audio.,usabilita:U0144,"ui-media QA 1.48.40 + media-validation statico: il canale audio è accettato come allegato autonomo, conserva MIME e durata e viene riprodotto senza mostrare la barra nativa."
 P1,media-upload,passed,Solo fotografia.,usabilita:U0142,"TEN_ATTACHMENTS su QA: pubblicazione composta esclusivamente da dieci fotografie accettata, persistita, riaperta e rimossa correttamente."
-P1,media-upload,pending,Solo video.,usabilita:U0143,
+P1,media-upload,passed,Solo video.,usabilita:U0143,"ui-media QA 1.48.40: due video WebM reali vengono selezionati dal comando video, pubblicati, riletti e riprodotti uno alla volta con arresto automatico del precedente."
 P1,media-upload,passed,Sostituire fotografia.,globale:T-0354,"P0_AVATAR_REPLACEMENT=7/7 su QA: caricamento foto precedente e nuova, chiavi differenti, nuova immagine leggibile, vecchia rimossa da MEDIA e profilo pubblico aggiornato."
 P1,media-upload,passed,Sostituire la propria fotografia.,usabilita:U0372,"P0_AVATAR_REPLACEMENT Thailandia 1.48.12 su QA isolato 7/7: il proprietario carica una fotografia, la sostituisce con un secondo PNG reale, ottiene una nuova chiave, riapre il nuovo file, verifica la rimozione del precedente e lo stato pubblico punta soltanto alla fotografia nuova."
 P1,media-upload,passed,Stato caricamento comunicato allo screen reader.,globale:T-1073,ui-upload-screen-reader Thailandia 1.48.12 Samsung S20 FE 1/1: video WebM reale portato a 9 MB e caricato a parti con ritardo; regione semantica role=status individuata tramite albero accessibile e sequenza annunci osservata da 0% a 100%; pubblicazione conclusa e pulizia QA completata.
@@ -888,7 +888,7 @@ P1,media-upload,passed,upload multipart;,globale:T-0164,"P0_CHUNK_RETRY=12/12 su
 P1,media-upload,passed,upload riprendibile;,globale:T-0165,P0_CHUNK_RETRY=12/12 su QA: reinvio idempotente della stessa parte senza duplicazione e completamento ripetibile; gate statico verifica ripresa dalle parti gia confermate.
 P1,media-upload,passed,utilizzare uno stato neutro di caricamento;,addendum:A0295,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P1,media-upload,passed,Verifica caricamento foto.,globale:T-0653,"P1_MEDIA_ROBUSTNESS 100/100 su QA 1.48.37: 20 post concorrenti a raffiche, 100 fotografie rilette byte per byte con content-type image/jpeg e 100 URL rimossi dopo la pulizia."
-P1,media-upload,pending,Verifica caricamento video.,globale:T-0654,
+P1,media-upload,passed,Verifica caricamento video.,globale:T-0654,"ui-media QA 1.48.40: POST del contenuto con due video restituisce 201, la scheda contiene entrambi i player e il contenuto viene eliminato nella pulizia finale."
 P1,media-upload,passed,Verificare audio.,usabilita:U0106,"ui-publish-complete su QA 1.48.37 touch 1/1: due elementi audio, uno caricato e uno registrato, risultano presenti su autore e pubblico dopo la risposta 201."
 P1,media-upload,passed,Verificare caricamento di ogni immagine Unsplash.,globale:T-1634,"production-smoke Thailandia 1.48.12: nessun riferimento Unsplash o immagine remota resta nel bundle; tutte le fotografie delle città sono asset locali e hanno risposto correttamente sul dominio ufficiale, eliminando dipendenza, scadenza e blocco del fornitore esterno."
 P1,media-upload,pending,Verificare caricamento differito.,globale:T-1635,
@@ -911,7 +911,7 @@ P1,media-upload,passed,Verificare quali fotografie restano memorizzate.,globale:
 P1,media-upload,passed,"Verificare stesso post, stessi commenti e stessa fotografia.",globale:T-1408,"QA autenticata 1.48.4: due dispositivi leggono lo stesso ID post, la stessa fotografia e gli stessi commenti dopo sincronizzazione e reload."
 P1,media-upload,passed,Verificare streaming senza caricare tutto il file in memoria.,globale:T-1008,"QA autenticata 1.48.4: upload grande a parti completato con streaming, commit finale e lettura del contenuto senza caricamento monolitico del file."
 P1,media-upload,passed,Verificare video.,usabilita:U0105,ui-publish-complete su QA 1.48.37 touch 1/1: il video reale risulta presente nel post dell'autore e nel post ricevuto dall'iPhone pubblico.
-P1,media-upload,pending,Video,globale:T-0292;globale:T-1262;usabilita:U0035;usabilita:U0118,
+P1,media-upload,passed,Video,globale:T-0292;globale:T-1262;usabilita:U0035;usabilita:U0118,"ui-media QA 1.48.40: due video reali con traccia audio caricati, persistiti, riaperti e riprodotti; limite complessivo degli allegati verificato a 10."
 P1,media-upload,pending,video dei percorsi completi;,usabilita:U0713,
 P1,media-upload,passed,video oltre 25 MB.,globale:T-0441,"ui-large-slow-video Thailandia 1.48.11 Samsung S20 FE 1/1: video WebM reale portato a 26 MB, caricato in 7 parti, collegato a un post pubblico, servito con richieste media ritardate di 1,2 secondi e riprodotto realmente oltre 0,2 secondi; pausa e pulizia server completate."
 P1,media-upload,pending,video orizzontale.,globale:T-0442,
