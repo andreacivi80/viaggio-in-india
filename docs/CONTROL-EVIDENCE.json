@@ -542,4 +542,14 @@
   ,{ "control": "posizione precisa disattiva;", "evidence": "ui-location QA 1.48.40: permesso rimosso, nessuna coordinata viene inviata; dopo nuova autorizzazione la condivisione riparte e viene poi cancellata." }
   ,{ "control": "posizione;", "evidence": "ui-location QA 1.48.40 + P0_LOCATION 30/30: acquisizione volontaria, validazione coordinate, sincronizzazione, Google Maps, navigazione e rimozione verificate." }
   ,{ "control": "Rimuovere la posizione.", "evidence": "ui-location QA 1.48.40: tocco Cancella posizione, DELETE 200 e scomparsa sincronizzata dalla vista del viaggiatore e della coordinatrice." }
+  ,{ "control": "“Offline” significhi funzione realmente disponibile senza rete;", "evidence": "ui-offline e ui-p0-cache-recovery QA 1.48.40: bacheca, diario, dati di emergenza, bozza con fotografia e coda locale usati con connessione realmente disattivata." }
+  ,{ "control": "Aggiungere alternativa offline.", "evidence": "ui-p0-cache-recovery QA 1.48.40: shell offline, 11 giornate e sezione Emergenza e dati offline restano disponibili quando la cartografia e la rete non rispondono." }
+  ,{ "control": "coda offline vuota oppure correttamente registrata;", "evidence": "ui-offline QA 1.48.40: IndexedDB passa da 0 a 1 durante l'invio senza rete e torna a 0 dopo eliminazione esplicita o consegna riuscita." }
+  ,{ "control": "Emergenza offline.", "evidence": "ui-p0-cache-recovery QA 1.48.40: con rete disattivata la sezione emergenza apre i numeri 1155 e +66 81 825 6103 come collegamenti telefonici." }
+  ,{ "control": "Errore Service Worker.", "evidence": "ui-p0-cache-recovery QA 1.48.40: cache con risposta HTML 500 e cache 1.37.18 vengono eliminate; l'app si riapre offline senza pagina bianca né contenuto corrotto." }
+  ,{ "control": "Verificare alternativa offline.", "evidence": "ui-p0-cache-recovery 1/1 e ui-offline 1/1 su QA 1.48.40: fallback consultabile e invio differito verificati su profilo mobile Galaxy S9+." }
+  ,{ "control": "gli upload riprendono dopo perdita della rete;", "evidence": "ui-offline QA 1.48.40: pubblicazione con foto accodata offline, browser chiuso, rete ripristinata e POST completato una sola volta con allegato visibile." }
+  ,{ "control": "Verificare caricamento differito.", "evidence": "ui-offline QA 1.48.40: messaggio di salvataggio locale, persistenza della richiesta, invio automatico alla riconnessione e pulizia della coda verificati end-to-end." }
+  ,{ "control": "comportamento al ricaricamento;", "evidence": "ui-offline QA 1.48.40: dopo consegna differita il reload conserva una sola pubblicazione e non duplica l'operazione; token e chiave dispositivo restano validi." }
+  ,{ "control": "Cache-Control corretto.", "evidence": "static gate 199/199 su 1.48.40: API e documenti privati impostano private, no-store; asset pubblici e Service Worker seguono la politica di cache versionata." }
 ]

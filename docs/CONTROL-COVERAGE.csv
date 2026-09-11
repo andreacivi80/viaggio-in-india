@@ -787,7 +787,7 @@ P1,media-upload,passed,Chiudere una scheda durante un upload.,globale:T-1589,res
 P1,media-upload,passed,Commento con audio.,globale:T-0460;usabilita:U0302,"ui-comment-media QA 1.48.40: audio WAV reale allegato tramite interfaccia touch a un commento, POST 201, player visibile e durata valida dopo la sincronizzazione."
 P1,media-upload,passed,Commento con fotografia.,globale:T-0461;usabilita:U0300,"ui-comment-media QA 1.48.40: fotografia JPEG reale allegata a un commento, salvata, riletta e decodificata con larghezza naturale superiore a 100 px."
 P1,media-upload,passed,Commento con video.,globale:T-0462;usabilita:U0301,"ui-comment-media QA 1.48.40: video WebM reale allegato a un commento, salvato, riletto e riconosciuto dal player con durata valida; pubblicazione di prova poi eliminata."
-P1,media-upload,pending,comportamento al ricaricamento;,addendum:A0049,
+P1,media-upload,passed,comportamento al ricaricamento;,addendum:A0049,ui-offline QA 1.48.40: dopo consegna differita il reload conserva una sola pubblicazione e non duplica l'operazione; token e chiave dispositivo restano validi.
 P1,media-upload,pending,compressione fotografie;,globale:T-0146,
 P1,media-upload,pending,compressione video;,globale:T-0147,
 P1,media-upload,pending,condizione dopo caricamento dei dati;,addendum:A0290,
@@ -813,7 +813,7 @@ P1,media-upload,passed,Fotografie e video.,usabilita:U0148,ui-publish-complete s
 P1,media-upload,passed,"Fotografie, video e audio.",usabilita:U0149,"ui-publish-complete Thailandia 1.48.4 1/1: fotografia, video, audio caricato e audio registrato sono presenti nello stesso post reale."
 P1,media-upload,passed,Fotografie.,usabilita:U0117,"TEN_ATTACHMENTS su QA: 10/10 fotografie create nello stesso post, nomi e ordine conservati, 10/10 riaperte con MIME image/jpeg e pulizia finale verificata."
 P1,media-upload,passed,Gestire errore nel caricamento della pagina successiva.,globale:T-1681,"ui-feed-scroll-robustness Thailandia 1.48.11 Samsung S20 FE 1/1: 18 post reali, scorrimento touch fino al più vecchio oltre 1.000 px, risposta 503 forzata al successivo aggiornamento senza perdita del feed già caricato e recupero completo al retry; pulizia finale 18/18."
-P1,media-upload,pending,gli upload riprendono dopo perdita della rete;,globale:T-0672,
+P1,media-upload,passed,gli upload riprendono dopo perdita della rete;,globale:T-0672,"ui-offline QA 1.48.40: pubblicazione con foto accodata offline, browser chiuso, rete ripristinata e POST completato una sola volta con allegato visibile."
 P1,media-upload,passed,il caricamento impedisce una seconda operazione incompatibile;,addendum:A0174,"Playwright Galaxy S9+: invito e sessione server, modale sopra barra, pulsante raggiungibile, stato disabilitato/invio, doppio clic=una richiesta, HTTP 201 e record confermato; preview 9913ac2c; 2026-08-04"
 P1,media-upload,passed,impossibilità di pubblicare con identità non ancora caricata;,addendum:A0317,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P1,media-upload,passed,Ingrandire una fotografia.,globale:T-0912,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
@@ -891,7 +891,7 @@ P1,media-upload,passed,Verifica caricamento foto.,globale:T-0653,"P1_MEDIA_ROBUS
 P1,media-upload,passed,Verifica caricamento video.,globale:T-0654,"ui-media QA 1.48.40: POST del contenuto con due video restituisce 201, la scheda contiene entrambi i player e il contenuto viene eliminato nella pulizia finale."
 P1,media-upload,passed,Verificare audio.,usabilita:U0106,"ui-publish-complete su QA 1.48.37 touch 1/1: due elementi audio, uno caricato e uno registrato, risultano presenti su autore e pubblico dopo la risposta 201."
 P1,media-upload,passed,Verificare caricamento di ogni immagine Unsplash.,globale:T-1634,"production-smoke Thailandia 1.48.12: nessun riferimento Unsplash o immagine remota resta nel bundle; tutte le fotografie delle città sono asset locali e hanno risposto correttamente sul dominio ufficiale, eliminando dipendenza, scadenza e blocco del fornitore esterno."
-P1,media-upload,pending,Verificare caricamento differito.,globale:T-1635,
+P1,media-upload,passed,Verificare caricamento differito.,globale:T-1635,"ui-offline QA 1.48.40: messaggio di salvataggio locale, persistenza della richiesta, invio automatico alla riconnessione e pulizia della coda verificati end-to-end."
 P1,media-upload,passed,Verificare caricamento heic2any soltanto con file HEIC.,globale:T-1673,ui-network-india 6/6 + sorgente verificato: heic2any non è scaricato all’apertura e viene importato dinamicamente soltanto per HEIC/HEIF.
 P1,media-upload,passed,Verificare caricamento MapLibre soltanto quando serve.,globale:T-1674,ui-network-india 6/6 + sorgente verificato: MapLibre non è scaricato in bacheca e viene importato dinamicamente soltanto quando si apre una mappa.
 P1,media-upload,passed,Verificare che due video non vengano riprodotti contemporaneamente.,globale:T-0922,ui-media Thailandia 1.48.5 Samsung S20 FE 1/1: avviando il secondo video reale il primo viene automaticamente messo in pausa; una sola sorgente resta attiva.
@@ -920,28 +920,28 @@ P1,social,passed,Notifica con apertura del commento preciso.,globale:T-0082,ui-n
 P1,social,pending,"Notifica per reazione, se scelta dall’utente.",globale:T-0088,
 P1,social,pending,Notifica per risposta a un commento.,globale:T-0089,
 P1,social,passed,Verificare che una notifica relativa a un post Gruppo non venga inviata ai familiari pubblici.,globale:T-0877,push-audience 5/5: un contenuto Gruppo raggiunge soltanto profili autenticati e non viene inviato a familiari/visitatori pubblici.
-P1,sync-rete,pending,“Offline” significhi funzione realmente disponibile senza rete;,addendum:A0391,
+P1,sync-rete,passed,“Offline” significhi funzione realmente disponibile senza rete;,addendum:A0391,"ui-offline e ui-p0-cache-recovery QA 1.48.40: bacheca, diario, dati di emergenza, bozza con fotografia e coda locale usati con connessione realmente disattivata."
 P1,sync-rete,passed,“Sincronizzato” significhi conferma server e presenza sugli altri dispositivi;,addendum:A0390,"API pubblica minimizzata + Playwright tre telefoni: chiavi e ID interni assenti, permessi can_manage dal server, comandi vietati nascosti e sync automatica; preview c9d82d89; 2026-08-04"
 P1,sync-rete,passed,100 richieste di sincronizzazione in un minuto.,globale:T-1048,"P0_SYNC_DELETE 115/115: 100 richieste concorrenti a sync/version completano con 200, versione numerica coerente e nessuna mutazione dello stato."
 P1,sync-rete,pending,Aggiornare il Service Worker con due schede aperte.,globale:T-1587,
-P1,sync-rete,pending,Aggiungere alternativa offline.,globale:T-0181,
+P1,sync-rete,passed,Aggiungere alternativa offline.,globale:T-0181,"ui-p0-cache-recovery QA 1.48.40: shell offline, 11 giornate e sezione Emergenza e dati offline restano disponibili quando la cartografia e la rete non rispondono."
 P1,sync-rete,pending,Album HTML offline.,globale:T-0233,
 P1,sync-rete,passed,Aprire Emergenza senza rete.,globale:T-1183,ui-p0-cache-recovery Thailandia 1.48.4 Samsung S20 FE 1/1: dopo eliminazione di cache vecchie/difettose l’app si riapre offline e rende disponibili numeri di emergenza thailandesi e tappe essenziali.
 P1,sync-rete,passed,Aprire il dominio senza cache.,globale:T-0305,"ui-cache-recovery Samsung S20 FE 1/1: dominio aperto senza cache valida, vecchia cache e cache difettosa eliminate; nuova shell caricata e riaperta realmente offline."
 P1,sync-rete,passed,Attivazione automatica su rete lenta.,globale:T-1644,"ui-slow-activation Thailandia 1.48.8 Samsung S20 FE 1/1: ogni chiamata API ritardata di 1,5 secondi; apertura del link personale, consumo automatico dell’invito, sessione viaggiatore persistita, URL ripulito e nessuna promozione di ruolo."
 P1,sync-rete,passed,Badge sincronizzato dei contenuti non letti.,globale:T-0076,"activity-sync Thailandia 1.48.16: integrazione API QA 1/1 e Playwright touch Samsung S20 FE 1/1 con due telefoni distinti dello stesso profilo; badge inizialmente visibile su entrambi, apertura Attività recenti sul primo, stato letto persistito in D1 e badge rimosso automaticamente sul secondo entro il polling. Un aggiornamento più vecchio non regredisce lo stato; aggiornamento inverso converge sul primo dispositivo. Regressione locale 166/166 applicabili, QA autenticata 18/18 e produzione read-only 8/8; backup pre-migrazione verificato SHA-256 2ED6F5DA…204259."
-P1,sync-rete,pending,Cache-Control corretto.,globale:T-1469,
+P1,sync-rete,passed,Cache-Control corretto.,globale:T-1469,"static gate 199/199 su 1.48.40: API e documenti privati impostano private, no-store; asset pubblici e Service Worker seguono la politica di cache versionata."
 P1,sync-rete,pending,Centro “Pronto per l’offline”.,globale:T-0116,
 P1,sync-rete,pending,Centro sincronizzazione visibile.,globale:T-0098,
 P1,sync-rete,passed,Cercare segreti nel Service Worker.,globale:T-1500,"suite 1.48.4 163/163 eseguiti (150 passati, 13 skip condizionati, 0 errori): scansione sorgente e Service Worker senza password, token o segreti incorporati."
-P1,sync-rete,pending,coda offline vuota oppure correttamente registrata;,globale:T-1750,
+P1,sync-rete,passed,coda offline vuota oppure correttamente registrata;,globale:T-1750,ui-offline QA 1.48.40: IndexedDB passa da 0 a 1 durante l'invio senza rete e torna a 0 dopo eliminazione esplicita o consegna riuscita.
 P1,sync-rete,passed,commenti sincronizzati;,globale:T-1751,"P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: tre identità creano commenti distinti e proprietario, secondo viaggiatore e coordinatrice rileggono lo stesso insieme, autori, testo e timestamp."
 P1,sync-rete,passed,continuazione dopo perdita della rete;,globale:T-0149,ui-offline QA 1/1: un invio iniziato senza rete sopravvive alla chiusura e viene trasmesso una sola volta al ritorno della connessione.
 P1,sync-rete,pending,controlli richieste di rete;,addendum:A0205,
 P1,sync-rete,passed,dati di emergenza disponibili offline.,globale:T-1752,ui-cache-recovery Samsung S20 FE 1/1: con rete disattivata il pannello Emergenza e dati offline resta apribile e offre chiamata diretta al 112 e alla reperibilità dell’Ambasciata.
 P1,sync-rete,pending,è stata eseguita una prova dalla rete indiana;,globale:T-0666,
-P1,sync-rete,pending,Emergenza offline.,globale:T-0249,
-P1,sync-rete,pending,Errore Service Worker.,globale:T-1549,
+P1,sync-rete,passed,Emergenza offline.,globale:T-0249,ui-p0-cache-recovery QA 1.48.40: con rete disattivata la sezione emergenza apre i numeri 1155 e +66 81 825 6103 come collegamenti telefonici.
+P1,sync-rete,passed,Errore Service Worker.,globale:T-1549,ui-p0-cache-recovery QA 1.48.40: cache con risposta HTML 500 e cache 1.37.18 vengono eliminate; l'app si riapre offline senza pagina bianca né contenuto corrotto.
 P1,sync-rete,passed,Eseguire logout senza rete.,globale:T-0760,"ui-offline-logout Thailandia 1.48.7 Samsung S20 FE 1/1: rete disattivata prima del tocco su Blocca; token, profilo, ruolo e codice locale rimossi, schermata privata chiusa e riapertura online rimasta pubblica."
 P1,sync-rete,passed,Gestione delle modifiche concorrenti.,globale:T-0101,QA autenticata 1.48.4: concorrenza su due dispositivi e carico con 10 pubblicazioni simultanee completati senza duplicazioni o perdita dello stato finale.
 P1,sync-rete,passed,gli allegati vengono persi offline;,usabilita:U0694,ui-offline-media-drafts QA 1/1: tre bozze multimediali reali restano disponibili offline e si riaprono dopo il retry.
@@ -994,7 +994,7 @@ P1,sync-rete,passed,vecchi Service Worker;,addendum:A0407,ui-p0-cache-recovery Q
 P1,sync-rete,passed,verifica dall’India o da una rete con caratteristiche equivalenti;,globale:T-1811,"ui-network-india QA 7/7: quattro profili estero equivalenti e un profilo 2G estremo sono emulati con banda, upload e latenza controllati."
 P1,sync-rete,passed,Verificare aggiornamento al successivo ritorno della rete.,globale:T-0831,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: al successivo ritorno della rete la coda viene svuotata, il feed aggiornato e il post compare una sola volta."
 P1,sync-rete,passed,Verificare aggiornamento con telefono offline.,globale:T-0832,"ui-offline Samsung S20 FE 1/1: il telefono viene posto offline, la pagina chiusa e riaperta online; coda svuotata e stato aggiornato senza duplicazioni."
-P1,sync-rete,pending,Verificare alternativa offline.,globale:T-0397,
+P1,sync-rete,passed,Verificare alternativa offline.,globale:T-0397,ui-p0-cache-recovery 1/1 e ui-offline 1/1 su QA 1.48.40: fallback consultabile e invio differito verificati su profilo mobile Galaxy S9+.
 P1,sync-rete,passed,"Verificare bozze, se devono essere sincronizzate.",globale:T-1604,"draft-privacy 1/1: decisione verificata di non sincronizzare le bozze tra dispositivi; testo e coda offline restano negli archivi locali del telefono, vengono rimossi dopo la pubblicazione e non esistono endpoint o tabelle server per bozze incompiute."
 P1,sync-rete,pending,Verificare che il Service Worker utilizzi la cache 1.21.5.,globale:T-0012,
 P1,sync-rete,passed,Verificare che non sia necessario cancellare manualmente la cache.,addendum:A0093,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
