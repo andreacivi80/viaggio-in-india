@@ -2,20 +2,28 @@ import { test, expect } from "@playwright/test";
 import { fileURLToPath } from "node:url";
 import { isSafeMutationTarget } from "./helpers/qa-mutation-target.mjs";
 
-const inviteToken = process.env.QA_UI_INVITE_TOKEN;
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
+const sessionToken = process.env.QA_SESSION_TOKEN;
+const profileId = process.env.QA_PROFILE_ID;
+const deviceKey = process.env.QA_OWNER_DEVICE_KEY;
 const audioPath = fileURLToPath(new URL("../public/audio/india-insieme-demo.wav", import.meta.url));
 const videoPath = fileURLToPath(new URL("../public/video/india-insieme-demo.webm", import.meta.url));
 
-test.skip(!inviteToken || !isSafeMutationTarget(baseUrl), "Invito QA e URL locale/QA richiesti");
+test.skip(!sessionToken || !profileId || !deviceKey || !isSafeMutationTarget(baseUrl), "Sessione personale QA e URL locale/QA richiesti");
 
 test("commenti con audio e video reali vengono salvati e riprodotti", async ({ page }) => {
   test.slow();
   let createdPostId = "";
-  await page.goto(`${baseUrl}/#invite=${encodeURIComponent(inviteToken)}`, { waitUntil: "networkidle" });
-  const sessionToken = await page.evaluate(() => localStorage.getItem("india-session-token"));
-  const deviceKey = await page.evaluate(() => localStorage.getItem("india-device-key"));
-  expect(sessionToken).toBeTruthy();
+  await page.addInitScript(({ token, id, key }) => {
+    localStorage.setItem("india-session-token", token);
+    localStorage.setItem("india-profile-id", id);
+    localStorage.setItem("india-profile-name", "Proprietario QA");
+    localStorage.setItem("india-visitor-name", "Proprietario QA");
+    localStorage.setItem("india-role", "traveler");
+    localStorage.setItem("india-device-key", key);
+  }, { token: sessionToken, id: profileId, key: deviceKey });
+  await page.goto(baseUrl, { waitUntil: "networkidle" });
+  await expect(page.locator(".accessPill")).not.toContainText("Pubblico", { timeout: 20_000 });
   try {
     const marker = `Commenti media ${Date.now()}`;
     const createResponse = await page.request.post(`${baseUrl}/api/posts`, {
