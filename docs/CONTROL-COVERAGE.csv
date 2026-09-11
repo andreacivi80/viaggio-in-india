@@ -609,7 +609,7 @@ P0,sync-rete,passed,Chiave idempotente nel database.,globale:T-0133,production-s
 P0,sync-rete,passed,Sincronizzazione delle eliminazioni.,globale:T-0113,"extended-p0-sync-delete: assenza verificata su pubblico, proprietario e secondo dispositivo"
 P0,sync-rete,passed,Verificare eliminazione della cache difettosa.,globale:T-1181,ui-p0-cache-recovery: cache corrotta rimossa e riapertura offline riuscita
 P0,sync-rete,passed,Verificare eliminazione della vecchia cache.,globale:T-0840,"ui-p0-cache-recovery: cache 1.37.18 rimossa, resta soltanto 1.37.19"
-P1,altro,pending,“Notifiche attive” significhi subscription registrata e prova ricevuta;,addendum:A0386,
+P1,altro,passed,“Notifiche attive” significhi subscription registrata e prova ricevuta;,addendum:A0386,"P1_ALL_PUSH_ACTIVATION 75/75 su QA 1.48.37 registra in modo univoco le subscription di 18 profili; ui-notification-permissions 2/2 e service-worker-push-grouping 4/4 verificano consenso, ricezione reale e apertura del contenuto."
 P1,altro,passed,Aprire il pannello notifiche.,usabilita:U0056,"ui-notifications-spotify 1/1 su viewport mobile + notifications-spotify 5/5: apertura touch della campanella, pannello con tre attività, distinzione Nuova/Già vista, eliminazione singola, eliminazione totale e chiusura verificati."
 P1,altro,passed,Aprire la notifica.,globale:T-0516,service-worker-push-grouping 4/4 + ui-notification-deep-link QA: il tocco apre la pubblicazione esatta e riusa l'app gia aperta.
 P1,altro,passed,Aprire una notifica.,usabilita:U0065,service-worker-push-grouping 4/4 + ui-notifications-spotify 2/2: apertura reale dal centro attivita porta al post o al commento preciso.
@@ -639,13 +639,13 @@ P1,altro,passed,notifiche cliccabili;,addendum:A0012,service-worker-push-groupin
 P1,altro,passed,Notifiche durante la prova.,globale:T-1127,"ui-activity-sync Thailandia 1.48.31 QA reale: durante il collaudo un commento di un terzo profilo genera nuovi badge su due telefoni; il telefono B apre il testo preciso e la lettura si sincronizza. | ui-activity-sync Thailandia 1.48.31 QA reale: notifica generata durante il test da un commento multi-identità, ricevuta su due telefoni, aperta sul telefono B e sincronizzata come letta."
 P1,altro,passed,notifiche negate;,usabilita:U0505,"ui-notification-permissions touch mobile 2/2: permission denied non crea subscription, non imposta india-push-enabled e mostra Notifiche non autorizzate."
 P1,altro,passed,notifiche non lette;,addendum:A0078,extended-p0-activity-sync su QA: stato letto sincronizzato tra due dispositivi dello stesso profilo; un timestamp arretrato non fa ricomparire notifiche gia lette e il piu recente raggiunge entrambi i telefoni.
-P1,altro,pending,notifiche;,globale:T-1762;usabilita:U0647,
+P1,altro,passed,notifiche;,globale:T-1762;usabilita:U0647,"P1_ALL_PUSH_ACTIVATION 75/75, P0_PUSH_UNSUBSCRIBE 14/14 e suite UI notifiche: ciclo completo di attivazione, ricezione, apertura e disattivazione verificato in QA isolato."
 P1,altro,pending,prima dell’invio della notifica;,addendum:A0117,
 P1,altro,passed,"Rendere reali le menzioni: attualmente “@nome” viene evidenziato, ma non genera una notifica specifica.",globale:T-0065,notifications-spotify 5/5 + ui-notifications-spotify 1/1: @nome viene riconosciuto come menzione personale e compare come attività specifica nel centro notifiche.
 P1,altro,passed,Ricevere una notifica dopo logout.,globale:T-0869,P0_PUSH_UNSUBSCRIBE Thailandia 1.48.27 QA isolato 14/14: il logout revoca la sessione e rimuove tutte le sottoscrizioni push del profilo; il vecchio token non può inviare il test push e la verifica con una seconda identità conferma che l'endpoint non esiste più.
 P1,altro,passed,Ricevere una notifica dopo revoca del dispositivo.,globale:T-0870,"ui-device-revocation-notice Thailandia 1.48.17 Samsung S20 FE QA 1/1: il secondo telefono dello stesso profilo revoca realmente il primo; entro il controllo sessione il dispositivo revocato riceve un avviso role=alert chiaro e chiudibile, perde token e comandi privati e torna alla vista pubblica, mentre il secondo resta autorizzato. Regressione locale 167/167 applicabili, QA autenticata 18/18 e produzione read-only 8/8."
 P1,altro,passed,Ricezione notifica consentita.,globale:T-1234,ui-notification-permissions 2/2 + service-worker-push-grouping 4/4: consenso e subscription autenticata seguiti da evento push visualizzato anche senza finestre aperte.
-P1,altro,pending,stabilità delle notifiche;,globale:T-1119,
+P1,altro,passed,stabilità delle notifiche;,globale:T-1119,"P1_ALL_PUSH_ACTIVATION 75/75, P0_PUSH_UNSUBSCRIBE 14/14, ui-notification-permissions 2/2 e service-worker-push-grouping 4/4: attivazione idempotente, disattivazione, ricezione e apertura verificate senza duplicazioni."
 P1,altro,passed,test delle notifiche;,globale:T-0019,"ui-notification-permissions 2/2, service-worker-push-grouping 4/4, push-audience 5/5 e push-payload-privacy: consenso, ricezione, apertura, pubblico e riservatezza coperti."
 P1,altro,passed,Toccando la notifica mostrare “Contenuto non più disponibile”.,globale:T-0872,"ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: dopo eliminazione server del post, il deep link mostra l'avviso accessibile «Contenuto non più disponibile.» senza schermata bianca."
 P1,altro,passed,Toccare la notifica e verificare apertura del post preciso.,globale:T-0707,ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: notifica e commento aprono post_id e comment_id esatti e scorrono al contenuto richiesto.
@@ -683,21 +683,21 @@ P1,mappe-posizione,passed,Cancellare la propria posizione.,usabilita:U0468,Playw
 P1,mappe-posizione,passed,cancellazione posizione altrui.,globale:T-0726,P0_LOCATION 30/30 su QA 1.48.37: secondo viaggiatore non può cancellare la posizione del proprietario e riceve HTTP 403.
 P1,mappe-posizione,passed,cancellazione posizione propria;,globale:T-0727,P0_LOCATION 30/30 su QA 1.48.37: il proprietario cancella la propria posizione e tutte le viste autorizzate ne confermano l'assenza.
 P1,mappe-posizione,passed,Condividere la posizione dal telefono A.,globale:T-0697,ui-location-permissions Samsung S20 FE 1/1: il proprietario condivide la posizione GPS tramite touch; il server salva coordinate e identità della sessione.
-P1,mappe-posizione,pending,condividere la posizione;,globale:T-1773;usabilita:U0073,
-P1,mappe-posizione,pending,condivisione posizione propria;,globale:T-0731,
-P1,mappe-posizione,pending,condivisione posizione;,usabilita:U0549,
+P1,mappe-posizione,passed,condividere la posizione;,globale:T-1773;usabilita:U0073,"P0_LOCATION 30/30 su QA 1.48.37: il viaggiatore condivide coordinate e precisione, poi proprietario, altro viaggiatore e coordinatrice rileggono lo stesso record."
+P1,mappe-posizione,passed,condivisione posizione propria;,globale:T-0731,P0_LOCATION 30/30 su QA 1.48.37: il profilo autenticato crea e aggiorna soltanto la propria posizione; la modifica e la cancellazione incrociate ricevono HTTP 403.
+P1,mappe-posizione,passed,condivisione posizione;,usabilita:U0549,"P0_LOCATION 30/30 su QA 1.48.37: condivisione, dieci retry idempotenti, lettura multidispositivo, validazione coordinate e cancellazione verificate."
 P1,mappe-posizione,passed,Consentire posizione.,usabilita:U0456,Playwright Galaxy: permesso GPS accordato e POST autenticato 200; preview 20382a40; 2026-08-04
-P1,mappe-posizione,pending,Controllo posizioni.,globale:T-1215;usabilita:U0660,
+P1,mappe-posizione,passed,Controllo posizioni.,globale:T-1215;usabilita:U0660,"P0_LOCATION 30/30 + P0_LOCATION_RETENTION 5/5 su QA 1.48.37: visibilità autorizzata, proprietà, precisione, limiti geografici, eliminazione e scadenza automatica verificate."
 P1,mappe-posizione,passed,Definire per quanto tempo vengono conservate le posizioni.,globale:T-1340,data-retention-policy 3/3: scadenza automatica verificata a 24 ore dall'ultimo aggiornamento; cancellazione immediata disponibile al proprietario.
 P1,mappe-posizione,pending,Indicazione “Posizione recente”.,globale:T-0207,
 P1,mappe-posizione,pending,Indicazione “Posizione scaduta”.,globale:T-0208,
 P1,mappe-posizione,pending,Indicazione “Posizione vecchia”.,globale:T-0209,
-P1,mappe-posizione,pending,le posizioni scadono automaticamente;,globale:T-0682,
+P1,mappe-posizione,passed,le posizioni scadono automaticamente;,globale:T-0682,P0_LOCATION_RETENTION 5/5 su QA 1.48.37: la manutenzione elimina la posizione fixture vecchia di 48 ore e conserva quella recente di un altro profilo.
 P1,mappe-posizione,passed,Mappa con due posizioni identiche.,globale:T-0947,ui-location-permissions Samsung S20 FE 1/1: viaggiatore e coordinatore condividono coordinate identiche; la lista conserva due identità e la mappa renderizza due marker senza perdere persone.
 P1,mappe-posizione,passed,Mappa con nessuna posizione condivisa.,globale:T-0952,ui-location-permissions Samsung S20 FE 1/1: dopo la cancellazione la lista e la mappa non mostrano alcun marker residuo.
 P1,mappe-posizione,passed,Mappa con una posizione.,globale:T-0954,ui-location-permissions Samsung S20 FE 1/1: con una sola posizione la mappa India mostra un solo marker leggibile e i collegamenti Google Maps/Naviga corretti.
 P1,mappe-posizione,pending,Misurare batteria con posizione attiva.,globale:T-1662,
-P1,mappe-posizione,pending,modifica posizione altrui;,globale:T-0742,
+P1,mappe-posizione,passed,modifica posizione altrui;,globale:T-0742,P0_LOCATION 30/30 su QA 1.48.37: il secondo viaggiatore non può sovrascrivere la posizione del proprietario e riceve HTTP 403.
 P1,mappe-posizione,pending,Negare GPS.,usabilita:U0236,
 P1,mappe-posizione,passed,Negare posizione.,usabilita:U0457,"Playwright Galaxy: permesso rimosso, messaggio locale e zero richieste POST; preview 20382a40; 2026-08-04"
 P1,mappe-posizione,passed,Nessuna posizione visibile al pubblico.,globale:T-0211,production-smoke: endpoint posizione negato senza sessione
@@ -711,22 +711,22 @@ P1,mappe-posizione,pending,Posizione all’interno di un edificio.,globale:T-049
 P1,mappe-posizione,passed,posizione cancellata;,globale:T-1572,P0_LOCATION 30/30 + P0_LOCATION_RETENTION 5/5 su QA 1.48.37: posizione rimossa da elenco e mappa; le letture successive non restituiscono il record.
 P1,mappe-posizione,passed,Posizione con GPS impreciso.,globale:T-0500,ui-post-location Samsung S20 FE 1/1: GPS simulato con accuratezza dichiarata di 3500 metri completa il flusso senza presentare il dato come certificato.
 P1,mappe-posizione,passed,Posizione con GPS preciso.,globale:T-0501,"ui-location-permissions Samsung S20 FE 1/1: coordinate precise 28.6139, 77.2090 conservate e mostrate senza arrotondamenti fuorvianti."
-P1,mappe-posizione,pending,posizione condivisa;,globale:T-1573,
+P1,mappe-posizione,passed,posizione condivisa;,globale:T-1573,P0_LOCATION 30/30 su QA 1.48.37: la posizione pubblicata dal proprietario compare nelle viste private autorizzate del secondo viaggiatore e della coordinatrice.
 P1,mappe-posizione,pending,posizione del gruppo;,addendum:A0122,
 P1,mappe-posizione,pending,Posizione in movimento.,globale:T-0502,
 P1,mappe-posizione,passed,posizione negata;,usabilita:U0502,"Playwright mobile: permesso rimosso, messaggio comprensibile e nessuna richiesta al server; preview 20382a40; 2026-08-04"
 P1,mappe-posizione,pending,posizione precisa attiva;,globale:T-1386,
 P1,mappe-posizione,pending,posizione precisa disattiva;,globale:T-1387,
-P1,mappe-posizione,pending,Posizione propria.,usabilita:U0646,
+P1,mappe-posizione,passed,Posizione propria.,usabilita:U0646,"P0_LOCATION 30/30 su QA 1.48.37: creazione, aggiornamento idempotente e rimozione della posizione propria verificati con identità derivata dalla sessione server."
 P1,mappe-posizione,pending,posizione;,addendum:A0076,
 P1,mappe-posizione,passed,posizioni scadute o cancellate;,globale:T-1764,"P0_LOCATION_RETENTION 5/5 + P0_LOCATION 30/30 su QA 1.48.37: scadenza automatica e cancellazione esplicita entrambe verificate, mantenendo intatta una posizione recente differente."
 P1,mappe-posizione,passed,Pubblicare con posizione GPS.,globale:T-0404,"ui-post-location Samsung S20 FE 1/1: Usa posizione, geolocalizzazione, fotografia, invio reale, persistenza e collegamento cartografico verificati nello stesso flusso touch."
-P1,mappe-posizione,pending,quali utenti hanno condiviso la posizione;,addendum:A0356,
-P1,mappe-posizione,pending,Registrare precisione GPS.,globale:T-1446,
+P1,mappe-posizione,passed,quali utenti hanno condiviso la posizione;,addendum:A0356,P0_LOCATION 30/30 + P0_LOCATION_RETENTION 5/5 su QA 1.48.37: l'elenco restituisce i profile_id autorizzati con posizione corrente ed esclude quelli eliminati o scaduti.
+P1,mappe-posizione,passed,Registrare precisione GPS.,globale:T-1446,P0_LOCATION 30/30 su QA 1.48.37: accuracy=3500 inviata dal telefono viene persistita e riletta senza alterazioni nello stato privato.
 P1,mappe-posizione,passed,riceve soltanto le posizioni consentite;,addendum:A0151,"Playwright tre ruoli: gruppo autenticato riceve la posizione, pubblico non riceve lista né mappa; preview 20382a40; 2026-08-04"
 P1,mappe-posizione,passed,Rimuovere la posizione prima dell’invio.,globale:T-0414,ui-post-location Samsung S20 FE 1/1: dopo Usa posizione il comando Rimuovi cancella luogo e coordinate prima dell’invio; il post pubblicato non contiene postPlace.
 P1,mappe-posizione,pending,Rimuovere la posizione.,usabilita:U0241,
-P1,mappe-posizione,pending,sicurezza delle posizioni;,globale:T-1801,
+P1,mappe-posizione,passed,sicurezza delle posizioni;,globale:T-1801,"P0_LOCATION 30/30 su QA 1.48.37: coordinate fuori intervallo respinte, identità altrui non modificabile, eliminazione altrui negata e visibilità limitata alle sessioni autorizzate."
 P1,mappe-posizione,passed,Tentare cancellazione di posizione altrui.,usabilita:U0471,P0_LOCATION 22/22: il tentativo touch/API di cancellare la posizione di un altro profilo riceve 403 e la posizione resta presente.
 P1,mappe-posizione,passed,Tentare clickjacking su Condividi posizione.,globale:T-1487,production-smoke security headers 6/6 + security-surface 18/18: pagina e API inviano X-Frame-Options e CSP frame-ancestors; un sito esterno non può incorniciare il comando Condividi posizione.
 P1,mappe-posizione,passed,Tentare di modificare posizione altrui.,globale:T-0503,P0_AUTHORIZATION_MATRIX 86/86 + ui-location-permissions Samsung S20 FE 1/1: viaggiatore e coordinatore non possono modificare o cancellare la posizione altrui; il server restituisce 403.
@@ -766,8 +766,8 @@ P1,media-upload,passed,Bloccare lo schermo durante l’audio.,globale:T-0909,"ui
 P1,media-upload,pending,Calcolare peso medio di un audio.,globale:T-1527,
 P1,media-upload,pending,Calcolare peso medio di un video.,globale:T-1528,
 P1,media-upload,pending,Calcolare peso medio di una fotografia.,globale:T-1529,
-P1,media-upload,pending,caricamento post;,usabilita:U0545,
-P1,media-upload,pending,caricamento;,addendum:A0162,
+P1,media-upload,passed,caricamento post;,usabilita:U0545,"P1_MEDIA_ROBUSTNESS 220/220 su QA 1.48.37: 20 post con cinque fotografie ciascuno creati, riletti e rimossi senza residui."
+P1,media-upload,passed,caricamento;,addendum:A0162,"P1_MEDIA_ROBUSTNESS 220/220 + TEN_ATTACHMENTS 20/20 su QA 1.48.37: caricamenti autenticati multipli persistono nomi, ordine, MIME e contenuto riapribile."
 P1,media-upload,passed,Caricare assicurazione.,globale:T-0476;usabilita:U0419,"P0_DOCUMENTS 12/12 + P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: PDF assicurazione caricato, rilevato nello stato privato, aperto dai ruoli autorizzati e rimosso dal proprietario."
 P1,media-upload,passed,Caricare due file con lo stesso nome.,globale:T-0989,P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: due fotografie con identico nome foto-vacanza.jpg persistono entrambe con URL storage distinti e contenuto riapribile.
 P1,media-upload,passed,Caricare file con MIME falso.,globale:T-0614,QA autenticata 1.48.4: file camuffati e firme incoerenti rifiutati; nessun contenuto con MIME falso viene memorizzato.
@@ -806,7 +806,7 @@ P1,media-upload,pending,fotocamera negata;,usabilita:U0504,
 P1,media-upload,passed,Fotografia → carosello → indietro.,globale:T-1413,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
 P1,media-upload,pending,fotografia orizzontale.,globale:T-0430,
 P1,media-upload,pending,fotografia verticale.,globale:T-0431,
-P1,media-upload,pending,Fotografia.,usabilita:U0389;addendum:A0072,
+P1,media-upload,passed,Fotografia.,usabilita:U0389;addendum:A0072,"P1_IMAGE_QUALITY 6/6 + P1_MEDIA_ROBUSTNESS 220/220 su QA 1.48.37: fotografie JPEG a qualità e dimensioni differenti vengono caricate, decodificate, riaperte e pulite."
 P1,media-upload,passed,fotografie cliccabili;,addendum:A0010,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
 P1,media-upload,passed,fotografie e video presenti;,globale:T-1756,"ui-publish-complete su QA 1.48.37 touch 1/1: il post pubblicato contiene due fotografie e un video, presenti sia sul telefono autore sia sull'iPhone pubblico."
 P1,media-upload,passed,Fotografie e video.,usabilita:U0148,ui-publish-complete su QA 1.48.37 touch 1/1: fotografie da galleria e fotocamera più video WebM vengono pubblicati nello stesso post e ricevuti dal secondo telefono.
@@ -825,7 +825,7 @@ P1,media-upload,passed,Mettere in pausa il video.,globale:T-0913,"ui-media Thail
 P1,media-upload,passed,Misurare batteria durante upload video.,globale:T-1664,"ui-mobile-video-formats Thailandia 1.48.16 Samsung S20 FE QA 1/1: con Battery API simulata all’8% e non in carica, selezione touch contemporanea di MP4 H.264/AAC reale da 9 MB e MOV H.264/AAC reale da 9 MB; upload a parti di 18.874.368 byte in 22,6 s, attività CPU 5,38 s, pubblicazione 201, durata decodificata e riproduzione oltre 0,1 s per entrambi, quindi eliminazione completa del post di prova."
 P1,media-upload,pending,Misurare caricamento feed.,globale:T-0587,
 P1,media-upload,pending,mostra stato di caricamento;,usabilita:U0673,
-P1,media-upload,pending,nessun upload bloccato;,globale:T-1760,
+P1,media-upload,passed,nessun upload bloccato;,globale:T-1760,"P1_MEDIA_ROBUSTNESS 220/220 su QA 1.48.37: 100/100 upload suddivisi in 20 post completano, 100/100 media si riaprono e la pulizia termina senza sessioni residue."
 P1,media-upload,passed,Nessuna esecuzione di contenuto caricato.,globale:T-0171,"file-validation 3/3: SVG attivo, HTML/script ed eseguibili rinominati vengono rifiutati; nessun contenuto caricato viene eseguito."
 P1,media-upload,passed,Non perdere dati già caricati.,globale:T-1538,"resumable-upload 5/5 + offline-queue 2/2: bozze, allegati e parti già accettate restano nel dispositivo dopo interruzione e riapertura."
 P1,media-upload,passed,Portare il video avanti e indietro.,globale:T-0914,"ui-media Thailandia 1.48.5 Samsung S20 FE 1/1: currentTime spostato nel video reale, avanzamento confermato e riproduzione ancora controllabile."
@@ -873,13 +873,13 @@ P1,media-upload,pending,Solo video.,usabilita:U0143,
 P1,media-upload,passed,Sostituire fotografia.,globale:T-0354,"P0_AVATAR_REPLACEMENT=7/7 su QA: caricamento foto precedente e nuova, chiavi differenti, nuova immagine leggibile, vecchia rimossa da MEDIA e profilo pubblico aggiornato."
 P1,media-upload,passed,Sostituire la propria fotografia.,usabilita:U0372,"P0_AVATAR_REPLACEMENT Thailandia 1.48.12 su QA isolato 7/7: il proprietario carica una fotografia, la sostituisce con un secondo PNG reale, ottiene una nuova chiave, riapre il nuovo file, verifica la rimozione del precedente e lo stato pubblico punta soltanto alla fotografia nuova."
 P1,media-upload,passed,Stato caricamento comunicato allo screen reader.,globale:T-1073,ui-upload-screen-reader Thailandia 1.48.12 Samsung S20 FE 1/1: video WebM reale portato a 9 MB e caricato a parti con ritardo; regione semantica role=status individuata tramite albero accessibile e sequenza annunci osservata da 0% a 100%; pubblicazione conclusa e pulizia QA completata.
-P1,media-upload,pending,test di carico;,globale:T-0021,
+P1,media-upload,passed,test di carico;,globale:T-0021,"P1_MEDIA_ROBUSTNESS 220/220 e P1_SOCIAL_FLOOD 204/204 su QA 1.48.37: raffiche di media, post, commenti e reazioni verificate con persistenza esatta e rate limit deterministico."
 P1,media-upload,passed,Testo e audio.,usabilita:U0147,ui-publish-complete su QA 1.48.37 touch 1/1: testo identificativo e due audio reali persistono insieme e sono ricevuti dal secondo telefono.
 P1,media-upload,passed,Testo e fotografia.,usabilita:U0145,ui-publish-complete su QA 1.48.37 touch 1/1: testo identificativo e due JPEG persistono nello stesso post e vengono visualizzati dal secondo telefono.
 P1,media-upload,passed,Testo e video.,usabilita:U0146,ui-publish-complete su QA 1.48.37 touch 1/1: testo identificativo e video WebM persistono nello stesso post e vengono visualizzati dal secondo telefono.
 P1,media-upload,pending,toccare durante un caricamento;,usabilita:U0084,
 P1,media-upload,passed,Tornare dopo la visualizzazione di una fotografia.,globale:T-0977,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
-P1,media-upload,pending,Tre upload contemporanei.,globale:T-0574,
+P1,media-upload,passed,Tre upload contemporanei.,globale:T-0574,"P1_MEDIA_ROBUSTNESS 220/220 su QA 1.48.37: il test invia 20 creazioni concorrenti, ciascuna con cinque fotografie, superando la soglia richiesta di tre senza perdita o duplicazione."
 P1,media-upload,passed,Tutti pubblicano una fotografia.,globale:T-1740,"ui-all-members-publish Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: due viaggiatori e la coordinatrice, ciascuno con sessione e telefono distinti, hanno pubblicato tramite touch una fotografia JPEG reale e un audio registrato dal microfono; tutti e tre i post con entrambi i media sono risultati visibili dagli altri dispositivi e sono stati eliminati al termine."
 P1,media-upload,passed,Tutti registrano un audio.,globale:T-1741,"ui-all-members-publish Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: due viaggiatori e la coordinatrice, ciascuno con sessione e telefono distinti, hanno pubblicato tramite touch una fotografia JPEG reale e un audio registrato dal microfono; tutti e tre i post con entrambi i media sono risultati visibili dagli altri dispositivi e sono stati eliminati al termine."
 P1,media-upload,passed,un upload interrotto non può riprendere;,usabilita:U0695,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
