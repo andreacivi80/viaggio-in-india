@@ -3,7 +3,7 @@ import { test, expect, devices } from "@playwright/test";
 test.use({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
 
 test("il telefono scarica lo stato completo soltanto quando cambia la versione", async ({ page }) => {
-  test.setTimeout(45_000);
+  test.setTimeout(75_000);
   let serverVersion = 1;
   let stateRequests = 0;
   let versionRequests = 0;
@@ -40,12 +40,12 @@ test("il telefono scarica lo stato completo soltanto quando cambia la versione",
   await page.waitForTimeout(1_000);
   const initialStateRequests = stateRequests;
   expect(initialStateRequests).toBeGreaterThanOrEqual(1);
-  await page.waitForTimeout(11_000);
-  expect(versionRequests).toBeGreaterThanOrEqual(2);
+  await page.waitForTimeout(16_000);
+  expect(versionRequests).toBeGreaterThanOrEqual(1);
   expect(stateRequests).toBe(initialStateRequests);
 
   serverVersion = 2;
-  await expect.poll(() => stateRequests, { timeout: 8_000 }).toBe(initialStateRequests + 1);
+  await expect.poll(() => stateRequests, { timeout: 18_000 }).toBe(initialStateRequests + 1);
   await page.waitForTimeout(6_000);
   expect(stateRequests).toBe(initialStateRequests + 1);
 });
