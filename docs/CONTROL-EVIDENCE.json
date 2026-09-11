@@ -513,4 +513,12 @@
   ,{ "control": "Tre upload contemporanei.", "evidence": "P1_MEDIA_ROBUSTNESS 220/220 su QA 1.48.37: il test invia 20 creazioni concorrenti, ciascuna con cinque fotografie, superando la soglia richiesta di tre senza perdita o duplicazione." }
   ,{ "control": "Notifica con apertura del commento preciso.", "evidence": "ui-notification-deep-link QA 1/1: una notifica reale apre esattamente il post e il commento indicati e mantiene visibile la discussione corretta." }
   ,{ "control": "Inviare notifica relativa a un contenuto successivamente eliminato.", "evidence": "ui-notification-deep-link QA 1/1 + ui-notifications-spotify 2/2: dopo l'eliminazione del contenuto il collegamento non mostra dati obsoleti e restituisce l'avviso Contenuto non più disponibile." }
+  ,{ "control": "Simulare rete 2G.", "evidence": "ui-network-india QA 7/7: profilo cellulare 2G a 110 kbps, upload 50 kbps e 900 ms di latenza apre la bacheca mobile senza pagina bianca entro il limite." }
+  ,{ "control": "sono stati superati i test di rete lenta;", "evidence": "ui-network-india QA 7/7: 2G, Wi-Fi debole, 3G, roaming congestionato ed eSIM 4G superati; app shell e moduli differiti restano utilizzabili." }
+  ,{ "control": "verifica dall’India o da una rete con caratteristiche equivalenti;", "evidence": "ui-network-india QA 7/7: quattro profili estero equivalenti e un profilo 2G estremo sono emulati con banda, upload e latenza controllati." }
+  ,{ "control": "Verificare comportamento offline.", "evidence": "ui-network-india 7/7 + ui-offline 1/1 + ui-offline-logout 1/1: riapertura, invio differito e blocco del dispositivo funzionano senza rete." }
+  ,{ "control": "HTML utilizzabile offline.", "evidence": "ui-network-india QA 7/7: HTML, JavaScript e CSS dell'app shell sono presenti con MIME corretto nella cache e la bacheca Android si riapre offline." }
+  ,{ "control": "continuazione dopo perdita della rete;", "evidence": "ui-offline QA 1/1: un invio iniziato senza rete sopravvive alla chiusura e viene trasmesso una sola volta al ritorno della connessione." }
+  ,{ "control": "gli allegati vengono persi offline;", "evidence": "ui-offline-media-drafts QA 1/1: tre bozze multimediali reali restano disponibili offline e si riaprono dopo il retry." }
+  ,{ "control": "vecchi Service Worker;", "evidence": "ui-p0-cache-recovery QA 1/1: cache vecchie e difettose vengono eliminate mantenendo disponibile l'app offline." }
 ]

@@ -936,7 +936,7 @@ P1,sync-rete,pending,Centro sincronizzazione visibile.,globale:T-0098,
 P1,sync-rete,passed,Cercare segreti nel Service Worker.,globale:T-1500,"suite 1.48.4 163/163 eseguiti (150 passati, 13 skip condizionati, 0 errori): scansione sorgente e Service Worker senza password, token o segreti incorporati."
 P1,sync-rete,pending,coda offline vuota oppure correttamente registrata;,globale:T-1750,
 P1,sync-rete,passed,commenti sincronizzati;,globale:T-1751,"P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: tre identità creano commenti distinti e proprietario, secondo viaggiatore e coordinatrice rileggono lo stesso insieme, autori, testo e timestamp."
-P1,sync-rete,pending,continuazione dopo perdita della rete;,globale:T-0149,
+P1,sync-rete,passed,continuazione dopo perdita della rete;,globale:T-0149,ui-offline QA 1/1: un invio iniziato senza rete sopravvive alla chiusura e viene trasmesso una sola volta al ritorno della connessione.
 P1,sync-rete,pending,controlli richieste di rete;,addendum:A0205,
 P1,sync-rete,passed,dati di emergenza disponibili offline.,globale:T-1752,ui-cache-recovery Samsung S20 FE 1/1: con rete disattivata il pannello Emergenza e dati offline resta apribile e offre chiamata diretta al 112 e alla reperibilità dell’Ambasciata.
 P1,sync-rete,pending,è stata eseguita una prova dalla rete indiana;,globale:T-0666,
@@ -944,9 +944,9 @@ P1,sync-rete,pending,Emergenza offline.,globale:T-0249,
 P1,sync-rete,pending,Errore Service Worker.,globale:T-1549,
 P1,sync-rete,passed,Eseguire logout senza rete.,globale:T-0760,"ui-offline-logout Thailandia 1.48.7 Samsung S20 FE 1/1: rete disattivata prima del tocco su Blocca; token, profilo, ruolo e codice locale rimossi, schermata privata chiusa e riapertura online rimasta pubblica."
 P1,sync-rete,passed,Gestione delle modifiche concorrenti.,globale:T-0101,QA autenticata 1.48.4: concorrenza su due dispositivi e carico con 10 pubblicazioni simultanee completati senza duplicazioni o perdita dello stato finale.
-P1,sync-rete,pending,gli allegati vengono persi offline;,usabilita:U0694,
+P1,sync-rete,passed,gli allegati vengono persi offline;,usabilita:U0694,ui-offline-media-drafts QA 1/1: tre bozze multimediali reali restano disponibili offline e si riaprono dopo il retry.
 P1,sync-rete,passed,Hotel e indirizzi offline.,globale:T-0119,ui-cache-recovery Samsung S20 FE 1/1: dopo riapertura completamente offline il Diario mostra nome e indirizzo del Rockland Hotel di Delhi dalla shell locale aggiornata.
-P1,sync-rete,pending,HTML utilizzabile offline.,globale:T-1718,
+P1,sync-rete,passed,HTML utilizzabile offline.,globale:T-1718,"ui-network-india QA 7/7: HTML, JavaScript e CSS dell'app shell sono presenti con MIME corretto nella cache e la bacheca Android si riapre offline."
 P1,sync-rete,passed,idempotenza;,globale:T-1792,production-smoke: idempotenza coperta su quattro tipi di scrittura
 P1,sync-rete,pending,Indicazione “Ultima sincronizzazione”.,globale:T-0105,
 P1,sync-rete,passed,Informazioni di emergenza offline.,globale:T-0122,ui-cache-recovery Samsung S20 FE 1/1: numeri e descrizioni di emergenza sono inclusi nella shell locale e restano leggibili dopo riapertura completamente offline.
@@ -977,12 +977,12 @@ P1,sync-rete,passed,Ritorno della rete.,globale:T-1237,"ui-offline QA: ritorno o
 P1,sync-rete,passed,Salvare più bozze offline.,globale:T-0849,offline-queue 3/3: due bozze post distinte restano contemporaneamente in IndexedDB con chiavi idempotenti differenti e vengono inviate una sola volta ciascuna.
 P1,sync-rete,passed,Salvataggio offline dei commenti.,globale:T-0129,"offline-queue 3/3: commento offline conserva post_id, testo e chiave idempotente come operazione separata e viene rimosso dalla coda soltanto dopo risposta positiva."
 P1,sync-rete,pending,Salvataggio offline delle posizioni.,globale:T-0132,
-P1,sync-rete,pending,Simulare rete 2G.,globale:T-0553,
+P1,sync-rete,passed,Simulare rete 2G.,globale:T-0553,"ui-network-india QA 7/7: profilo cellulare 2G a 110 kbps, upload 50 kbps e 900 ms di latenza apre la bacheca mobile senza pagina bianca entro il limite."
 P1,sync-rete,passed,Simulare rete 3G.,globale:T-0554,ui-network-india QA: profilo 3G indiano simulato con throttling mobile e caricamento completo della bacheca.
 P1,sync-rete,pending,sincronizzazione fallita;,usabilita:U0510,
 P1,sync-rete,passed,sincronizzazione incrementale;,globale:T-1802,P0_SYNC_DELETE 115/115 su QA 1.48.37: sync_version aumenta dopo la modifica; 100 letture concorrenti restituiscono la stessa versione e non la alterano.
 P1,sync-rete,passed,Sincronizzazione sul secondo telefono.,usabilita:U0314,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P1,sync-rete,pending,sono stati superati i test di rete lenta;,globale:T-0688,
+P1,sync-rete,passed,sono stati superati i test di rete lenta;,globale:T-0688,"ui-network-india QA 7/7: 2G, Wi-Fi debole, 3G, roaming congestionato ed eSIM 4G superati; app shell e moduli differiti restano utilizzabili."
 P1,sync-rete,passed,Stato letto/non letto sincronizzato tra dispositivi.,globale:T-0091,"activity-sync Thailandia 1.48.16: integrazione API QA 1/1 e Playwright touch Samsung S20 FE 1/1 con due telefoni distinti dello stesso profilo; badge inizialmente visibile su entrambi, apertura Attività recenti sul primo, stato letto persistito in D1 e badge rimosso automaticamente sul secondo entro il polling. Un aggiornamento più vecchio non regredisce lo stato; aggiornamento inverso converge sul primo dispositivo. Regressione locale 166/166 applicabili, QA autenticata 18/18 e produzione read-only 8/8; backup pre-migrazione verificato SHA-256 2ED6F5DA…204259."
 P1,sync-rete,passed,test automatico del Service Worker.,globale:T-0013,production-smoke: revisione e Service Worker verificati sul dominio live
 P1,sync-rete,passed,test di idempotenza;,globale:T-0023,"production-smoke: retry idempotenti di commenti, reazioni, post e documenti"
@@ -990,15 +990,15 @@ P1,sync-rete,passed,test offline;,globale:T-0026;usabilita:U0726,offline-queue: 
 P1,sync-rete,passed,test rete lenta;,globale:T-1810;usabilita:U0725,"ui-network-india 6/6 e ui-slow-activation 1/1: Wi-Fi debole, 3G, roaming congestionato, eSIM e attivazione lenta superati."
 P1,sync-rete,passed,toccare con rete lenta;,usabilita:U0085,ui-slow-activation QA su telefono mobile: apertura invito e collegamento tramite gesti reali con rete rallentata.
 P1,sync-rete,passed,toccare senza rete;,usabilita:U0086,"ui-offline e ui-offline-logout QA: composizione, blocco dispositivo e riapertura mediante gesti touch senza connessione."
-P1,sync-rete,pending,vecchi Service Worker;,addendum:A0407,
-P1,sync-rete,pending,verifica dall’India o da una rete con caratteristiche equivalenti;,globale:T-1811,
+P1,sync-rete,passed,vecchi Service Worker;,addendum:A0407,ui-p0-cache-recovery QA 1/1: cache vecchie e difettose vengono eliminate mantenendo disponibile l'app offline.
+P1,sync-rete,passed,verifica dall’India o da una rete con caratteristiche equivalenti;,globale:T-1811,"ui-network-india QA 7/7: quattro profili estero equivalenti e un profilo 2G estremo sono emulati con banda, upload e latenza controllati."
 P1,sync-rete,passed,Verificare aggiornamento al successivo ritorno della rete.,globale:T-0831,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: al successivo ritorno della rete la coda viene svuotata, il feed aggiornato e il post compare una sola volta."
 P1,sync-rete,passed,Verificare aggiornamento con telefono offline.,globale:T-0832,"ui-offline Samsung S20 FE 1/1: il telefono viene posto offline, la pagina chiusa e riaperta online; coda svuotata e stato aggiornato senza duplicazioni."
 P1,sync-rete,pending,Verificare alternativa offline.,globale:T-0397,
 P1,sync-rete,passed,"Verificare bozze, se devono essere sincronizzate.",globale:T-1604,"draft-privacy 1/1: decisione verificata di non sincronizzare le bozze tra dispositivi; testo e coda offline restano negli archivi locali del telefono, vengono rimossi dopo la pubblicazione e non esistono endpoint o tabelle server per bozze incompiute."
 P1,sync-rete,pending,Verificare che il Service Worker utilizzi la cache 1.21.5.,globale:T-0012,
 P1,sync-rete,passed,Verificare che non sia necessario cancellare manualmente la cache.,addendum:A0093,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
-P1,sync-rete,pending,Verificare comportamento offline.,globale:T-1639,
+P1,sync-rete,passed,Verificare comportamento offline.,globale:T-1639,"ui-network-india 7/7 + ui-offline 1/1 + ui-offline-logout 1/1: riapertura, invio differito e blocco del dispositivo funzionano senza rete."
 P1,sync-rete,passed,Verificare funzionamento con rete assente.,globale:T-1192,"ui-network-india 6/6 + ui-p0-cache-recovery 1/1 + ui-offline 1/1 su Thailandia 1.48.4: shell pubblica, emergenze e invio differito funzionano con rete assente."
 P1,sync-rete,passed,Verificare gestione della revoca al ritorno della rete.,globale:T-0769,"ui-session-history Samsung S20 FE 2/2: il telefono resta temporaneamente con la sessione locale mentre è offline; dopo la revoca da un secondo dispositivo e il ritorno online riceve 401, cancella token/ruolo/profilo e torna pubblico."
 P1,sync-rete,passed,Verificare nessuna anteprima nella cache pubblica.,globale:T-1007,"public-cache 1/1 + service-worker-offline 2/2: campi personali, contenuti non pubblici, API private e documenti non vengono inseriti nella cache pubblica o serviti offline."

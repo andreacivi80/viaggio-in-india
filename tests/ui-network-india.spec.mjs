@@ -17,6 +17,7 @@ async function emulateNetwork(page, profile) {
 }
 
 const networkProfiles = [
+  { name: "rete cellulare 2G", latency: 900, downloadKbps: 110, uploadKbps: 50, connectionType: "cellular2g" },
   { name: "Wi-Fi indiana debole", latency: 280, downloadKbps: 1400, uploadKbps: 450, connectionType: "wifi" },
   { name: "SIM indiana 3G", latency: 450, downloadKbps: 420, uploadKbps: 160, connectionType: "cellular3g" },
   { name: "roaming italiano congestionato", latency: 700, downloadKbps: 256, uploadKbps: 96, connectionType: "cellular3g" },
