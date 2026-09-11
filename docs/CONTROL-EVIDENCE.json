@@ -535,4 +535,11 @@
   ,{ "control": "Commento con audio.", "evidence": "ui-comment-media QA 1.48.40: audio WAV reale allegato tramite interfaccia touch a un commento, POST 201, player visibile e durata valida dopo la sincronizzazione." }
   ,{ "control": "Commento con fotografia.", "evidence": "ui-comment-media QA 1.48.40: fotografia JPEG reale allegata a un commento, salvata, riletta e decodificata con larghezza naturale superiore a 100 px." }
   ,{ "control": "Commento con video.", "evidence": "ui-comment-media QA 1.48.40: video WebM reale allegato a un commento, salvato, riletto e riconosciuto dal player con durata valida; pubblicazione di prova poi eliminata." }
+  ,{ "control": "Negare GPS.", "evidence": "ui-location QA 1.48.40: revoca del permesso geolocalizzazione sul telefono, messaggio Permesso posizione non disponibile e zero POST verso /api/locations." }
+  ,{ "control": "Non visualizzare posizione.", "evidence": "ui-location QA 1.48.40: il contesto pubblico non riceve elenco, mappa o comandi posizione; l'area resta protetta dalla sessione personale." }
+  ,{ "control": "posizione del gruppo;", "evidence": "ui-location QA 1.48.40: viaggiatore e coordinatrice condividono due posizioni, la vista autorizzata mostra entrambi e il marker raggruppato indica 2." }
+  ,{ "control": "posizione precisa attiva;", "evidence": "ui-location QA 1.48.40: permesso attivo, coordinate 28.6139/77.2090 e precisione ±3500 m persistite e mostrate con avviso di segnale debole." }
+  ,{ "control": "posizione precisa disattiva;", "evidence": "ui-location QA 1.48.40: permesso rimosso, nessuna coordinata viene inviata; dopo nuova autorizzazione la condivisione riparte e viene poi cancellata." }
+  ,{ "control": "posizione;", "evidence": "ui-location QA 1.48.40 + P0_LOCATION 30/30: acquisizione volontaria, validazione coordinate, sincronizzazione, Google Maps, navigazione e rimozione verificate." }
+  ,{ "control": "Rimuovere la posizione.", "evidence": "ui-location QA 1.48.40: tocco Cancella posizione, DELETE 200 e scomparsa sincronizzata dalla vista del viaggiatore e della coordinatrice." }
 ]

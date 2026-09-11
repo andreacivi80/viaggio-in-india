@@ -698,34 +698,34 @@ P1,mappe-posizione,passed,Mappa con nessuna posizione condivisa.,globale:T-0952,
 P1,mappe-posizione,passed,Mappa con una posizione.,globale:T-0954,ui-location-permissions Samsung S20 FE 1/1: con una sola posizione la mappa India mostra un solo marker leggibile e i collegamenti Google Maps/Naviga corretti.
 P1,mappe-posizione,pending,Misurare batteria con posizione attiva.,globale:T-1662,
 P1,mappe-posizione,passed,modifica posizione altrui;,globale:T-0742,P0_LOCATION 30/30 su QA 1.48.37: il secondo viaggiatore non può sovrascrivere la posizione del proprietario e riceve HTTP 403.
-P1,mappe-posizione,pending,Negare GPS.,usabilita:U0236,
+P1,mappe-posizione,passed,Negare GPS.,usabilita:U0236,"ui-location QA 1.48.40: revoca del permesso geolocalizzazione sul telefono, messaggio Permesso posizione non disponibile e zero POST verso /api/locations."
 P1,mappe-posizione,passed,Negare posizione.,usabilita:U0457,"Playwright Galaxy: permesso rimosso, messaggio locale e zero richieste POST; preview 20382a40; 2026-08-04"
 P1,mappe-posizione,passed,Nessuna posizione visibile al pubblico.,globale:T-0211,production-smoke: endpoint posizione negato senza sessione
 P1,mappe-posizione,passed,Non dichiarare una posizione come certificata se non è verificabile.,globale:T-1444,ui-location-permissions Samsung S20 FE 1/1: l’interfaccia non presenta il GPS come verificato o certificato e avverte che il dato proviene dal dispositivo.
 P1,mappe-posizione,pending,non esistono posizioni;,addendum:A0302,
 P1,mappe-posizione,passed,Non mostrare posizione precisa sul blocco schermo.,globale:T-1355,"push-payload-privacy 3/3: il payload mostrabile sul blocco schermo è generico e non contiene coordinate, luogo preciso, identificativo profilo o contenuti privati."
 P1,mappe-posizione,passed,Non rendere pubblica la posizione EXIF senza consenso.,globale:T-1432,"P0_MEDIA_DELETE 14/14: fotografia JPEG reale con EXIF GPS e modello Samsung viene pubblicata senza trasferire place_name, latitude o longitude nello stato pubblico."
-P1,mappe-posizione,pending,Non visualizzare posizione.,usabilita:U0364,
+P1,mappe-posizione,passed,Non visualizzare posizione.,usabilita:U0364,"ui-location QA 1.48.40: il contesto pubblico non riceve elenco, mappa o comandi posizione; l'area resta protetta dalla sessione personale."
 P1,mappe-posizione,passed,Ogni posizione deve essere collegata a un profilo esistente.,globale:T-1018,migration-safety 8/8 + P1_LOCATION_PROFILE_INTEGRITY 1/1: trigger D1 rifiuta posizioni verso profili inesistenti e pulisce la posizione quando il profilo viene eliminato.
 P1,mappe-posizione,pending,Posizione all’interno di un edificio.,globale:T-0499,
 P1,mappe-posizione,passed,posizione cancellata;,globale:T-1572,P0_LOCATION 30/30 + P0_LOCATION_RETENTION 5/5 su QA 1.48.37: posizione rimossa da elenco e mappa; le letture successive non restituiscono il record.
 P1,mappe-posizione,passed,Posizione con GPS impreciso.,globale:T-0500,ui-post-location Samsung S20 FE 1/1: GPS simulato con accuratezza dichiarata di 3500 metri completa il flusso senza presentare il dato come certificato.
 P1,mappe-posizione,passed,Posizione con GPS preciso.,globale:T-0501,"ui-location-permissions Samsung S20 FE 1/1: coordinate precise 28.6139, 77.2090 conservate e mostrate senza arrotondamenti fuorvianti."
 P1,mappe-posizione,passed,posizione condivisa;,globale:T-1573,P0_LOCATION 30/30 su QA 1.48.37: la posizione pubblicata dal proprietario compare nelle viste private autorizzate del secondo viaggiatore e della coordinatrice.
-P1,mappe-posizione,pending,posizione del gruppo;,addendum:A0122,
+P1,mappe-posizione,passed,posizione del gruppo;,addendum:A0122,"ui-location QA 1.48.40: viaggiatore e coordinatrice condividono due posizioni, la vista autorizzata mostra entrambi e il marker raggruppato indica 2."
 P1,mappe-posizione,pending,Posizione in movimento.,globale:T-0502,
 P1,mappe-posizione,passed,posizione negata;,usabilita:U0502,"Playwright mobile: permesso rimosso, messaggio comprensibile e nessuna richiesta al server; preview 20382a40; 2026-08-04"
-P1,mappe-posizione,pending,posizione precisa attiva;,globale:T-1386,
-P1,mappe-posizione,pending,posizione precisa disattiva;,globale:T-1387,
+P1,mappe-posizione,passed,posizione precisa attiva;,globale:T-1386,"ui-location QA 1.48.40: permesso attivo, coordinate 28.6139/77.2090 e precisione ±3500 m persistite e mostrate con avviso di segnale debole."
+P1,mappe-posizione,passed,posizione precisa disattiva;,globale:T-1387,"ui-location QA 1.48.40: permesso rimosso, nessuna coordinata viene inviata; dopo nuova autorizzazione la condivisione riparte e viene poi cancellata."
 P1,mappe-posizione,passed,Posizione propria.,usabilita:U0646,"P0_LOCATION 30/30 su QA 1.48.37: creazione, aggiornamento idempotente e rimozione della posizione propria verificati con identità derivata dalla sessione server."
-P1,mappe-posizione,pending,posizione;,addendum:A0076,
+P1,mappe-posizione,passed,posizione;,addendum:A0076,"ui-location QA 1.48.40 + P0_LOCATION 30/30: acquisizione volontaria, validazione coordinate, sincronizzazione, Google Maps, navigazione e rimozione verificate."
 P1,mappe-posizione,passed,posizioni scadute o cancellate;,globale:T-1764,"P0_LOCATION_RETENTION 5/5 + P0_LOCATION 30/30 su QA 1.48.37: scadenza automatica e cancellazione esplicita entrambe verificate, mantenendo intatta una posizione recente differente."
 P1,mappe-posizione,passed,Pubblicare con posizione GPS.,globale:T-0404,"ui-post-location Samsung S20 FE 1/1: Usa posizione, geolocalizzazione, fotografia, invio reale, persistenza e collegamento cartografico verificati nello stesso flusso touch."
 P1,mappe-posizione,passed,quali utenti hanno condiviso la posizione;,addendum:A0356,P0_LOCATION 30/30 + P0_LOCATION_RETENTION 5/5 su QA 1.48.37: l'elenco restituisce i profile_id autorizzati con posizione corrente ed esclude quelli eliminati o scaduti.
 P1,mappe-posizione,passed,Registrare precisione GPS.,globale:T-1446,P0_LOCATION 30/30 su QA 1.48.37: accuracy=3500 inviata dal telefono viene persistita e riletta senza alterazioni nello stato privato.
 P1,mappe-posizione,passed,riceve soltanto le posizioni consentite;,addendum:A0151,"Playwright tre ruoli: gruppo autenticato riceve la posizione, pubblico non riceve lista né mappa; preview 20382a40; 2026-08-04"
 P1,mappe-posizione,passed,Rimuovere la posizione prima dell’invio.,globale:T-0414,ui-post-location Samsung S20 FE 1/1: dopo Usa posizione il comando Rimuovi cancella luogo e coordinate prima dell’invio; il post pubblicato non contiene postPlace.
-P1,mappe-posizione,pending,Rimuovere la posizione.,usabilita:U0241,
+P1,mappe-posizione,passed,Rimuovere la posizione.,usabilita:U0241,"ui-location QA 1.48.40: tocco Cancella posizione, DELETE 200 e scomparsa sincronizzata dalla vista del viaggiatore e della coordinatrice."
 P1,mappe-posizione,passed,sicurezza delle posizioni;,globale:T-1801,"P0_LOCATION 30/30 su QA 1.48.37: coordinate fuori intervallo respinte, identità altrui non modificabile, eliminazione altrui negata e visibilità limitata alle sessioni autorizzate."
 P1,mappe-posizione,passed,Tentare cancellazione di posizione altrui.,usabilita:U0471,P0_LOCATION 22/22: il tentativo touch/API di cancellare la posizione di un altro profilo riceve 403 e la posizione resta presente.
 P1,mappe-posizione,passed,Tentare clickjacking su Condividi posizione.,globale:T-1487,production-smoke security headers 6/6 + security-surface 18/18: pagina e API inviano X-Frame-Options e CSP frame-ancestors; un sito esterno non può incorniciare il comando Condividi posizione.
