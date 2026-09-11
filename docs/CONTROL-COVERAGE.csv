@@ -324,7 +324,7 @@ P0,altro,passed,contenuto eliminato;,usabilita:U0511,"extended-p0-sync-delete: c
 P0,altro,passed,Definire se i contenuti vengono eliminati o anonimizzati.,globale:T-1320,"data-retention-policy 3/3 + P0_MEDIA_DELETE 14/14 + P0_SYNC_DELETE 115/115 su QA 1.48.37: eliminazione esplicita rimuove record, media, commenti e reazioni; non restano copie anonimizzate raggiungibili."
 P0,altro,passed,"Eliminare dallo ZIP le cartelle node_modules, .git, .wrangler e dist, se deve essere ricostruita automaticamente.",globale:T-0005,"clean-source-archive 2/2: allowlist di radice e verifica di tutte le entry escludono node_modules, .git, .wrangler, dist, artifacts, report e file .env."
 P0,altro,passed,Eliminare dallo ZIP le cartelle:,globale:T-0006,"clean-source-archive 2/2: archivio costruito da allowlist e ispezionato dopo la decompressione; nessuna cartella generata, dipendenza, backup o segreto incluso."
-P0,altro,pending,Eliminare i dati del browser.,globale:T-0859,
+P0,altro,passed,Eliminare i dati del browser.,globale:T-0859,"ui-clear-browser-data touch mobile 1/1: localStorage, sessionStorage, cache, IndexedDB e cookie cancellati; al reload il telefono torna Pubblico senza comandi privati."
 P0,altro,passed,Eliminare il post.,globale:T-0400,extended-p0-sync-delete: eliminazione reale propagata
 P0,altro,passed,Eliminare subscription inattive.,globale:T-1349,P0_PUSH_UNSUBSCRIBE 14/14 + data-retention-policy 3/3: disattivazione e logout rimuovono le sottoscrizioni; endpoint permanentemente 404/410 viene eliminato dal Worker.
 P0,altro,passed,Eliminare un proprio post.,usabilita:U0281,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
@@ -519,7 +519,7 @@ P0,persistenza,passed,Interruzione del database dopo salvataggio del file.,globa
 P0,persistenza,pending,Migrazione non riuscita.,globale:T-1550,
 P0,persistenza,passed,nessun dato precedente ripristinato erroneamente.,usabilita:U0568,P0_BACKUP_CONTENT 24/24: un post eliminato prima dello snapshot non compare nella tabella posts ripristinata né per ID né per contenuto; nessun dato cancellato viene riesposto.
 P0,persistenza,passed,nessuna modifica al database;,usabilita:U0584,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P0,persistenza,pending,nessuna modifica nel database;,globale:T-0748,
+P0,persistenza,passed,nessuna modifica nel database;,globale:T-0748,"ui-clear-browser-data touch mobile 1/1: la cancellazione locale e il reload producono zero POST, PUT, PATCH o DELETE verso il server e lasciano il profilo remoto invariato."
 P0,persistenza,passed,Non devono esistere riferimenti nel database a file mancanti.,globale:T-1013,"P0_DOCUMENT_CONCURRENCY 18/18 + d1-media-atomicity: sostituzione ed eliminazione rimuovono chiave e riferimento, senza record verso file mancanti."
 P0,persistenza,pending,"ogni requisito è collegato a tasto, API, database e test;",addendum:A0460,
 P0,persistenza,passed,Preferiti salvati nel database.,globale:T-0266,"ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: PUT autenticato salva il post nel database, lo stato personale lo restituisce come salvato e DELETE lo rimuove; il pubblico non riceve preferiti."
@@ -563,10 +563,10 @@ P0,profili-ruoli,passed,Commento come Coordinatore.,usabilita:U0298,P0_SOCIAL 12
 P0,profili-ruoli,passed,Controllare author_name e profile_id nel database.,usabilita:U0175,P0_ROLES 20/20: author_name e profile_id falsificati vengono ignorati e derivati dalla sessione server.
 P0,profili-ruoli,passed,Coordinatore,globale:T-0278;addendum:A0133;addendum:A0212,"P0_ROLES_AND_SHARED_CONTROLS 30/30 su QA 1.48.37: la coordinatrice assegnata conserva il ruolo server, può svolgere soltanto le operazioni previste e non può essere sostituita o impersonata tramite campi client."
 P0,profili-ruoli,passed,Coordinatore sulla risorsa A;,addendum:A0108,P0 locale ruoli 18/18: post creato e rimosso con identità della sessione coordinatore
-P0,profili-ruoli,pending,da Coordinatore a Pubblico;,addendum:A0086,
+P0,profili-ruoli,passed,da Coordinatore a Pubblico;,addendum:A0086,ui-clear-browser-data touch mobile 1/1: una sessione coordinatore verificata mostra la griglia; dopo la cancellazione completa dei dati browser il reload mostra Pubblico e nessun comando privato.
 P0,profili-ruoli,passed,da Coordinatore a Viaggiatore;,addendum:A0084,extended-p0-roles: inviti negati immediatamente dopo retrocessione
 P0,profili-ruoli,passed,da Viaggiatore a Coordinatore;,addendum:A0083,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
-P0,profili-ruoli,pending,dashboard Coordinatore;,addendum:A0120,
+P0,profili-ruoli,passed,dashboard Coordinatore;,addendum:A0120,ui-coordinator-grid-access touch + ui-clear-browser-data 1/1: la griglia e visibile solo con sessione coordinatore verificata e scompare quando le credenziali locali vengono cancellate.
 P0,profili-ruoli,passed,il Coordinatore disponga soltanto dei poteri necessari;,addendum:A0380,extended-p0-roles: matrice operazioni coordinatore/viaggiatore verificata
 P0,profili-ruoli,passed,Il Coordinatore non deve pubblicare accidentalmente come altro profilo.,usabilita:U0170,P0 locale ruoli 18/18: author_name falsificato ignorato e profile_id imposto dalla sessione coordinatore
 P0,profili-ruoli,passed,Il Coordinatore revoca un dispositivo di prova.,globale:T-1729,"P0_AUTH_LIFECYCLE 68/68: il coordinatore revoca il dispositivo scelto, la relativa sessione riceve 401 e le altre sessioni autorizzate restano attive."

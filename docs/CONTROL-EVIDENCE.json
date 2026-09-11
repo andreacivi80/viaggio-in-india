@@ -475,4 +475,8 @@
   ,{ "control": "le notifiche aprono il contenuto preciso;", "evidence": "ui-notification-deep-link QA: pubblicazione e commento reali vengono aperti tramite i rispettivi parametri; un contenuto eliminato mostra un avviso chiaro." }
   ,{ "control": "test delle notifiche;", "evidence": "ui-notification-permissions 2/2, service-worker-push-grouping 4/4, push-audience 5/5 e push-payload-privacy: consenso, ricezione, apertura, pubblico e riservatezza coperti." }
   ,{ "control": "una notifica mostra dati riservati;", "evidence": "push-payload-privacy 4/4 + push-audience 5/5: testo, passaporto, nomi file e identificativi non entrano nel push; visibilita group/private non raggiunge destinatari non autorizzati." }
+  ,{ "control": "Eliminare i dati del browser.", "evidence": "ui-clear-browser-data touch mobile 1/1: localStorage, sessionStorage, cache, IndexedDB e cookie cancellati; al reload il telefono torna Pubblico senza comandi privati." }
+  ,{ "control": "nessuna modifica nel database;", "evidence": "ui-clear-browser-data touch mobile 1/1: la cancellazione locale e il reload producono zero POST, PUT, PATCH o DELETE verso il server e lasciano il profilo remoto invariato." }
+  ,{ "control": "da Coordinatore a Pubblico;", "evidence": "ui-clear-browser-data touch mobile 1/1: una sessione coordinatore verificata mostra la griglia; dopo la cancellazione completa dei dati browser il reload mostra Pubblico e nessun comando privato." }
+  ,{ "control": "dashboard Coordinatore;", "evidence": "ui-coordinator-grid-access touch + ui-clear-browser-data 1/1: la griglia e visibile solo con sessione coordinatore verificata e scompare quando le credenziali locali vengono cancellate." }
 ]
