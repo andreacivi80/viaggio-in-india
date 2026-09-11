@@ -558,4 +558,6 @@
   ,{ "control": "Calcolare peso medio di un audio.", "evidence": "media-capacity 1/1: campione audio reale dei collaudi misurato a 617.444 byte medi; file non vuoto e sotto il limite server di 120 MiB." }
   ,{ "control": "Calcolare peso medio di un video.", "evidence": "media-capacity 1/1: tre video reali WebM/MOV/MP4 dei collaudi misurati a 715.859 byte medi; tutti sotto il limite server di 500 MiB." }
   ,{ "control": "Calcolare peso medio di una fotografia.", "evidence": "media-capacity 1/1: undici immagini reali Thailandia JPG/PNG misurate a 556.455 byte medi; tutte non vuote e sotto il limite server di 120 MiB." }
+  ,{ "control": "mostra stato di caricamento;", "evidence": "ui-upload-screen-reader QA 1.48.40: upload reale da 9 MiB rallentato, stato role=status visibile e annunci progressivi verificati dallo 0% al 100%." }
+  ,{ "control": "upload interrotto;", "evidence": "ui-upload-logout QA 1.48.40: blocco del dispositivo durante la prima parte di un video da 9 MiB interrompe il trasferimento, mostra l'avviso e non crea alcun post osservabile." }
 ]
