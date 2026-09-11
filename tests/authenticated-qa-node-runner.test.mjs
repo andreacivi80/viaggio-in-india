@@ -45,6 +45,14 @@ test("il runner Node esegue anche i collaudi touch Playwright senza shell interm
   assert.match(source, /"playwright", "test"/);
   assert.match(source, /QA_UI_SESSION_TOKEN: tokens\.owner/);
   assert.match(source, /QA_UI_DEVICE_KEY: deviceKeys\.owner/);
+  assert.match(source, /QA_UI_INVITE_TOKEN: tokens\.invite/);
+  assert.match(source, /QA_UI_SWITCH_INVITE_TOKEN: tokens\.switchInvite/);
+  assert.match(source, /QA_UI_COORDINATOR_INVITE_TOKEN: tokens\.coordinatorInvite/);
+  assert.match(source, /QA_UI_EXPIRED_SESSION_TOKEN: tokens\.expired/);
+  assert.match(source, /configurazione QA incompleta/);
+  assert.match(source, /testSource\.match\(\/QA_UI_/);
+  assert.match(source, /Test QA inesistente/);
+  assert.match(source, /INSERT INTO profile_invites/);
 });
 
 test("il runner prepara le posizioni di scadenza solo per il relativo controllo", () => {

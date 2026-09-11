@@ -1,5 +1,5 @@
 import { createHash, randomBytes, randomUUID } from "node:crypto";
-import { mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 
@@ -12,6 +12,11 @@ if (!/^https:\/\/([a-z0-9-]+\.)?viaggio-in-india-2026-qa\.pages\.dev$/i.test(bas
   throw new Error("Protezione dati: i test scriventi possono usare soltanto QA");
 if (!testFiles.length || testFiles.some((file) => !/^[a-z0-9._-]+\.mjs$/i.test(file)))
   throw new Error("Specificare --test=<file.mjs>[,<file.mjs>]");
+const testSources = new Map(testFiles.map((file) => {
+  const path = join(root, "tests", file);
+  if (!existsSync(path)) throw new Error(`Test QA inesistente: ${file}`);
+  return [file, readFileSync(path, "utf8")];
+}));
 if (![0, 18].includes(pushMemberCount)) throw new Error("--push-members può essere soltanto 18");
 
 const runId = randomUUID().replaceAll("-", "");
@@ -28,6 +33,7 @@ const profiles = {
 const tokens = {
   owner: token(), other: token(), coordinator: token(), coordinatorSecond: token(),
   expired: token(), secondary: token(), deleting: token(),
+  invite: token(), switchInvite: token(), coordinatorInvite: token(),
 };
 const deviceKeys = {
   owner: "1".repeat(64), other: "2".repeat(64), coordinator: "3".repeat(64),
@@ -35,6 +41,7 @@ const deviceKeys = {
 };
 const ids = Object.values(profiles);
 const pushMembers = [];
+const managedProfileName = `Gestito QA ${runId.slice(0, 8)}`;
 
 function sql(valueToQuote) { return `'${String(valueToQuote).replaceAll("'", "''")}'`; }
 function profileInsert(id, name, role = "traveler") {
@@ -68,6 +75,9 @@ ${sessionInsert(profiles.coordinator, tokens.coordinator, value("device-coordina
 ${sessionInsert(profiles.coordinator, tokens.coordinatorSecond, value("device-coordinator-secondary"), "Secondo telefono coordinatore QA", deviceKeys.coordinatorSecond)}
 ${sessionInsert(profiles.deleting, tokens.deleting, value("device-delete"), "Telefono profilo da eliminare QA", deviceKeys.deleting)}
 ${sessionInsert(profiles.owner, tokens.expired, value("device-expired"), "Sessione inattiva QA", deviceKeys.expired, oldLastUse)}
+INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at) VALUES(${sql(digest(tokens.invite))},${sql(profiles.owner)},${sql(profiles.coordinator)},${sql(created)},${sql(expires)},NULL);
+INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at) VALUES(${sql(digest(tokens.switchInvite))},${sql(profiles.owner)},${sql(profiles.coordinator)},${sql(created)},${sql(expires)},NULL);
+INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at) VALUES(${sql(digest(tokens.coordinatorInvite))},${sql(profiles.coordinator)},${sql(profiles.coordinator)},${sql(created)},${sql(expires)},NULL);
 INSERT INTO posts(id,author_name,profile_id,day_index,visibility,text,created_at) VALUES(${sql(referencePostId)},'Proprietario QA',${sql(profiles.owner)},-1,'public',${sql(`Pubblicazione di riferimento QA ${runId}`)},${sql(created)});
 ${pushSql}
 ${retentionFixtures}`;
@@ -89,6 +99,11 @@ DELETE FROM push_subscriptions WHERE profile_id IN (${quotedIds});
 DELETE FROM auth_sessions WHERE profile_id IN (${quotedIds});
 DELETE FROM profile_device_claims WHERE profile_id IN (${quotedIds});
 DELETE FROM security_audit_log WHERE actor_profile_id IN (${quotedIds});
+DELETE FROM security_audit_log WHERE actor_profile_id IN (SELECT id FROM profiles WHERE name=${sql(managedProfileName)});
+DELETE FROM profile_invites WHERE profile_id IN (SELECT id FROM profiles WHERE name=${sql(managedProfileName)}) OR created_by IN (SELECT id FROM profiles WHERE name=${sql(managedProfileName)});
+DELETE FROM auth_sessions WHERE profile_id IN (SELECT id FROM profiles WHERE name=${sql(managedProfileName)});
+DELETE FROM profile_device_claims WHERE profile_id IN (SELECT id FROM profiles WHERE name=${sql(managedProfileName)});
+DELETE FROM profiles WHERE name=${sql(managedProfileName)};
 DELETE FROM guest_sessions WHERE display_name LIKE ${sql(`%${runId}%`)};
 DELETE FROM profiles WHERE id IN (${quotedIds});`;
 const temporaryDirectory = join(root, "artifacts", "qa-node", runId);
@@ -152,11 +167,23 @@ try {
     QA_UI_PROFILE_ID: profiles.owner,
     QA_UI_PROFILE_NAME: "Proprietario QA",
     QA_UI_DEVICE_KEY: deviceKeys.owner,
+    QA_UI_INVITE_TOKEN: tokens.invite,
+    QA_UI_SWITCH_INVITE_TOKEN: tokens.switchInvite,
+    QA_UI_COORDINATOR_NAME: "Coordinatore QA",
+    QA_UI_COORDINATOR_INVITE_TOKEN: tokens.coordinatorInvite,
+    QA_UI_MANAGED_PROFILE_NAME: managedProfileName,
+    QA_UI_EXPIRED_SESSION_TOKEN: tokens.expired,
+    QA_UI_ALLOW_REGISTRATION: "true",
   };
   for (const testFile of testFiles) {
-    if (testFile.endsWith(".spec.mjs"))
+    if (testFile.endsWith(".spec.mjs")) {
+      const testSource = testSources.get(testFile);
+      const requiredUiVariables = [...new Set(testSource.match(/QA_UI_[A-Z0-9_]+/g) || [])]
+        .filter((name) => name !== "QA_UI_GROUP_CODE");
+      const missing = requiredUiVariables.filter((name) => !uiEnvironment[name]);
+      if (missing.length) throw new Error(`${testFile}: configurazione QA incompleta (${missing.join(", ")})`);
       executeNode(npxCli, ["playwright", "test", `tests/${testFile}`, "--reporter=line"], uiEnvironment);
-    else
+    } else
       executeNode(join(root, "tests", testFile), [], environment);
   }
   succeeded = true;

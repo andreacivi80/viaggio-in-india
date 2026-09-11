@@ -103,10 +103,11 @@ test("viaggiatore gestisce 10 PDF reali e il coordinatore vede e apre l'ultimo",
     await expect(coordinatorPage.locator(".coordinatorDashboard")).toBeVisible();
     const travelerStatus = coordinatorPage.locator(".documentPersonCard").filter({ hasText: travelerName });
     await expect(travelerStatus).toContainText("1/4");
+    const travelerFirstName = travelerName.split(" ")[0];
     await expect(
-      travelerStatus.getByRole("button", { name: new RegExp(`${travelerName}: Passaporto presente`) }),
+      travelerStatus.getByRole("button", { name: new RegExp(`${travelerFirstName}: Passaporto presente`) }),
     ).toBeVisible();
-    await travelerStatus.getByRole("button", { name: new RegExp(`${travelerName}: Passaporto presente`) }).tap();
+    await travelerStatus.getByRole("button", { name: new RegExp(`${travelerFirstName}: Passaporto presente`) }).tap();
     const coordinatorViewer = coordinatorPage.locator(".documentPreviewOverlay");
     await expect(coordinatorViewer).toBeVisible();
     await expectPdfVisible(coordinatorViewer);
