@@ -1,18 +1,15 @@
 import { test, expect } from "@playwright/test";
 
-const cities = ["Delhi", "Delhi", "Udaipur", "Udaipur", "Jodhpur", "Jodhpur", "Jaipur", "Jaipur", "Agra", "Agra", "Varanasi", "Varanasi", "Varanasi", "Delhi"];
+const cities = ["Bangkok", "Hua Hin", "Chumphon", "Khao Sok", "Cheow Lan Lake", "Phi Phi Island", "Krabi", "Krabi", "Krabi", "Bangkok", "Bangkok"];
+const dates = ["2026-12-26", "2026-12-27", "2026-12-28", "2026-12-29", "2026-12-30", "2026-12-31", "2027-01-01", "2027-01-02", "2027-01-03", "2027-01-04", "2027-01-05"];
 const healthDeclarationByCity = {
-  Delhi: ["Delhi", "South West Delhi", "New Delhi", "India settentrionale"],
-  Udaipur: ["Rajasthan", "Udaipur", "Mewar", "Rajasthan meridionale"],
-  Jodhpur: ["Rajasthan", "Jodhpur", "Marwar", "Rajasthan occidentale"],
-  Jaipur: ["Rajasthan", "Jaipur", "Dhundhar", "Rajasthan orientale"],
-  Agra: ["Uttar Pradesh", "Agra", "Braj", "Uttar Pradesh occidentale"],
-  Varanasi: ["Uttar Pradesh", "Varanasi", "Purvanchal", "Uttar Pradesh orientale"],
+  Bangkok: ["Bangkok", "Bangkok Metropolis", "Thailandia centrale"],
+  Chumphon: ["Chumphon", "Mueang Chumphon", "Thailandia meridionale"],
 };
 
 test("giornate aperte mostrano clima, alba, tramonto e informazioni della città senza sovrapporsi", async ({ page }, testInfo) => {
   const forecasts = cities.map((city, index) => ({
-    date: `2026-08-${String(10 + index).padStart(2, "0")}`,
+    date: dates[index],
     city,
     min: 25,
     max: 34,
@@ -25,7 +22,7 @@ test("giornate aperte mostrano clima, alba, tramonto e informazioni della città
   await page.route("**/api/weather", (route) => route.fulfill({
     status: 200,
     contentType: "application/json",
-    body: JSON.stringify({ source: "QA", timezone: "Asia/Kolkata", forecasts }),
+    body: JSON.stringify({ source: "QA", timezone: "Asia/Bangkok", forecasts }),
   }));
   await page.goto("/", { waitUntil: "networkidle" });
   await page.locator(".tabs").getByRole("button", { name: "Viaggio" }).tap();
@@ -89,14 +86,7 @@ test("giornate aperte mostrano clima, alba, tramonto e informazioni della città
     expect(closeSize.height).toBeGreaterThanOrEqual(44);
     await closeButton.tap();
     await expect(citySheet).toHaveCount(0);
-    if (index === 2) {
-      const baggage = day.locator(".flightBaggageCard");
-      await expect(baggage).toBeVisible();
-      await baggage.locator("summary").tap();
-      await expect(baggage).toContainText("55 x 35 x 25 cm");
-      await expect(baggage).toContainText("7 kg");
-      await expect(baggage).toContainText("158 cm totali - 15 kg");
-    }
+    await expect(day.locator(".flightBaggageCard")).toHaveCount(0);
     if (index === 0) {
       await day.locator(".dayClimateCard").scrollIntoViewIfNeeded();
       await page.screenshot({ path: testInfo.outputPath("clima-e-citta.png"), fullPage: false });
