@@ -757,9 +757,9 @@ P1,media-upload,passed,Aprire fotografia.,usabilita:U0208;usabilita:U0422,"ui-me
 P1,media-upload,passed,Aprire fotografie e video pubblici.,usabilita:U0616,"ui-publish-complete Thailandia 1.48.4 1/1: il secondo telefono pubblico visualizza due fotografie, video, due audio e luogo pubblicati, senza comandi di eliminazione."
 P1,media-upload,passed,Aprire la fotocamera.,usabilita:U0187,"ui-publish-complete su QA 1.48.37, Galaxy S9+ touch 1/1: il compositore espone l'ingresso fotocamera capture=environment, lo attiva e acquisisce una fotografia reale senza sostituire quella di galleria."
 P1,media-upload,passed,Aprire una fotografia del carosello.,globale:T-1394,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
-P1,media-upload,pending,Archivio di audio.,globale:T-1708,
-P1,media-upload,pending,Archivio di fotografie.,globale:T-1709,
-P1,media-upload,pending,Archivio di video.,globale:T-1714,
+P1,media-upload,passed,Archivio di audio.,globale:T-1708,ui-download-archive QA 1.48.40 2/2 + travelArchive statico: il viaggiatore autenticato genera uno ZIP valido che include gli audio visibili; il pubblico non vede il comando.
+P1,media-upload,passed,Archivio di fotografie.,globale:T-1709,"ui-download-archive QA 1.48.40 2/2 + travelArchive statico: lo ZIP contiene fotografie visibili e manifest coerente, senza includere contenuti non autorizzati."
+P1,media-upload,passed,Archivio di video.,globale:T-1714,ui-download-archive QA 1.48.40 2/2 + travelArchive statico: i video visibili entrano nell'archivio locale; un media indisponibile non annulla l'intero download.
 P1,media-upload,passed,Audio.,usabilita:U0119,"ui-media QA 1.48.40: file WAV reale selezionato, mostrato in anteprima, pubblicato, riletto con durata valida e riprodotto dal controllo touch compatto."
 P1,media-upload,passed,Aumento improvviso degli upload.,globale:T-1540,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: quattro raffiche reali da cinque richieste concorrenti completate senza errori, perdita o duplicazione."
 P1,media-upload,passed,Bloccare lo schermo durante l’audio.,globale:T-0909,"ui-media Thailandia 1.48.4 1/1: l’audio avviato con touch viene messo in pausa al pagehide, quindi non continua con schermo/app in background."

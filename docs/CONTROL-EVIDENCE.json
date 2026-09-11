@@ -552,4 +552,7 @@
   ,{ "control": "Verificare caricamento differito.", "evidence": "ui-offline QA 1.48.40: messaggio di salvataggio locale, persistenza della richiesta, invio automatico alla riconnessione e pulizia della coda verificati end-to-end." }
   ,{ "control": "comportamento al ricaricamento;", "evidence": "ui-offline QA 1.48.40: dopo consegna differita il reload conserva una sola pubblicazione e non duplica l'operazione; token e chiave dispositivo restano validi." }
   ,{ "control": "Cache-Control corretto.", "evidence": "static gate 199/199 su 1.48.40: API e documenti privati impostano private, no-store; asset pubblici e Service Worker seguono la politica di cache versionata." }
+  ,{ "control": "Archivio di audio.", "evidence": "ui-download-archive QA 1.48.40 2/2 + travelArchive statico: il viaggiatore autenticato genera uno ZIP valido che include gli audio visibili; il pubblico non vede il comando." }
+  ,{ "control": "Archivio di fotografie.", "evidence": "ui-download-archive QA 1.48.40 2/2 + travelArchive statico: lo ZIP contiene fotografie visibili e manifest coerente, senza includere contenuti non autorizzati." }
+  ,{ "control": "Archivio di video.", "evidence": "ui-download-archive QA 1.48.40 2/2 + travelArchive statico: i video visibili entrano nell'archivio locale; un media indisponibile non annulla l'intero download." }
 ]
