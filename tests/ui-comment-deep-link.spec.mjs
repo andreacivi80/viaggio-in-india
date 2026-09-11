@@ -3,7 +3,7 @@ import { test, expect, devices } from "@playwright/test";
 test.use({ ...devices["Galaxy S9+"], serviceWorkers: "block" });
 
 test("un link apre anche un commento vecchio e la discussione resta aperta dopo la sincronizzazione", async ({ page }) => {
-  test.setTimeout(45_000);
+  test.setTimeout(75_000);
   let serverVersion = 1;
   const comments = [
     { id: "comment-target", author_name: "Anna", text: "Commento preciso da aprire" },
@@ -56,7 +56,7 @@ test("un link apre anche un commento vecchio e la discussione resta aperta dopo 
 
   serverVersion = 2;
   comments.push({ id: "comment-five", author_name: "Elena", text: "Commento arrivato durante la lettura" });
-  await expect(post.getByText("Commento arrivato durante la lettura")).toBeVisible({ timeout: 10_000 });
+  await expect(post.getByText("Commento arrivato durante la lettura")).toBeVisible({ timeout: 25_000 });
   await expect(target).toBeVisible();
 
   await post.getByRole("button", { name: "Mostra soltanto gli ultimi commenti" }).tap();

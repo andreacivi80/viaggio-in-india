@@ -81,7 +81,8 @@ test("due telefoni rispondono e reagiscono ai commenti con tocchi reali", async 
     const otherRoot = refreshedOtherPost.locator(`[data-comment-id="${rootId}"]`);
     await expect(otherRoot).toContainText(rootText);
     await otherRoot.getByRole("button", { name: "Rispondi" }).tap();
-    await expect(refreshedOtherPost.locator(".replyTarget")).toContainText(members.owner.name);
+    const ownerNamePattern = new RegExp(`Risposta a ${members.owner.name.split(" ")[0]} (?:${members.owner.name.split(" ")[1]}|${members.owner.name.split(" ")[1]?.slice(0, 1)}\\.)`);
+    await expect(refreshedOtherPost.locator(".replyTarget")).toContainText(ownerNamePattern);
 
     const replyText = `Risposta touch ${Date.now()}`;
     await refreshedOtherPost.getByPlaceholder("Scrivi un commento…").fill(replyText);
@@ -97,8 +98,9 @@ test("due telefoni rispondono e reagiscono ai commenti con tocchi reali", async 
     const refreshedOwnerPost = ownerPage.locator(".post").filter({ hasText: referenceText });
     const ownerReply = refreshedOwnerPost.locator(`[data-comment-id="${replyId}"]`);
     await expect(ownerReply).toContainText(replyText);
-    await ownerReply.getByRole("button", { name: `Cuore al commento di ${members.other.name}` }).tap();
-    await expect(ownerReply.getByRole("button", { name: `Cuore al commento di ${members.other.name}` })).toHaveAttribute("aria-pressed", "true");
+    const otherNamePattern = new RegExp(`Cuore al commento di ${members.other.name.split(" ")[0]} (?:${members.other.name.split(" ")[1]}|${members.other.name.split(" ")[1]?.slice(0, 1)}\\.)`);
+    await ownerReply.getByRole("button", { name: otherNamePattern }).tap();
+    await expect(ownerReply.getByRole("button", { name: otherNamePattern })).toHaveAttribute("aria-pressed", "true");
     console.log("TOUCH_COMMENT_REACTION=OK");
 
     await otherPage.reload({ waitUntil: "domcontentloaded" });
