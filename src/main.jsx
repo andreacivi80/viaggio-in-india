@@ -71,7 +71,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.39",
+const VERSION = "1.48.40",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -1935,15 +1935,12 @@ function App() {
     history.pushState({ view: "map", day: i }, "", url);
   };
   const returnFromMap = () => {
-    if (history.state?.view === "map" && navigationOriginRef.current) {
-      history.back();
-    } else {
-      const url = new URL(location.href);
-      url.searchParams.delete("view");
-      url.searchParams.delete("day");
-      history.replaceState({}, "", url);
-      restoreNavigationOrigin(navigationOriginRef.current);
-    }
+    const origin = navigationOriginRef.current;
+    const url = new URL(location.href);
+    url.searchParams.delete("view");
+    url.searchParams.delete("day");
+    history.replaceState({}, "", url);
+    restoreNavigationOrigin(origin);
   };
   const activityItems = useMemo(
     () =>
