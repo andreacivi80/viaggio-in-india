@@ -59,8 +59,15 @@ test("bloccare il dispositivo interrompe il video in caricamento senza pubblicar
     });
     await sheet.getByPlaceholder("Racconta questo momento…").fill(marker);
     const firstPart = uploader.waitForRequest((request) => /\/api\/uploads\/[^/]+\/parts\/1$/.test(request.url()));
-    await sheet.locator(".composerActions > button").tap();
+    const publishButton = sheet.locator(".composerActions > button");
+    await publishButton.tap();
     await firstPart;
+    await expect(publishButton).toBeDisabled();
+    await expect(publishButton).toContainText("Invio…");
+    expect(await publishButton.evaluate((button) => {
+      button.click();
+      return button.disabled;
+    })).toBe(true);
 
     const logout = await fetch(`${baseUrl}/api/auth/logout`, {
       method: "POST",
