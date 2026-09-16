@@ -804,8 +804,8 @@ P1,media-upload,passed,"dispone di screenshot, video o log come prova.",globale:
 P1,media-upload,passed,Eseguire logout durante un caricamento.,globale:T-0759,"ui-upload-logout Thailandia 1.48.10 Samsung S20 FE 1/1 + resumable-upload 6/6: video reale portato a 9 MB, prima parte trattenuta, sessione revocata durante il trasferimento, fetch annullata, complete mai chiamato e nessun post visibile dal secondo account; manifesto locale conservato per ripresa autorizzata."
 P1,media-upload,pending,fotocamera negata;,usabilita:U0504,
 P1,media-upload,passed,Fotografia → carosello → indietro.,globale:T-1413,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
-P1,media-upload,pending,fotografia orizzontale.,globale:T-0430,
-P1,media-upload,pending,fotografia verticale.,globale:T-0431,
+P1,media-upload,passed,fotografia orizzontale.,globale:T-0430,"ui-media-orientation QA 1.48.40 Samsung S20 FE touch 1/1: JPEG reale 1200x600 pubblicato, riaperto con dimensioni naturali esatte e object-fit contain, senza taglio; pulizia QA completata."
+P1,media-upload,passed,fotografia verticale.,globale:T-0431,"ui-media-orientation QA 1.48.40 Samsung S20 FE touch 1/1: JPEG reale 600x1200 pubblicato, riaperto con dimensioni naturali esatte e object-fit contain, senza taglio; pulizia QA completata."
 P1,media-upload,passed,Fotografia.,usabilita:U0389;addendum:A0072,"P1_IMAGE_QUALITY 6/6 + P1_MEDIA_ROBUSTNESS 220/220 su QA 1.48.37: fotografie JPEG a qualità e dimensioni differenti vengono caricate, decodificate, riaperte e pulite."
 P1,media-upload,passed,fotografie cliccabili;,addendum:A0010,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
 P1,media-upload,passed,fotografie e video presenti;,globale:T-1756,"ui-publish-complete su QA 1.48.37 touch 1/1: il post pubblicato contiene due fotografie e un video, presenti sia sul telefono autore sia sull'iPhone pubblico."
@@ -914,8 +914,8 @@ P1,media-upload,passed,Verificare video.,usabilita:U0105,ui-publish-complete su 
 P1,media-upload,passed,Video,globale:T-0292;globale:T-1262;usabilita:U0035;usabilita:U0118,"ui-media QA 1.48.40: due video reali con traccia audio caricati, persistiti, riaperti e riprodotti; limite complessivo degli allegati verificato a 10."
 P1,media-upload,pending,video dei percorsi completi;,usabilita:U0713,
 P1,media-upload,passed,video oltre 25 MB.,globale:T-0441,"ui-large-slow-video Thailandia 1.48.11 Samsung S20 FE 1/1: video WebM reale portato a 26 MB, caricato in 7 parti, collegato a un post pubblico, servito con richieste media ritardate di 1,2 secondi e riprodotto realmente oltre 0,2 secondi; pausa e pulizia server completate."
-P1,media-upload,pending,video orizzontale.,globale:T-0442,
-P1,media-upload,pending,video verticale.,globale:T-0443,
+P1,media-upload,passed,video orizzontale.,globale:T-0442,"ui-media-orientation QA 1.48.40 Samsung S20 FE touch 1/1: WebM reale 640x360 pubblicato, metadati video riletti con dimensioni esatte e object-fit contain; pulizia QA completata."
+P1,media-upload,passed,video verticale.,globale:T-0443,"ui-media-orientation QA 1.48.40 Samsung S20 FE touch 1/1: WebM reale 360x640 pubblicato, metadati video riletti con dimensioni esatte e object-fit contain; pulizia QA completata."
 P1,social,passed,Notifica con apertura del commento preciso.,globale:T-0082,ui-notification-deep-link QA 1/1: una notifica reale apre esattamente il post e il commento indicati e mantiene visibile la discussione corretta.
 P1,social,pending,"Notifica per reazione, se scelta dall’utente.",globale:T-0088,
 P1,social,pending,Notifica per risposta a un commento.,globale:T-0089,

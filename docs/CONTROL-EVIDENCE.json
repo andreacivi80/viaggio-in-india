@@ -560,4 +560,8 @@
   ,{ "control": "Calcolare peso medio di una fotografia.", "evidence": "media-capacity 1/1: undici immagini reali Thailandia JPG/PNG misurate a 556.455 byte medi; tutte non vuote e sotto il limite server di 120 MiB." }
   ,{ "control": "mostra stato di caricamento;", "evidence": "ui-upload-screen-reader QA 1.48.40: upload reale da 9 MiB rallentato, stato role=status visibile e annunci progressivi verificati dallo 0% al 100%." }
   ,{ "control": "upload interrotto;", "evidence": "ui-upload-logout QA 1.48.40: blocco del dispositivo durante la prima parte di un video da 9 MiB interrompe il trasferimento, mostra l'avviso e non crea alcun post osservabile." }
+  ,{ "control": "fotografia orizzontale.", "evidence": "ui-media-orientation QA 1.48.40 Samsung S20 FE touch 1/1: JPEG reale 1200x600 pubblicato, riaperto con dimensioni naturali esatte e object-fit contain, senza taglio; pulizia QA completata." }
+  ,{ "control": "fotografia verticale.", "evidence": "ui-media-orientation QA 1.48.40 Samsung S20 FE touch 1/1: JPEG reale 600x1200 pubblicato, riaperto con dimensioni naturali esatte e object-fit contain, senza taglio; pulizia QA completata." }
+  ,{ "control": "video orizzontale.", "evidence": "ui-media-orientation QA 1.48.40 Samsung S20 FE touch 1/1: WebM reale 640x360 pubblicato, metadati video riletti con dimensioni esatte e object-fit contain; pulizia QA completata." }
+  ,{ "control": "video verticale.", "evidence": "ui-media-orientation QA 1.48.40 Samsung S20 FE touch 1/1: WebM reale 360x640 pubblicato, metadati video riletti con dimensioni esatte e object-fit contain; pulizia QA completata." }
 ]
