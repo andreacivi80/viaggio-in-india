@@ -669,7 +669,7 @@ P1,documenti,passed,Controllare PDF corrotti o pericolosi.,globale:T-0166,file-v
 P1,documenti,pending,messaggio se il caricamento supera il tempo previsto;,addendum:A0321,
 P1,documenti,pending,PDF del diario.,globale:T-1724,
 P1,documenti,pending,PDF del viaggio.,globale:T-0265,
-P1,documenti,pending,PDF molto grande.,globale:T-0438,
+P1,documenti,passed,PDF molto grande.,globale:T-0438,"production-smoke QA 1.48.40, 18/18 eseguiti: PDF reale da 9 MiB caricato a parti, completato in archivio privato, ritrovato nello stato personale, verificato con HEAD autenticato e cancellato; pulizia QA confermata."
 P1,mappe-posizione,passed,"A cancella posizione, B vede scomparsa.",usabilita:U0561,ui-location-permissions Samsung S20 FE 1/1: A cancella con gesto touch e la posizione scompare dal telefono B entro il ciclo di sincronizzazione.
 P1,mappe-posizione,passed,"A condivide posizione, B vede marker.",usabilita:U0560,ui-location-permissions Samsung S20 FE 1/1: A condivide con gesto touch e B vede il marker e le coordinate senza refresh manuale; il pubblico non vede la mappa privata.
 P1,mappe-posizione,passed,Aggiornamenti posizione durante la prova.,globale:T-1122,"ui-location-permissions Samsung S20 FE 1/1: condivisione, rimozione, diniego permesso, nuova autorizzazione, aggiornamento e seconda rimozione verificati nella stessa sessione."
