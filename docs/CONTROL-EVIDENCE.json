@@ -566,4 +566,6 @@
   ,{ "control": "video verticale.", "evidence": "ui-media-orientation QA 1.48.40 Samsung S20 FE touch 1/1: WebM reale 360x640 pubblicato, metadati video riletti con dimensioni esatte e object-fit contain; pulizia QA completata." }
   ,{ "control": "Misurare caricamento feed.", "evidence": "ui-feed-scroll-robustness QA 1.48.40 Galaxy S9+ touch 1/1: 18 pubblicazioni reali caricate e rese scorrevoli entro la soglia esplicita di 20 s, fino all'elemento più vecchio oltre 1.000 px; pulizia QA completata." }
   ,{ "control": "Ricaricare la pagina.", "evidence": "ui-feed-scroll-robustness QA 1.48.40 Galaxy S9+ touch 1/1: feed reale ricaricato prima con /api/state forzata a 503 e poi online; tutti i 18 elementi restano leggibili e scorrevoli, senza pagina bianca o perdita." }
+  ,{ "control": "autorizzata sempre;", "evidence": "ui-location-permission-modes QA 1.48.40 Galaxy S9+ 1/1: geolocalizzazione concessa, usata, pagina chiusa e riaperta nella stessa sessione mobile; stato ancora granted e coordinate identiche." }
+  ,{ "control": "autorizzata una sola volta;", "evidence": "ui-location-permission-modes QA 1.48.40 Galaxy S9+ 1/1: geolocalizzazione disponibile nella sessione autorizzata; dopo chiusura completa del contesto, una nuova sessione non eredita il permesso granted." }
 ]

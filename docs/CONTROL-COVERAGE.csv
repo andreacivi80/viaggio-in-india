@@ -39,8 +39,8 @@ P0,accessi-privacy,passed,Autorizzare il microfono.,globale:T-0445;usabilita:U02
 P0,accessi-privacy,passed,Autorizzare il permesso.,usabilita:U0188,ui-location touch 1/1: grant geolocation abilita la condivisione reale
 P0,accessi-privacy,passed,Autorizzare notifiche.,globale:T-0519,"ui-notification-permissions touch mobile 2/2: il tocco Attiva richiede il consenso una volta, registra una sola sottoscrizione autenticata e mostra stato Attive."
 P0,accessi-privacy,passed,autorizzata durante l’uso;,globale:T-1370,ui-location touch 1/1: permesso geolocation limitato al contesto mobile attivo
-P0,accessi-privacy,pending,autorizzata sempre;,globale:T-1371,
-P0,accessi-privacy,pending,autorizzata una sola volta;,globale:T-1372,
+P0,accessi-privacy,passed,autorizzata sempre;,globale:T-1371,"ui-location-permission-modes QA 1.48.40 Galaxy S9+ 1/1: geolocalizzazione concessa, usata, pagina chiusa e riaperta nella stessa sessione mobile; stato ancora granted e coordinate identiche."
+P0,accessi-privacy,passed,autorizzata una sola volta;,globale:T-1372,"ui-location-permission-modes QA 1.48.40 Galaxy S9+ 1/1: geolocalizzazione disponibile nella sessione autorizzata; dopo chiusura completa del contesto, una nuova sessione non eredita il permesso granted."
 P0,accessi-privacy,passed,autorizzate;,globale:T-1373,ui-location touch 1/1: con permesso concesso API posizione 200 e sincronizzazione visibile
 P0,accessi-privacy,passed,autorizzazione negata;,addendum:A0167,ui-location touch 1/1: diniego mostra messaggio e produce zero richieste POST
 P0,accessi-privacy,passed,autorizzazioni dei ruoli;,globale:T-1790,P0 locale ruoli 18/18: matrice viaggiatore/coordinatore verificata direttamente sugli endpoint
