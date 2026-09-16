@@ -173,7 +173,7 @@ P0,accessi-privacy,passed,non riceve token o segreti;,addendum:A0155,"security-s
 P0,accessi-privacy,passed,Non riutilizzare token già revocati.,addendum:A0345,Live revoke command 403 + authenticated remote QA 20/20; preview a4b05356; 2026-08-04
 P0,accessi-privacy,passed,non utilizzare la password comune per aggirare il rifiuto.,addendum:A0274,access-state-documentation + access-session-boundaries 17/17: password comune non ripete né autorizza endpoint privati dopo 401/403
 P0,accessi-privacy,pending,Notifica per invito personale.,globale:T-0085,
-P0,accessi-privacy,pending,"Notifica per posizione condivisa, soltanto se autorizzata.",globale:T-0087,
+P0,accessi-privacy,passed,"Notifica per posizione condivisa, soltanto se autorizzata.",globale:T-0087,"P0_LOCATION QA 30/30 + notification routing unit 1/1: solo una POST autenticata del proprietario crea la posizione e il push di gruppo; autore, familiari, pubblico e profili con preferenza posizione disattiva sono esclusi."
 P0,accessi-privacy,passed,notifiche autorizzate correttamente;,globale:T-1793,push-audience 5/5: autorizzazione calcolata lato Worker prima di costruire ogni push
 P0,accessi-privacy,passed,Notifiche inviate soltanto agli utenti autorizzati a vedere il post.,globale:T-0070,"push-audience 5/5: matrice public/family/group/private verificata per pubblico, ospite e profilo"
 P0,accessi-privacy,passed,nuove funzioni basate sulla sessione;,addendum:A0400,ui-password-access touch 1/1: Pubblica usa la sessione personale verificata e non il codice comune
@@ -428,7 +428,7 @@ P0,documenti,passed,Non mostrare numeri di passaporto.,globale:T-1354,"push-payl
 P0,documenti,passed,non riceve dati dei documenti;,addendum:A0143,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,documenti,passed,non riceve documenti;,addendum:A0148,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,documenti,passed,Non visualizzare documenti.,usabilita:U0363;usabilita:U0367,"P0_RESOURCE_ENUMERATION 17/17 + ui-public-access-boundary Thailandia 1.48.4 2/2: pubblico e profili non autorizzati non ricevono elenco, metadati o contenuto dei documenti."
-P0,documenti,pending,Notifica per documento mancante o aggiornato.,globale:T-0084,
+P0,documenti,passed,Notifica per documento mancante o aggiornato.,globale:T-0084,"P0_DOCUMENTS QA 12/12 + notification routing unit 1/1: caricamento/aggiornamento del proprietario avvisa solo la coordinatrice abilitata; stato mancante/verificato della coordinatrice avvisa soltanto il proprietario abilitato, con payload generico privo di dati del documento."
 P0,documenti,passed,Ogni documento deve essere collegato a un profilo esistente.,globale:T-1016,migration-safety 7/7 + P0_DOCUMENT_PROFILE_INTEGRITY 2/2: trigger D1 rifiutano INSERT e UPDATE di document_status verso profili inesistenti.
 P0,documenti,passed,ogni Viaggiatore vede soltanto i propri documenti;,globale:T-0686,"extended-p0-documents: owner vede il file, secondo viaggiatore non vede record né media"
 P0,documenti,passed,PDF nei documenti.,globale:T-0439,ui-documents QA mobile: 10 PDF reali renderizzati con PDF.js su Samsung e iPhone

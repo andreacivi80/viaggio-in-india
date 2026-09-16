@@ -96,10 +96,10 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0081 | 7 | Non inviare all’autore la notifica della propria operazione. | NON ESEGUITO | — |
 | T-0082 | 7 | Notifica con apertura del commento preciso. | NON ESEGUITO | — |
 | T-0083 | 7 | Notifica con apertura del post preciso. | NON ESEGUITO | — |
-| T-0084 | 7 | Notifica per documento mancante o aggiornato. | NON ESEGUITO | — |
+| T-0084 | 7 | Notifica per documento mancante o aggiornato. | SUPERATO | P0_DOCUMENTS QA 12/12 + routing 1/1: destinatario/proprietario e coordinatrice filtrati per ruolo, preferenza e autore; payload generico. |
 | T-0085 | 7 | Notifica per invito personale. | NON ESEGUITO | — |
 | T-0086 | 7 | Notifica per menzione. | NON ESEGUITO | — |
-| T-0087 | 7 | Notifica per posizione condivisa, soltanto se autorizzata. | NON ESEGUITO | — |
+| T-0087 | 7 | Notifica per posizione condivisa, soltanto se autorizzata. | SUPERATO | P0_LOCATION QA 30/30 + routing 1/1: notifica soltanto dopo condivisione autenticata; autore, pubblico, familiari e preferenza disattiva esclusi. |
 | T-0088 | 7 | Notifica per reazione, se scelta dall’utente. | NON ESEGUITO | — |
 | T-0089 | 7 | Notifica per risposta a un commento. | NON ESEGUITO | — |
 | T-0090 | 7 | Preferenze separate per post, commenti, reazioni, documenti e posizione. | SUPERATO | QA API 1/1 + Galaxy S9+ touch 1/1 + unit 3/3: cinque preferenze indipendenti, persistenti, isolate per profilo e filtrate lato server. |

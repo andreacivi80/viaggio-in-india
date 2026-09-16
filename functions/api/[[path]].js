@@ -525,6 +525,18 @@ export function notificationPreferenceAllows(subscription, payload) {
   return !preference || !subscription.profile_id || Number(subscription[`pref_${preference}`] ?? 1) === 1;
 }
 
+export function authorizedNotificationSubscriptions(
+  subscriptions,
+  payload,
+  { recipientRole = "", targetProfileId = "" } = {},
+) {
+  return subscriptions.filter((subscription) =>
+    canNotifySubscriber(subscription, payload) &&
+    notificationPreferenceAllows(subscription, payload) &&
+    (!recipientRole || subscription.profile_role === recipientRole) &&
+    (!targetProfileId || subscription.profile_id === targetProfileId));
+}
+
 async function notifySubscribers(env, payload, { recipientRole = "", targetProfileId = "" } = {}) {
   const subscriptions = await env.DB.prepare(
     `SELECT s.id,s.endpoint,s.p256dh,s.auth,s.profile_id,s.guest_visitor_id,
@@ -536,11 +548,11 @@ async function notifySubscribers(env, payload, { recipientRole = "", targetProfi
      LEFT JOIN profiles p ON p.id=s.profile_id
      LEFT JOIN notification_preferences np ON np.profile_id=s.profile_id`,
   ).all();
-  const authorizedSubscriptions = subscriptions.results.filter((subscription) =>
-    canNotifySubscriber(subscription, payload) &&
-    notificationPreferenceAllows(subscription, payload) &&
-    (!recipientRole || subscription.profile_role === recipientRole) &&
-    (!targetProfileId || subscription.profile_id === targetProfileId));
+  const authorizedSubscriptions = authorizedNotificationSubscriptions(
+    subscriptions.results,
+    payload,
+    { recipientRole, targetProfileId },
+  );
   if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY)
     return {
       configured: false,
