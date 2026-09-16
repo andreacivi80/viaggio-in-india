@@ -208,7 +208,7 @@ P0,accessi-privacy,passed,"Revocare invito, se previsto.",usabilita:U0381,auth-l
 P0,accessi-privacy,passed,Revocare un invito non ancora utilizzato.,globale:T-0779,auth-lifecycle 40/40: DELETE dell’invito pendente restituisce 200 e il successivo claim viene respinto
 P0,accessi-privacy,passed,riceve soltanto contenuti autorizzati ai familiari;,addendum:A0146,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,accessi-privacy,passed,Ricezione invito.,globale:T-1233,ui-invite-misdelivery touch 2/2: invito personale ricevuto su telefono nuovo crea la sessione del profilo previsto
-P0,accessi-privacy,pending,Richiedere invito personale.,usabilita:U0483,
+P0,accessi-privacy,passed,Richiedere invito personale.,usabilita:U0483,"ui-multi-invite-copy QA 1.48.40 mobile 1/1: la coordinatrice genera un invito personale distinto, valido 48 ore e monouso; il profilo destinatario viene collegato senza cambiare identità e la copia successiva non può riutilizzare il token."
 P0,accessi-privacy,passed,Richiedere l’invito personale per collegare un dispositivo a un profilo.,globale:T-0038,QA 1.31.0: nuovo dispositivo collegato tramite invito personale monouso
 P0,accessi-privacy,passed,Richiesta di nuovo accesso.,usabilita:U0488,"P0_AUTH_LIFECYCLE 68/68: nuova registrazione/invito, scadenza, rinnovo e nuovo accesso verificati con token reali."
 P0,accessi-privacy,passed,"Ridurre la durata della sessione, attualmente prevista fino a 90 giorni.",globale:T-0039,security-surface + auth-lifecycle 35/35: durata massima ridotta a 30 giorni e inattività massima a 21 giorni
@@ -265,7 +265,7 @@ P0,accessi-privacy,passed,Utilizzare token scaduto.,globale:T-0628;usabilita:U05
 P0,accessi-privacy,passed,Utilizzare un invito già consumato.,globale:T-0781,extended-p0-auth-lifecycle 28/28: riuso dell’invito consumato negato
 P0,accessi-privacy,passed,Utilizzare un invito scaduto.,globale:T-0782,extended-p0-auth-lifecycle 28/28: invito oltre expires_at negato
 P0,accessi-privacy,passed,utilizzo alternato di profile_id locale e profile_id della sessione.,addendum:A0411,ui-coordinator-grid touch 1/1: role e profile_id falsificati in localStorage vengono sostituiti dall’identità server senza privilegi coordinatore
-P0,accessi-privacy,pending,Valutare cookie sicuro HttpOnly invece del token nel localStorage.,globale:T-0042,
+P0,accessi-privacy,passed,Valutare cookie sicuro HttpOnly invece del token nel localStorage.,globale:T-0042,"session-token-storage-decision 1/1: valutati vantaggio XSS, CSRF, flussi offline e migrazione; decisione documentata di non fare una sostituzione parziale in rilascio e piano futuro Secure/HttpOnly/SameSite=Strict con rollout atomico, L1/L2 e rollback."
 P0,accessi-privacy,passed,vecchie funzioni basate soltanto sulla password;,addendum:A0399,security-surface 17/17: inventario sorgente prova che groupOk compare solo nei quattro endpoint iniziali; auth/unlock è disabilitato e il client non lo richiama
 P0,accessi-privacy,passed,vecchio nome locale e nuova sessione;,addendum:A0057,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,vecchio profile_id e nuova sessione;,addendum:A0056,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
