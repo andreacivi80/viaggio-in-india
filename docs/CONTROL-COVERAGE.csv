@@ -496,7 +496,7 @@ P0,persistenza,passed,Applicare le migrazioni una alla volta.,globale:T-1026,"P0
 P0,persistenza,passed,assenza di perdita dati.,globale:T-1109,baseline D1 2026-08-05: conteggi produzione invariati prima/dopo
 P0,persistenza,passed,Backup D1.,globale:T-0635,backup D1 pre-1.29.0 esportato e verificato
 P0,persistenza,pending,Backup delle chiavi Push.,globale:T-0636,
-P0,persistenza,pending,Backup delle configurazioni.,globale:T-0637,
+P0,persistenza,passed,Backup delle configurazioni.,globale:T-0637,"clean-source-archive 2/2 e repository remoto: archivio ricostruibile verificato contenente package/lock, configurazioni Cloudflare produzione e QA, schema, migrazioni, sorgenti, test e documentazione; .env, credenziali e cartelle generate esclusi."
 P0,persistenza,passed,backup e ripristino;,globale:T-1791,backup e ripristino D1 verificati end-to-end
 P0,persistenza,passed,backup eseguito;,globale:T-1749,backup eseguito con impronta SHA-256 verificata
 P0,persistenza,pending,Backup non eseguito.,globale:T-1542,

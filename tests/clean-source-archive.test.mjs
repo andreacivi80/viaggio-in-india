@@ -10,7 +10,8 @@ test("l'archivio sorgente include tutti i componenti necessari e nessun dato gen
   const names = Object.keys(archiveEntries());
   for (const required of [
     "README.md", "package.json", "src/main.jsx", "functions/api/[[path]].js",
-    "db/schema.sql", "wrangler.jsonc", "docs/CONTROL-COVERAGE.md",
+    "db/schema.sql", "wrangler.jsonc", "wrangler.qa.jsonc", "package-lock.json",
+    "docs/CONTROL-COVERAGE.md",
   ]) assert.ok(names.includes(required), `${required} deve essere consegnato`);
   assert.equal(names.some((name) => forbidden.test(name)), false);
 });
