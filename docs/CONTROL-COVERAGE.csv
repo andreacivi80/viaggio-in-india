@@ -516,7 +516,7 @@ P0,persistenza,passed,il database deve registrare il risultato;,addendum:A0030,A
 P0,persistenza,passed,il database non deve essere modificato;,addendum:A0034,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,persistenza,passed,il database non riceva valori non validi;,globale:T-1292,migration-safety 8/8 + P0_DOCUMENT_PROFILE_INTEGRITY 2/2 + P1_LOCATION_PROFILE_INTEGRITY 1/1: vincoli e trigger rifiutano valori e riferimenti profilo non validi.
 P0,persistenza,passed,Interruzione del database dopo salvataggio del file.,globale:T-1151,d1-media-atomicity L1: un’interruzione D1 dopo il salvataggio MEDIA elimina la parte orfana e consente il retry.
-P0,persistenza,pending,Migrazione non riuscita.,globale:T-1550,
+P0,persistenza,passed,Migrazione non riuscita.,globale:T-1550,"MIGRATION_FAILURE_ROLLBACK 1/1: su D1 locale isolato una migrazione file aggiorna una riga e poi fallisce su tabella inesistente; il batch viene respinto e la verifica successiva conserva il valore originale, senza stato parziale."
 P0,persistenza,passed,nessun dato precedente ripristinato erroneamente.,usabilita:U0568,P0_BACKUP_CONTENT 24/24: un post eliminato prima dello snapshot non compare nella tabella posts ripristinata né per ID né per contenuto; nessun dato cancellato viene riesposto.
 P0,persistenza,passed,nessuna modifica al database;,usabilita:U0584,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,persistenza,passed,nessuna modifica nel database;,globale:T-0748,"ui-clear-browser-data touch mobile 1/1: la cancellazione locale e il reload producono zero POST, PUT, PATCH o DELETE verso il server e lasciano il profilo remoto invariato."
