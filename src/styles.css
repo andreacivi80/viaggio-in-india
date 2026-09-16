@@ -4491,6 +4491,26 @@ mark.mention {
 .locationList article small {
   color: var(--color-text-secondary);
 }
+.locationFreshness {
+  display: inline-flex;
+  width: fit-content;
+  margin-top: 0.28rem;
+  padding: 0.2rem 0.48rem;
+  border-radius: 999px;
+  font-weight: 800;
+}
+.locationFreshness.recent {
+  color: #17643a;
+  background: #dcfce7;
+}
+.locationFreshness.old {
+  color: #875406;
+  background: #fef3c7;
+}
+.locationFreshness.expired {
+  color: #9f2d2d;
+  background: #fee2e2;
+}
 .locationActions {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

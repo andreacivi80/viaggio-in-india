@@ -63,6 +63,10 @@ const referencePostId = value("qa-reference");
 const retentionFixtures = testFiles.includes("extended-p0-location-retention.mjs") ? `
 INSERT INTO locations(profile_id,display_name,latitude,longitude,accuracy,updated_at) VALUES(${sql(profiles.owner)},'Posizione scaduta QA',28.6139,77.209,50,${sql(new Date(Date.now() - 48 * 86400000).toISOString())});
 INSERT INTO locations(profile_id,display_name,latitude,longitude,accuracy,updated_at) VALUES(${sql(profiles.other)},'Posizione recente QA',13.7563,100.5018,50,${sql(created)});` : "";
+const locationAgeFixtures = testFiles.includes("ui-location-age-labels.spec.mjs") ? `
+INSERT INTO locations(profile_id,display_name,latitude,longitude,accuracy,updated_at) VALUES(${sql(profiles.owner)},'Posizione recente QA',13.7563,100.5018,25,${sql(new Date(Date.now() - 5 * 60000).toISOString())});
+INSERT INTO locations(profile_id,display_name,latitude,longitude,accuracy,updated_at) VALUES(${sql(profiles.other)},'Posizione vecchia QA',13.7463,100.5118,50,${sql(new Date(Date.now() - 2 * 3600000).toISOString())});
+INSERT INTO locations(profile_id,display_name,latitude,longitude,accuracy,updated_at) VALUES(${sql(profiles.coordinator)},'Posizione scaduta QA',13.7363,100.5218,75,${sql(new Date(Date.now() - 18 * 3600000).toISOString())});` : "";
 const setup = `
 UPDATE profiles SET role='traveler' WHERE role='coordinator' AND id LIKE 'qa-%';
 ${profileInsert(profiles.owner, "Proprietario")}
@@ -82,7 +86,8 @@ INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_
 INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at) VALUES(${sql(digest(tokens.coordinatorInvite))},${sql(profiles.coordinator)},${sql(profiles.coordinator)},${sql(created)},${sql(expires)},NULL);
 INSERT INTO posts(id,author_name,profile_id,day_index,visibility,text,created_at) VALUES(${sql(referencePostId)},'Proprietario QA',${sql(profiles.owner)},-1,'public',${sql(`Pubblicazione di riferimento QA ${runId}`)},${sql(created)});
 ${pushSql}
-${retentionFixtures}`;
+${retentionFixtures}
+${locationAgeFixtures}`;
 const quotedIds = ids.map(sql).join(",");
 const quotedActors = ids.map((id) => sql(`profile:${id}`)).join(",");
 const cleanup = `

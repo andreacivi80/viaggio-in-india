@@ -132,6 +132,13 @@ const travelerDetails = (person) =>
   [travelerRoleLabel(person), person.origin_city, person.age && `${person.age} anni`, person.job]
     .filter(Boolean)
     .join(" · ");
+const locationFreshness = (updatedAt, referenceTime = Date.now()) => {
+  const updatedTime = new Date(updatedAt).getTime();
+  const age = Number.isFinite(updatedTime) ? Math.max(0, referenceTime - updatedTime) : Infinity;
+  if (age <= 15 * 60 * 1000) return { label: "Posizione recente", tone: "recent" };
+  if (age <= 12 * 60 * 60 * 1000) return { label: "Posizione vecchia", tone: "old" };
+  return { label: "Posizione scaduta", tone: "expired" };
+};
 const TRAVELER_ICON = "/traveler-icon.png";
 const ITALIAN_CITY_COORDINATES = {
   milano: [9.19, 45.464], roma: [12.496, 41.903], palermo: [13.362, 38.116],
@@ -5739,8 +5746,9 @@ function VaultOnline({
         <>
           <PeopleLocationMap locations={privateData.locations} />
           <div className="locationList">
-            {privateData.locations.map((x) => (
-              <article key={x.profile_id}>
+            {privateData.locations.map((x) => {
+              const freshness = locationFreshness(x.updated_at);
+              return <article key={x.profile_id}>
                 <div>
                   <b>{x.display_name}</b>
                   <span>
@@ -5756,6 +5764,7 @@ function VaultOnline({
                   <small>
                     Ultimo aggiornamento · {new Date(x.updated_at).toLocaleString("it-IT")}
                   </small>
+                  <small className={`locationFreshness ${freshness.tone}`}>{freshness.label}</small>
                 </div>
                 <div className="locationActions">
                   <a
@@ -5778,8 +5787,8 @@ function VaultOnline({
                     </button>
                   )}
                 </div>
-              </article>
-            ))}
+              </article>;
+            })}
           </div>
         </>
       )}

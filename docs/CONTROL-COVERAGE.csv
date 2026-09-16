@@ -689,9 +689,9 @@ P1,mappe-posizione,passed,condivisione posizione;,usabilita:U0549,"P0_LOCATION 3
 P1,mappe-posizione,passed,Consentire posizione.,usabilita:U0456,Playwright Galaxy: permesso GPS accordato e POST autenticato 200; preview 20382a40; 2026-08-04
 P1,mappe-posizione,passed,Controllo posizioni.,globale:T-1215;usabilita:U0660,"P0_LOCATION 30/30 + P0_LOCATION_RETENTION 5/5 su QA 1.48.37: visibilità autorizzata, proprietà, precisione, limiti geografici, eliminazione e scadenza automatica verificate."
 P1,mappe-posizione,passed,Definire per quanto tempo vengono conservate le posizioni.,globale:T-1340,data-retention-policy 3/3: scadenza automatica verificata a 24 ore dall'ultimo aggiornamento; cancellazione immediata disponibile al proprietario.
-P1,mappe-posizione,pending,Indicazione “Posizione recente”.,globale:T-0207,
-P1,mappe-posizione,pending,Indicazione “Posizione scaduta”.,globale:T-0208,
-P1,mappe-posizione,pending,Indicazione “Posizione vecchia”.,globale:T-0209,
+P1,mappe-posizione,passed,Indicazione “Posizione recente”.,globale:T-0207,ui-location-age-labels QA 1.48.40 Galaxy S9+ touch 1/1: una posizione aggiornata da 5 minuti mostra l'etichetta verde Posizione recente; fixture QA eliminata a fine prova.
+P1,mappe-posizione,passed,Indicazione “Posizione scaduta”.,globale:T-0208,ui-location-age-labels QA 1.48.40 Galaxy S9+ touch 1/1: una posizione aggiornata da 18 ore mostra l'etichetta rossa Posizione scaduta; fixture QA eliminata a fine prova.
+P1,mappe-posizione,passed,Indicazione “Posizione vecchia”.,globale:T-0209,ui-location-age-labels QA 1.48.40 Galaxy S9+ touch 1/1: una posizione aggiornata da 2 ore mostra l'etichetta ambra Posizione vecchia; fixture QA eliminata a fine prova.
 P1,mappe-posizione,passed,le posizioni scadono automaticamente;,globale:T-0682,P0_LOCATION_RETENTION 5/5 su QA 1.48.37: la manutenzione elimina la posizione fixture vecchia di 48 ore e conserva quella recente di un altro profilo.
 P1,mappe-posizione,passed,Mappa con due posizioni identiche.,globale:T-0947,ui-location-permissions Samsung S20 FE 1/1: viaggiatore e coordinatore condividono coordinate identiche; la lista conserva due identità e la mappa renderizza due marker senza perdere persone.
 P1,mappe-posizione,passed,Mappa con nessuna posizione condivisa.,globale:T-0952,ui-location-permissions Samsung S20 FE 1/1: dopo la cancellazione la lista e la mappa non mostrano alcun marker residuo.
