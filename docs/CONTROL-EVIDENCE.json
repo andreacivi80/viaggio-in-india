@@ -568,4 +568,5 @@
   ,{ "control": "Ricaricare la pagina.", "evidence": "ui-feed-scroll-robustness QA 1.48.40 Galaxy S9+ touch 1/1: feed reale ricaricato prima con /api/state forzata a 503 e poi online; tutti i 18 elementi restano leggibili e scorrevoli, senza pagina bianca o perdita." }
   ,{ "control": "autorizzata sempre;", "evidence": "ui-location-permission-modes QA 1.48.40 Galaxy S9+ 1/1: geolocalizzazione concessa, usata, pagina chiusa e riaperta nella stessa sessione mobile; stato ancora granted e coordinate identiche." }
   ,{ "control": "autorizzata una sola volta;", "evidence": "ui-location-permission-modes QA 1.48.40 Galaxy S9+ 1/1: geolocalizzazione disponibile nella sessione autorizzata; dopo chiusura completa del contesto, una nuova sessione non eredita il permesso granted." }
+  ,{ "control": "aggiorna il database;", "evidence": "ui-profile-multidevice QA 1.48.40 Galaxy S9+ 1/1: PUT reale del profilo restituisce 200, la modifica persiste in D1, compare sul secondo telefono dopo reload e due aggiornamenti concorrenti lasciano un record completo; valori originali ripristinati." }
 ]

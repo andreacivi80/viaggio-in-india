@@ -491,7 +491,7 @@ P0,media-upload,passed,Verificare eliminazione della vecchia fotografia.,globale
 P0,media-upload,passed,Verificare eliminazione delle fotografie.,usabilita:U0286,extended-p0-media-delete: JPEG non più raggiungibile dopo DELETE
 P0,media-upload,passed,Verificare perdita immediata dei privilegi da Coordinatore.,globale:T-0771,extended-p0-roles: retrocessione live; il token già aperto perde immediatamente inviti e modifica profili
 P0,media-upload,passed,Verificare scomparsa immediata dei comandi da Coordinatore.,addendum:A0097,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
-P0,persistenza,pending,aggiorna il database;,usabilita:U0676,
+P0,persistenza,passed,aggiorna il database;,usabilita:U0676,"ui-profile-multidevice QA 1.48.40 Galaxy S9+ 1/1: PUT reale del profilo restituisce 200, la modifica persiste in D1, compare sul secondo telefono dopo reload e due aggiornamenti concorrenti lasciano un record completo; valori originali ripristinati."
 P0,persistenza,passed,Applicare le migrazioni una alla volta.,globale:T-1026,"P0_MIGRATION_CHAIN 23/23: ogni migrazione viene applicata singolarmente in ordine su D1 locale e, dopo ciascun passaggio, profilo, post e documento sentinella restano presenti."
 P0,persistenza,passed,assenza di perdita dati.,globale:T-1109,baseline D1 2026-08-05: conteggi produzione invariati prima/dopo
 P0,persistenza,passed,Backup D1.,globale:T-0635,backup D1 pre-1.29.0 esportato e verificato
