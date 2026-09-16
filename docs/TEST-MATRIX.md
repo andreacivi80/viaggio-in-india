@@ -102,7 +102,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0087 | 7 | Notifica per posizione condivisa, soltanto se autorizzata. | NON ESEGUITO | — |
 | T-0088 | 7 | Notifica per reazione, se scelta dall’utente. | NON ESEGUITO | — |
 | T-0089 | 7 | Notifica per risposta a un commento. | NON ESEGUITO | — |
-| T-0090 | 7 | Preferenze separate per post, commenti, reazioni, documenti e posizione. | NON ESEGUITO | — |
+| T-0090 | 7 | Preferenze separate per post, commenti, reazioni, documenti e posizione. | SUPERATO | QA API 1/1 + Galaxy S9+ touch 1/1 + unit 3/3: cinque preferenze indipendenti, persistenti, isolate per profilo e filtrate lato server. |
 | T-0091 | 7 | Stato letto/non letto sincronizzato tra dispositivi. | NON ESEGUITO | — |
 | T-0092 | 7 | Test Push con app aperta. | NON ESEGUITO | — |
 | T-0093 | 7 | Test Push con app completamente chiusa. | NON ESEGUITO | — |
@@ -1620,7 +1620,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1605 | 87 | Verificare che il vecchio telefono non acceda più. | NON ESEGUITO | — |
 | T-1606 | 87 | Verificare documenti corretti. | NON ESEGUITO | — |
 | T-1607 | 87 | Verificare elenco dispositivi aggiornato. | SUPERATO | production-smoke: elenco dispositivi aggiornato dopo revoca |
-| T-1608 | 87 | Verificare preferenze notifiche. | NON ESEGUITO | — |
+| T-1608 | 87 | Verificare preferenze notifiche. | SUPERATO | QA API 1/1 + Galaxy S9+ touch 1/1: modifica rapida, reload, persistenza e isolamento fra profili verificati. |
 | T-1609 | 87 | Verificare preferiti. | NON ESEGUITO | — |
 | T-1610 | 87 | Verificare profilo corretto. | NON ESEGUITO | — |
 | T-1611 | 87 | Verificare rimozione della vecchia subscription Push. | NON ESEGUITO | — |

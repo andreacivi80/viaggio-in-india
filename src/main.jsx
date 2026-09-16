@@ -1121,6 +1121,14 @@ function App() {
     [pushEnabled, setPushEnabled] = useState(
       () => localStorage.getItem("india-push-enabled") === "true",
     ),
+    [notificationPreferences, setNotificationPreferences] = useState({
+      posts: true,
+      comments: true,
+      reactions: true,
+      documents: true,
+      location: true,
+    }),
+    [notificationPreferencesBusy, setNotificationPreferencesBusy] = useState(false),
     [quickProfileOpen, setQuickProfileOpen] = useState(false),
     [travelersOpen, setTravelersOpen] = useState(false),
     [travelerOriginsOpen, setTravelerOriginsOpen] = useState(false),
@@ -1707,6 +1715,47 @@ function App() {
       `${currentProfile.name} ${currentProfile.surname || ""}`.trim(),
     );
   }, [currentProfile?.id, verifiedSessionToken]);
+  useEffect(() => {
+    if (!verifiedSessionToken) return;
+    let active = true;
+    fetch(`${API}/notification-preferences`, {
+      cache: "no-store",
+      headers: sessionHeaders(verifiedSessionToken),
+    })
+      .then((response) => response.ok ? response.json() : Promise.reject())
+      .then((result) => {
+        if (active && result.preferences) setNotificationPreferences(result.preferences);
+      })
+      .catch(() => {
+        if (active) setQuickStatus("Preferenze notifiche non disponibili. Riprova.");
+      });
+    return () => { active = false; };
+  }, [verifiedSessionToken]);
+  const updateNotificationPreference = async (key, checked) => {
+    if (!verifiedSessionToken) return;
+    const previousValue = notificationPreferences[key];
+    setNotificationPreferences((current) => ({ ...current, [key]: checked }));
+    setNotificationPreferencesBusy(true);
+    try {
+      const response = await fetch(`${API}/notification-preferences`, {
+        method: "PUT",
+        headers: { ...sessionHeaders(verifiedSessionToken), "content-type": "application/json" },
+        body: JSON.stringify({ [key]: checked }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "Salvataggio non riuscito");
+      setNotificationPreferences((current) => ({
+        ...current,
+        [key]: result.preferences[key],
+      }));
+      setQuickStatus("Preferenze notifiche aggiornate.");
+    } catch (error) {
+      setNotificationPreferences((current) => ({ ...current, [key]: previousValue }));
+      setQuickStatus(error.message || "Preferenze notifiche non aggiornate.");
+    } finally {
+      setNotificationPreferencesBusy(false);
+    }
+  };
   const openComposer = (dayIndex) => {
     // Pubblicare e' un'azione del gruppo: non lasciare il pannello bloccato
     // dalla sola anteprima pubblica quando questo dispositivo e' gia' sbloccato.
@@ -2291,6 +2340,7 @@ function App() {
                 <small>La scelta resta memorizzata su questo dispositivo.</small>
               </div>
             ) : currentProfile && verifiedSessionToken ? (
+              <>
               <div className="quickProfileActions">
                 <button onClick={quickShareLocation}>
                   <MapPin /> Condividi posizione
@@ -2312,6 +2362,26 @@ function App() {
                     : "Documenti e sicurezza"}
                 </button>
               </div>
+              <fieldset className="notificationPreferences" aria-busy={notificationPreferencesBusy}>
+                <legend>Quali notifiche vuoi ricevere</legend>
+                {[
+                  ["posts", "Nuove pubblicazioni"],
+                  ["comments", "Commenti"],
+                  ["reactions", "Reazioni"],
+                  ["documents", "Documenti"],
+                  ["location", "Posizioni condivise"],
+                ].map(([key, label]) => (
+                  <label key={key}>
+                    <span>{label}</span>
+                    <input
+                      type="checkbox"
+                      checked={notificationPreferences[key]}
+                      onChange={(event) => updateNotificationPreference(key, event.target.checked)}
+                    />
+                  </label>
+                ))}
+              </fieldset>
+              </>
             ) : (
               <div className="profileChooser personalLinkRequired">
                 <b>Telefono non collegato a un profilo</b>

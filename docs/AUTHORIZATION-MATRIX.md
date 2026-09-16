@@ -126,3 +126,5 @@ Il collaudo touch `ui-protected-pdf.spec.mjs` carica un PDF AES-256 realmente ci
 ## Confine della chiave VAPID
 
 Il test `vapid-secret-boundary.test.mjs` verifica che `VAPID_PRIVATE_KEY` sia letta soltanto dal Worker come binding segreto. L’endpoint pubblico `/api/push/config` restituisce esclusivamente `VAPID_PUBLIC_KEY`; client e configurazioni Wrangler versionate non contengono la chiave privata. Dopo ogni build, `scan-client-secrets.mjs` esamina inoltre tutti i file destinati al browser e blocca il rilascio se trova il nome o un valore assimilabile alla chiave privata.
+
+Le preferenze push sono personali: `GET/PUT /api/notification-preferences` richiedono una sessione verificata e il server usa esclusivamente il `profile_id` della sessione. Le cinque categorie indipendenti sono pubblicazioni, commenti, reazioni, documenti e posizione. Il filtro viene applicato dal Worker prima dell’invio; un altro profilo, un familiare o la sola password comune non possono leggere o modificare queste scelte.

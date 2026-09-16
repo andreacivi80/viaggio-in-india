@@ -4491,6 +4491,32 @@ mark.mention {
 .locationList article small {
   color: var(--color-text-secondary);
 }
+.notificationPreferences {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(42, 58, 50, .16);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .72);
+}
+.notificationPreferences legend {
+  padding: 0 5px;
+  font-size: .78rem;
+  font-weight: 800;
+  color: #33443a;
+}
+.notificationPreferences label {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: .82rem;
+}
+.notificationPreferences input {
+  width: 20px;
+  height: 20px;
+  accent-color: #176b4c;
+}
 .locationFreshness {
   display: inline-flex;
   width: fit-content;

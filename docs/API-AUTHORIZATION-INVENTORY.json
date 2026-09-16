@@ -117,6 +117,16 @@
       "access": "public"
     },
     {
+      "method": "GET",
+      "path": "notification-preferences",
+      "access": "profile"
+    },
+    {
+      "method": "PUT",
+      "path": "notification-preferences",
+      "access": "profile-owner"
+    },
+    {
       "method": "POST",
       "path": "push/subscribe",
       "access": "public-filtered"

@@ -480,7 +480,13 @@ export function sanitizePushPayload(payload = {}) {
     : tag.startsWith("comment-")
     ? "comment"
     : tag.startsWith("post-")
-      ? "post"
+    ? "post"
+    : tag.startsWith("reaction-")
+      ? "reaction"
+      : tag.startsWith("document-")
+        ? "document"
+        : tag.startsWith("location-")
+          ? "location"
       : "system";
   const body = kind === "technical"
     ? "È stato rilevato un problema tecnico. Il responsabile può consultare il registro di sicurezza."
@@ -488,6 +494,12 @@ export function sanitizePushPayload(payload = {}) {
     ? "È stato aggiunto un nuovo commento."
     : kind === "post"
       ? "È stato pubblicato un nuovo ricordo del viaggio."
+      : kind === "reaction"
+        ? "Qualcuno ha reagito a un contenuto."
+        : kind === "document"
+          ? "Un documento è stato aggiornato."
+          : kind === "location"
+            ? "Un viaggiatore ha condiviso la posizione."
       : "C'è un nuovo aggiornamento nell'app.";
   const requestedUrl = String(payload.url || "/");
   const url = /^\/(?:\?[a-z0-9_=&%.-]*)?$/i.test(requestedUrl)
@@ -500,16 +512,35 @@ export function sanitizePushPayload(payload = {}) {
     tag,
   };
 }
-async function notifySubscribers(env, payload, { recipientRole = "" } = {}) {
+const notificationPreferenceForTag = (tag = "") =>
+  tag.startsWith("post-") ? "posts"
+  : tag.startsWith("comment-") ? "comments"
+  : tag.startsWith("reaction-") ? "reactions"
+  : tag.startsWith("document-") ? "documents"
+  : tag.startsWith("location-") ? "location"
+  : "";
+
+export function notificationPreferenceAllows(subscription, payload) {
+  const preference = notificationPreferenceForTag(String(payload?.tag || ""));
+  return !preference || !subscription.profile_id || Number(subscription[`pref_${preference}`] ?? 1) === 1;
+}
+
+async function notifySubscribers(env, payload, { recipientRole = "", targetProfileId = "" } = {}) {
   const subscriptions = await env.DB.prepare(
     `SELECT s.id,s.endpoint,s.p256dh,s.auth,s.profile_id,s.guest_visitor_id,
-            p.role AS profile_role
+            p.role AS profile_role,
+            np.posts AS pref_posts,np.comments AS pref_comments,
+            np.reactions AS pref_reactions,np.documents AS pref_documents,
+            np.location AS pref_location
      FROM push_subscriptions s
-     LEFT JOIN profiles p ON p.id=s.profile_id`,
+     LEFT JOIN profiles p ON p.id=s.profile_id
+     LEFT JOIN notification_preferences np ON np.profile_id=s.profile_id`,
   ).all();
   const authorizedSubscriptions = subscriptions.results.filter((subscription) =>
     canNotifySubscriber(subscription, payload) &&
-    (!recipientRole || subscription.profile_role === recipientRole));
+    notificationPreferenceAllows(subscription, payload) &&
+    (!recipientRole || subscription.profile_role === recipientRole) &&
+    (!targetProfileId || subscription.profile_id === targetProfileId));
   if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY)
     return {
       configured: false,
@@ -748,6 +779,7 @@ async function deleteProfileData(env, profileId) {
     env.DB.prepare("DELETE FROM document_status WHERE profile_id=?").bind(profileId),
     env.DB.prepare("DELETE FROM locations WHERE profile_id=?").bind(profileId),
     env.DB.prepare("DELETE FROM push_subscriptions WHERE profile_id=?").bind(profileId),
+    env.DB.prepare("DELETE FROM notification_preferences WHERE profile_id=?").bind(profileId),
     env.DB.prepare("DELETE FROM profile_invites WHERE profile_id=? OR created_by=?").bind(profileId, profileId),
     env.DB.prepare("DELETE FROM auth_sessions WHERE profile_id=?").bind(profileId),
     env.DB.prepare("DELETE FROM profile_device_claims WHERE profile_id=?").bind(profileId),
@@ -1650,6 +1682,47 @@ export async function onRequest(context) {
     }
     if (request.method === "GET" && path === "push/config")
       return json({ public_key: env.VAPID_PUBLIC_KEY || "" });
+    if (request.method === "GET" && path === "notification-preferences") {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 401);
+      const defaults = { posts: true, comments: true, reactions: true, documents: true, location: true };
+      const stored = await env.DB.prepare(
+        "SELECT posts,comments,reactions,documents,location FROM notification_preferences WHERE profile_id=?",
+      ).bind(session.profile_id).first();
+      const current = stored
+        ? Object.fromEntries(Object.keys(defaults).map((key) => [key, Boolean(stored[key])]))
+        : defaults;
+      return json({ preferences: current });
+    }
+    if (request.method === "PUT" && path === "notification-preferences") {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 401);
+      const limited = await rateLimit(env, request, "notification-preferences", 30, 60, session.profile_id);
+      if (limited) return limited;
+      const body = await request.json().catch(() => null);
+      if (!body || typeof body !== "object" || Array.isArray(body))
+        return json({ error: "Preferenze non valide" }, 400);
+      const keys = ["posts", "comments", "reactions", "documents", "location"];
+      if (Object.keys(body).some((key) => !keys.includes(key)) ||
+          Object.entries(body).some(([, value]) => typeof value !== "boolean"))
+        return json({ error: "Le preferenze devono essere valori vero/falso" }, 400);
+      const updatedAt = now();
+      const statements = [env.DB.prepare(
+        `INSERT OR IGNORE INTO notification_preferences(profile_id,posts,comments,reactions,documents,location,updated_at)
+         VALUES(?,1,1,1,1,1,?)`,
+      ).bind(session.profile_id, updatedAt)];
+      for (const [key, value] of Object.entries(body))
+        statements.push(env.DB.prepare(
+          `UPDATE notification_preferences SET ${key}=?,updated_at=? WHERE profile_id=?`,
+        ).bind(Number(value), updatedAt, session.profile_id));
+      await env.DB.batch(statements);
+      const saved = await env.DB.prepare(
+        "SELECT posts,comments,reactions,documents,location FROM notification_preferences WHERE profile_id=?",
+      ).bind(session.profile_id).first();
+      return json({
+        preferences: Object.fromEntries(keys.map((key) => [key, Boolean(saved[key])])),
+      });
+    }
     if (request.method === "POST" && path === "push/subscribe") {
       const session = await sessionFromRequest(request, env);
       const guest = session ? null : await guestFromRequest(request, env);
@@ -2441,7 +2514,7 @@ export async function onRequest(context) {
       const limited = await rateLimit(env, request, "comment-reactions", 30, 60, actorId);
       if (limited) return limited;
       const target = await env.DB.prepare(
-        `SELECT c.id,c.post_id,p.profile_id,p.visibility
+        `SELECT c.id,c.post_id,c.profile_id AS comment_profile_id,p.profile_id,p.visibility
          FROM comments c JOIN posts p ON p.id=c.post_id
          WHERE c.id=?`,
       ).bind(commentId).first();
@@ -2476,6 +2549,14 @@ export async function onRequest(context) {
       }
       const payload = { ok: true, reaction: kind };
       await completeIdempotentOperation(env, operation.operationHash, payload);
+      if (request.headers.get("x-qa-silent") !== "true" && target.comment_profile_id)
+        context.waitUntil?.(notifySubscribers(env, {
+          tag: `reaction-comment-${commentId}-${Date.now()}`,
+          url: `/?post=${encodeURIComponent(target.post_id)}&comment=${encodeURIComponent(commentId)}`,
+          visibility: target.visibility,
+          author_profile_id: session?.profile_id || "",
+          author_guest_id: guest?.visitor_id || "",
+        }, { targetProfileId: target.comment_profile_id }));
       return json(payload);
     }
     if (request.method === "POST" && path === "reactions") {
@@ -2557,6 +2638,14 @@ export async function onRequest(context) {
       }
       const payload = { ok: true, reaction: kind };
       await completeIdempotentOperation(env, operation.operationHash, payload);
+      if (request.headers.get("x-qa-silent") !== "true" && targetPost.profile_id)
+        context.waitUntil?.(notifySubscribers(env, {
+          tag: `reaction-post-${b.post_id}-${Date.now()}`,
+          url: `/?post=${encodeURIComponent(b.post_id)}`,
+          visibility: targetPost.visibility,
+          author_profile_id: session?.profile_id || "",
+          author_guest_id: guest?.visitor_id || "",
+        }, { targetProfileId: targetPost.profile_id }));
       return json(payload);
     }
     if (path === "private" && request.method === "GET") {
@@ -2622,6 +2711,13 @@ export async function onRequest(context) {
         resource_id: session.profile_id,
         result: "success",
       });
+      if (request.headers.get("x-qa-silent") !== "true")
+        context.waitUntil?.(notifySubscribers(env, {
+          tag: `location-${session.profile_id}-${Date.now()}`,
+          url: "/?view=map",
+          visibility: "group",
+          author_profile_id: session.profile_id,
+        }));
       return json({ ok: true });
     }
     if (path.startsWith("locations/") && request.method === "DELETE") {
@@ -2737,6 +2833,17 @@ export async function onRequest(context) {
         resource_id: `${profileId}:${type}`,
         result: "success",
       });
+      if (request.headers.get("x-qa-silent") !== "true") {
+        const notification = {
+          tag: `document-${profileId}-${type}-${Date.now()}`,
+          url: "/",
+          visibility: "group",
+          author_profile_id: session.profile_id,
+        };
+        if (session.role === "coordinator" && profileId !== session.profile_id)
+          context.waitUntil?.(notifySubscribers(env, notification, { targetProfileId: profileId }));
+        else context.waitUntil?.(notifySubscribers(env, notification, { recipientRole: "coordinator" }));
+      }
       return json(payload);
     }
     if (path.startsWith("documents/") && request.method === "DELETE") {
