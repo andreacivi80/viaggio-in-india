@@ -7,6 +7,8 @@ const packageData = JSON.parse(await readFile(new URL("../package.json", import.
 
 test("il Service Worker usa una cache versionata e chiavi URL riutilizzabili offline", () => {
   assert.match(worker, new RegExp(`thailandia-insieme-v${packageData.version.replaceAll(".", "\\.")}`));
+  assert.doesNotMatch(worker, /const CACHE = ["'](?:india|thailandia)-insieme-v1\.21\.5["']/);
+  assert.match(worker, /caches\s*\.keys\(\)[\s\S]*?filter\(\(key\) => key !== CACHE\)[\s\S]*?caches\.delete\(key\)/);
   assert.match(worker, /const cacheKey = event\.request\.mode === "navigate"[\s\S]*?url\.href/);
   assert.match(worker, /cached\.then\(\(hit\) => hit \|\| network\)/);
   assert.match(worker, /cache\.put\(cacheKey, response\.clone\(\)\)/);
