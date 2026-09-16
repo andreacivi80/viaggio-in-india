@@ -5352,7 +5352,7 @@ function VaultOnline({
             ? "Permesso posizione non concesso. Abilitalo nelle impostazioni del browser."
             : "Posizione non disponibile. Controlla GPS e connessione e riprova.",
         ),
-      { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
     );
   };
   const removeLocation = async (targetProfileId) => {

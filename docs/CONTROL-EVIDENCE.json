@@ -575,4 +575,7 @@
   ,{ "control": "Indicazione “Posizione recente”.", "evidence": "ui-location-age-labels QA 1.48.40 Galaxy S9+ touch 1/1: una posizione aggiornata da 5 minuti mostra l'etichetta verde Posizione recente; fixture QA eliminata a fine prova." }
   ,{ "control": "Indicazione “Posizione vecchia”.", "evidence": "ui-location-age-labels QA 1.48.40 Galaxy S9+ touch 1/1: una posizione aggiornata da 2 ore mostra l'etichetta ambra Posizione vecchia; fixture QA eliminata a fine prova." }
   ,{ "control": "Indicazione “Posizione scaduta”.", "evidence": "ui-location-age-labels QA 1.48.40 Galaxy S9+ touch 1/1: una posizione aggiornata da 18 ore mostra l'etichetta rossa Posizione scaduta; fixture QA eliminata a fine prova." }
+  ,{ "control": "Posizione all’interno di un edificio.", "evidence": "ui-location-real-conditions QA 1.48.40 Galaxy S9+ touch 1/1: fix indoor simulato con precisione ±1200 m viene salvato e mostrato con avviso segnale GPS debole, senza falsificare l'accuratezza." }
+  ,{ "control": "Posizione in movimento.", "evidence": "ui-location-real-conditions QA 1.48.40 Galaxy S9+ touch 1/1: dopo lo spostamento il client richiede un fix non memorizzato, aggiorna da 13.7563/100.5018 a 13.7700/100.5300 e conserva un solo record." }
+  ,{ "control": "non esistono posizioni;", "evidence": "ui-location-real-conditions QA 1.48.40 Galaxy S9+ touch 1/1: cancellata l'unica posizione, elenco vuoto e contatore mappa 0; pulizia QA confermata." }
 ]

@@ -702,18 +702,18 @@ P1,mappe-posizione,passed,Negare GPS.,usabilita:U0236,"ui-location QA 1.48.40: r
 P1,mappe-posizione,passed,Negare posizione.,usabilita:U0457,"Playwright Galaxy: permesso rimosso, messaggio locale e zero richieste POST; preview 20382a40; 2026-08-04"
 P1,mappe-posizione,passed,Nessuna posizione visibile al pubblico.,globale:T-0211,production-smoke: endpoint posizione negato senza sessione
 P1,mappe-posizione,passed,Non dichiarare una posizione come certificata se non è verificabile.,globale:T-1444,ui-location-permissions Samsung S20 FE 1/1: l’interfaccia non presenta il GPS come verificato o certificato e avverte che il dato proviene dal dispositivo.
-P1,mappe-posizione,pending,non esistono posizioni;,addendum:A0302,
+P1,mappe-posizione,passed,non esistono posizioni;,addendum:A0302,"ui-location-real-conditions QA 1.48.40 Galaxy S9+ touch 1/1: cancellata l'unica posizione, elenco vuoto e contatore mappa 0; pulizia QA confermata."
 P1,mappe-posizione,passed,Non mostrare posizione precisa sul blocco schermo.,globale:T-1355,"push-payload-privacy 3/3: il payload mostrabile sul blocco schermo è generico e non contiene coordinate, luogo preciso, identificativo profilo o contenuti privati."
 P1,mappe-posizione,passed,Non rendere pubblica la posizione EXIF senza consenso.,globale:T-1432,"P0_MEDIA_DELETE 14/14: fotografia JPEG reale con EXIF GPS e modello Samsung viene pubblicata senza trasferire place_name, latitude o longitude nello stato pubblico."
 P1,mappe-posizione,passed,Non visualizzare posizione.,usabilita:U0364,"ui-location QA 1.48.40: il contesto pubblico non riceve elenco, mappa o comandi posizione; l'area resta protetta dalla sessione personale."
 P1,mappe-posizione,passed,Ogni posizione deve essere collegata a un profilo esistente.,globale:T-1018,migration-safety 8/8 + P1_LOCATION_PROFILE_INTEGRITY 1/1: trigger D1 rifiuta posizioni verso profili inesistenti e pulisce la posizione quando il profilo viene eliminato.
-P1,mappe-posizione,pending,Posizione all’interno di un edificio.,globale:T-0499,
+P1,mappe-posizione,passed,Posizione all’interno di un edificio.,globale:T-0499,"ui-location-real-conditions QA 1.48.40 Galaxy S9+ touch 1/1: fix indoor simulato con precisione ±1200 m viene salvato e mostrato con avviso segnale GPS debole, senza falsificare l'accuratezza."
 P1,mappe-posizione,passed,posizione cancellata;,globale:T-1572,P0_LOCATION 30/30 + P0_LOCATION_RETENTION 5/5 su QA 1.48.37: posizione rimossa da elenco e mappa; le letture successive non restituiscono il record.
 P1,mappe-posizione,passed,Posizione con GPS impreciso.,globale:T-0500,ui-post-location Samsung S20 FE 1/1: GPS simulato con accuratezza dichiarata di 3500 metri completa il flusso senza presentare il dato come certificato.
 P1,mappe-posizione,passed,Posizione con GPS preciso.,globale:T-0501,"ui-location-permissions Samsung S20 FE 1/1: coordinate precise 28.6139, 77.2090 conservate e mostrate senza arrotondamenti fuorvianti."
 P1,mappe-posizione,passed,posizione condivisa;,globale:T-1573,P0_LOCATION 30/30 su QA 1.48.37: la posizione pubblicata dal proprietario compare nelle viste private autorizzate del secondo viaggiatore e della coordinatrice.
 P1,mappe-posizione,passed,posizione del gruppo;,addendum:A0122,"ui-location QA 1.48.40: viaggiatore e coordinatrice condividono due posizioni, la vista autorizzata mostra entrambi e il marker raggruppato indica 2."
-P1,mappe-posizione,pending,Posizione in movimento.,globale:T-0502,
+P1,mappe-posizione,passed,Posizione in movimento.,globale:T-0502,"ui-location-real-conditions QA 1.48.40 Galaxy S9+ touch 1/1: dopo lo spostamento il client richiede un fix non memorizzato, aggiorna da 13.7563/100.5018 a 13.7700/100.5300 e conserva un solo record."
 P1,mappe-posizione,passed,posizione negata;,usabilita:U0502,"Playwright mobile: permesso rimosso, messaggio comprensibile e nessuna richiesta al server; preview 20382a40; 2026-08-04"
 P1,mappe-posizione,passed,posizione precisa attiva;,globale:T-1386,"ui-location QA 1.48.40: permesso attivo, coordinate 28.6139/77.2090 e precisione ±3500 m persistite e mostrate con avviso di segnale debole."
 P1,mappe-posizione,passed,posizione precisa disattiva;,globale:T-1387,"ui-location QA 1.48.40: permesso rimosso, nessuna coordinata viene inviata; dopo nuova autorizzazione la condivisione riparte e viene poi cancellata."
