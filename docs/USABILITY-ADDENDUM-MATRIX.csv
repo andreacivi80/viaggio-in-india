@@ -203,7 +203,7 @@
 "A0202","A13. COPERTURA AUTOMATICA DEI TASTI","registri stato attivo/disabilitato;","passed","TypeScript JSX inventory: 115 interactive elements, zero missing handlers/empty links; Playwright credential flow","1.31.0"
 "A0203","A13. COPERTURA AUTOMATICA DEI TASTI","esegua il clic;","pending","","1.31.0"
 "A0204","A13. COPERTURA AUTOMATICA DEI TASTI","controlli errori JavaScript;","pending","","1.31.0"
-"A0205","A13. COPERTURA AUTOMATICA DEI TASTI","controlli richieste di rete;","pending","","1.31.0"
+"A0205","A13. COPERTURA AUTOMATICA DEI TASTI","controlli richieste di rete;","passed","QA 1.48.48 Galaxy S9+ touch 1/1: navigazione Bacheca/Viaggio senza richieste first-party fallite; solo HTTPS o blob same-origin, nessun segreto in query, API sotto 500 e cache pubblica limitata a meteo/sole/luoghi.","1.48.48"
 "A0206","A13. COPERTURA AUTOMATICA DEI TASTI","controlli modifica della schermata;","pending","","1.31.0"
 "A0207","A13. COPERTURA AUTOMATICA DEI TASTI","controlli risposta dell’API;","pending","","1.31.0"
 "A0208","A13. COPERTURA AUTOMATICA DEI TASTI","controlli eventuale modifica del database.","pending","","1.31.0"
