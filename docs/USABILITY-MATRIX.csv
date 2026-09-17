@@ -584,7 +584,7 @@
 "U0583","30. TEST DI SICUREZZA DELLE RICHIESTE","401 o 403;","passed","Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04","1.31.0"
 "U0584","30. TEST DI SICUREZZA DELLE RICHIESTE","nessuna modifica al database;","passed","Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04","1.31.0"
 "U0585","30. TEST DI SICUREZZA DELLE RICHIESTE","nessun file creato;","pending","","1.31.0"
-"U0586","30. TEST DI SICUREZZA DELLE RICHIESTE","nessuna notifica inviata;","pending","","1.31.0"
+"U0586","30. TEST DI SICUREZZA DELLE RICHIESTE","nessuna notifica inviata;","passed","NOTIFICATION_NEGATIVE_CASES 1/1: i dinieghi server precedono ogni invio push sui percorsi mutanti notificabili.","1.48.42"
 "U0587","30. TEST DI SICUREZZA DELLE RICHIESTE","evento registrato nel log.","pending","","1.31.0"
 "U0588","31. CONTROLLO DATABASE DOPO OGNI OPERAZIONE","un solo record;","pending","","1.31.0"
 "U0589","31. CONTROLLO DATABASE DOPO OGNI OPERAZIONE","autore corretto;","pending","","1.31.0"

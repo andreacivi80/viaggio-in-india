@@ -78,6 +78,23 @@ test("tag differenti conservano avvisi distinti", async () => {
   assert.deepEqual([...visibleByTag.keys()], ["post-1", "comment-2"]);
 });
 
+test("dieci notifiche contemporanee restano complete e isolate per tag", async () => {
+  const { listeners, visibleByTag } = serviceWorkerRuntime();
+  const push = listeners.get("push");
+  await Promise.all(Array.from({ length: 10 }, (_, index) => dispatchPush(push, {
+    title: "Thailandia Insieme",
+    body: `Aggiornamento ${index + 1}`,
+    tag: `simultanea-${index + 1}`,
+    url: `/?notification=${index + 1}`,
+  })));
+  assert.equal(visibleByTag.size, 10);
+  for (let index = 1; index <= 10; index += 1) {
+    const shown = visibleByTag.get(`simultanea-${index}`);
+    assert.equal(shown.options.body, `Aggiornamento ${index}`);
+    assert.equal(shown.options.data.url, `/?notification=${index}`);
+  }
+});
+
 test("a telefono bloccato la push resta visibile e il tocco riapre il contenuto", async () => {
   const { listeners, visibleByTag, openedWindows } = serviceWorkerRuntime();
   await dispatchPush(listeners.get("push"), {

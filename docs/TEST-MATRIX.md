@@ -98,10 +98,10 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0083 | 7 | Notifica con apertura del post preciso. | NON ESEGUITO | — |
 | T-0084 | 7 | Notifica per documento mancante o aggiornato. | SUPERATO | P0_DOCUMENTS QA 12/12 + routing 1/1: destinatario/proprietario e coordinatrice filtrati per ruolo, preferenza e autore; payload generico. |
 | T-0085 | 7 | Notifica per invito personale. | SUPERATO | QA Galaxy S9+ 1/1 + routing/sanitizzazione 2/2 + gate 208/208: consegna solo al profilo invitato già sottoscritto; autore, altri profili, familiari e pubblico esclusi; nessun token o link segreto nel push; inviti distinti e monouso. |
-| T-0086 | 7 | Notifica per menzione. | NON ESEGUITO | — |
+| T-0086 | 7 | Notifica per menzione. | SUPERATO | NOTIFICATION_TARGETING 4/4: handle Unicode normalizzato, corrispondenza esatta, destinatario mirato, autore escluso, preferenza commenti e deep link privato verificati. |
 | T-0087 | 7 | Notifica per posizione condivisa, soltanto se autorizzata. | SUPERATO | P0_LOCATION QA 30/30 + routing 1/1: notifica soltanto dopo condivisione autenticata; autore, pubblico, familiari e preferenza disattiva esclusi. |
-| T-0088 | 7 | Notifica per reazione, se scelta dall’utente. | NON ESEGUITO | — |
-| T-0089 | 7 | Notifica per risposta a un commento. | NON ESEGUITO | — |
+| T-0088 | 7 | Notifica per reazione, se scelta dall’utente. | SUPERATO | NOTIFICATION_TARGETING 4/4 + NOTIFICATION_PREFERENCES: la reazione aggiunta avvisa solo il proprietario del contenuto, esclude autore e preferenza reazioni disattiva; la rimozione non genera push. |
+| T-0089 | 7 | Notifica per risposta a un commento. | SUPERATO | NOTIFICATION_TARGETING 4/4: risposta collegata nello stesso post, destinatario profilo o ospite preciso, esclusione autore/duplicati, preferenza e deep link al commento. |
 | T-0090 | 7 | Preferenze separate per post, commenti, reazioni, documenti e posizione. | SUPERATO | QA API 1/1 + Galaxy S9+ touch 1/1 + unit 3/3: cinque preferenze indipendenti, persistenti, isolate per profilo e filtrate lato server. |
 | T-0091 | 7 | Stato letto/non letto sincronizzato tra dispositivi. | NON ESEGUITO | — |
 | T-0092 | 7 | Test Push con app aperta. | NON ESEGUITO | — |
@@ -583,7 +583,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0568 | 32 | Aggiornamenti contemporanei da tre telefoni. | NON ESEGUITO | — |
 | T-0569 | 32 | Aggiornamento posizione contemporaneo. | NON ESEGUITO | — |
 | T-0570 | 32 | Commento mentre il post viene eliminato. | NON ESEGUITO | — |
-| T-0571 | 32 | Dieci notifiche contemporanee. | NON ESEGUITO | — |
+| T-0571 | 32 | Dieci notifiche contemporanee. | SUPERATO | SERVICE_WORKER_PUSH_GROUPING 1/1: dieci eventi push concorrenti con tag e deep link distinti producono dieci avvisi completi senza sovrascrittura. |
 | T-0572 | 32 | Eliminazione mentre un altro dispositivo legge. | NON ESEGUITO | — |
 | T-0573 | 32 | Sostituzione documento durante il download. | NON ESEGUITO | — |
 | T-0574 | 32 | Tre upload contemporanei. | NON ESEGUITO | — |
@@ -761,7 +761,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0746 | 40 | nessun file creato; | NON ESEGUITO | — |
 | T-0747 | 40 | nessuna informazione sensibile nella risposta. | NON ESEGUITO | — |
 | T-0748 | 40 | nessuna modifica nel database; | NON ESEGUITO | — |
-| T-0749 | 40 | nessuna notifica inviata; | NON ESEGUITO | — |
+| T-0749 | 40 | nessuna notifica inviata; | SUPERATO | NOTIFICATION_NEGATIVE_CASES 1/1: le richieste non autorizzate terminano con 401/403 prima di ogni chiamata a notifySubscribers. |
 | T-0750 | 40 | pubblicazione post; | NON ESEGUITO | — |
 | T-0751 | 40 | reazione; | NON ESEGUITO | — |
 | T-0752 | 40 | risposta HTTP 401 o 403; | NON ESEGUITO | — |

@@ -17,7 +17,7 @@ test("risposte e reazioni ai commenti hanno schema additivo e indici dedicati", 
 });
 
 test("il server convalida la risposta nello stesso post e limita la gerarchia a un livello", () => {
-  assert.match(worker, /SELECT id,parent_comment_id FROM comments WHERE id=\? AND post_id=\?/);
+  assert.match(worker, /SELECT id,parent_comment_id,profile_id,visitor_id FROM comments WHERE id=\? AND post_id=\?/);
   assert.match(worker, /parentCommentId = parentComment\.parent_comment_id \|\| parentComment\.id/);
   assert.match(worker, /INSERT INTO comments\(id,post_id,author_name,profile_id,visitor_id,text,media_key,media_type,parent_comment_id,created_at\)/);
 });

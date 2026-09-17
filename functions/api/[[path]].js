@@ -554,7 +554,7 @@ export function sanitizePushPayload(payload = {}) {
   const tag = String(payload.tag || "activity").slice(0, 96);
   const kind = tag.startsWith("technical-")
     ? "technical"
-    : tag.startsWith("comment-")
+    : /^(?:comment|mention-comment|reply-comment)-/.test(tag)
     ? "comment"
     : tag.startsWith("post-")
     ? "post"
@@ -597,7 +597,7 @@ export function sanitizePushPayload(payload = {}) {
 }
 const notificationPreferenceForTag = (tag = "") =>
   tag.startsWith("post-") ? "posts"
-  : tag.startsWith("comment-") ? "comments"
+  : /^(?:comment|mention-comment|reply-comment)-/.test(tag) ? "comments"
   : tag.startsWith("reaction-") ? "reactions"
   : tag.startsWith("document-") ? "documents"
   : tag.startsWith("location-") ? "location"
@@ -611,16 +611,27 @@ export function notificationPreferenceAllows(subscription, payload) {
 export function authorizedNotificationSubscriptions(
   subscriptions,
   payload,
-  { recipientRole = "", targetProfileId = "" } = {},
+  {
+    recipientRole = "",
+    targetProfileId = "",
+    targetGuestId = "",
+    excludeProfileIds = [],
+    excludeGuestIds = [],
+  } = {},
 ) {
+  const excludedProfiles = new Set(excludeProfileIds.filter(Boolean));
+  const excludedGuests = new Set(excludeGuestIds.filter(Boolean));
   return subscriptions.filter((subscription) =>
     canNotifySubscriber(subscription, payload) &&
     notificationPreferenceAllows(subscription, payload) &&
     (!recipientRole || subscription.profile_role === recipientRole) &&
-    (!targetProfileId || subscription.profile_id === targetProfileId));
+    (!targetProfileId || subscription.profile_id === targetProfileId) &&
+    (!targetGuestId || subscription.guest_visitor_id === targetGuestId) &&
+    !excludedProfiles.has(subscription.profile_id) &&
+    !excludedGuests.has(subscription.guest_visitor_id));
 }
 
-async function notifySubscribers(env, payload, { recipientRole = "", targetProfileId = "" } = {}) {
+async function notifySubscribers(env, payload, options = {}) {
   const subscriptions = await env.DB.prepare(
     `SELECT s.id,s.endpoint,s.p256dh,s.auth,s.profile_id,s.guest_visitor_id,
             p.role AS profile_role,
@@ -634,7 +645,7 @@ async function notifySubscribers(env, payload, { recipientRole = "", targetProfi
   const authorizedSubscriptions = authorizedNotificationSubscriptions(
     subscriptions.results,
     payload,
-    { recipientRole, targetProfileId },
+    options,
   );
   if (!env.VAPID_PUBLIC_KEY || !env.VAPID_PRIVATE_KEY)
     return {
@@ -921,6 +932,26 @@ async function ensureProfileGenderSchema(env) {
     env.DB.prepare("UPDATE profiles SET gender='female' WHERE lower(trim(name))='valentina' AND (gender IS NULL OR gender='')"),
   ]);
   profileGenderSchemaReady = true;
+}
+
+export function profileMentionHandle(profile = {}) {
+  return `${profile.name || ""}_${profile.surname || ""}`
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9_]/gi, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_|_$/g, "");
+}
+
+export function mentionedProfileIds(text, profiles = []) {
+  const source = String(text || "").toLowerCase();
+  return profiles
+    .filter((profile) => {
+      const handle = profileMentionHandle(profile).toLowerCase();
+      return Boolean(handle) && new RegExp(`(^|\\s)@${handle}(?=$|[^a-z0-9_])`, "i").test(source);
+    })
+    .map((profile) => String(profile.id || ""))
+    .filter(Boolean);
 }
 let profileContactSchemaReady = false;
 async function ensureProfileContactSchema(env) {
@@ -2527,14 +2558,18 @@ export async function onRequest(context) {
         return json({ error: "Contenuto non autorizzato" }, 403);
       const requestedParentId = String(form.get("parent_comment_id") || "").trim();
       let parentCommentId = "";
+      let replyProfileId = "";
+      let replyGuestId = "";
       if (requestedParentId) {
         const parentComment = await env.DB.prepare(
-          "SELECT id,parent_comment_id FROM comments WHERE id=? AND post_id=?",
+          "SELECT id,parent_comment_id,profile_id,visitor_id FROM comments WHERE id=? AND post_id=?",
         ).bind(requestedParentId, postId).first();
         if (!parentComment)
           return json({ error: "Commento a cui rispondere non trovato" }, 404);
         // Le conversazioni rimangono a un solo livello anche rispondendo a una risposta.
         parentCommentId = parentComment.parent_comment_id || parentComment.id;
+        replyProfileId = String(parentComment.profile_id || "");
+        replyGuestId = String(parentComment.visitor_id || "");
       }
       const commentText = String(form.get("text") || "");
       const commentFile = form.get("file");
@@ -2591,9 +2626,20 @@ export async function onRequest(context) {
         await abandonIdempotentOperation(env, operation.operationHash);
         throw error;
       }
-      if (request.headers.get("x-qa-silent") !== "true")
-        context.waitUntil?.(
-          notifySubscribers(env, {
+      if (request.headers.get("x-qa-silent") !== "true") {
+        const profileRows = commentText.includes("@")
+          ? await env.DB.prepare("SELECT id,name,surname FROM profiles").all()
+          : { results: [] };
+        const mentionProfileIds = mentionedProfileIds(commentText, profileRows.results)
+          .filter((profileId) => profileId !== row.profile_id);
+        const targetedProfileIds = [...new Set([
+          ...mentionProfileIds,
+          replyProfileId && replyProfileId !== row.profile_id ? replyProfileId : "",
+        ].filter(Boolean))];
+        const targetedGuestIds = [...new Set([
+          replyGuestId && replyGuestId !== (guest?.visitor_id || "") ? replyGuestId : "",
+        ].filter(Boolean))];
+        const notification = {
           title: row.author_name,
           body: row.text || "Ha aggiunto un commento.",
           url: `/?post=${encodeURIComponent(row.post_id)}&comment=${encodeURIComponent(row.id)}`,
@@ -2601,8 +2647,23 @@ export async function onRequest(context) {
           visibility: targetPost.visibility,
           author_profile_id: row.profile_id,
           author_guest_id: guest?.visitor_id || "",
+        };
+        const deliveries = [
+          notifySubscribers(env, notification, {
+            excludeProfileIds: targetedProfileIds,
+            excludeGuestIds: targetedGuestIds,
           }),
-        );
+          ...targetedProfileIds.map((targetProfileId) => notifySubscribers(env, {
+            ...notification,
+            tag: `${mentionProfileIds.includes(targetProfileId) ? "mention" : "reply"}-comment-${row.id}`,
+          }, { targetProfileId })),
+          ...targetedGuestIds.map((targetGuestId) => notifySubscribers(env, {
+            ...notification,
+            tag: `reply-comment-${row.id}`,
+          }, { targetGuestId })),
+        ];
+        context.waitUntil?.(Promise.all(deliveries));
+      }
       const payload = { ...row, media_url: mediaUrl(media?.key) };
       await completeIdempotentOperation(env, operation.operationHash, payload, 201);
       return json(payload, 201);
