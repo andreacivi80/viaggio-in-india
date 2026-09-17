@@ -1599,7 +1599,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1584 | 85 | tentativo non autorizzato; | NON ESEGUITO | — |
 | T-1585 | 85 | tipo di operazione; | NON ESEGUITO | — |
 | T-1586 | 86 | Accedere nella prima scheda. | NON ESEGUITO | — |
-| T-1587 | 86 | Aggiornare il Service Worker con due schede aperte. | NON ESEGUITO | — |
+| T-1587 | 86 | Aggiornare il Service Worker con due schede aperte. | SUPERATO | QA 1.48.46, Galaxy S9+: due schede controllate dallo stesso Service Worker; update esplicito senza reload o perdita stato, seconda scheda ricaricata sulla nuova shell e prima rimasta intatta; Playwright 1/1. |
 | T-1588 | 86 | Aprire l’app in due schede dello stesso browser. | NON ESEGUITO | — |
 | T-1589 | 86 | Chiudere una scheda durante un upload. | NON ESEGUITO | — |
 | T-1590 | 86 | Eseguire logout nella prima scheda. | NON ESEGUITO | — |
