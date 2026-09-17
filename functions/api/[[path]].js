@@ -487,6 +487,8 @@ export function sanitizePushPayload(payload = {}) {
         ? "document"
         : tag.startsWith("location-")
           ? "location"
+          : tag.startsWith("invite-")
+          ? "invite"
       : "system";
   const body = kind === "technical"
     ? "È stato rilevato un problema tecnico. Il responsabile può consultare il registro di sicurezza."
@@ -500,11 +502,15 @@ export function sanitizePushPayload(payload = {}) {
           ? "Un documento è stato aggiornato."
           : kind === "location"
             ? "Un viaggiatore ha condiviso la posizione."
+            : kind === "invite"
+            ? "Hai ricevuto un nuovo invito personale."
       : "C'è un nuovo aggiornamento nell'app.";
   const requestedUrl = String(payload.url || "/");
-  const url = /^\/(?:\?[a-z0-9_=&%.-]*)?$/i.test(requestedUrl)
-    ? requestedUrl
-    : "/";
+  const url = kind === "invite"
+    ? "/"
+    : /^\/(?:\?[a-z0-9_=&%.-]*)?$/i.test(requestedUrl)
+      ? requestedUrl
+      : "/";
   return {
     title: "Thailandia Insieme",
     body,
@@ -1466,6 +1472,13 @@ export async function onRequest(context) {
         resource_id: profile.id,
         result: "success",
       });
+      if (request.headers.get("x-qa-silent") !== "true")
+        context.waitUntil?.(notifySubscribers(env, {
+          visibility: "group",
+          tag: `invite-${profile.id}-${Date.now()}`,
+          url: "/",
+          author_profile_id: session.profile_id,
+        }, { targetProfileId: profile.id }));
       return json({
         invite_id: await tokenHash(token),
         invite_token: token,

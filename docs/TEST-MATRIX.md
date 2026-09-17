@@ -97,7 +97,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0082 | 7 | Notifica con apertura del commento preciso. | NON ESEGUITO | — |
 | T-0083 | 7 | Notifica con apertura del post preciso. | NON ESEGUITO | — |
 | T-0084 | 7 | Notifica per documento mancante o aggiornato. | SUPERATO | P0_DOCUMENTS QA 12/12 + routing 1/1: destinatario/proprietario e coordinatrice filtrati per ruolo, preferenza e autore; payload generico. |
-| T-0085 | 7 | Notifica per invito personale. | NON ESEGUITO | — |
+| T-0085 | 7 | Notifica per invito personale. | SUPERATO | QA Galaxy S9+ 1/1 + routing/sanitizzazione 2/2 + gate 208/208: consegna solo al profilo invitato già sottoscritto; autore, altri profili, familiari e pubblico esclusi; nessun token o link segreto nel push; inviti distinti e monouso. |
 | T-0086 | 7 | Notifica per menzione. | NON ESEGUITO | — |
 | T-0087 | 7 | Notifica per posizione condivisa, soltanto se autorizzata. | SUPERATO | P0_LOCATION QA 30/30 + routing 1/1: notifica soltanto dopo condivisione autenticata; autore, pubblico, familiari e preferenza disattiva esclusi. |
 | T-0088 | 7 | Notifica per reazione, se scelta dall’utente. | NON ESEGUITO | — |

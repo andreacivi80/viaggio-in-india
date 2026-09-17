@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import {
   authorizedNotificationSubscriptions,
   notificationPreferenceAllows,
+  sanitizePushPayload,
 } from "../functions/api/[[path]].js";
 
 const worker = readFileSync(new URL("../functions/api/[[path]].js", import.meta.url), "utf8");
@@ -72,4 +73,37 @@ test("documenti mancanti o aggiornati raggiungono solo il destinatario o la coor
     authorizedNotificationSubscriptions(subscriptions, uploadedByOwner, { recipientRole: "coordinator" }).map(({ id }) => id),
     ["coordinator"],
   );
+});
+
+test("l'invito personale raggiunge soltanto il profilo destinatario", () => {
+  const subscriptions = [
+    { id: "author", profile_id: "profile-coordinator", guest_visitor_id: "", profile_role: "coordinator" },
+    { id: "target-device-1", profile_id: "profile-target", guest_visitor_id: "", profile_role: "traveler" },
+    { id: "target-device-2", profile_id: "profile-target", guest_visitor_id: "", profile_role: "traveler" },
+    { id: "other", profile_id: "profile-other", guest_visitor_id: "", profile_role: "traveler" },
+    { id: "guest", profile_id: "", guest_visitor_id: "guest-a", profile_role: "" },
+  ];
+  const payload = {
+    tag: "invite-profile-target-123",
+    visibility: "group",
+    author_profile_id: "profile-coordinator",
+  };
+  assert.deepEqual(
+    authorizedNotificationSubscriptions(subscriptions, payload, { targetProfileId: "profile-target" })
+      .map(({ id }) => id),
+    ["target-device-1", "target-device-2"],
+  );
+});
+
+test("la notifica invito non espone token, link segreti o testo controllato dal client", () => {
+  const safe = sanitizePushPayload({
+    tag: "invite-profile-target-123",
+    title: "token segreto",
+    body: "Thailandia2026 invite_token=super-secret",
+    url: "/?invite=super-secret",
+  });
+  assert.equal(safe.title, "Thailandia Insieme");
+  assert.equal(safe.body, "Hai ricevuto un nuovo invito personale.");
+  assert.equal(safe.url, "/");
+  assert.doesNotMatch(JSON.stringify(safe), /super-secret|Thailandia2026/);
 });
