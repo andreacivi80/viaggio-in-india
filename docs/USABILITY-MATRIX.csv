@@ -502,7 +502,7 @@
 "U0501","26. TEST DI TUTTI I MESSAGGI DI ERRORE","più di dieci allegati;","passed","Playwright mobile: undicesimo allegato rifiutato con messaggio preciso e i primi dieci conservati; preview b4f2cf13; 2026-08-04","1.31.0"
 "U0502","26. TEST DI TUTTI I MESSAGGI DI ERRORE","posizione negata;","passed","Playwright mobile: permesso rimosso, messaggio comprensibile e nessuna richiesta al server; preview 20382a40; 2026-08-04","1.31.0"
 "U0503","26. TEST DI TUTTI I MESSAGGI DI ERRORE","microfono negato;","pending","","1.31.0"
-"U0504","26. TEST DI TUTTI I MESSAGGI DI ERRORE","fotocamera negata;","pending","","1.31.0"
+"U0504","26. TEST DI TUTTI I MESSAGGI DI ERRORE","fotocamera negata;","passed","QA 1.48.46: selezione fotocamera vuota/negata non avvia upload, annuncia un errore accessibile e indica Galleria foto come alternativa; test automatici camera-denied 3/3.","1.48.46"
 "U0505","26. TEST DI TUTTI I MESSAGGI DI ERRORE","notifiche negate;","pending","","1.31.0"
 "U0506","26. TEST DI TUTTI I MESSAGGI DI ERRORE","rete assente;","pending","","1.31.0"
 "U0507","26. TEST DI TUTTI I MESSAGGI DI ERRORE","server non disponibile;","pending","","1.31.0"

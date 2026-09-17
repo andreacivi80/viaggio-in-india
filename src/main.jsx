@@ -51,6 +51,7 @@ import {
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
 import { compressMobilePhoto } from "./mediaCompression.js";
+import { cameraSelectionFeedback } from "./mediaSelectionFeedback.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 import { createTravelArchive, visibleArchiveMedia } from "./travelArchive.js";
@@ -77,7 +78,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.45",
+const VERSION = "1.48.46",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -3728,6 +3729,12 @@ function Diary({
                       accept="image/*,.heic,.heif"
                       capture="environment"
                       onChange={async (e) => {
+                        const feedback = cameraSelectionFeedback(e.target.files);
+                        if (feedback) {
+                          setFileStatus(feedback);
+                          e.target.value = "";
+                          return;
+                        }
                         await addFiles(e.target.files);
                         e.target.value = "";
                       }}
