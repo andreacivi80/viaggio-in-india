@@ -71,7 +71,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.40",
+const VERSION = "1.48.41",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -132,6 +132,13 @@ const travelerDetails = (person) =>
   [travelerRoleLabel(person), person.origin_city, person.age && `${person.age} anni`, person.job]
     .filter(Boolean)
     .join(" · ");
+const coordinatorContactHref = (contact) => {
+  const value = String(contact || "").trim();
+  if (!value) return "";
+  if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) return `mailto:${value}`;
+  const phone = value.replace(/[^+\d]/g, "");
+  return phone.length >= 6 ? `tel:${phone}` : "";
+};
 const locationFreshness = (updatedAt, referenceTime = Date.now()) => {
   const updatedTime = new Date(updatedAt).getTime();
   const age = Number.isFinite(updatedTime) ? Math.max(0, referenceTime - updatedTime) : Infinity;
@@ -1236,6 +1243,7 @@ function App() {
     name: "",
     surname: "",
     origin_city: "",
+    contact: "",
     gender: "",
     role: "traveler",
     privacy_consent: false,
@@ -2397,6 +2405,16 @@ function App() {
                   value={bootstrapForm.origin_city}
                   onChange={(event) => setBootstrapForm({ ...bootstrapForm, origin_city: event.target.value })}
                 />
+                {people.length === 0 && (
+                  <input
+                    type="text"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    placeholder="Contatto coordinatrice (telefono o email)"
+                    value={bootstrapForm.contact}
+                    onChange={(event) => setBootstrapForm({ ...bootstrapForm, contact: event.target.value })}
+                  />
+                )}
                 <label className="genderSelect">
                   Genere (facoltativo)
                   <select value={bootstrapForm.gender} onChange={(event) => setBootstrapForm({ ...bootstrapForm, gender: event.target.value })}>
@@ -4872,6 +4890,7 @@ function People({
       age: "",
       job: "",
       origin_city: "",
+      contact: "",
       bio: "",
       gender: "",
       role: "traveler",
@@ -4976,6 +4995,7 @@ function People({
         age: "",
         job: "",
         origin_city: "",
+        contact: "",
         bio: "",
         gender: "",
         role: "traveler",
@@ -5024,6 +5044,7 @@ function People({
                     age: "",
                     job: "",
                     origin_city: "",
+                    contact: "",
                     bio: "",
                     gender: "",
                     role: "traveler",
@@ -5086,6 +5107,14 @@ function People({
             value={form.origin_city}
             onChange={(e) => setForm({ ...form, origin_city: e.target.value })}
           />
+          <input
+            type="text"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder="Contatto (telefono o email)"
+            value={form.contact}
+            onChange={(e) => setForm({ ...form, contact: e.target.value })}
+          />
           <textarea
             placeholder="Raccontaci qualcosa di te…"
             value={form.bio}
@@ -5147,6 +5176,15 @@ function People({
               {x.name} {x.surname}{x.origin_city ? ` · ${x.origin_city}` : ""}
             </h3>
             <small>{travelerDetails(x)}</small>
+            {sessionToken && x.role === "coordinator" && x.contact && (
+              coordinatorContactHref(x.contact) ? (
+                <a className="coordinatorContact" href={coordinatorContactHref(x.contact)}>
+                  Contatta la coordinatrice · {x.contact}
+                </a>
+              ) : (
+                <span className="coordinatorContact">Contatto coordinatrice · {x.contact}</span>
+              )
+            )}
             <p>{x.bio}</p>
             {sessionToken && canEdit(x.id) && (
               <div className="profileActions">
@@ -5159,6 +5197,7 @@ function People({
                       age: x.age || "",
                       job: x.job || "",
                       origin_city: x.origin_city || "",
+                      contact: x.contact || "",
                       bio: x.bio || "",
                       gender: x.gender || "",
                       role: x.role || "traveler",

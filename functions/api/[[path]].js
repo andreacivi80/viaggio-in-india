@@ -922,6 +922,13 @@ async function ensureProfileGenderSchema(env) {
   ]);
   profileGenderSchemaReady = true;
 }
+let profileContactSchemaReady = false;
+async function ensureProfileContactSchema(env) {
+  if (profileContactSchemaReady) return;
+  try { await env.DB.prepare("ALTER TABLE profiles ADD COLUMN contact TEXT DEFAULT ''").run(); }
+  catch (error) { if (!/duplicate column|already exists/i.test(String(error?.message || error))) throw error; }
+  profileContactSchemaReady = true;
+}
 let profilePrivacySchemaReady = false;
 async function ensureProfilePrivacySchema(env) {
   if (profilePrivacySchemaReady) return;
@@ -1192,6 +1199,7 @@ export async function onRequest(context) {
   ).replace(/^\/+|\/+$/g, "");
   try {
     await ensureProfileGenderSchema(env);
+    await ensureProfileContactSchema(env);
     await ensureProfilePrivacySchema(env);
     await ensureSessionDeviceSchema(env);
     await ensureGuestDeviceSchema(env);
@@ -1205,19 +1213,20 @@ export async function onRequest(context) {
       const name = String(body.name || "").trim();
       const surname = String(body.surname || "").trim();
       const originCity = String(body.origin_city || "").trim();
+      const contact = String(body.contact || "").trim();
       if (body.privacy_consent !== true)
         return json({ error: "Accetta l’informativa privacy per creare il profilo" }, 400);
       if (!name) return json({ error: "Inserisci il nome del coordinatore" }, 400);
-      if (name.length > 80 || surname.length > 80 || originCity.length > 100)
+      if (name.length > 80 || surname.length > 80 || originCity.length > 100 || contact.length > 120)
         return json({ error: "I dati inseriti sono troppo lunghi" }, 400);
       const profileId = id();
       const createdAt = now();
       const inserted = await env.DB.prepare(
-        `INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,privacy_consent_at,privacy_consent_version,created_at)
-         SELECT ?,?,?, '', '', ?, '', 'coordinator', NULL, ?, ?, ?
+        `INSERT INTO profiles(id,name,surname,age,job,origin_city,contact,bio,role,avatar_key,privacy_consent_at,privacy_consent_version,created_at)
+         SELECT ?,?,?, '', '', ?, ?, '', 'coordinator', NULL, ?, ?, ?
          WHERE NOT EXISTS (SELECT 1 FROM profiles)`,
       )
-        .bind(profileId, name, surname, originCity, createdAt, PRIVACY_CONSENT_VERSION, createdAt)
+        .bind(profileId, name, surname, originCity, contact, createdAt, PRIVACY_CONSENT_VERSION, createdAt)
         .run();
       if (!inserted.meta?.changes)
         return json({ error: "Il gruppo è già stato inizializzato" }, 409);
@@ -1234,7 +1243,7 @@ export async function onRequest(context) {
         });
         return json({
           ...issued,
-          profile: { id: profileId, name, surname, origin_city: originCity, role: "coordinator" },
+          profile: { id: profileId, name, surname, origin_city: originCity, contact, role: "coordinator" },
         }, 201);
       } catch (error) {
         await env.DB.prepare("DELETE FROM profiles WHERE id=?").bind(profileId).run();
@@ -2164,6 +2173,7 @@ export async function onRequest(context) {
         age: String(form.get("age") || ""),
         job: String(form.get("job") || ""),
         origin_city: String(form.get("origin_city") || ""),
+        contact: String(form.get("contact") || "").trim().slice(0, 120),
         bio: String(form.get("bio") || ""),
         // The coordinator is assigned once during bootstrap. Every profile
         // created afterwards is always a traveler.
@@ -2173,7 +2183,7 @@ export async function onRequest(context) {
         created_at: now(),
       };
       await env.DB.prepare(
-        "INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,created_at,gender) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO profiles(id,name,surname,age,job,origin_city,contact,bio,role,avatar_key,created_at,gender) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
       )
         .bind(
           row.id,
@@ -2182,6 +2192,7 @@ export async function onRequest(context) {
           row.age,
           row.job,
           row.origin_city,
+          row.contact,
           row.bio,
           row.role,
           row.avatar_key,
@@ -2228,7 +2239,7 @@ export async function onRequest(context) {
       const updatedRole = current.role;
       try {
         await env.DB.prepare(
-          "UPDATE profiles SET name=?,surname=?,age=?,job=?,origin_city=?,bio=?,role=?,avatar_key=?,gender=? WHERE id=?",
+          "UPDATE profiles SET name=?,surname=?,age=?,job=?,origin_city=?,contact=?,bio=?,role=?,avatar_key=?,gender=? WHERE id=?",
         )
           .bind(
             name,
@@ -2236,6 +2247,7 @@ export async function onRequest(context) {
             String(form.get("age") || ""),
             String(form.get("job") || ""),
             String(form.get("origin_city") || ""),
+            String(form.get("contact") || "").trim().slice(0, 120),
             String(form.get("bio") || ""),
             updatedRole,
             avatarKey,

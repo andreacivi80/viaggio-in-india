@@ -1406,6 +1406,20 @@ h3 {
   overflow-wrap: anywhere;
   word-break: break-word;
 }
+.coordinatorContact {
+  display: block;
+  margin: 5px 0 2px;
+  color: #205844;
+  font-size: 12px;
+  font-weight: 850;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  text-decoration: none;
+}
+a.coordinatorContact:focus-visible {
+  outline: 3px solid rgba(32, 88, 68, 0.3);
+  outline-offset: 3px;
+}
 .peopleGrid .avatar {
   margin: auto;
 }

@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   age TEXT DEFAULT '',
   job TEXT DEFAULT '',
   origin_city TEXT DEFAULT '',
+  contact TEXT DEFAULT '',
   bio TEXT DEFAULT '',
   role TEXT DEFAULT 'traveler',
   gender TEXT DEFAULT '',

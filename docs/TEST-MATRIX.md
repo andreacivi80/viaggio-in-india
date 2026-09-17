@@ -1208,7 +1208,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1193 | 65 | Verificare notifica prioritaria al Coordinatore. | NON ESEGUITO | — |
 | T-1194 | 65 | Verificare posizione allegata soltanto con consenso. | NON ESEGUITO | — |
 | T-1195 | 65 | Visualizzare ambasciata italiana. | NON ESEGUITO | — |
-| T-1196 | 65 | Visualizzare contatto del Coordinatore. | NON ESEGUITO | — |
+| T-1196 | 65 | Visualizzare contatto del Coordinatore. | SUPERATO | QA 1.48.41 + COORDINATOR_CONTACT 1/1: telefono/email opzionale persistito in D1 e mostrato nel Gruppo come link sicuro; il pubblico non riceve il campo. |
 | T-1197 | 65 | Visualizzare hotel della giornata. | NON ESEGUITO | — |
 | T-1198 | 65 | Visualizzare numero dell’assicurazione. | NON ESEGUITO | — |
 | T-1199 | 66 | Accesso personale. | NON ESEGUITO | — |
