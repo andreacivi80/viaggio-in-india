@@ -53,6 +53,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import { compressMobilePhoto } from "./mediaCompression.js";
 import { editPhoto } from "./photoEditing.js";
+import { compressMobileVideo, shouldCompressVideo } from "./videoCompression.js";
 import { cameraSelectionFeedback } from "./mediaSelectionFeedback.js";
 import { syncStatusLabel } from "./syncStatus.js";
 import {
@@ -88,7 +89,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.55",
+const VERSION = "1.48.56",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -4036,6 +4037,25 @@ function AttachmentPreview({ file, description, onDescription, onReplace, onRemo
       setEditing(false);
     }
   };
+  const compressVideo = async () => {
+    if (editing) return;
+    setEditing(true);
+    setEditStatus("Preparo il video…");
+    try {
+      const edited = await compressMobileVideo(file, {
+        onProgress: (progress) => setEditStatus(`Riduzione video ${progress}%`),
+      });
+      if (edited === file) setEditStatus("Video già ottimizzato o compressione non disponibile");
+      else {
+        onReplace(edited);
+        setEditStatus("Video ridotto: originale invariato sul telefono");
+      }
+    } catch (error) {
+      setEditStatus(error.message || "Compressione video non disponibile");
+    } finally {
+      setEditing(false);
+    }
+  };
   return (
     <article>
       {file.type.startsWith("image/") ? (
@@ -4075,6 +4095,16 @@ function AttachmentPreview({ file, description, onDescription, onReplace, onRemo
             aria-label={`Descrizione di ${file.name}`}
           />
         </>
+      )}
+      {shouldCompressVideo(file) && (
+        <div className="photoEditActions">
+          <button type="button" disabled={editing} onClick={compressVideo} aria-label={`Riduci dimensione ${file.name}`}>
+            ⇩ Riduci video
+          </button>
+        </div>
+      )}
+      {!file.type.startsWith("image/") && editStatus && (
+        <small className="photoEditStatus" role="status">{editStatus}</small>
       )}
       <button className="removeAttachment" onClick={onRemove} aria-label={`Rimuovi ${file.name}`}>
         ×

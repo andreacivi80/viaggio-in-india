@@ -159,7 +159,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0144 | 10 | Una sola reazione dopo dieci retry. | NON ESEGUITO | — |
 | T-0145 | 11 | bonifica periodica dei file orfani. | NON ESEGUITO | — |
 | T-0146 | 11 | compressione fotografie; | SUPERATO | MEDIA_COMPRESSION 4/4: JPEG/WebP oltre 2 MiB ricodificati a qualità 0,88 e lato massimo 2560 px, orientamento rispettato, proporzioni integre e fallback all’originale. |
-| T-0147 | 11 | compressione video; | NON ESEGUITO | — |
+| T-0147 | 11 | compressione video; | SUPERATO | Revisione 1.48.56: comando touch opzionale oltre 25 MiB, ricodifica locale a bitrate ridotto con avanzamento e originale del telefono invariato. QA Galaxy S9+ 1/1: MP4 da 26 MiB ridotto, pubblicato, riaperto e riprodotto; fallback sicuro se il browser non supporta la ricodifica. |
 | T-0148 | 11 | continuazione dopo chiusura dell’app; | NON ESEGUITO | — |
 | T-0149 | 11 | continuazione dopo perdita della rete; | NON ESEGUITO | — |
 | T-0150 | 11 | copertina video; | SUPERATO | Revisione 1.48.52: il player genera dal primo fotogramma una copertina JPEG locale, senza upload aggiuntivo; fallback al player nativo se il browser nega il canvas. Collaudo reale Galaxy S9+ su due video: copertine presenti, swipe touch, riproduzione e pausa esclusiva superati 1/1. |
