@@ -86,7 +86,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.51",
+const VERSION = "1.48.52",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -4175,6 +4175,45 @@ function AudioRecorder({ onRecorded }) {
   );
 }
 
+function VideoWithPoster({ src, label = "Video del viaggio" }) {
+  const [poster, setPoster] = useState("");
+  const capturedSource = useRef("");
+
+  useEffect(() => {
+    capturedSource.current = "";
+    setPoster("");
+  }, [src]);
+
+  const capturePoster = (event) => {
+    const video = event.currentTarget;
+    if (!src || capturedSource.current === src || !video.videoWidth || !video.videoHeight) return;
+    capturedSource.current = src;
+    try {
+      const canvas = document.createElement("canvas");
+      const width = Math.min(960, video.videoWidth);
+      canvas.width = width;
+      canvas.height = Math.max(1, Math.round((video.videoHeight / video.videoWidth) * width));
+      canvas.getContext("2d", { alpha: false })?.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const frame = canvas.toDataURL("image/jpeg", 0.82);
+      if (frame && frame !== "data:,") setPoster(frame);
+    } catch {
+      // Il player nativo resta utilizzabile anche se il browser non permette l'estrazione del fotogramma.
+    }
+  };
+
+  return (
+    <video
+      controls
+      playsInline
+      preload="metadata"
+      src={src}
+      poster={poster || undefined}
+      onLoadedData={capturePoster}
+      aria-label={label}
+    />
+  );
+}
+
 function PostMedia({ items, postId }) {
   const [openImage, setOpenImage] = useState(null);
   const visualItems = items.filter(
@@ -4233,7 +4272,7 @@ function PostMedia({ items, postId }) {
                 </button>
               )}
               {item.media_type?.startsWith("video") && (
-                <video controls playsInline preload="metadata" src={item.media_url} />
+                <VideoWithPoster src={item.media_url} label={`Video ${index + 1} con copertina`} />
               )}
               {index === 0 && photoAudio && (
                 <div className="photoAudioOverlay">
@@ -4876,12 +4915,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
               />
             )}
             {x.media_type?.startsWith("video") && (
-              <video
-                controls
-                playsInline
-                preload="metadata"
-                src={x.media_url}
-              />
+              <VideoWithPoster src={x.media_url} label={`Risposta video di ${x.author_name}`} />
             )}
           </div>
         ))}

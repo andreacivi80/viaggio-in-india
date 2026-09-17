@@ -173,6 +173,8 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
     await expect(videoPlayers).toHaveCount(2);
     await expect(videoPlayers.nth(0)).toBeVisible();
     await expect.poll(() => videoPlayers.nth(0).evaluate((element) => element.duration)).toBeGreaterThan(0);
+    await expect.poll(() => videoPlayers.nth(0).getAttribute("poster")).toMatch(/^data:image\/jpeg;base64,/);
+    await expect.poll(() => videoPlayers.nth(1).getAttribute("poster")).toMatch(/^data:image\/jpeg;base64,/);
     await videoPlayers.nth(0).evaluate(async (element) => { element.muted = true; await element.play(); });
     await expect.poll(() => videoPlayers.nth(0).evaluate((element) => element.paused)).toBe(false);
     await videoPlayers.nth(1).evaluate(async (element) => { element.muted = true; await element.play(); });

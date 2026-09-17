@@ -162,7 +162,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0147 | 11 | compressione video; | NON ESEGUITO | — |
 | T-0148 | 11 | continuazione dopo chiusura dell’app; | NON ESEGUITO | — |
 | T-0149 | 11 | continuazione dopo perdita della rete; | NON ESEGUITO | — |
-| T-0150 | 11 | copertina video; | NON ESEGUITO | — |
+| T-0150 | 11 | copertina video; | SUPERATO | Revisione 1.48.52: il player genera dal primo fotogramma una copertina JPEG locale, senza upload aggiuntivo; fallback al player nativo se il browser nega il canvas. Collaudo reale Galaxy S9+ su due video: copertine presenti, swipe touch, riproduzione e pausa esclusiva superati 1/1. |
 | T-0151 | 11 | limite complessivo del post; | NON ESEGUITO | — |
 | T-0152 | 11 | miniature; | NON ESEGUITO | — |
 | T-0153 | 11 | modifica della copertina; | NON ESEGUITO | — |

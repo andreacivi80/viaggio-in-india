@@ -795,7 +795,7 @@ P1,media-upload,passed,conferma prima del caricamento;,addendum:A0371,"DOCUMENT_
 P1,media-upload,passed,Conservare possibilità di scaricare l’originale.,globale:T-1646,"travel-archive 3/3: foto, audio e video originali visibili vengono scaricati con byte reali in uno ZIP; un file indisponibile non annulla gli altri."
 P1,media-upload,passed,Consultare post già scaricati.,globale:T-0540,"travel-archive 3/3: foto, audio e video originali visibili vengono scaricati con byte reali in uno ZIP; un file indisponibile non annulla gli altri."
 P1,media-upload,passed,controllo server prima del caricamento;,addendum:A0136,"UPLOAD_STATE_AUTHORIZATION 1/1: sessione/proprietà precedono lettura byte; descrizione e firma reale precedono persistenza."
-P1,media-upload,pending,copertina video;,globale:T-0150,
+P1,media-upload,passed,copertina video;,globale:T-0150,Revisione 1.48.52: copertina JPEG generata dal primo fotogramma; UI QA Galaxy S9+ con due video superata 1/1.
 P1,media-upload,passed,Deep link della singola fotografia.,globale:T-0245,"ui-photo-deep-link Thailandia 1.48.9 Samsung S20 FE 1/1: URL della singola fotografia apre il media esatto, il reload conserva il visualizzatore e il comando touch Chiudi foto torna alla bacheca ripulendo il parametro; L1/L2 completo 18/18 applicabili."
 P1,media-upload,pending,Definire gestione della componente video della Live Photo.,globale:T-1429,
 P1,media-upload,pending,Descrizione delle fotografie.,globale:T-1064,
