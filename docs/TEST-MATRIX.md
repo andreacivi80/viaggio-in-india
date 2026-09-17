@@ -1441,7 +1441,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1426 | 76 | Caricare fotografia contenente data e ora. | NON ESEGUITO | — |
 | T-1427 | 76 | Caricare fotografia contenente modello del telefono. | NON ESEGUITO | — |
 | T-1428 | 76 | Caricare una fotografia contenente coordinate GPS EXIF. | NON ESEGUITO | — |
-| T-1429 | 76 | Definire gestione della componente video della Live Photo. | NON ESEGUITO | — |
+| T-1429 | 76 | Definire gestione della componente video della Live Photo. | SUPERATO | La componente MOV viene trattata come video separato: selezione `.mov`, caricamento, copertina e riproduzione nativa senza confonderla con la foto HEIC/JPEG. Collaudo reale QA Galaxy S9+ a batteria simulata 8%: MOV + MP4 per 18.874.368 byte, caricamento e riproduzione superati 1/1 in 22,143 s. |
 | T-1430 | 76 | Definire se l’originale deve essere conservato. | NON ESEGUITO | — |
 | T-1431 | 76 | Distinguere originale e versione ottimizzata. | NON ESEGUITO | — |
 | T-1432 | 76 | Non rendere pubblica la posizione EXIF senza consenso. | NON ESEGUITO | — |
