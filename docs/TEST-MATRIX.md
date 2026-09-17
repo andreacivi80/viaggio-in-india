@@ -144,7 +144,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0129 | 9 | Salvataggio offline dei commenti. | NON ESEGUITO | — |
 | T-0130 | 9 | Salvataggio offline dei video selezionati. | SUPERATO | offline-queue: file MP4 conservato con nome, MIME e contenuto |
 | T-0131 | 9 | Salvataggio offline delle fotografie selezionate. | SUPERATO | offline-queue: file JPEG conservato con nome, MIME e contenuto |
-| T-0132 | 9 | Salvataggio offline delle posizioni. | NON ESEGUITO | — |
+| T-0132 | 9 | Salvataggio offline delle posizioni. | SUPERATO | QA isolata 1.48.50 Galaxy S9+ touch 1/1: GPS acquisito offline, posizione JSON conservata per profilo sul telefono, inviata automaticamente con sessione e chiave dispositivo al ritorno rete, verificata in area privata e rimossa a fine test. |
 | T-0133 | 10 | Chiave idempotente nel database. | SUPERATO | production-smoke: chiave idempotente riutilizzata e risposta replayed |
 | T-0134 | 10 | Identificativo univoco per ogni operazione. | NON ESEGUITO | — |
 | T-0135 | 10 | Nessuna duplicazione dopo cambio Wi-Fi/dati mobili. | NON ESEGUITO | — |

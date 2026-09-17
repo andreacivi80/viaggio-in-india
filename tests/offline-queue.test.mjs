@@ -21,6 +21,7 @@ const {
   queuedRequests,
   queuedRequestCount,
   queueFormRequest,
+  queueJsonRequest,
   removeQueuedRequest,
 } = await import("../src/offlineQueue.js");
 
@@ -89,6 +90,28 @@ test("la coda conserva insieme foto, audio, video e PDF", async () => {
     fixtures.map(([name, type]) => [name, type]));
   assert.deepEqual(await Promise.all(uploaded.map((file) => file.text())),
     fixtures.map(([, , body]) => body));
+});
+
+test("una posizione resta in coda come JSON e viene inviata con la sessione del dispositivo", async () => {
+  const location = { profile_id: "profilo-qa", latitude: 13.7563, longitude: 100.5018, accuracy: 12 };
+  await queueJsonRequest({
+    id: "location:profilo-qa",
+    endpoint: "/api/locations",
+    body: location,
+    authType: "session",
+    operationKey: "location-profilo-qa",
+  });
+  let sent;
+  globalThis.fetch = async (endpoint, options) => {
+    sent = { endpoint, options };
+    return new Response("{}", { status: 200 });
+  };
+  assert.deepEqual(await flushOfflineQueue(), { sent: 1, pending: 0 });
+  assert.equal(sent.endpoint, "/api/locations");
+  assert.equal(sent.options.headers["content-type"], "application/json");
+  assert.equal(sent.options.headers.authorization, "Bearer sessione-tecnica");
+  assert.equal(sent.options.headers["x-device-key"], "chiave-dispositivo-tecnica");
+  assert.deepEqual(JSON.parse(sent.options.body), location);
 });
 
 test("la coda conserva più bozze e un commento come operazioni distinte", async () => {

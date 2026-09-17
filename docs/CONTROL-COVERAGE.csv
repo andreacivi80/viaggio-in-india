@@ -976,7 +976,7 @@ P1,sync-rete,passed,Ripresa dopo perdita della rete.,globale:T-1725,"ui-offline 
 P1,sync-rete,passed,Ritorno della rete.,globale:T-1237,"ui-offline QA: ritorno online, invio idempotente e stato aggiornato verificati end-to-end."
 P1,sync-rete,passed,Salvare più bozze offline.,globale:T-0849,offline-queue 3/3: due bozze post distinte restano contemporaneamente in IndexedDB con chiavi idempotenti differenti e vengono inviate una sola volta ciascuna.
 P1,sync-rete,passed,Salvataggio offline dei commenti.,globale:T-0129,"offline-queue 3/3: commento offline conserva post_id, testo e chiave idempotente come operazione separata e viene rimosso dalla coda soltanto dopo risposta positiva."
-P1,sync-rete,pending,Salvataggio offline delle posizioni.,globale:T-0132,
+P1,sync-rete,passed,Salvataggio offline delle posizioni.,globale:T-0132,"QA isolata 1.48.50 Galaxy S9+ touch 1/1: acquisizione GPS offline, coda JSON locale per profilo, invio automatico autenticato al ritorno rete, verifica privata e pulizia QA completa."
 P1,sync-rete,passed,Simulare rete 2G.,globale:T-0553,"ui-network-india QA 7/7: profilo cellulare 2G a 110 kbps, upload 50 kbps e 900 ms di latenza apre la bacheca mobile senza pagina bianca entro il limite."
 P1,sync-rete,passed,Simulare rete 3G.,globale:T-0554,ui-network-india QA: profilo 3G indiano simulato con throttling mobile e caricamento completo della bacheca.
 P1,sync-rete,passed,sincronizzazione fallita;,usabilita:U0510,"ui-offline QA 1.48.40 Galaxy S9+ touch 1/1: l'invio fallito offline resta in IndexedDB dopo chiusura pagina, riparte al ritorno della rete, crea esattamente un post con foto e svuota la coda senza duplicati; contenuto QA eliminato."

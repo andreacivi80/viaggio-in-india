@@ -37,6 +37,7 @@ import {
   flushOfflineQueue,
   queuedRequests,
   queueFormRequest,
+  queueJsonRequest,
   removeQueuedRequest,
 } from "./offlineQueue.js";
 import { shouldUseResumableUpload, uploadFileResumable } from "./resumableUpload.js";
@@ -85,7 +86,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.49",
+const VERSION = "1.48.50",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -2002,26 +2003,40 @@ function App() {
     setQuickStatus("Cerco la posizione…");
     navigator.geolocation?.getCurrentPosition(
       async (position) => {
-        const response = await fetch(`${API}/locations`, {
-          method: "POST",
-          headers: {
-            "content-type": "application/json",
-            ...sessionHeaders(verifiedSessionToken),
-          },
-          body: JSON.stringify({
-            profile_id: currentProfile.id,
-            display_name:
-              `${currentProfile.name} ${currentProfile.surname || ""}`.trim(),
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy,
-          }),
-        });
-        setQuickStatus(
-          response.ok
-            ? "Posizione condivisa adesso."
-            : "Posizione non inviata. Riprova.",
-        );
+        const location = {
+          profile_id: currentProfile.id,
+          display_name: `${currentProfile.name} ${currentProfile.surname || ""}`.trim(),
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+        };
+        try {
+          const response = await fetch(`${API}/locations`, {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+              ...sessionHeaders(verifiedSessionToken),
+            },
+            body: JSON.stringify(location),
+          });
+          if (!response.ok) throw new Error("Posizione non inviata");
+          setQuickStatus("Posizione condivisa adesso.");
+        } catch (error) {
+          if (!navigator.onLine || error instanceof TypeError) {
+            try {
+              await queueJsonRequest({
+                id: `location:${currentProfile.id}`,
+                endpoint: `${API}/locations`,
+                body: location,
+                authType: "session",
+                operationKey: `location-${currentProfile.id}`,
+              });
+              setQuickStatus("Posizione salvata sul telefono. Sarà condivisa quando torna la rete.");
+            } catch {
+              setQuickStatus("Posizione non salvata: archivio offline non disponibile.");
+            }
+          } else setQuickStatus("Posizione non inviata. Riprova.");
+        }
       },
       () => setQuickStatus("Permesso posizione non disponibile."),
     );
@@ -5648,6 +5663,12 @@ function VaultOnline({
     setLocationStatus("Ricerca della posizione in corso…");
     navigator.geolocation.getCurrentPosition(
       async (p) => {
+        const location = {
+          profile_id: viewerProfileId,
+          latitude: p.coords.latitude,
+          longitude: p.coords.longitude,
+          accuracy: p.coords.accuracy,
+        };
         try {
           const response = await fetch(`${API}/locations`, {
             method: "POST",
@@ -5655,19 +5676,27 @@ function VaultOnline({
               "content-type": "application/json",
               ...sessionHeaders(sessionToken),
             },
-            body: JSON.stringify({
-              profile_id: viewerProfileId,
-              latitude: p.coords.latitude,
-              longitude: p.coords.longitude,
-              accuracy: p.coords.accuracy,
-            }),
+            body: JSON.stringify(location),
           });
           const result = await response.json().catch(() => ({}));
           if (!response.ok) throw new Error(result.error || "Posizione non aggiornata");
           setLocationStatus("Posizione aggiornata e visibile al gruppo.");
           await refresh();
         } catch (error) {
-          setLocationStatus(error.message || "Posizione non aggiornata. Riprova.");
+          if (!navigator.onLine || error instanceof TypeError) {
+            try {
+              await queueJsonRequest({
+                id: `location:${viewerProfileId}`,
+                endpoint: `${API}/locations`,
+                body: location,
+                authType: "session",
+                operationKey: `location-${viewerProfileId}`,
+              });
+              setLocationStatus("Posizione salvata sul telefono. Sarà condivisa quando torna la rete.");
+            } catch {
+              setLocationStatus("Posizione non salvata: archivio offline non disponibile.");
+            }
+          } else setLocationStatus(error.message || "Posizione non aggiornata. Riprova.");
         }
       },
       (error) =>

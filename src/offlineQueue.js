@@ -72,6 +72,30 @@ export async function queueFormRequest({
   return id;
 }
 
+export async function queueJsonRequest({
+  id,
+  endpoint,
+  body,
+  authType,
+  method = "POST",
+  operationKey,
+}) {
+  await transact("readwrite", (store) => store.put({
+    id,
+    endpoint,
+    method,
+    authType,
+    operationKey,
+    payloadType: "json",
+    body,
+    entries: [],
+    attempts: 0,
+    createdAt: new Date().toISOString(),
+  }));
+  signalQueueChanged();
+  return id;
+}
+
 export async function queuedRequestCount() {
   return Number(await transact("readonly", (store) => store.count()));
 }
@@ -88,7 +112,7 @@ export async function queuedRequests() {
       endpoint: item.endpoint,
       attempts: Number(item.attempts || 0),
       createdAt: item.createdAt,
-      attachmentCount: item.entries.filter((entry) => entry.isFile).length,
+      attachmentCount: (item.entries || []).filter((entry) => entry.isFile).length,
     }));
 }
 
@@ -144,20 +168,25 @@ export async function flushOfflineQueue() {
   for (const item of await allRequests()) {
     const identity = await authorizationHeaders(item);
     if (!identity) continue;
-    const form = new FormData();
-    for (const entry of item.entries) {
-      if (entry.isFile && entry.value instanceof Blob)
-        form.append(entry.name, entry.value, entry.filename || "allegato");
-      else form.append(entry.name, entry.value);
+    let body;
+    const requestHeaders = { ...identity, "x-idempotency-key": item.operationKey };
+    if (item.payloadType === "json") {
+      body = JSON.stringify(item.body || {});
+      requestHeaders["content-type"] = "application/json";
+    } else {
+      const form = new FormData();
+      for (const entry of item.entries || []) {
+        if (entry.isFile && entry.value instanceof Blob)
+          form.append(entry.name, entry.value, entry.filename || "allegato");
+        else form.append(entry.name, entry.value);
+      }
+      body = form;
     }
     try {
       const response = await fetch(item.endpoint, {
         method: item.method,
-        headers: {
-          ...identity,
-          "x-idempotency-key": item.operationKey,
-        },
-        body: form,
+        headers: requestHeaders,
+        body,
       });
       if (response.ok) {
         await removeRequest(item.id);
