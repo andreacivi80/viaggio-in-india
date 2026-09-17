@@ -712,7 +712,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0697 | 39 | Condividere la posizione dal telefono A. | NON ESEGUITO | — |
 | T-0698 | 39 | Creare il profilo del Viaggiatore A. | NON ESEGUITO | — |
 | T-0699 | 39 | Creare il profilo del Viaggiatore B. | NON ESEGUITO | — |
-| T-0700 | 39 | Documentare e applicare una regola unica. | NON ESEGUITO | — |
+| T-0700 | 39 | Documentare e applicare una regola unica. | SUPERATO | CONCURRENT_WRITE_RULE 3/3 + QA document-concurrency 28/28: lo stato confermato dal server prevale; retry idempotenti, aggiornamenti D1 ordinati, sostituzioni senza orfani e rilettura dopo esito incerto. |
 | T-0701 | 39 | Eliminare un documento dal telefono B. | NON ESEGUITO | — |
 | T-0702 | 39 | Modificare il nome del profilo A. | NON ESEGUITO | — |
 | T-0703 | 39 | Pubblicare un contenuto. | NON ESEGUITO | — |
