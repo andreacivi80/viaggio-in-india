@@ -87,7 +87,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.53",
+const VERSION = "1.48.54",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -3321,6 +3321,7 @@ function Diary({
       () => localStorage.getItem("india-draft") || "",
     ),
     [files, setFiles] = useState([]),
+    [photoDescriptions, setPhotoDescriptions] = useState([]),
     [author, setAuthor] = useState(
       () => localStorage.getItem("india-visitor-name") || "",
     ),
@@ -3416,17 +3417,14 @@ function Diary({
       );
       return;
     }
-    setFiles((current) => {
-      const total = current.length + selected.length;
-      if (total > 10) {
-        setFileStatus(
-          `Puoi caricare massimo 10 contenuti per ogni post. Hai selezionato ${total} elementi. Rimuovine ${total - 10} per continuare.`,
-        );
-        return current;
-      }
-      setFileStatus("");
-      return [...current, ...selected];
-    });
+    const total = files.length + selected.length;
+    if (total > 10) {
+      setFileStatus(`Puoi caricare massimo 10 contenuti per ogni post. Hai selezionato ${total} elementi. Rimuovine ${total - 10} per continuare.`);
+      return;
+    }
+    setFileStatus("");
+    setFiles((current) => [...current, ...selected]);
+    setPhotoDescriptions((current) => [...current, ...selected.map(() => "")]);
   };
   const visiblePosts = filterPostsOffline(posts, feedQuery).filter((p) => {
     if (feedFilter === "all") return true;
@@ -3469,8 +3467,12 @@ function Diary({
       pendingForm = new FormData();
       for (const [key, value] of f.entries()) pendingForm.append(key, value);
       files.forEach((file) => pendingForm.append("files", file));
+      pendingForm.set("media_descriptions", JSON.stringify(photoDescriptions));
       const uploadedIds = [];
-      for (const file of files) {
+      const directDescriptions = [];
+      const uploadedDescriptions = [];
+      for (const [index, file] of files.entries()) {
+        const description = file.type.startsWith("image/") ? (photoDescriptions[index] || "") : "";
         if (navigator.onLine && shouldUseResumableUpload(file)) {
           setFileStatus(uploadProgressMessage(`Caricamento protetto di ${file.name}`, 0));
           const uploaded = await uploadFileResumable({
@@ -3485,9 +3487,14 @@ function Diary({
             signal: uploadController.signal,
           });
           uploadedIds.push(uploaded.upload_id);
-        } else f.append("files", file);
+          uploadedDescriptions.push(description);
+        } else {
+          f.append("files", file);
+          directDescriptions.push(description);
+        }
       }
       f.set("upload_ids", JSON.stringify(uploadedIds));
+      f.set("media_descriptions", JSON.stringify([...directDescriptions, ...uploadedDescriptions]));
       if (!postOperationRef.current)
         postOperationRef.current = crypto.randomUUID();
       const r = await fetch(`${API}/posts`, {
@@ -3512,6 +3519,7 @@ function Diary({
       setText("");
       localStorage.removeItem("india-draft");
       setFiles([]);
+      setPhotoDescriptions([]);
       setPlaceName("");
       setPostCoordinates(null);
       setPlaceResults([]);
@@ -3538,6 +3546,7 @@ function Diary({
           });
           setText("");
           setFiles([]);
+          setPhotoDescriptions([]);
           setPlaceName("");
           setPostCoordinates(null);
           setSpotifyUrl("");
@@ -3891,11 +3900,14 @@ function Diary({
                         <AttachmentPreview
                           key={`${file.name}-${file.lastModified}-${index}`}
                           file={file}
-                          onRemove={() =>
-                            setFiles((current) =>
-                              current.filter((_, itemIndex) => itemIndex !== index),
-                            )
-                          }
+                          description={photoDescriptions[index] || ""}
+                          onDescription={(value) => setPhotoDescriptions((current) =>
+                            current.map((item, itemIndex) => itemIndex === index ? value : item),
+                          )}
+                          onRemove={() => {
+                            setFiles((current) => current.filter((_, itemIndex) => itemIndex !== index));
+                            setPhotoDescriptions((current) => current.filter((_, itemIndex) => itemIndex !== index));
+                          }}
                         />
                       ))}
                     </div>
@@ -3997,7 +4009,7 @@ function Diary({
   );
 }
 
-function AttachmentPreview({ file, onRemove }) {
+function AttachmentPreview({ file, description, onDescription, onRemove }) {
   const [url, setUrl] = useState("");
   useEffect(() => {
     const objectUrl = URL.createObjectURL(file);
@@ -4017,6 +4029,16 @@ function AttachmentPreview({ file, onRemove }) {
       )}
       <span>{file.name}</span>
       <small>{(file.size / 1024 / 1024).toFixed(1)} MB</small>
+      {file.type.startsWith("image/") && (
+        <input
+          type="text"
+          maxLength={280}
+          value={description}
+          onChange={(event) => onDescription(event.target.value)}
+          placeholder="Descrivi questa foto (facoltativo)"
+          aria-label={`Descrizione di ${file.name}`}
+        />
+      )}
       <button onClick={onRemove} aria-label={`Rimuovi ${file.name}`}>
         ×
       </button>
@@ -4269,8 +4291,11 @@ function PostMedia({ items, postId }) {
                   aria-label={`Apri fotografia ${index + 1}`}
                   onClick={() => openPhoto(item, index)}
                 >
-                  <img src={item.media_url} alt="Ricordo del viaggio" loading="lazy" />
+                  <img src={item.media_url} alt={item.description || "Ricordo del viaggio"} loading="lazy" />
                 </button>
+              )}
+              {item.media_type?.startsWith("image") && item.description && (
+                <p className="photoDescription">{item.description}</p>
               )}
               {item.media_type?.startsWith("video") && (
                 <VideoWithPoster src={item.media_url} label={`Video ${index + 1} con copertina`} />

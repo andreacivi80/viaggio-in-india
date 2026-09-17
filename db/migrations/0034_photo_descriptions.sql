@@ -1,0 +1,1 @@
+ALTER TABLE post_media ADD COLUMN description TEXT NOT NULL DEFAULT '';

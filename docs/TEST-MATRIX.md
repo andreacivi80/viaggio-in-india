@@ -1076,7 +1076,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1061 | 57 | Controllo con caratteri ingranditi al 200%. | NON ESEGUITO | — |
 | T-1062 | 57 | Controllo con caratteri ingranditi al 300%. | NON ESEGUITO | — |
 | T-1063 | 57 | Descrizione dei marker della mappa. | NON ESEGUITO | — |
-| T-1064 | 57 | Descrizione delle fotografie. | NON ESEGUITO | — |
+| T-1064 | 57 | Descrizione delle fotografie. | SUPERATO | Revisione 1.48.54: descrizione facoltativa fino a 280 caratteri per ogni fotografia, persistita in colonna additiva, limitata dal server, visibile sulla foto e usata come testo alternativo. Collaudo reale QA: pubblicazione, risposta API, feed e accessibilità mobile superati 1/1; controlli strutturali 2/2. |
 | T-1065 | 57 | Descrizione dello stato dei documenti. | NON ESEGUITO | — |
 | T-1066 | 57 | Focus intrappolato correttamente nelle finestre modali. | NON ESEGUITO | — |
 | T-1067 | 57 | Lettura corretta dei pulsanti. | NON ESEGUITO | — |

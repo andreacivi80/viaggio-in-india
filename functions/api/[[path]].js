@@ -1179,6 +1179,7 @@ async function readState(env, session = null, guest = null) {
             media_type: m.media_type,
             media_name: m.media_name,
             media_size: m.media_size,
+            description: m.description || "",
             position: m.position,
           })),
       ],
@@ -2354,6 +2355,15 @@ export async function onRequest(context) {
       }
       if (!Array.isArray(uploadIds)) return json({ error: "Elenco caricamenti non valido" }, 400);
       uploadIds = [...new Set(uploadIds.map(String).filter(Boolean))];
+      let mediaDescriptions;
+      try {
+        mediaDescriptions = JSON.parse(String(form.get("media_descriptions") || "[]"));
+      } catch {
+        return json({ error: "Descrizioni delle fotografie non valide" }, 400);
+      }
+      if (!Array.isArray(mediaDescriptions))
+        return json({ error: "Descrizioni delle fotografie non valide" }, 400);
+      mediaDescriptions = mediaDescriptions.slice(0, 10).map((value) => String(value || "").trim().slice(0, 280));
       if (files.length + uploadIds.length > 10)
         return json(
           {
@@ -2407,6 +2417,9 @@ export async function onRequest(context) {
         for (const file of files)
           savedMedia.push(await saveMedia(env, file, mediaPrefix));
         savedMedia.push(...uploadedMedia);
+        savedMedia.forEach((media, position) => {
+          media.description = media.type?.startsWith("image/") ? (mediaDescriptions[position] || "") : "";
+        });
         await env.DB.prepare(
           "INSERT INTO posts(id,author_name,profile_id,day_index,visibility,text,place_name,latitude,longitude,media_key,media_type,media_name,media_size,created_at) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         )
@@ -2431,7 +2444,7 @@ export async function onRequest(context) {
           await env.DB.batch(
             savedMedia.map((media, position) =>
               env.DB.prepare(
-                "INSERT INTO post_media(id,post_id,media_key,media_type,media_name,media_size,position,created_at) VALUES(?,?,?,?,?,?,?,?)",
+                "INSERT INTO post_media(id,post_id,media_key,media_type,media_name,media_size,description,position,created_at) VALUES(?,?,?,?,?,?,?,?,?)",
               ).bind(
                 id(),
                 row.id,
@@ -2439,6 +2452,7 @@ export async function onRequest(context) {
                 media.type,
                 media.name,
                 media.size,
+                media.description,
                 position,
                 row.created_at,
               ),

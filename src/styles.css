@@ -2035,6 +2035,14 @@ footer small {
   font-size: 11px;
   color: var(--color-text-secondary);
 }
+.attachmentPreviews input {
+  grid-column: 1 / -1;
+  min-height: 40px;
+  padding: 8px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  font-size: 13px;
+}
 .attachmentPreviews button {
   position: absolute;
   top: 4px;
@@ -2215,6 +2223,20 @@ footer small {
   width: 100%;
   aspect-ratio: 16 / 9;
   background: #111;
+}
+.photoDescription {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  z-index: 2;
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: rgba(9, 20, 16, 0.78);
+  color: #fff;
+  font-size: 13px;
+  line-height: 1.3;
 }
 .photoAudioOverlay { position: absolute; left: 12px; bottom: 12px; z-index: 3; max-width: calc(100% - 24px); }
 .compactPhotoAudio {

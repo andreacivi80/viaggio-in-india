@@ -120,6 +120,8 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
     const sheet = page.locator(".uploadSheet");
     await sheet.locator('input[accept^="image"]').first().setInputFiles(photoPath);
     await expect(sheet.getByText("1 allegati pronti")).toBeVisible();
+    const photoDescription = "Bangkok al tramonto vista dal gruppo";
+    await sheet.getByLabel(/Descrizione di/).fill(photoDescription);
     await sheet.locator('input[accept^="video"]').setInputFiles([
       { name: "prova-video-a.webm", mimeType: "video/webm", buffer: video },
       { name: "prova-video-b.webm", mimeType: "video/webm", buffer: video },
@@ -142,10 +144,14 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
     await sheet.locator(".composerActions > button").tap();
     const response = await responsePromise;
     expect(response.status()).toBe(201);
-    createdPostId = (await response.json()).id;
+    const createdPost = await response.json();
+    createdPostId = createdPost.id;
+    expect(createdPost.media[0].description).toBe(photoDescription);
     const post = page.locator(".post").filter({ hasText: text });
     await expect(post).toBeVisible();
     await expect(post.locator("img", { has: undefined })).toBeVisible();
+    await expect(post.getByText(photoDescription, { exact: true })).toBeVisible();
+    await expect(post.getByAltText(photoDescription)).toBeVisible();
     await post.getByRole("button", { name: "Apri fotografia 1" }).tap();
     const photoViewer = page.getByRole("dialog", { name: "Fotografia aperta" });
     await expect(photoViewer).toBeVisible();

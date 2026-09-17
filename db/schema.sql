@@ -38,6 +38,7 @@ CREATE TABLE IF NOT EXISTS post_media (
   media_type TEXT,
   media_name TEXT,
   media_size INTEGER DEFAULT 0,
+  description TEXT NOT NULL DEFAULT '',
   position INTEGER DEFAULT 0,
   created_at TEXT NOT NULL
 );
