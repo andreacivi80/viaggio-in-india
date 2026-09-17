@@ -5140,7 +5140,7 @@ function VaultOnline({
   const documentOperationRef = useRef({});
   const vaultSyncVersionRef = useRef(0);
   const [code, setCode] = useState(""),
-    [privateData, setPrivateData] = useState({ documents: [], locations: [] }),
+    [privateData, setPrivateData] = useState({ documents: [], locations: [], retention_extensions: [] }),
     [profileId, setProfileId] = useState(""),
     [busy, setBusy] = useState(""),
     [documentStatus, setDocumentStatus] = useState(""),
@@ -5149,6 +5149,8 @@ function VaultOnline({
     [pendingDocumentDelete, setPendingDocumentDelete] = useState(""),
     [locationMapOpen, setLocationMapOpen] = useState(false),
     [viewMode, setViewMode] = useState("traveler"),
+    [retentionDate, setRetentionDate] = useState(""),
+    [retentionStatus, setRetentionStatus] = useState(""),
     [devices, setDevices] = useState([]);
   const refresh = async () => {
     if (!sessionToken) return;
@@ -5471,6 +5473,34 @@ function VaultOnline({
     });
     if (response.ok) await lockDevice();
   };
+  const requestRetentionExtension = async () => {
+    if (!retentionDate) {
+      setRetentionStatus("Scegli fino a quale data vuoi conservare i tuoi dati.");
+      return;
+    }
+    const response = await fetch(`${API}/retention-extension`, {
+      method: "POST",
+      headers: { ...sessionHeaders(sessionToken), "content-type": "application/json" },
+      body: JSON.stringify({ retain_until: retentionDate }),
+    });
+    const result = await response.json().catch(() => ({}));
+    setRetentionStatus(response.ok
+      ? "Richiesta inviata alla coordinatrice."
+      : result.error || "Richiesta non inviata.");
+    if (response.ok) await refresh();
+  };
+  const decideRetentionExtension = async (targetProfileId, decision) => {
+    const response = await fetch(`${API}/retention-extension/${encodeURIComponent(targetProfileId)}`, {
+      method: "PUT",
+      headers: { ...sessionHeaders(sessionToken), "content-type": "application/json" },
+      body: JSON.stringify({ decision }),
+    });
+    const result = await response.json().catch(() => ({}));
+    setRetentionStatus(response.ok
+      ? decision === "approve" ? "Proroga autorizzata." : "Proroga rifiutata."
+      : result.error || "Decisione non salvata.");
+    if (response.ok) await refresh();
+  };
   if (!sessionToken)
     return (
       <section>
@@ -5533,6 +5563,35 @@ function VaultOnline({
           )}
         </div>
       </details>
+      {viewMode === "traveler" && privateData.viewer?.profile_id === profileId && (
+        <section className="retentionCard" aria-label="Conservazione dei dati">
+          <div>
+            <b>Conservazione dei tuoi dati</b>
+            <small>Puoi chiedere una proroga fino a dodici mesi. Diventa valida solo dopo l’autorizzazione della coordinatrice.</small>
+          </div>
+          {(() => {
+            const extension = privateData.retention_extensions?.find((item) => item.profile_id === profileId);
+            return extension ? (
+              <p>
+                <strong>{extension.status === "approved" ? "Autorizzata" : extension.status === "rejected" ? "Rifiutata" : "In attesa"}</strong>
+                {` · fino al ${new Date(`${extension.retain_until}T12:00:00Z`).toLocaleDateString("it-IT")}`}
+              </p>
+            ) : null;
+          })()}
+          <label>
+            Conserva fino al
+            <input
+              type="date"
+              value={retentionDate}
+              min={new Date(Date.now() + 86400000).toISOString().slice(0, 10)}
+              max={new Date(Date.now() + 366 * 86400000).toISOString().slice(0, 10)}
+              onChange={(event) => setRetentionDate(event.target.value)}
+            />
+          </label>
+          <button type="button" onClick={requestRetentionExtension}>Richiedi proroga</button>
+          {retentionStatus && <small role="status">{retentionStatus}</small>}
+        </section>
+      )}
       <div className="rolePreview" aria-label="Anteprima del ruolo">
         <div>
           <small>ANTEPRIMA SCHERMATA</small>
@@ -5576,6 +5635,25 @@ function VaultOnline({
       )}
       {isCoordinator && (
         <section className="coordinatorDashboard">
+          {privateData.retention_extensions?.some((extension) => extension.status === "pending") && (
+            <div className="retentionRequests" aria-label="Richieste di proroga pendenti">
+              <h3>Proroghe da autorizzare</h3>
+              {privateData.retention_extensions.filter((extension) => extension.status === "pending").map((extension) => {
+                const person = people.find((item) => item.id === extension.profile_id);
+                return (
+                  <div key={extension.profile_id}>
+                    <span>
+                      <b>{person ? `${person.name} ${person.surname || ""}`.trim() : "Viaggiatore"}</b>
+                      <small>Fino al {new Date(`${extension.retain_until}T12:00:00Z`).toLocaleDateString("it-IT")}</small>
+                    </span>
+                    <button type="button" onClick={() => decideRetentionExtension(extension.profile_id, "approve")}>Autorizza</button>
+                    <button type="button" onClick={() => decideRetentionExtension(extension.profile_id, "reject")}>Rifiuta</button>
+                  </div>
+                );
+              })}
+              {retentionStatus && <small role="status">{retentionStatus}</small>}
+            </div>
+          )}
           <div className="coordinatorHead">
             <div>
               <span className="eyebrow">VISTA COORDINATORE</span>

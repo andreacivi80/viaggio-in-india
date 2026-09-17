@@ -104,6 +104,7 @@ DELETE FROM upload_sessions WHERE profile_id IN (${quotedIds});
 DELETE FROM profile_invites WHERE profile_id IN (${quotedIds}) OR created_by IN (${quotedIds});
 DELETE FROM push_subscriptions WHERE profile_id IN (${quotedIds});
 DELETE FROM notification_preferences WHERE profile_id IN (${quotedIds});
+DELETE FROM retention_extensions WHERE profile_id IN (${quotedIds}) OR approved_by IN (${quotedIds});
 DELETE FROM auth_sessions WHERE profile_id IN (${quotedIds});
 DELETE FROM profile_device_claims WHERE profile_id IN (${quotedIds});
 DELETE FROM security_audit_log WHERE actor_profile_id IN (${quotedIds});

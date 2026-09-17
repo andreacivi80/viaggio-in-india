@@ -798,6 +798,7 @@ async function deleteProfileData(env, profileId) {
     env.DB.prepare("DELETE FROM locations WHERE profile_id=?").bind(profileId),
     env.DB.prepare("DELETE FROM push_subscriptions WHERE profile_id=?").bind(profileId),
     env.DB.prepare("DELETE FROM notification_preferences WHERE profile_id=?").bind(profileId),
+    env.DB.prepare("DELETE FROM retention_extensions WHERE profile_id=?").bind(profileId),
     env.DB.prepare("DELETE FROM profile_invites WHERE profile_id=? OR created_by=?").bind(profileId, profileId),
     env.DB.prepare("DELETE FROM auth_sessions WHERE profile_id=?").bind(profileId),
     env.DB.prepare("DELETE FROM profile_device_claims WHERE profile_id=?").bind(profileId),
@@ -2673,10 +2674,86 @@ export async function onRequest(context) {
         }, { targetProfileId: targetPost.profile_id }));
       return json(payload);
     }
+    if (path === "retention-extension" && request.method === "POST") {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Accesso personale richiesto" }, 401);
+      const limited = await rateLimit(env, request, "retention-extension", 6, 3600, session.profile_id);
+      if (limited) return limited;
+      const body = await request.json().catch(() => ({}));
+      if (body.profile_id && String(body.profile_id) !== session.profile_id)
+        return json({ error: "Puoi richiedere la proroga soltanto per i tuoi dati" }, 403);
+      const retainUntil = String(body.retain_until || "");
+      const requestedDate = /^\d{4}-\d{2}-\d{2}$/.test(retainUntil)
+        ? new Date(`${retainUntil}T23:59:59.999Z`)
+        : new Date(NaN);
+      const tomorrow = new Date();
+      tomorrow.setUTCHours(0, 0, 0, 0);
+      tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+      const maximum = new Date();
+      maximum.setUTCHours(23, 59, 59, 999);
+      maximum.setUTCFullYear(maximum.getUTCFullYear() + 1);
+      if (!Number.isFinite(requestedDate.getTime()) || requestedDate < tomorrow || requestedDate > maximum)
+        return json({ error: "Scegli una data futura entro dodici mesi" }, 400);
+      const reason = String(body.reason || "").trim().slice(0, 240);
+      const requestedAt = now();
+      await env.DB.prepare(
+        `INSERT INTO retention_extensions(profile_id,retain_until,reason,status,requested_at,decided_at,approved_by)
+         VALUES(?,?,?,'pending',?,NULL,NULL)
+         ON CONFLICT(profile_id) DO UPDATE SET retain_until=excluded.retain_until,reason=excluded.reason,
+           status='pending',requested_at=excluded.requested_at,decided_at=NULL,approved_by=NULL`,
+      ).bind(session.profile_id, retainUntil, reason, requestedAt).run();
+      await writeSecurityAudit(env, {
+        event_type: "retention_extension_requested",
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "profile",
+        resource_id: session.profile_id,
+        result: "pending",
+      });
+      return json({
+        extension: {
+          profile_id: session.profile_id,
+          retain_until: retainUntil,
+          reason,
+          status: "pending",
+          requested_at: requestedAt,
+          decided_at: null,
+          approved_by: null,
+        },
+      });
+    }
+    if (path.startsWith("retention-extension/") && request.method === "PUT") {
+      const session = await sessionFromRequest(request, env);
+      if (!session || session.role !== "coordinator")
+        return json({ error: "Solo la coordinatrice può autorizzare una proroga" }, 403);
+      const profileId = decodeURIComponent(path.slice("retention-extension/".length));
+      const body = await request.json().catch(() => ({}));
+      const status = body.decision === "approve" ? "approved" : body.decision === "reject" ? "rejected" : "";
+      if (!profileId || !status) return json({ error: "Decisione non valida" }, 400);
+      const decidedAt = now();
+      const result = await env.DB.prepare(
+        `UPDATE retention_extensions SET status=?,decided_at=?,approved_by=?
+         WHERE profile_id=? AND status='pending'`,
+      ).bind(status, decidedAt, session.profile_id, profileId).run();
+      if (!result.meta?.changes) return json({ error: "Richiesta pendente non trovata" }, 404);
+      await writeSecurityAudit(env, {
+        event_type: `retention_extension_${status}`,
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "profile",
+        resource_id: profileId,
+        result: status,
+      });
+      const extension = await env.DB.prepare("SELECT * FROM retention_extensions WHERE profile_id=?")
+        .bind(profileId).first();
+      return json({ extension });
+    }
     if (path === "private" && request.method === "GET") {
       const session = await sessionFromRequest(request, env);
       if (!session) return json({ error: "Accesso personale richiesto" }, 401);
-      const [docs, locations] = await Promise.all([
+      const [docs, locations, retentionExtensions] = await Promise.all([
         session.role === "coordinator"
           ? env.DB.prepare("SELECT * FROM document_status").all()
           : env.DB.prepare(
@@ -2687,10 +2764,15 @@ export async function onRequest(context) {
         env.DB.prepare(
           "SELECT * FROM locations ORDER BY updated_at DESC",
         ).all(),
+        session.role === "coordinator"
+          ? env.DB.prepare("SELECT * FROM retention_extensions ORDER BY requested_at DESC").all()
+          : env.DB.prepare("SELECT * FROM retention_extensions WHERE profile_id=?")
+            .bind(session.profile_id).all(),
       ]);
       return json({
         documents: docs.results,
         locations: locations.results,
+        retention_extensions: retentionExtensions.results,
         viewer: {
           profile_id: session.profile_id,
           role: session.role,

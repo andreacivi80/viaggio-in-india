@@ -19,3 +19,7 @@ Foto, audio, video e PDF vengono conservati nel formato caricato finché il cont
 ## Regola di sicurezza
 
 La manutenzione automatica può eliminare soltanto dati scaduti secondo questa tabella. Documenti, post e commenti validi non hanno una scadenza automatica. Ogni eliminazione richiesta dall'utente deve essere autorizzata dal server e confermata nell'interfaccia.
+
+## Proroga autorizzata
+
+Ogni viaggiatore può richiedere dall'area Documenti e sicurezza una proroga per i propri dati, con una data futura entro dodici mesi. La richiesta resta `pending` e non produce effetti finché la coordinatrice non la approva. Solo una sessione coordinatore verificata può impostare `approved` o `rejected`; richiedente, altri viaggiatori, familiari e pubblico non possono auto-approvarla né vedere le richieste altrui. Stato, data, richiedente, decisore e orari sono persistiti e registrati nel log di sicurezza. Un'eliminazione esplicita richiesta dal proprietario prevale sempre sulla proroga.

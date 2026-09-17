@@ -1350,7 +1350,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1335 | 70 | Verificare eliminazione delle sessioni. | NON ESEGUITO | — |
 | T-1336 | 71 | Avvisare gli utenti prima dell’eliminazione. | NON ESEGUITO | — |
 | T-1337 | 71 | Consentire download dei propri dati. | NON ESEGUITO | — |
-| T-1338 | 71 | Consentire proroga autorizzata della conservazione. | NON ESEGUITO | — |
+| T-1338 | 71 | Consentire proroga autorizzata della conservazione. | SUPERATO | QA API 1/1 + Galaxy S9+ touch 1/1 + statico 4/4 + gate 215/215: richiesta solo propria, massimo 12 mesi, privata e pendente; approvazione/rifiuto esclusivi della coordinatrice; audit e persistenza verificati. |
 | T-1339 | 71 | Definire cosa accade al termine del viaggio. | NON ESEGUITO | — |
 | T-1340 | 71 | Definire per quanto tempo vengono conservate le posizioni. | NON ESEGUITO | — |
 | T-1341 | 71 | Definire per quanto tempo vengono conservate le subscription Push. | NON ESEGUITO | — |

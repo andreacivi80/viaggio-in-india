@@ -208,6 +208,16 @@
     },
     {
       "method": "POST",
+      "path": "retention-extension",
+      "access": "profile-owner"
+    },
+    {
+      "method": "PUT",
+      "path": "retention-extension/*",
+      "access": "coordinator"
+    },
+    {
+      "method": "POST",
       "path": "locations",
       "access": "owner"
     },

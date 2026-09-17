@@ -4491,6 +4491,46 @@ mark.mention {
 .locationList article small {
   color: var(--color-text-secondary);
 }
+
+.retentionCard,
+.retentionRequests {
+  margin: 14px 0;
+  padding: 14px;
+  border: 1px solid rgba(42, 91, 75, 0.2);
+  border-radius: 16px;
+  background: #f6fbf8;
+  display: grid;
+  gap: 10px;
+}
+.retentionCard > div,
+.retentionCard label,
+.retentionRequests > div {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+}
+.retentionCard > div,
+.retentionCard label span,
+.retentionRequests span {
+  min-width: 0;
+}
+.retentionCard small,
+.retentionRequests small {
+  display: block;
+  color: #53645e;
+}
+.retentionCard input[type="date"] {
+  max-width: 180px;
+}
+.retentionRequests > div {
+  flex-wrap: wrap;
+  padding-top: 8px;
+  border-top: 1px solid rgba(42, 91, 75, 0.14);
+}
+.retentionRequests > div > span {
+  flex: 1 1 150px;
+}
 .notificationPreferences {
   margin: 12px 0 0;
   padding: 10px 12px;
