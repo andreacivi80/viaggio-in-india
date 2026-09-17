@@ -28,9 +28,15 @@ test("posizione indoor, in movimento e stato senza posizioni su cellulare", asyn
       localStorage.setItem("india-visitor-name", name);
       localStorage.setItem("india-role", "traveler");
       localStorage.setItem("india-device-key", key);
+      Object.defineProperty(navigator, "getBattery", {
+        configurable: true,
+        value: async () => ({ level: 0.42, charging: false }),
+      });
     }, { token: sessionToken, id: profileId, name: profileName, key: deviceKey });
 
     await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
+    const client = await context.newCDPSession(page);
+    await client.send("Performance.enable");
     await page.locator("button.accessPill").tap();
     const firstUpdate = page.waitForResponse(
       (response) => response.url().endsWith("/api/locations") && response.request().method() === "POST",
@@ -39,6 +45,19 @@ test("posizione indoor, in movimento e stato senza posizioni su cellulare", asyn
     expect((await firstUpdate).status()).toBe(200);
     await page.getByRole("button", { name: "Documenti e sicurezza" }).tap();
     await page.getByRole("button", { name: /Apri mappa posizioni/ }).tap();
+    await expect(page.locator(".peopleLocationMap")).toHaveAttribute("data-map-settled", "true", { timeout: 30_000 });
+    await page.waitForTimeout(1_000);
+
+    const mapMetricsBefore = await client.send("Performance.getMetrics");
+    const batteryBefore = await page.evaluate(async () => (await navigator.getBattery()).level);
+    await page.waitForTimeout(5_000);
+    const mapMetricsAfter = await client.send("Performance.getMetrics");
+    const batteryAfter = await page.evaluate(async () => (await navigator.getBattery()).level);
+    const metric = (metrics, name) => metrics.metrics.find((item) => item.name === name)?.value || 0;
+    const mapTaskSeconds = metric(mapMetricsAfter, "TaskDuration") - metric(mapMetricsBefore, "TaskDuration");
+    expect(batteryAfter).toBe(batteryBefore);
+    expect(mapTaskSeconds).toBeLessThan(1);
+    console.log(`MAP_BATTERY_MEASUREMENT=${JSON.stringify({ batteryBefore, batteryAfter, mapTaskSeconds })}`);
 
     const ownLocation = page.locator(".locationList article").filter({ hasText: profileName });
     await expect(ownLocation).toContainText("13.7563, 100.5018");

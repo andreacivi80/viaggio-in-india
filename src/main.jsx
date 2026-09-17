@@ -89,7 +89,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.56",
+const VERSION = "1.48.57",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -937,6 +937,7 @@ function PeopleLocationMap({ locations }) {
   const markersRef = useRef([]);
   const tripMarkersRef = useRef([]);
   const [mapReady, setMapReady] = useState(false);
+  const [mapSettled, setMapSettled] = useState(false);
   useEffect(() => {
     if (!elementRef.current || mapRef.current) return;
     let cancelled = false;
@@ -949,6 +950,7 @@ function PeopleLocationMap({ locations }) {
         zoom: 5.2,
         minZoom: 4,
         attributionControl: false,
+        fadeDuration: 0,
       });
       mapRef.current.addControl(
         new maplibregl.NavigationControl({ showCompass: false }),
@@ -1007,8 +1009,11 @@ function PeopleLocationMap({ locations }) {
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !mapReady) return;
+    let cancelled = false;
+    setMapSettled(false);
     const render = async () => {
       const { default: maplibregl } = await import("maplibre-gl");
+      if (cancelled) return;
       markersRef.current.forEach((marker) => marker.remove());
       const locationGroups = groupLocationsByCoordinate(locations);
       markersRef.current = locationGroups.map((group) => {
@@ -1039,25 +1044,36 @@ function PeopleLocationMap({ locations }) {
       });
       map.resize();
       if (!locationGroups.length) {
-        map.easeTo({ center: [99.75, 10.8], zoom: 5.2, duration: 500 });
+        map.jumpTo({ center: [99.75, 10.8], zoom: 5.2 });
       } else if (locationGroups.length === 1) {
-        map.easeTo({
+        map.jumpTo({
           center: [locationGroups[0].longitude, locationGroups[0].latitude],
           zoom: 10,
-          duration: 700,
         });
       } else {
         const bounds = locationGroups.reduce(
           (value, group) => value.extend([group.longitude, group.latitude]),
           new maplibregl.LngLatBounds(),
         );
-        map.fitBounds(bounds, { padding: 55, maxZoom: 10, duration: 700 });
+        map.fitBounds(bounds, { padding: 55, maxZoom: 10, duration: 0 });
       }
+      map.once("idle", () => {
+        if (cancelled) return;
+        map.stop();
+        setMapSettled(true);
+      });
     };
     render();
+    return () => { cancelled = true; };
   }, [locations, mapReady]);
   return (
-    <div className="peopleLocationMap" ref={elementRef} aria-label="Posizioni del gruppo sulla cartina della Thailandia" />
+    <div
+      className="peopleLocationMap"
+      ref={elementRef}
+      data-map-settled={mapSettled ? "true" : "false"}
+      aria-busy={!mapSettled}
+      aria-label="Posizioni del gruppo sulla cartina della Thailandia"
+    />
   );
 }
 

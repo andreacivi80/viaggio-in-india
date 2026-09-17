@@ -1032,7 +1032,7 @@ P2,mappe-posizione,passed,Mappa con una persona fuori dall’India.,globale:T-09
 P2,mappe-posizione,passed,Mappa.,usabilita:U0080,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P2,mappe-posizione,pending,menu non nascosto dietro la mappa;,addendum:A0240,
 P2,mappe-posizione,pending,Misurare apertura mappa.,globale:T-0583,
-P2,mappe-posizione,pending,Misurare batteria con mappa aperta.,globale:T-1659,
+P2,mappe-posizione,passed,Misurare batteria con mappa aperta.,globale:T-1659,"QA 1.48.57 Galaxy S9+ 1/1: posizione inviata e rimossa realmente; mappa stabilizzata senza animazioni continue; batteria simulata invariata e TaskDuration 0,013 s in 5 s; cleanup QA completato"
 P2,mappe-posizione,pending,nessun popup della mappa sopra una conferma di sicurezza;,addendum:A0248,
 P2,mappe-posizione,passed,Selezionare ogni giorno dai pulsanti della mappa.,usabilita:U0341,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P2,mappe-posizione,pending,Tornare dalla mappa.,globale:T-0976,
