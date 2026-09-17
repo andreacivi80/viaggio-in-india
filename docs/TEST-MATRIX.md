@@ -158,7 +158,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0143 | 10 | Una sola posizione dopo dieci retry. | NON ESEGUITO | — |
 | T-0144 | 10 | Una sola reazione dopo dieci retry. | NON ESEGUITO | — |
 | T-0145 | 11 | bonifica periodica dei file orfani. | NON ESEGUITO | — |
-| T-0146 | 11 | compressione fotografie; | NON ESEGUITO | — |
+| T-0146 | 11 | compressione fotografie; | SUPERATO | MEDIA_COMPRESSION 4/4: JPEG/WebP oltre 2 MiB ricodificati a qualità 0,88 e lato massimo 2560 px, orientamento rispettato, proporzioni integre e fallback all’originale. |
 | T-0147 | 11 | compressione video; | NON ESEGUITO | — |
 | T-0148 | 11 | continuazione dopo chiusura dell’app; | NON ESEGUITO | — |
 | T-0149 | 11 | continuazione dopo perdita della rete; | NON ESEGUITO | — |

@@ -788,7 +788,7 @@ P1,media-upload,passed,Commento con audio.,globale:T-0460;usabilita:U0302,"ui-co
 P1,media-upload,passed,Commento con fotografia.,globale:T-0461;usabilita:U0300,"ui-comment-media QA 1.48.40: fotografia JPEG reale allegata a un commento, salvata, riletta e decodificata con larghezza naturale superiore a 100 px."
 P1,media-upload,passed,Commento con video.,globale:T-0462;usabilita:U0301,"ui-comment-media QA 1.48.40: video WebM reale allegato a un commento, salvato, riletto e riconosciuto dal player con durata valida; pubblicazione di prova poi eliminata."
 P1,media-upload,passed,comportamento al ricaricamento;,addendum:A0049,ui-offline QA 1.48.40: dopo consegna differita il reload conserva una sola pubblicazione e non duplica l'operazione; token e chiave dispositivo restano validi.
-P1,media-upload,pending,compressione fotografie;,globale:T-0146,
+P1,media-upload,passed,compressione fotografie;,globale:T-0146,"MEDIA_COMPRESSION 4/4: immagini grandi compresse prima dell’upload a max 2560 px/qualità 0,88 senza ritaglio; orientamento EXIF richiesto e originale conservato su errore o mancato risparmio."
 P1,media-upload,pending,compressione video;,globale:T-0147,
 P1,media-upload,passed,condizione dopo caricamento dei dati;,addendum:A0290,"UPLOAD_STATE_AUTHORIZATION 1/1: caricamento dati non altera sessione o ruolo e i comandi restano subordinati allo stato verificato."
 P1,media-upload,passed,conferma prima del caricamento;,addendum:A0371,"DOCUMENT_UPLOAD_CONFIRMATION 2/2: conferma esplicita con nome file, categoria e destinatari prima di caricare o sostituire; annullamento senza invio."

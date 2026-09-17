@@ -50,6 +50,7 @@ import {
   sanitizeProfilesForPublicCache,
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
+import { compressMobilePhoto } from "./mediaCompression.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 import { createTravelArchive, visibleArchiveMedia } from "./travelArchive.js";
@@ -76,7 +77,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.44",
+const VERSION = "1.48.45",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -214,7 +215,7 @@ const normalizeMobileUpload = async (file) => {
   const isHeic =
     /\.(heic|heif)$/i.test(file.name || "") ||
     /image\/(heic|heif)/i.test(file.type || "");
-  if (!isHeic) return file;
+  if (!isHeic) return compressMobilePhoto(file);
   const module = await import("heic2any");
   const converted = await module.default({
     blob: file,
@@ -222,11 +223,12 @@ const normalizeMobileUpload = async (file) => {
     quality: 0.9,
   });
   const jpeg = Array.isArray(converted) ? converted[0] : converted;
-  return new File(
+  const convertedFile = new File(
     [jpeg],
     `${String(file.name || "foto").replace(/\.(heic|heif)$/i, "")}.jpg`,
     { type: "image/jpeg", lastModified: Date.now() },
   );
+  return compressMobilePhoto(convertedFile);
 };
 const deviceKey = () => {
   let key = localStorage.getItem("india-device-key") || "";
