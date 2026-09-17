@@ -790,11 +790,11 @@ P1,media-upload,passed,Commento con video.,globale:T-0462;usabilita:U0301,"ui-co
 P1,media-upload,passed,comportamento al ricaricamento;,addendum:A0049,ui-offline QA 1.48.40: dopo consegna differita il reload conserva una sola pubblicazione e non duplica l'operazione; token e chiave dispositivo restano validi.
 P1,media-upload,pending,compressione fotografie;,globale:T-0146,
 P1,media-upload,pending,compressione video;,globale:T-0147,
-P1,media-upload,pending,condizione dopo caricamento dei dati;,addendum:A0290,
-P1,media-upload,pending,conferma prima del caricamento;,addendum:A0371,
+P1,media-upload,passed,condizione dopo caricamento dei dati;,addendum:A0290,"UPLOAD_STATE_AUTHORIZATION 1/1: caricamento dati non altera sessione o ruolo e i comandi restano subordinati allo stato verificato."
+P1,media-upload,passed,conferma prima del caricamento;,addendum:A0371,"DOCUMENT_UPLOAD_CONFIRMATION 2/2: conferma esplicita con nome file, categoria e destinatari prima di caricare o sostituire; annullamento senza invio."
 P1,media-upload,passed,Conservare possibilità di scaricare l’originale.,globale:T-1646,"travel-archive 3/3: foto, audio e video originali visibili vengono scaricati con byte reali in uno ZIP; un file indisponibile non annulla gli altri."
 P1,media-upload,passed,Consultare post già scaricati.,globale:T-0540,"travel-archive 3/3: foto, audio e video originali visibili vengono scaricati con byte reali in uno ZIP; un file indisponibile non annulla gli altri."
-P1,media-upload,pending,controllo server prima del caricamento;,addendum:A0136,
+P1,media-upload,passed,controllo server prima del caricamento;,addendum:A0136,"UPLOAD_STATE_AUTHORIZATION 1/1: sessione/proprietà precedono lettura byte; descrizione e firma reale precedono persistenza."
 P1,media-upload,pending,copertina video;,globale:T-0150,
 P1,media-upload,passed,Deep link della singola fotografia.,globale:T-0245,"ui-photo-deep-link Thailandia 1.48.9 Samsung S20 FE 1/1: URL della singola fotografia apre il media esatto, il reload conserva il visualizzatore e il comando touch Chiudi foto torna alla bacheca ripulendo il parametro; L1/L2 completo 18/18 applicabili."
 P1,media-upload,pending,Definire gestione della componente video della Live Photo.,globale:T-1429,

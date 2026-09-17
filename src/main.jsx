@@ -76,7 +76,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.43",
+const VERSION = "1.48.44",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -5289,6 +5289,7 @@ function VaultOnline({
     [documentStatus, setDocumentStatus] = useState(""),
     [locationStatus, setLocationStatus] = useState(""),
     [documentPreview, setDocumentPreview] = useState(null),
+    [pendingDocumentUpload, setPendingDocumentUpload] = useState(null),
     [pendingDocumentDelete, setPendingDocumentDelete] = useState(""),
     [locationMapOpen, setLocationMapOpen] = useState(false),
     [viewMode, setViewMode] = useState("traveler"),
@@ -5918,7 +5919,11 @@ function VaultOnline({
                             <input
                               type="file"
                               accept="application/pdf,image/*"
-                              onChange={(e) => upload(type, e.target.files?.[0])}
+                              onChange={(event) => {
+                                const file = event.target.files?.[0];
+                                event.target.value = "";
+                                if (file) setPendingDocumentUpload({ type, label, file, replacing: true });
+                              }}
                             />
                           </label>
                           <button onClick={() => setPendingDocumentDelete(type)}>
@@ -5934,7 +5939,11 @@ function VaultOnline({
                     <input
                       type="file"
                       accept="application/pdf,image/*,.heic,.heif"
-                      onChange={(e) => upload(type, e.target.files?.[0])}
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        event.target.value = "";
+                        if (file) setPendingDocumentUpload({ type, label, file, replacing: false });
+                      }}
                     />
                   </label>
                 ) : (
@@ -6006,6 +6015,29 @@ function VaultOnline({
                 <a href={documentPreview.url} download={documentPreview.name}>Scarica il documento</a>
               </div>
             )}
+          </div>
+        </div>
+      )}
+      {pendingDocumentUpload && (
+        <div className="confirmOverlay" onClick={() => setPendingDocumentUpload(null)}>
+          <div className="confirmCard" role="dialog" aria-modal="true" aria-label="Conferma caricamento documento" onClick={(event) => event.stopPropagation()}>
+            <ShieldCheck />
+            <h3>{pendingDocumentUpload.replacing ? "Sostituire questo documento?" : "Caricare questo documento?"}</h3>
+            <p>
+              <b>{pendingDocumentUpload.label}</b> · {pendingDocumentUpload.file.name}
+              <br />Sarà visibile soltanto a te e alla coordinatrice.
+            </p>
+            <div>
+              <button type="button" onClick={() => setPendingDocumentUpload(null)}>Annulla</button>
+              <button
+                type="button"
+                onClick={async () => {
+                  const pending = pendingDocumentUpload;
+                  setPendingDocumentUpload(null);
+                  await upload(pending.type, pending.file);
+                }}
+              >{pendingDocumentUpload.replacing ? "Sostituisci" : "Carica ora"}</button>
+            </div>
           </div>
         </div>
       )}
