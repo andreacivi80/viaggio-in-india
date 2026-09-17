@@ -1,0 +1,25 @@
+id,requirement,button_or_screen,frontend,api,authorization,database,expected,test,status
+F001,Accesso con password del gruppo,Password del gruppo,verifyGroupCode,auth/group,group-code,rate_limits,Password valida abilita registrazione o collegamento,tests/access-flow.test.mjs,COMPLETE
+F002,Registrazione e collegamento profilo,Entra nel gruppo,registerTraveler,auth/register,group-code,profiles;auth_sessions,Profilo viaggiatore e sessione vincolata al dispositivo,tests/ui-profile-creation.spec.mjs,COMPLETE
+F003,Blocco sessione personale,Blocca,logout,auth/logout,profile,auth_sessions,Sessione revocata e privilegi rimossi,tests/extended-p0-auth-lifecycle.mjs,COMPLETE
+F004,Consultazione bacheca,Bacheca,Feed,state,public-filtered,posts;post_media,Contenuti filtrati per visibilita,tests/ui-public-access-boundary.spec.mjs,COMPLETE
+F005,Itinerario giornaliero,Viaggio;SCEGLI LA GIORNATA,TripBoard,trip-checks/*,authenticated-group-member,trip_checks,Tappa e spunte sincronizzate,tests/ui-navigation.spec.mjs,COMPLETE
+F006,Mappa reale del viaggio,Mappa,RouteMap,N/A,public,N/A,Itinerario Thailandia leggibile e continuo,tests/thailand-overview-route.test.mjs,COMPLETE
+F007,Informazioni citta,CONOSCIAMO LA TAPPA,CitySheet,weather,public,N/A,Dati della citta e meteo disponibili,tests/health-declaration-city.test.mjs,COMPLETE
+F008,Elenco viaggiatori,Apri elenco viaggiatori,TravelerDirectory,state,profile,profiles,Elenco ordinato e scorrevole,tests/ui-people.spec.mjs,COMPLETE
+F009,Mappa provenienze,Apri la cartina di provenienza,ItalyTravelerMap,state,profile,profiles,Italia intera e provenienze aggregate,tests/map-origins.test.mjs,COMPLETE
+F010,Pubblicazione testo e media,Pubblica,CreatePost,posts;uploads/init;media/:key,profile,posts;post_media;upload_sessions;upload_parts,Post e allegati confermati dal server,tests/ui-publish-complete.spec.mjs,COMPLETE
+F011,Fotocamera e posizione post,Scatta;Usa posizione,CreatePost,posts;places/reverse,profile,posts,Foto e luogo associati al post,tests/ui-post-location.spec.mjs,COMPLETE
+F012,Registrazione audio,Registra,AudioRecorder,posts;uploads/init;media/:key,profile,posts;post_media;upload_sessions;upload_parts,Audio pubblicato e riproducibile,tests/ui-microphone-permissions.spec.mjs,COMPLETE
+F013,Condivisione Spotify,Aggiungi una canzone da Spotify,spotifyLink,posts,profile,posts,Link Spotify validato e incorporato,tests/notifications-spotify.test.mjs,COMPLETE
+F014,Commenti e risposte,Commenta;Rispondi,PostCard,comments,profile-or-guest,comments,Commento o risposta persistita,tests/comment-conversations.test.mjs,COMPLETE
+F015,Reazioni,Reazioni,react;reactToComment,reactions;comment-reactions,profile-or-guest,reactions;comment_reactions,Una reazione coerente per identita,tests/reaction-concurrency.test.mjs,COMPLETE
+F016,Centro notifiche,Attivita recenti,ActivityPanel,state;activity/read,profile,activity_state,Nuove e viste sincronizzate e cancellabili,tests/notification-preferences.test.mjs,COMPLETE
+F017,Preferenze notifiche,Quali notifiche vuoi ricevere,updateNotificationPreference,notification-preferences,profile-owner,notification_preferences,Categorie salvate per profilo,tests/notification-preferences.test.mjs,COMPLETE
+F018,Area documenti privata,Documenti e sicurezza,Vault,private;documents,profile-owner-or-coordinator-step-up,document_status,Documenti visibili soltanto ai ruoli ammessi,tests/extended-p0-documents.mjs,COMPLETE
+F019,Anteprima e download documento,Apri a schermo intero;Scarica,PdfDocumentViewer,media/:key,conditional-media-visibility,document_status,Documento apribile e scaricabile senza esposizione,tests/ui-protected-pdf.spec.mjs,COMPLETE
+F020,Condivisione posizione,Posizione condivisa,locate,locations,owner,locations,Posizione aggiornata o rimossa dal proprietario,tests/extended-p0-location.mjs,COMPLETE
+F021,Invito personale,Crea invito personale,createInvite,auth/invites,coordinator-step-up,profile_invites,Invito monouso e a scadenza,tests/invite-link-privacy.test.mjs,COMPLETE
+F022,Esportazione dati gruppo,Scarica dati,downloadTravelArchive,state;media/:key,profile,posts;post_media,Archivio dei contenuti visibili scaricato,tests/travel-archive.test.mjs,COMPLETE
+F023,Amministrazione protetta,Griglia coordinatore,AdminStepUpPanel,auth/admin-step-up;profiles;security/audit,coordinator-step-up,profiles;security_audit_log,Operazioni amministrative brevi e vincolate al dispositivo,tests/admin-step-up.test.mjs,COMPLETE
+F024,Coda invii offline,Invii in attesa,offlineQueue,N/A,profile,N/A,Bozze locali ritentate senza duplicati,tests/offline-queue.test.mjs,COMPLETE
