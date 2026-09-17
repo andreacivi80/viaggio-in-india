@@ -39,6 +39,10 @@ async function preparePhone(page, permission) {
       },
     });
     Object.defineProperty(window, "PushManager", { configurable: true, value: function PushManager() {} });
+    Object.defineProperty(navigator, "getBattery", {
+      configurable: true,
+      value: async () => ({ level: 0.35, charging: false }),
+    });
     Object.defineProperty(navigator, "serviceWorker", {
       configurable: true,
       value: {
@@ -121,4 +125,29 @@ test("il diniego notifiche non crea sottoscrizioni e resta riprovabile", async (
   expect(subscriptions).toBe(0);
   expect(await page.evaluate(() => window.__notificationPermissionRequests)).toBe(1);
   expect(await page.evaluate(() => localStorage.getItem("india-push-enabled"))).toBeNull();
+});
+
+test("una sottoscrizione attiva resta inattiva in attesa della push e non consuma cicli continui", async ({ page }) => {
+  await preparePhone(page, "granted");
+  let subscriptions = 0;
+  await page.route("**/api/push/subscribe", async (route) => {
+    subscriptions += 1;
+    await route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true }) });
+  });
+  const client = await page.context().newCDPSession(page);
+  await client.send("Performance.enable");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.locator(".accessPill").tap();
+  await page.locator(".quickProfilePanel").getByRole("button", { name: "Attiva notifiche" }).tap();
+  await expect(page.getByRole("button", { name: "Disattiva notifiche" })).toBeVisible();
+  const before = await client.send("Performance.getMetrics");
+  const batteryBefore = await page.evaluate(async () => (await navigator.getBattery()).level);
+  await page.waitForTimeout(5_000);
+  const after = await client.send("Performance.getMetrics");
+  const batteryAfter = await page.evaluate(async () => (await navigator.getBattery()).level);
+  const value = (metrics, name) => metrics.metrics.find((item) => item.name === name)?.value || 0;
+  const taskSeconds = value(after, "TaskDuration") - value(before, "TaskDuration");
+  expect(subscriptions).toBe(1);
+  expect(batteryAfter).toBe(batteryBefore);
+  expect(taskSeconds).toBeLessThan(0.5);
 });

@@ -1672,9 +1672,9 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1657 | 92 | Misurare batteria con app aperta e inattiva. | NON ESEGUITO | — |
 | T-1658 | 92 | Misurare batteria con app chiusa. | NON ESEGUITO | — |
 | T-1659 | 92 | Misurare batteria con mappa aperta. | NON ESEGUITO | — |
-| T-1660 | 92 | Misurare batteria con notifiche attive. | NON ESEGUITO | — |
+| T-1660 | 92 | Misurare batteria con notifiche attive. | SUPERATO | QA Galaxy S9+ 3/3: una sola sottoscrizione; attesa di 5 secondi senza polling push, livello batteria simulato stabile e TaskDuration inferiore a 0,5 s. Il Service Worker reagisce agli eventi push senza timer continui. |
 | T-1661 | 92 | Misurare batteria con polling attivo. | NON ESEGUITO | — |
-| T-1662 | 92 | Misurare batteria con posizione attiva. | NON ESEGUITO | — |
+| T-1662 | 92 | Misurare batteria con posizione attiva. | SUPERATO | QA Galaxy S9+ 1/1 e struttura 1/1: rilevamento soltanto dopo Condividi/Aggiorna, due coordinate reali simulate correttamente, nessun watchPosition continuo e cancellazione conclusiva. |
 | T-1663 | 92 | Misurare batteria durante conversione HEIC. | NON ESEGUITO | — |
 | T-1664 | 92 | Misurare batteria durante upload video. | NON ESEGUITO | — |
 | T-1665 | 92 | Ridurre attività in background non indispensabili. | NON ESEGUITO | — |

@@ -6,4 +6,3 @@ K-004,K0,P2,usabilita-mobile,pending,Test Push su iPhone con PWA installata.,glo
 K-005,K0,P2,usabilita-mobile,pending,Utilizzare l’app in automobile come passeggero.,globale:T-0597,122,gesto touch su Samsung e iPhone + geometria + risultato API,
 K-006,K0,P2,usabilita-mobile,pending,Verificare Live Photo iPhone.,globale:T-1435,122,gesto touch su Samsung e iPhone + geometria + risultato API,
 K-007,K0,P2,mappe-posizione,pending,Misurare batteria con mappa aperta.,globale:T-1659,110,condivisione/rimozione reale + secondo dispositivo + diniego pubblico,
-K-008,K0,P1,altro,pending,Misurare batteria con notifiche attive.,globale:T-1660,100,azione reale + conferma UI + verifica database/storage/notifiche,

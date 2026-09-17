@@ -625,7 +625,7 @@ P1,altro,passed,Inviare notifica con emoji.,globale:T-0863,"push-payload-privacy
 P1,altro,passed,Inviare notifica con testo molto lungo.,globale:T-0864,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
 P1,altro,passed,Inviare notifica con titolo molto lungo.,globale:T-0865,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
 P1,altro,passed,le notifiche aprono il contenuto preciso;,globale:T-0681,ui-notification-deep-link QA: pubblicazione e commento reali vengono aperti tramite i rispettivi parametri; un contenuto eliminato mostra un avviso chiaro.
-P1,altro,pending,Misurare batteria con notifiche attive.,globale:T-1660,
+P1,altro,passed,Misurare batteria con notifiche attive.,globale:T-1660,QA Galaxy S9+ 3/3: sottoscrizione push attiva una sola volta; 5 secondi in attesa senza polling push o variazione batteria simulata e TaskDuration sotto 0.5 s; Service Worker event-driven 1/1.
 P1,altro,passed,Negare notifiche.,globale:T-0522;usabilita:U0063,"ui-notification-permissions touch mobile 2/2: diniego del browser produce zero richieste push, mantiene Non attive e lascia disponibile il comando per riprovare."
 P1,altro,passed,nessuna notifica deve essere inviata;,addendum:A0036,"NOTIFICATION_NEGATIVE_CASES 1/1: post, commenti, posizioni e documenti applicano 401/403 prima di ogni percorso notifySubscribers."
 P1,altro,passed,nessuna notifica inviata;,globale:T-0749;usabilita:U0586,"NOTIFICATION_NEGATIVE_CASES 1/1: i dinieghi server precedono ogni invio push sui percorsi mutanti notificabili."
@@ -696,7 +696,7 @@ P1,mappe-posizione,passed,le posizioni scadono automaticamente;,globale:T-0682,P
 P1,mappe-posizione,passed,Mappa con due posizioni identiche.,globale:T-0947,ui-location-permissions Samsung S20 FE 1/1: viaggiatore e coordinatore condividono coordinate identiche; la lista conserva due identità e la mappa renderizza due marker senza perdere persone.
 P1,mappe-posizione,passed,Mappa con nessuna posizione condivisa.,globale:T-0952,ui-location-permissions Samsung S20 FE 1/1: dopo la cancellazione la lista e la mappa non mostrano alcun marker residuo.
 P1,mappe-posizione,passed,Mappa con una posizione.,globale:T-0954,ui-location-permissions Samsung S20 FE 1/1: con una sola posizione la mappa India mostra un solo marker leggibile e i collegamenti Google Maps/Naviga corretti.
-P1,mappe-posizione,pending,Misurare batteria con posizione attiva.,globale:T-1662,
+P1,mappe-posizione,passed,Misurare batteria con posizione attiva.,globale:T-1662,QA Galaxy S9+ 1/1 + struttura 1/1: due rilevamenti GPS solo su tocco esplicito condividi/aggiorna; nessun watchPosition continuo; cancellazione posizione e pulizia QA completate.
 P1,mappe-posizione,passed,modifica posizione altrui;,globale:T-0742,P0_LOCATION 30/30 su QA 1.48.37: il secondo viaggiatore non può sovrascrivere la posizione del proprietario e riceve HTTP 403.
 P1,mappe-posizione,passed,Negare GPS.,usabilita:U0236,"ui-location QA 1.48.40: revoca del permesso geolocalizzazione sul telefono, messaggio Permesso posizione non disponibile e zero POST verso /api/locations."
 P1,mappe-posizione,passed,Negare posizione.,usabilita:U0457,"Playwright Galaxy: permesso rimosso, messaggio locale e zero richieste POST; preview 20382a40; 2026-08-04"

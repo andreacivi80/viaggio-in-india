@@ -1,7 +1,7 @@
 # Pacchetto ristretto dei controlli critici — revisione 1.41.1
 
-Controlli selezionati: **8** tra 8 controlli P0–P2 ancora privi di evidenza conclusiva.
-Stato del pacchetto: **0 superati**, **8 pendenti**.
+Controlli selezionati: **7** tra 7 controlli P0–P2 ancora privi di evidenza conclusiva.
+Stato del pacchetto: **0 superati**, **7 pendenti**.
 
 Sono esclusi i controlli già superati e i doppioni. La selezione privilegia rischi che possono bloccare il viaggio, esporre dati privati, perdere contenuti o produrre comportamenti diversi tra telefoni. Ogni controllo richiede una prova reale locale o QA; la produzione resta in sola lettura.
 
@@ -25,10 +25,9 @@ Sono esclusi i controlli già superati e i doppioni. La selezione privilegia ris
   Sorgente: `globale:T-1435`. I flussi fondamentali devono restare raggiungibili e azionabili tramite touch.
 - [ ] **K-007 · mappe-posizione** — Misurare batteria con mappa aperta.
   Sorgente: `globale:T-1659`. La posizione deve essere disponibile solo al gruppo e rimovibile dal proprietario.
-- [ ] **K-008 · altro** — Misurare batteria con notifiche attive.
-  Sorgente: `globale:T-1660`. Il flusso di eliminazione deve essere esplicito, recuperabile e coerente.
 
 ## K1
 
 
 ## K2
+
