@@ -6,6 +6,7 @@ const forbidden = [
   ["CLOUDFLARE", "API", "TOKEN"].join("_"),
   ["CF", "API", "TOKEN"].join("_"),
   ["india", "26"].join(""),
+  ["Thailandia", "2026"].join(""),
 ];
 const extensions = /\.(?:css|html|js|json|mjs)$/i;
 

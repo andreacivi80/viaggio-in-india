@@ -1504,19 +1504,19 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1489 | 80 | Tentare di incorporare l’app in un iframe esterno. | NON ESEGUITO | — |
 | T-1490 | 80 | Verificare che pagine pubbliche eventualmente incorporabili siano separate da quelle private. | NON ESEGUITO | — |
 | T-1491 | 80 | Verificare protezione mediante CSP frame-ancestors. | NON ESEGUITO | — |
-| T-1492 | 81 | Aggiungere scansione automatica dei segreti nella pipeline. | NON ESEGUITO | — |
+| T-1492 | 81 | Aggiungere scansione automatica dei segreti nella pipeline. | SUPERATO | Static 264/264: ogni build esegue `scan-client-secrets` e fallisce su credenziali client vietate. |
 | T-1493 | 81 | Cercare chiavi private VAPID nel bundle JavaScript. | SUPERATO | scan-client-secrets: build bloccata se compare VAPID_PRIVATE_KEY nel client |
-| T-1494 | 81 | Cercare file .env nello ZIP. | NON ESEGUITO | — |
-| T-1495 | 81 | Cercare GROUP_CODE nel bundle JavaScript. | NON ESEGUITO | — |
-| T-1496 | 81 | Cercare ID o credenziali non necessarie. | NON ESEGUITO | — |
-| T-1497 | 81 | Cercare segreti nei file sorgenti. | NON ESEGUITO | — |
+| T-1494 | 81 | Cercare file .env nello ZIP. | SUPERATO | Static 264/264 `clean-source-archive`: archivio riproducibile privo di `.env`, token e artefatti locali. |
+| T-1495 | 81 | Cercare GROUP_CODE nel bundle JavaScript. | SUPERATO | Build 1.48.57 + `scan-client-secrets`: password di gruppo e identificatori riservati assenti dal bundle `dist`. |
+| T-1496 | 81 | Cercare ID o credenziali non necessarie. | SUPERATO | Static 264/264 `repository-secrets` + `security-surface`: nessun token API, chiave privata, file credenziale o ID riservato nel client. |
+| T-1497 | 81 | Cercare segreti nei file sorgenti. | SUPERATO | Static 264/264 `repository-secrets`: file tracciati e sorgenti applicativi scansionati senza credenziali attive. |
 | T-1498 | 81 | Cercare segreti nei log GitHub Actions. | NON ESEGUITO | — |
 | T-1499 | 81 | Cercare segreti nei messaggi di errore. | NON ESEGUITO | — |
 | T-1500 | 81 | Cercare segreti nel Service Worker. | NON ESEGUITO | — |
 | T-1501 | 81 | Cercare segreti nella cronologia Git. | NON ESEGUITO | — |
 | T-1502 | 81 | Cercare token Cloudflare. | SUPERATO | repository-secrets e scan-client-secrets: token Cloudflare assenti da file tracciati e bundle |
 | T-1503 | 81 | Ruotare immediatamente qualsiasi segreto eventualmente esposto. | NON ESEGUITO | — |
-| T-1504 | 81 | Verificare che soltanto la chiave pubblica VAPID sia inviata al browser. | NON ESEGUITO | — |
+| T-1504 | 81 | Verificare che soltanto la chiave pubblica VAPID sia inviata al browser. | SUPERATO | Static 264/264 `vapid-secret-boundary`: `push/config` espone `public_key` e nessun campo o riferimento alla chiave privata. |
 | T-1505 | 82 | Verificare accesso amministrativo con autenticazione a più fattori. | SUPERATO | QA API 7/7 + Galaxy S9+ touch 1/1 + statico 218/218: sessione coordinatrice/device + password, token firmato di 10 minuti vincolato a profilo e dispositivo; rifiutati password errata, viaggiatore, alterazione e riuso su secondo telefono. |
 | T-1506 | 82 | Verificare ambiente di collaudo separato. | NON ESEGUITO | — |
 | T-1507 | 82 | Verificare ambiente produzione. | NON ESEGUITO | — |
@@ -1533,8 +1533,8 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1518 | 82 | Verificare redirect da HTTP a HTTPS. | NON ESEGUITO | — |
 | T-1519 | 82 | Verificare rollback del deploy. | NON ESEGUITO | — |
 | T-1520 | 82 | Verificare VAPID_PRIVATE_KEY. | NON ESEGUITO | — |
-| T-1521 | 82 | Verificare VAPID_PUBLIC_KEY. | NON ESEGUITO | — |
-| T-1522 | 82 | Verificare variabile GROUP_CODE. | NON ESEGUITO | — |
+| T-1521 | 82 | Verificare VAPID_PUBLIC_KEY. | SUPERATO | Static 264/264 `vapid-secret-boundary`: endpoint `push/config` restituisce esclusivamente `VAPID_PUBLIC_KEY`. |
+| T-1522 | 82 | Verificare variabile GROUP_CODE. | SUPERATO | Build 1.48.57: `GROUP_CODE` resta binding server e il valore non entra in sorgente o bundle client. |
 | T-1523 | 83 | Calcolare consumo giornaliero previsto. | NON ESEGUITO | — |
 | T-1524 | 83 | Calcolare consumo massimo di un post con 10 allegati. | NON ESEGUITO | — |
 | T-1525 | 83 | Calcolare consumo per 14 giorni. | NON ESEGUITO | — |

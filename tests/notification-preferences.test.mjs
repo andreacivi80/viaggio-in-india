@@ -99,11 +99,11 @@ test("la notifica invito non espone token, link segreti o testo controllato dal 
   const safe = sanitizePushPayload({
     tag: "invite-profile-target-123",
     title: "token segreto",
-    body: "Thailandia2026 invite_token=super-secret",
+    body: "CodiceGruppoDemo2026 invite_token=super-secret",
     url: "/?invite=super-secret",
   });
   assert.equal(safe.title, "Thailandia Insieme");
   assert.equal(safe.body, "Hai ricevuto un nuovo invito personale.");
   assert.equal(safe.url, "/");
-  assert.doesNotMatch(JSON.stringify(safe), /super-secret|Thailandia2026/);
+  assert.doesNotMatch(JSON.stringify(safe), /super-secret|CodiceGruppoDemo2026/);
 });

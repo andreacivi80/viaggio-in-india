@@ -1309,7 +1309,7 @@ P3,altro,passed,Aggiungere protezione antispam.,globale:T-0057,"P1_SOCIAL_FLOOD 
 P3,altro,pending,Aggiungere pulsante “Cancella dati da questo dispositivo”.,globale:T-1621,
 P3,altro,passed,Aggiungere revoca del singolo dispositivo.,globale:T-0031,production-smoke: revoca del dispositivo secondario e lista aggiornata
 P3,altro,passed,Aggiungere scadenza per inattività.,globale:T-0033,QA 1.31.0: sessione inattiva da 30 giorni respinta con HTTP 401
-P3,altro,pending,Aggiungere scansione automatica dei segreti nella pipeline.,globale:T-1492,
+P3,altro,passed,Aggiungere scansione automatica dei segreti nella pipeline.,globale:T-1492,Static 264/264: ogni build esegue scan-client-secrets e fallisce su credenziali client vietate
 P3,altro,pending,Aggiungere segnalazione dei contenuti.,globale:T-0060,
 P3,altro,pending,Aggiungere un messaggio “Aggiornamento disponibile”.,globale:T-0823,
 P3,altro,pending,Allarme in caso di errori ripetuti.,globale:T-0216,
@@ -1419,10 +1419,10 @@ P3,altro,pending,caratteri invisibili;,globale:T-1289,
 P3,altro,pending,caratteri JavaScript;,globale:T-1290,
 P3,altro,pending,casuali;,addendum:A0349,
 P3,altro,pending,catturare la richiesta;,addendum:A0323,
-P3,altro,pending,Cercare file .env nello ZIP.,globale:T-1494,
-P3,altro,pending,Cercare GROUP_CODE nel bundle JavaScript.,globale:T-1495,
-P3,altro,pending,Cercare ID o credenziali non necessarie.,globale:T-1496,
-P3,altro,pending,Cercare segreti nei file sorgenti.,globale:T-1497,
+P3,altro,passed,Cercare file .env nello ZIP.,globale:T-1494,Static 264/264 clean-source-archive: archivio riproducibile privo di .env token e artefatti locali
+P3,altro,passed,Cercare GROUP_CODE nel bundle JavaScript.,globale:T-1495,Build 1.48.57 + scan-client-secrets: password di gruppo e identificatori riservati assenti dal bundle dist
+P3,altro,passed,Cercare ID o credenziali non necessarie.,globale:T-1496,Static 264/264 repository-secrets + security-surface: nessun token API chiave privata file credenziale o ID riservato nel client
+P3,altro,passed,Cercare segreti nei file sorgenti.,globale:T-1497,Static 264/264 repository-secrets: file tracciati e sorgenti applicativi scansionati senza credenziali attive
 P3,altro,pending,Cercare segreti nei log GitHub Actions.,globale:T-1498,
 P3,altro,pending,Cercare segreti nei messaggi di errore.,globale:T-1499,
 P3,altro,pending,Cercare segreti nella cronologia Git.,globale:T-1501,
@@ -2654,9 +2654,9 @@ P3,altro,pending,"Verificare troncamento e pulsante “Leggi tutto”, se necess
 P3,altro,pending,Verificare Udaipur.,globale:T-0379,
 P3,altro,pending,Verificare URL precedente non più funzionante.,globale:T-0492,
 P3,altro,pending,Verificare utilizzo singolo.,usabilita:U0380,
-P3,altro,pending,Verificare VAPID_PUBLIC_KEY.,globale:T-1521,
+P3,altro,passed,Verificare VAPID_PUBLIC_KEY.,globale:T-1521,Static 264/264 vapid-secret-boundary: endpoint push/config restituisce esclusivamente VAPID_PUBLIC_KEY
 P3,altro,pending,Verificare Varanasi.,globale:T-0380,
-P3,altro,pending,Verificare variabile GROUP_CODE.,globale:T-1522,
+P3,altro,passed,Verificare variabile GROUP_CODE.,globale:T-1522,Build 1.48.57: GROUP_CODE resta binding server e il valore non entra in sorgente o bundle client
 P3,altro,pending,Verificare zoom testo 200%.,globale:T-0613,
 P3,altro,passed,Verificare zoom.,usabilita:U0344,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P3,altro,pending,versione corretta;,globale:T-1768,
@@ -2831,7 +2831,7 @@ P3,social,pending,Tentare di pubblicare.,usabilita:U0619,
 P3,social,passed,Toccare Pubblica.,usabilita:U0131,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P3,social,pending,Tutti pubblicano un post di prova.,globale:T-1739,
 P3,social,passed,un utente può pubblicare come un’altra persona;,usabilita:U0689,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P3,social,pending,Verificare che soltanto la chiave pubblica VAPID sia inviata al browser.,globale:T-1504,
+P3,social,passed,Verificare che soltanto la chiave pubblica VAPID sia inviata al browser.,globale:T-1504,Static 264/264 vapid-secret-boundary: push/config espone public_key e nessun campo o riferimento alla chiave privata
 P3,social,pending,Verificare rimozione dei metadati sensibili dalle copie pubbliche.,globale:T-1438,
 P3,social,pending,Verificare soltanto contenuti pubblici.,usabilita:U0094,
 P3,social,pending,Visualizzare la Bacheca pubblica.,usabilita:U0613,
