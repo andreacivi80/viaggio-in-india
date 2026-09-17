@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { strFromU8, unzipSync } from "fflate";
-import { createTravelArchive, visibleArchiveMedia } from "../src/travelArchive.js";
+import { createOfflineAlbumHtml, createTravelArchive, visibleArchiveMedia } from "../src/travelArchive.js";
 
 const posts = [{
   id: "post-1",
@@ -40,10 +40,23 @@ test("l’archivio comprende pubblicazioni, foto, audio e video visibili", async
   const files = unzipSync(new Uint8Array(await blob.arrayBuffer()));
   assert.ok(files["LEGGIMI.txt"]);
   assert.ok(files["pubblicazioni.json"]);
+  assert.ok(files["album-offline.html"]);
   assert.match(strFromU8(files["pubblicazioni.json"]), /Primo giorno/);
+  const album = strFromU8(files["album-offline.html"]);
+  assert.match(album, /Album offline · Thailandia Insieme/);
+  assert.match(album, /giorno-01\/pubblicazione-001\/Delhi\.jpg/);
+  assert.match(album, /Primo giorno/);
+  assert.doesNotMatch(album, /<script/i);
   assert.ok(Object.keys(files).some((name) => name.endsWith("Delhi.jpg")));
   assert.ok(Object.keys(files).some((name) => name.endsWith("Voce.mp3")));
   assert.ok(Object.keys(files).some((name) => name.endsWith("Saluto.mp4")));
+});
+
+test("l’album offline neutralizza testo e attributi non affidabili", () => {
+  const html = createOfflineAlbumHtml([{ ...posts[0], text: '<script>alert("x")</script>' }]);
+  assert.doesNotMatch(html, /<script>alert/);
+  assert.match(html, /&lt;script&gt;alert\(&quot;x&quot;\)&lt;\/script&gt;/);
+  assert.match(html, /Content-Security-Policy/);
 });
 
 test("un contenuto temporaneamente indisponibile non annulla tutto il download", async () => {

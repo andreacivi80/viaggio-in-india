@@ -245,7 +245,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0230 | 15 | Revoca immediata di sessioni compromesse. | NON ESEGUITO | — |
 | T-0231 | 15 | Sanificazione dei contenuti inseriti nei popup delle mappe. | NON ESEGUITO | — |
 | T-0232 | 15 | Validazione di tutti gli identificativi. | NON ESEGUITO | — |
-| T-0233 | 16 | Album HTML offline. | NON ESEGUITO | — |
+| T-0233 | 16 | Album HTML offline. | SUPERATO | Revisione 1.48.51: lo ZIP del Gruppo include `album-offline.html` autosufficiente con foto, audio, video, testi e commenti già visibili. Verifica reale Galaxy S9+: download autenticato e apertura/contenuto ZIP validati; il visitatore non vede il comando. Test automatici 4/4 unitari + 2/2 UI QA. |
 | T-0234 | 16 | Ambasciata. | NON ESEGUITO | — |
 | T-0235 | 16 | Archivio finale. | NON ESEGUITO | — |
 | T-0236 | 16 | Biglietti collegati alle giornate. | NON ESEGUITO | — |

@@ -43,6 +43,39 @@ export function visibleArchiveMedia(posts = []) {
   return items;
 }
 
+const escapeHtml = (value) => String(value || "")
+  .replaceAll("&", "&amp;")
+  .replaceAll("<", "&lt;")
+  .replaceAll(">", "&gt;")
+  .replaceAll('"', "&quot;")
+  .replaceAll("'", "&#39;");
+
+export function createOfflineAlbumHtml(posts = [], media = visibleArchiveMedia(posts)) {
+  const pathByUrl = new Map(media.map((item) => [item.media_url, item.archivePath]));
+  const mediaMarkup = (item) => {
+    const path = pathByUrl.get(item?.media_url);
+    if (!path) return "";
+    const type = String(item.media_type || "");
+    const source = escapeHtml(path);
+    if (type.startsWith("image/")) return `<img src="${source}" alt="${escapeHtml(item.media_name || "Foto del viaggio")}" loading="lazy">`;
+    if (type.startsWith("video/")) return `<video src="${source}" controls preload="metadata"></video>`;
+    if (type.startsWith("audio/")) return `<audio src="${source}" controls preload="metadata"></audio>`;
+    return `<a href="${source}">${escapeHtml(item.media_name || "Apri allegato")}</a>`;
+  };
+  const cards = posts.map((post) => {
+    const postMedia = post.media?.length
+      ? post.media
+      : post.media_url
+        ? [{ media_url: post.media_url, media_type: post.media_type, media_name: post.media_name }]
+        : [];
+    const comments = (post.comments || []).map((comment) =>
+      `<li><b>${escapeHtml(comment.author_name || "Ospite")}</b> ${escapeHtml(comment.text || "")}${mediaMarkup(comment)}</li>`,
+    ).join("");
+    return `<article><header><b>${escapeHtml(post.author_name || "Viaggiatore")}</b><small>${escapeHtml(post.created_at || "")}</small></header><p>${escapeHtml(post.text || "")}</p>${postMedia.map(mediaMarkup).join("")}${comments ? `<ul>${comments}</ul>` : ""}</article>`;
+  }).join("");
+  return `<!doctype html><html lang="it"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' data:; media-src 'self'; style-src 'unsafe-inline'"><title>Album offline · Thailandia Insieme</title><style>body{max-width:760px;margin:auto;padding:20px;font:16px system-ui;background:#f7f3ea;color:#17241f}h1{color:#c6531c}article{margin:16px 0;padding:16px;border-radius:16px;background:#fff;box-shadow:0 5px 20px #0001}header{display:flex;justify-content:space-between;gap:12px}small{color:#66736c}img,video{display:block;width:100%;max-height:70vh;object-fit:contain;margin:12px 0;border-radius:12px;background:#111}audio{width:100%;margin:12px 0}li{margin:8px 0}</style></head><body><h1>Thailandia Insieme</h1><p>Album consultabile senza connessione. Include soltanto i contenuti visibili al momento del download.</p>${cards || "<p>Nessuna pubblicazione disponibile.</p>"}</body></html>`;
+}
+
 export async function createTravelArchive({ posts = [], requestHeaders = {}, fetchImpl = fetch, onProgress = () => {} }) {
   const { Zip, ZipPassThrough, strToU8 } = await import("fflate");
   const media = visibleArchiveMedia(posts);
@@ -76,6 +109,7 @@ export async function createTravelArchive({ posts = [], requestHeaders = {}, fet
     }));
     addText("LEGGIMI.txt", "Archivio Viaggio in Thailandia. Contiene le pubblicazioni e i contenuti multimediali visibili a questo utente al momento del download. I documenti privati non sono inclusi.\n");
     addText("pubblicazioni.json", JSON.stringify(manifest, null, 2));
+    addText("album-offline.html", createOfflineAlbumHtml(posts, media));
     (async () => {
       for (const item of media) {
         try {

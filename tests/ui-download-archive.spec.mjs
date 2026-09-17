@@ -1,4 +1,6 @@
 import { expect, test, devices } from "@playwright/test";
+import { readFile } from "node:fs/promises";
+import { strFromU8, unzipSync } from "fflate";
 import { isSafeMutationTarget } from "./helpers/qa-mutation-target.mjs";
 
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
@@ -31,7 +33,13 @@ test("Scarica dati è disponibile nel Gruppo autenticato e produce uno ZIP", asy
   await button.tap();
   const download = await downloadPromise;
   expect(download.suggestedFilename()).toMatch(/^viaggio-thailandia-\d{4}-\d{2}-\d{2}\.zip$/);
-  await expect(page.getByRole("status")).toContainText("Archivio scaricato");
+  const downloadedPath = await download.path();
+  const files = unzipSync(new Uint8Array(await readFile(downloadedPath)));
+  expect(files["album-offline.html"]).toBeTruthy();
+  const album = strFromU8(files["album-offline.html"]);
+  expect(album).toContain("Album offline · Thailandia Insieme");
+  expect(album).not.toMatch(/<script/i);
+  await expect(page.getByText(/Archivio scaricato/)).toBeVisible();
 });
 
 test("il visitatore pubblico non vede Scarica dati", async ({ browser }) => {
