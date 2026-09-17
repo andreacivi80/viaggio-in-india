@@ -32,6 +32,22 @@ const visibleText = (node) => {
 };
 const clean = (value = "") => value.replace(/^['"{]|['"}]$/g, "").trim();
 
+const ancestorFormHasSubmitHandler = (node) => {
+  let current = node.parent;
+  while (current) {
+    if (ts.isJsxElement(current) && tagName(current.openingElement) === "form") {
+      return attributes(current.openingElement).has("onSubmit");
+    }
+    current = current.parent;
+  }
+  return false;
+};
+
+const isEmptyHandler = (initializer = "") => {
+  const compact = initializer.replace(/\s+/g, "");
+  return /=>\{\}\}?$/.test(compact) || /=>undefined\}?$/.test(compact) || /=>null\}?$/.test(compact);
+};
+
 const visit = (node) => {
   if (ts.isJsxElement(node) || ts.isJsxSelfClosingElement(node)) {
     const opening = ts.isJsxElement(node) ? node.openingElement : node;
@@ -46,13 +62,17 @@ const visit = (node) => {
         visibleText(node) ||
         clean(attrs.get("placeholder")) ||
         "<dinamico>";
-      const hasHandler = [...attrs.keys()].some((name) =>
+      const directHandler = [...attrs.keys()].find((name) =>
         /^(onClick|onChange|onInput|onSubmit|onPointerDown|onKeyDown)$/.test(name),
       );
+      const submitViaForm =
+        tag === "button" && clean(attrs.get("type")) === "submit" && ancestorFormHasSubmitHandler(opening);
+      const hasHandler = Boolean(directHandler || submitViaForm);
       const href = clean(attrs.get("href"));
       let issue = "";
-      if ((tag === "button" || role === "button") && !hasHandler)
+      if ((tag === "button" || role === "button") && !hasHandler && !attrs.has("disabled"))
         issue = "Tasto senza handler esplicito";
+      if (directHandler && isEmptyHandler(attrs.get(directHandler))) issue = "Handler vuoto";
       if (tag === "a" && (!href || href === "#")) issue = "Collegamento vuoto";
       rows.push({
         id: `I${String(rows.length + 1).padStart(4, "0")}`,
@@ -60,7 +80,7 @@ const visit = (node) => {
         role,
         label,
         line: position.line + 1,
-        handler: hasHandler ? "yes" : "no",
+        handler: directHandler ? "direct" : submitViaForm ? "form-submit" : "no",
         disabled: attrs.has("disabled") ? "conditional-or-yes" : "no",
         href,
         issue,
@@ -78,14 +98,24 @@ const csv = [
   ...rows.map((row) => columns.map((column) => escapeCsv(row[column])).join(",")),
 ].join("\n");
 const issues = rows.filter((row) => row.issue);
+const incompleteMarkers = [];
+const incompletePattern = /(?:non ancora disponibile|prossimamente|coming soon|verr(?:a|à) aggiunt|da implementare|funzione non completata)/gi;
+for (const match of sourceText.matchAll(incompletePattern)) {
+  const position = sourceFile.getLineAndCharacterOfPosition(match.index || 0);
+  incompleteMarkers.push({ line: position.line + 1, text: match[0] });
+}
 await mkdir("docs", { recursive: true });
 await writeFile("docs/INTERACTIVE-INVENTORY.csv", csv, "utf8");
 await writeFile(
   "docs/INTERACTIVE-AUDIT.md",
-  `# Inventario elementi interattivi\n\n- Elementi trovati: ${rows.length}\n- Anomalie statiche: ${issues.length}\n\n` +
+  `# Inventario elementi interattivi\n\n- Elementi trovati: ${rows.length}\n- Anomalie statiche: ${issues.length}\n- Funzioni dichiarate incomplete nell'interfaccia: ${incompleteMarkers.length}\n\n` +
     (issues.length
       ? issues.map((row) => `- ${row.id} · riga ${row.line} · ${row.tag} · ${row.label}: ${row.issue}`).join("\n")
-      : "Nessun tasto senza handler esplicito e nessun collegamento vuoto rilevato."),
+      : "Nessun tasto senza handler, handler vuoto o collegamento vuoto rilevato.") +
+    "\n\n" +
+    (incompleteMarkers.length
+      ? incompleteMarkers.map((item) => `- Riga ${item.line}: ${item.text}`).join("\n")
+      : "Nessuna funzione presentata all'utente come incompleta o futura."),
   "utf8",
 );
-console.log(JSON.stringify({ total: rows.length, issues }, null, 2));
+console.log(JSON.stringify({ total: rows.length, issues, incompleteMarkers }, null, 2));
