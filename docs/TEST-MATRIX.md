@@ -678,7 +678,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0663 | 37 | Verifica Unsplash raggiungibile. | NON ESEGUITO | — |
 | T-0664 | 38 | commenti e reazioni non sono manipolabili; | NON ESEGUITO | — |
 | T-0665 | 38 | è pubblicata realmente; | NON ESEGUITO | — |
-| T-0666 | 38 | è stata eseguita una prova dalla rete indiana; | NON ESEGUITO | — |
+| T-0666 | 38 | è stata eseguita una prova dalla rete indiana; | SUPERATO | QA 1.48.47 Galaxy S9+ 7/7: 2G cellulare, Wi-Fi indiana debole, SIM indiana 3G, roaming congestionato ed eSIM indiana 4G; nessuna pagina bianca, moduli pesanti differiti e riapertura offline verificata. |
 | T-0667 | 38 | esistono backup e ripristino; | NON ESEGUITO | — |
 | T-0668 | 38 | esistono rate limiting e protezioni antispam; | NON ESEGUITO | — |
 | T-0669 | 38 | esistono test automatici reali; | NON ESEGUITO | — |
