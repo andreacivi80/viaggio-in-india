@@ -52,6 +52,7 @@ import {
 } from "./publicCache.js";
 import { validateMediaSelection } from "./mediaValidation.js";
 import { compressMobilePhoto } from "./mediaCompression.js";
+import { editPhoto } from "./photoEditing.js";
 import { cameraSelectionFeedback } from "./mediaSelectionFeedback.js";
 import { syncStatusLabel } from "./syncStatus.js";
 import {
@@ -87,7 +88,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.54",
+const VERSION = "1.48.55",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -3898,11 +3899,14 @@ function Diary({
                     <div>
                       {files.map((file, index) => (
                         <AttachmentPreview
-                          key={`${file.name}-${file.lastModified}-${index}`}
+                          key={`attachment-${index}`}
                           file={file}
                           description={photoDescriptions[index] || ""}
                           onDescription={(value) => setPhotoDescriptions((current) =>
                             current.map((item, itemIndex) => itemIndex === index ? value : item),
+                          )}
+                          onReplace={(edited) => setFiles((current) =>
+                            current.map((item, itemIndex) => itemIndex === index ? edited : item),
                           )}
                           onRemove={() => {
                             setFiles((current) => current.filter((_, itemIndex) => itemIndex !== index));
@@ -4009,13 +4013,29 @@ function Diary({
   );
 }
 
-function AttachmentPreview({ file, description, onDescription, onRemove }) {
+function AttachmentPreview({ file, description, onDescription, onReplace, onRemove }) {
   const [url, setUrl] = useState("");
+  const [editing, setEditing] = useState(false);
+  const [editStatus, setEditStatus] = useState("");
   useEffect(() => {
     const objectUrl = URL.createObjectURL(file);
     setUrl(objectUrl);
     return () => URL.revokeObjectURL(objectUrl);
   }, [file]);
+  const applyEdit = async (options, successMessage) => {
+    if (editing) return;
+    setEditing(true);
+    setEditStatus("Modifico la foto…");
+    try {
+      const edited = await editPhoto(file, options);
+      onReplace(edited);
+      setEditStatus(successMessage);
+    } catch (error) {
+      setEditStatus(error.message || "Modifica non riuscita");
+    } finally {
+      setEditing(false);
+    }
+  };
   return (
     <article>
       {file.type.startsWith("image/") ? (
@@ -4030,16 +4050,33 @@ function AttachmentPreview({ file, description, onDescription, onRemove }) {
       <span>{file.name}</span>
       <small>{(file.size / 1024 / 1024).toFixed(1)} MB</small>
       {file.type.startsWith("image/") && (
-        <input
-          type="text"
-          maxLength={280}
-          value={description}
-          onChange={(event) => onDescription(event.target.value)}
-          placeholder="Descrivi questa foto (facoltativo)"
-          aria-label={`Descrizione di ${file.name}`}
-        />
+        <>
+          <div className="photoEditActions">
+            <button
+              type="button"
+              disabled={editing}
+              onClick={() => applyEdit({ rotate: 90 }, "Foto ruotata")}
+              aria-label={`Ruota 90 gradi ${file.name}`}
+            >↻ Ruota 90°</button>
+            <button
+              type="button"
+              disabled={editing}
+              onClick={() => applyEdit({ cropSquare: true }, "Foto ritagliata")}
+              aria-label={`Ritaglia quadrato ${file.name}`}
+            >▣ Ritaglia</button>
+          </div>
+          {editStatus && <small className="photoEditStatus" role="status">{editStatus}</small>}
+          <input
+            type="text"
+            maxLength={280}
+            value={description}
+            onChange={(event) => onDescription(event.target.value)}
+            placeholder="Descrivi questa foto (facoltativo)"
+            aria-label={`Descrizione di ${file.name}`}
+          />
+        </>
       )}
-      <button onClick={onRemove} aria-label={`Rimuovi ${file.name}`}>
+      <button className="removeAttachment" onClick={onRemove} aria-label={`Rimuovi ${file.name}`}>
         ×
       </button>
     </article>

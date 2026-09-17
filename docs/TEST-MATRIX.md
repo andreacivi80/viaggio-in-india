@@ -173,7 +173,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0158 | 11 | retry del singolo file; | NON ESEGUITO | — |
 | T-0159 | 11 | riordinamento allegati; | NON ESEGUITO | — |
 | T-0160 | 11 | ripresa; | SUPERATO | resumable-upload: ripresa da parti già confermate |
-| T-0161 | 11 | rotazione e ritaglio fotografie; | NON ESEGUITO | — |
+| T-0161 | 11 | rotazione e ritaglio fotografie; | SUPERATO | Revisione 1.48.55: comandi touch Ruota 90° e Ritaglia applicati localmente alla copia selezionata. Collaudo QA Galaxy S9+ 1/1: anteprima e pubblicazione quadrate verificate, descrizione conservata e dati QA ripuliti. |
 | T-0162 | 11 | stima del consumo dati; | NON ESEGUITO | — |
 | T-0163 | 11 | stima del tempo; | NON ESEGUITO | — |
 | T-0164 | 11 | upload multipart; | NON ESEGUITO | — |

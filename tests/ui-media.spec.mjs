@@ -120,6 +120,17 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
     const sheet = page.locator(".uploadSheet");
     await sheet.locator('input[accept^="image"]').first().setInputFiles(photoPath);
     await expect(sheet.getByText("1 allegati pronti")).toBeVisible();
+    await sheet.getByRole("button", { name: /Ruota 90 gradi/ }).tap();
+    await expect(sheet.getByText("Foto ruotata", { exact: true })).toBeVisible();
+    await sheet.getByRole("button", { name: /Ritaglia quadrato/ }).tap();
+    await expect(sheet.getByText("Foto ritagliata", { exact: true })).toBeVisible();
+    await expect.poll(() => sheet.locator(".attachmentPreviews img").evaluate((image) => image.naturalWidth)).toBeGreaterThan(0);
+    const editedPreviewSize = await sheet.locator(".attachmentPreviews img").evaluate((image) => ({
+      width: image.naturalWidth,
+      height: image.naturalHeight,
+    }));
+    expect(editedPreviewSize.width).toBeGreaterThan(0);
+    expect(editedPreviewSize.width).toBe(editedPreviewSize.height);
     const photoDescription = "Bangkok al tramonto vista dal gruppo";
     await sheet.getByLabel(/Descrizione di/).fill(photoDescription);
     await sheet.locator('input[accept^="video"]').setInputFiles([
@@ -152,6 +163,12 @@ test("foto, video con audio e messaggio audio si caricano e restano riproducibil
     await expect(post.locator("img", { has: undefined })).toBeVisible();
     await expect(post.getByText(photoDescription, { exact: true })).toBeVisible();
     await expect(post.getByAltText(photoDescription)).toBeVisible();
+    const publishedPhotoSize = await post.getByAltText(photoDescription).evaluate((image) => ({
+      width: image.naturalWidth,
+      height: image.naturalHeight,
+    }));
+    expect(publishedPhotoSize.width).toBeGreaterThan(0);
+    expect(publishedPhotoSize.width).toBe(publishedPhotoSize.height);
     await post.getByRole("button", { name: "Apri fotografia 1" }).tap();
     const photoViewer = page.getByRole("dialog", { name: "Fotografia aperta" });
     await expect(photoViewer).toBeVisible();

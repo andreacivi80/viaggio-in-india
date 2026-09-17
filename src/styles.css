@@ -2043,7 +2043,7 @@ footer small {
   border-radius: 10px;
   font-size: 13px;
 }
-.attachmentPreviews button {
+.attachmentPreviews .removeAttachment {
   position: absolute;
   top: 4px;
   right: 4px;
@@ -2135,6 +2135,30 @@ footer small {
   border-radius: var(--radius-medium);
   background: #f0faf6;
   color: var(--color-text-primary);
+}
+.photoEditActions {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+.attachmentPreviews .photoEditActions button {
+  position: static;
+  min-height: 42px;
+  padding: 7px 8px;
+  border: 1px solid #b9cfc6;
+  border-radius: 10px;
+  background: #edf7f1;
+  color: #153b31;
+  font-size: 11px;
+  font-weight: 850;
+  touch-action: manipulation;
+}
+.attachmentPreviews .photoEditActions button:disabled { opacity: .55; }
+.attachmentPreviews .photoEditStatus {
+  grid-column: 1 / -1;
+  color: #245c49;
+  font-weight: 800;
 }
 .offlineFeedSearch {
   display: grid;
