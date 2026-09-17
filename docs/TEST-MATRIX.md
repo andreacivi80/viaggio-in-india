@@ -1446,7 +1446,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1431 | 76 | Distinguere originale e versione ottimizzata. | NON ESEGUITO | — |
 | T-1432 | 76 | Non rendere pubblica la posizione EXIF senza consenso. | NON ESEGUITO | — |
 | T-1433 | 76 | Verificare che la fotografia non venga mostrata ruotata. | NON ESEGUITO | — |
-| T-1434 | 76 | Verificare fotografie HDR. | NON ESEGUITO | — |
+| T-1434 | 76 | Verificare fotografie HDR. | SUPERATO | Collaudo reale QA Galaxy S9+ 1/1 con PNG HDR 16 bit, primarie BT.2020 e curva PQ: selezione touch, pubblicazione, riapertura 4×2 e download identico; chunk colore cICP conservato e dati QA rimossi. |
 | T-1435 | 76 | Verificare Live Photo iPhone. | NON ESEGUITO | — |
 | T-1436 | 76 | Verificare orientamento EXIF. | NON ESEGUITO | — |
 | T-1437 | 76 | Verificare profilo colore. | NON ESEGUITO | — |
