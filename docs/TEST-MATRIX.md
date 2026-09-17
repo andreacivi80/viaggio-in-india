@@ -117,7 +117,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0102 | 8 | Indicazione “Errore”. | NON ESEGUITO | — |
 | T-0103 | 8 | Indicazione “In attesa”. | NON ESEGUITO | — |
 | T-0104 | 8 | Indicazione “Invio in corso”. | NON ESEGUITO | — |
-| T-0105 | 8 | Indicazione “Ultima sincronizzazione”. | NON ESEGUITO | — |
+| T-0105 | 8 | Indicazione “Ultima sincronizzazione”. | SUPERATO | QA 1.48.47: orario aggiornato solo dopo /api/state valido, conservato sul dispositivo e distinto dallo stato offline; indicatore accessibile sempre visibile. |
 | T-0106 | 8 | Nessun salto della pagina durante l’aggiornamento. | NON ESEGUITO | — |
 | T-0107 | 8 | Nessuna chiusura involontaria di modali e tastiera. | NON ESEGUITO | — |
 | T-0108 | 8 | Paginazione dei commenti. | NON ESEGUITO | — |

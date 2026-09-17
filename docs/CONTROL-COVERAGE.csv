@@ -948,7 +948,7 @@ P1,sync-rete,passed,gli allegati vengono persi offline;,usabilita:U0694,ui-offli
 P1,sync-rete,passed,Hotel e indirizzi offline.,globale:T-0119,ui-cache-recovery Samsung S20 FE 1/1: dopo riapertura completamente offline il Diario mostra nome e indirizzo del Rockland Hotel di Delhi dalla shell locale aggiornata.
 P1,sync-rete,passed,HTML utilizzabile offline.,globale:T-1718,"ui-network-india QA 7/7: HTML, JavaScript e CSS dell'app shell sono presenti con MIME corretto nella cache e la bacheca Android si riapre offline."
 P1,sync-rete,passed,idempotenza;,globale:T-1792,production-smoke: idempotenza coperta su quattro tipi di scrittura
-P1,sync-rete,pending,Indicazione “Ultima sincronizzazione”.,globale:T-0105,
+P1,sync-rete,passed,Indicazione “Ultima sincronizzazione”.,globale:T-0105,"QA 1.48.47: timestamp scritto solo dopo /api/state valido, persistito sul dispositivo e mostrato con stato online/offline; test sync-status 2/2."
 P1,sync-rete,passed,Informazioni di emergenza offline.,globale:T-0122,ui-cache-recovery Samsung S20 FE 1/1: numeri e descrizioni di emergenza sono inclusi nella shell locale e restano leggibili dopo riapertura completamente offline.
 P1,sync-rete,passed,Invio automatico al ritorno della rete.,globale:T-0123,ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: il post con foto accodato senza rete parte automaticamente al ritorno online.
 P1,sync-rete,passed,l’offline conserva testo e allegati;,globale:T-0678,"offline-queue: testo, foto, audio e video conservati nella coda"

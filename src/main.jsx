@@ -52,6 +52,7 @@ import {
 import { validateMediaSelection } from "./mediaValidation.js";
 import { compressMobilePhoto } from "./mediaCompression.js";
 import { cameraSelectionFeedback } from "./mediaSelectionFeedback.js";
+import { syncStatusLabel } from "./syncStatus.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 import { createTravelArchive, visibleArchiveMedia } from "./travelArchive.js";
@@ -78,7 +79,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.46",
+const VERSION = "1.48.47",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -1236,6 +1237,10 @@ function App() {
     [offlineItems, setOfflineItems] = useState([]),
     [pendingOfflineDelete, setPendingOfflineDelete] = useState(null),
     [stateLoaded, setStateLoaded] = useState(false),
+    [lastSyncedAt, setLastSyncedAt] = useState(
+      () => Number(localStorage.getItem("thailand-last-sync-at") || 0),
+    ),
+    [isOnline, setIsOnline] = useState(() => navigator.onLine),
     [sessionNotice, setSessionNotice] = useState(""),
     [accessCode, setAccessCode] = useState(""),
     [groupCode, setGroupCode] = useState(""),
@@ -1396,6 +1401,16 @@ function App() {
     sessionTokenRef.current = effectiveSessionToken;
     refresh();
   }, [effectiveSessionToken]);
+  useEffect(() => {
+    const online = () => setIsOnline(true);
+    const offline = () => setIsOnline(false);
+    addEventListener("online", online);
+    addEventListener("offline", offline);
+    return () => {
+      removeEventListener("online", online);
+      removeEventListener("offline", offline);
+    };
+  }, []);
   const refresh = async () => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 12000);
@@ -1423,6 +1438,9 @@ function App() {
       setPeople(d.profiles || []);
       setDone(d.trip_checks || {});
       syncVersionRef.current = Number(d.sync_version || 0);
+      const syncedAt = Date.now();
+      setLastSyncedAt(syncedAt);
+      localStorage.setItem("thailand-last-sync-at", String(syncedAt));
       if (sessionTokenRef.current) {
         const serverLastRead = d.activity_state?.last_read_at || "";
         const localLastRead = localStorage.getItem("india-activity-read") || "";
@@ -2234,6 +2252,14 @@ function App() {
         <div className="top">
           <img className="flag" src="/thailand/thailand-flag.png" alt="Bandiera della Thailandia" />
           <span className="versionBadge">REV {VERSION}</span>
+          <span
+            className={`syncStatus ${isOnline ? "" : "offline"}`}
+            role="status"
+            aria-label={`Ultima sincronizzazione: ${syncStatusLabel(lastSyncedAt, isOnline)}`}
+            title="Ultima sincronizzazione dei dati"
+          >
+            {syncStatusLabel(lastSyncedAt, isOnline)}
+          </span>
           <button
             className={`accessPill ${effectiveSessionToken ? "unlocked" : ""}`}
             onClick={() => {
