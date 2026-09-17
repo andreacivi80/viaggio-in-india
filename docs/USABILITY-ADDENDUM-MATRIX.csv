@@ -319,7 +319,7 @@
 "A0318","A21. CONTROLLO DELLE FUNZIONI DURANTE IL CARICAMENTO INIZIALE","impossibilità di aprire documenti prima della verifica della sessione;","passed","Playwright credential precedence 4/4; preview 06eec926; 2026-08-04","1.31.0"
 "A0319","A21. CONTROLLO DELLE FUNZIONI DURANTE IL CARICAMENTO INIZIALE","impossibilità di utilizzare il ruolo conservato localmente come autorizzazione;","passed","Playwright credential precedence 4/4; preview 06eec926; 2026-08-04","1.31.0"
 "A0320","A21. CONTROLLO DELLE FUNZIONI DURANTE IL CARICAMENTO INIZIALE","possibilità di consultare contenuti pubblici già disponibili;","pending","","1.31.0"
-"A0321","A21. CONTROLLO DELLE FUNZIONI DURANTE IL CARICAMENTO INIZIALE","messaggio se il caricamento supera il tempo previsto;","pending","","1.31.0"
+"A0321","A21. CONTROLLO DELLE FUNZIONI DURANTE IL CARICAMENTO INIZIALE","messaggio se il caricamento supera il tempo previsto;","passed","UPLOAD_FEEDBACK 3/3 + RESUMABLE_UPLOAD 6/6: dopo 20 secondi pubblicazioni e documenti mostrano un avviso accessibile di rete lenta; progresso e retry continuano senza duplicati e il timer viene sempre rimosso.","1.48.43"
 "A0322","A21. CONTROLLO DELLE FUNZIONI DURANTE IL CARICAMENTO INIZIALE","possibilità di riprovare.","pending","","1.31.0"
 "A0323","A22. TEST DELLE RICHIESTE RIPETUTE DAL BROWSER","catturare la richiesta;","pending","","1.31.0"
 "A0324","A22. TEST DELLE RICHIESTE RIPETUTE DAL BROWSER","reinviarla identica;","passed","Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04","1.31.0"

@@ -666,7 +666,7 @@ P1,documenti,passed,Caricare biglietti.,globale:T-0477;usabilita:U0418,"P0_DOCUM
 P1,documenti,passed,Caricare un PDF multipagina.,globale:T-0993,"ui-protected-pdf Samsung S20 FE 1/1: PDF reale a due pagine caricato via input touch; il visualizzatore renderizza esattamente due canvas, poi chiusura ed eliminazione completano senza pagina bianca."
 P1,documenti,passed,Caricare visto.,globale:T-0479;usabilita:U0417,P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: PDF visto caricato e sottoposto a dieci retry simultanei con la stessa chiave; resta una sola versione valida e apribile.
 P1,documenti,passed,Controllare PDF corrotti o pericolosi.,globale:T-0166,file-validation L1 + P0_DOCUMENT_CONCURRENCY 28/28: PDF corrotto o con firma non valida riceve 400 e non sostituisce il documento valido precedente.
-P1,documenti,pending,messaggio se il caricamento supera il tempo previsto;,addendum:A0321,
+P1,documenti,passed,messaggio se il caricamento supera il tempo previsto;,addendum:A0321,"UPLOAD_FEEDBACK 3/3 + RESUMABLE_UPLOAD 6/6: avviso accessibile dopo 20 secondi, progresso lento esplicito, upload e retry idempotente proseguono senza duplicati."
 P1,documenti,pending,PDF del diario.,globale:T-1724,
 P1,documenti,pending,PDF del viaggio.,globale:T-0265,
 P1,documenti,passed,PDF molto grande.,globale:T-0438,"production-smoke QA 1.48.40, 18/18 eseguiti: PDF reale da 9 MiB caricato a parti, completato in archivio privato, ritrovato nello stato personale, verificato con HEAD autenticato e cancellato; pulizia QA confermata."

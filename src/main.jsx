@@ -41,6 +41,11 @@ import {
 } from "./offlineQueue.js";
 import { shouldUseResumableUpload, uploadFileResumable } from "./resumableUpload.js";
 import {
+  SLOW_UPLOAD_NOTICE_DELAY_MS,
+  slowUploadMessage,
+  uploadProgressMessage,
+} from "./uploadFeedback.js";
+import {
   sanitizePostsForPublicCache,
   sanitizeProfilesForPublicCache,
 } from "./publicCache.js";
@@ -71,7 +76,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.42",
+const VERSION = "1.48.43",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -3345,6 +3350,11 @@ function Diary({
     const uploadController = new AbortController();
     uploadAbortRef.current = uploadController;
     let pendingForm;
+    let slowUploadNoticeShown = false;
+    const slowUploadTimer = setTimeout(() => {
+      slowUploadNoticeShown = true;
+      setFileStatus(slowUploadMessage(files.length ? "gli allegati" : "la pubblicazione"));
+    }, SLOW_UPLOAD_NOTICE_DELAY_MS);
     try {
       const f = new FormData();
       f.set("author_name", author || "Viaggiatore");
@@ -3363,14 +3373,16 @@ function Diary({
       const uploadedIds = [];
       for (const file of files) {
         if (navigator.onLine && shouldUseResumableUpload(file)) {
-          setFileStatus(`Caricamento protetto di ${file.name}: 0%`);
+          setFileStatus(uploadProgressMessage(`Caricamento protetto di ${file.name}`, 0));
           const uploaded = await uploadFileResumable({
             api: API,
             file,
             scope: "post",
             visibility: postVisibility,
             headers: sessionHeaders(sessionToken),
-            onProgress: (progress) => setFileStatus(`Caricamento protetto di ${file.name}: ${progress}%`),
+            onProgress: (progress) => setFileStatus(
+              uploadProgressMessage(`Caricamento protetto di ${file.name}`, progress, slowUploadNoticeShown),
+            ),
             signal: uploadController.signal,
           });
           uploadedIds.push(uploaded.upload_id);
@@ -3440,6 +3452,7 @@ function Diary({
         }
       } else setFileStatus(e.message || "Pubblicazione non riuscita.");
     } finally {
+      clearTimeout(slowUploadTimer);
       if (uploadAbortRef.current === uploadController) uploadAbortRef.current = null;
       setBusy(false);
     }
@@ -5373,15 +5386,22 @@ function VaultOnline({
         signature,
         key: crypto.randomUUID(),
       };
+    let slowUploadNoticeShown = false;
+    const slowUploadTimer = setTimeout(() => {
+      slowUploadNoticeShown = true;
+      setDocumentStatus(slowUploadMessage("il documento"));
+    }, SLOW_UPLOAD_NOTICE_DELAY_MS);
     try {
       if (navigator.onLine && shouldUseResumableUpload(file)) {
-        setDocumentStatus(`Caricamento protetto: 0%`);
+        setDocumentStatus(uploadProgressMessage("Caricamento protetto", 0));
         const uploaded = await uploadFileResumable({
           api: API,
           file,
           scope: "document",
           headers: sessionHeaders(sessionToken),
-          onProgress: (progress) => setDocumentStatus(`Caricamento protetto: ${progress}%`),
+          onProgress: (progress) => setDocumentStatus(
+            uploadProgressMessage("Caricamento protetto", progress, slowUploadNoticeShown),
+          ),
         });
         f.delete("file");
         f.set("upload_id", uploaded.upload_id);
@@ -5419,6 +5439,7 @@ function VaultOnline({
         }
       } else setDocumentStatus("Caricamento del documento non riuscito.");
     } finally {
+      clearTimeout(slowUploadTimer);
       setBusy("");
     }
   };
