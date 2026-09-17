@@ -13,6 +13,11 @@
     },
     {
       "method": "POST",
+      "path": "auth/admin-step-up",
+      "access": "coordinator-session-plus-group-code-device-bound"
+    },
+    {
+      "method": "POST",
       "path": "auth/unlock",
       "access": "disabled"
     },
@@ -64,17 +69,17 @@
     {
       "method": "POST",
       "path": "auth/invites",
-      "access": "coordinator"
+      "access": "coordinator-step-up"
     },
     {
       "method": "DELETE",
       "path": "auth/invites/*",
-      "access": "coordinator"
+      "access": "coordinator-step-up"
     },
     {
       "method": "GET",
       "path": "security/audit",
-      "access": "coordinator"
+      "access": "coordinator-step-up"
     },
     {
       "method": "GET",
@@ -139,7 +144,7 @@
     {
       "method": "POST",
       "path": "push/test",
-      "access": "coordinator"
+      "access": "coordinator-step-up"
     },
     {
       "method": "POST",
@@ -149,7 +154,7 @@
     {
       "method": "POST",
       "path": "profiles",
-      "access": "coordinator"
+      "access": "coordinator-step-up"
     },
     {
       "method": "PUT",
@@ -204,7 +209,7 @@
     {
       "method": "GET",
       "path": "private",
-      "access": "profile"
+      "access": "profile-own-or-coordinator-step-up-all"
     },
     {
       "method": "POST",
@@ -214,7 +219,7 @@
     {
       "method": "PUT",
       "path": "retention-extension/*",
-      "access": "coordinator"
+      "access": "coordinator-step-up"
     },
     {
       "method": "POST",
@@ -229,7 +234,7 @@
     {
       "method": "POST",
       "path": "documents",
-      "access": "owner-or-coordinator-verify"
+      "access": "owner-or-coordinator-step-up-verify"
     },
     {
       "method": "DELETE",

@@ -4415,6 +4415,30 @@ mark.mention {
   margin-top: 3px;
   color: var(--color-text-secondary);
 }
+.adminStepUp {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(150px, 220px) auto;
+  align-items: center;
+  gap: 10px;
+  margin: 10px 0 14px;
+  padding: 12px;
+  border: 1px solid rgba(120, 72, 30, 0.22);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 248, 232, 0.96), rgba(250, 235, 211, 0.9));
+}
+.adminStepUp > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.adminStepUp > div svg { width: 22px; flex: 0 0 auto; }
+.adminStepUp span,
+.adminStepUp span small { display: block; }
+.adminStepUp > small { grid-column: 1 / -1; }
+@media (max-width: 680px) {
+  .adminStepUp { grid-template-columns: 1fr; }
+  .adminStepUp > small { grid-column: auto; }
+}
 @media (max-width: 350px) {
   .unlockInline {
     grid-template-columns: minmax(82px, 1fr) auto;

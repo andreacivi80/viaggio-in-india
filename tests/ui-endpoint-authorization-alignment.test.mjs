@@ -8,7 +8,8 @@ test("i comandi sensibili della UI dipendono dalla sessione verificata e dal ruo
   const ui = await read("src/main.jsx");
   assert.match(ui, /const verifiedSessionToken = sessionProfile \? sessionToken : ""/);
   assert.match(ui, /currentProfile && verifiedSessionToken/);
-  assert.match(ui, /const canManageGroup = sessionProfile\?\.role === "coordinator"/);
+  assert.match(ui, /const isCoordinatorProfile = sessionProfile\?\.role === "coordinator"/);
+  assert.match(ui, /const canManageGroup = isCoordinatorProfile && adminUnlocked/);
   assert.match(ui, /canManageGroup \|\| sessionProfile\?\.id === profileId/);
   assert.match(ui, /const viewerIsCoordinator = privateData\.viewer\?\.role === "coordinator"/);
   assert.match(ui, /\{p\.can_manage && \(/);

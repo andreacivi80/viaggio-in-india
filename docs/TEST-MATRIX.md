@@ -1517,7 +1517,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1502 | 81 | Cercare token Cloudflare. | SUPERATO | repository-secrets e scan-client-secrets: token Cloudflare assenti da file tracciati e bundle |
 | T-1503 | 81 | Ruotare immediatamente qualsiasi segreto eventualmente esposto. | NON ESEGUITO | — |
 | T-1504 | 81 | Verificare che soltanto la chiave pubblica VAPID sia inviata al browser. | NON ESEGUITO | — |
-| T-1505 | 82 | Verificare accesso amministrativo con autenticazione a più fattori. | NON ESEGUITO | — |
+| T-1505 | 82 | Verificare accesso amministrativo con autenticazione a più fattori. | SUPERATO | QA API 7/7 + Galaxy S9+ touch 1/1 + statico 218/218: sessione coordinatrice/device + password, token firmato di 10 minuti vincolato a profilo e dispositivo; rifiutati password errata, viaggiatore, alterazione e riuso su secondo telefono. |
 | T-1506 | 82 | Verificare ambiente di collaudo separato. | NON ESEGUITO | — |
 | T-1507 | 82 | Verificare ambiente produzione. | NON ESEGUITO | — |
 | T-1508 | 82 | Verificare binding D1 corretto. | NON ESEGUITO | — |

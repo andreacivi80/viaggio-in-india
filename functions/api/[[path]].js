@@ -182,6 +182,83 @@ async function tokenHash(token) {
     byte.toString(16).padStart(2, "0"),
   ).join("");
 }
+const base64UrlEncode = (value) => {
+  const bytes = new TextEncoder().encode(String(value || ""));
+  let binary = "";
+  bytes.forEach((byte) => { binary += String.fromCharCode(byte); });
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+};
+const base64UrlDecode = (value) => {
+  const normalized = String(value || "").replace(/-/g, "+").replace(/_/g, "/");
+  const padded = `${normalized}${"=".repeat((4 - normalized.length % 4) % 4)}`;
+  const binary = atob(padded);
+  return new Uint8Array(Array.from(binary, (character) => character.charCodeAt(0)));
+};
+async function hmacKey(secret, usages) {
+  return crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(String(secret || "")),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    usages,
+  );
+}
+export async function groupSecretMatches(candidate, expected) {
+  if (!candidate || !expected) return false;
+  const message = new TextEncoder().encode("thailandia-admin-step-up");
+  const expectedKey = await hmacKey(expected, ["sign"]);
+  const signature = await crypto.subtle.sign("HMAC", expectedKey, message);
+  const candidateKey = await hmacKey(candidate, ["verify"]);
+  return crypto.subtle.verify("HMAC", candidateKey, signature, message);
+}
+export async function issueAdminStepUp(env, session) {
+  const issuedAt = Date.now();
+  const expiresAt = issuedAt + 10 * 60 * 1000;
+  const encodedPayload = base64UrlEncode(JSON.stringify({
+    profile_id: session.profile_id,
+    device_id: session.device_id,
+    issued_at: issuedAt,
+    expires_at: expiresAt,
+    nonce: secureToken().slice(0, 24),
+  }));
+  const key = await hmacKey(env.GROUP_CODE, ["sign"]);
+  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(encodedPayload));
+  const encodedSignature = btoa(String.fromCharCode(...new Uint8Array(signature)))
+    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+  return { token: `${encodedPayload}.${encodedSignature}`, expires_at: new Date(expiresAt).toISOString() };
+}
+export async function validAdminStepUp(request, env, session) {
+  if (!session || session.role !== "coordinator" || !env.GROUP_CODE) return false;
+  const token = String(request.headers.get("x-admin-step-up") || "").trim();
+  const [encodedPayload, encodedSignature, extra] = token.split(".");
+  if (!encodedPayload || !encodedSignature || extra) return false;
+  try {
+    const key = await hmacKey(env.GROUP_CODE, ["verify"]);
+    const signatureValid = await crypto.subtle.verify(
+      "HMAC",
+      key,
+      base64UrlDecode(encodedSignature),
+      new TextEncoder().encode(encodedPayload),
+    );
+    if (!signatureValid) return false;
+    const payload = JSON.parse(new TextDecoder().decode(base64UrlDecode(encodedPayload)));
+    const currentTime = Date.now();
+    return payload.profile_id === session.profile_id &&
+      payload.device_id === session.device_id &&
+      Number(payload.issued_at) <= currentTime + 30_000 &&
+      Number(payload.expires_at) > currentTime &&
+      Number(payload.expires_at) - Number(payload.issued_at) <= 10 * 60 * 1000;
+  } catch {
+    return false;
+  }
+}
+async function requireAdminStepUp(request, env, session) {
+  if (await validAdminStepUp(request, env, session)) return null;
+  return json({
+    error: "Conferma di nuovo la password per usare le funzioni amministrative.",
+    code: "ADMIN_STEP_UP_REQUIRED",
+  }, 428);
+}
 const auditValue = (value, maxLength = 120) =>
   String(value || "").replace(/[\u0000-\u001f\u007f]/g, " ").trim().slice(0, maxLength);
 export function buildSecurityAuditRecord(input = {}) {
@@ -1170,6 +1247,42 @@ export async function onRequest(context) {
       if (!groupOk(request, env)) return json({ error: "Codice non corretto" }, 403);
       return json({ ok: true });
     }
+    if (request.method === "POST" && path === "auth/admin-step-up") {
+      const session = await sessionFromRequest(request, env);
+      if (!session || session.role !== "coordinator")
+        return json({ error: "Solo la coordinatrice può attivare le funzioni amministrative" }, 403);
+      const limited = await rateLimit(env, request, "admin-step-up", 5, 300, session.profile_id, {
+        ip: 12,
+        actor: 5,
+        session: 5,
+      });
+      if (limited) return limited;
+      const body = await request.json().catch(() => ({}));
+      const validPassword = await groupSecretMatches(String(body.password || ""), env.GROUP_CODE);
+      if (!validPassword) {
+        await writeSecurityAudit(env, {
+          event_type: "admin_step_up_failed",
+          actor_profile_id: session.profile_id,
+          actor_role: session.role,
+          device_id: session.device_id,
+          resource_type: "session",
+          resource_id: session.device_id,
+          result: "denied",
+        });
+        return json({ error: "Password non corretta" }, 403);
+      }
+      const issued = await issueAdminStepUp(env, session);
+      await writeSecurityAudit(env, {
+        event_type: "admin_step_up_succeeded",
+        actor_profile_id: session.profile_id,
+        actor_role: session.role,
+        device_id: session.device_id,
+        resource_type: "session",
+        resource_id: session.device_id,
+        result: "success",
+      });
+      return json({ ok: true, ...issued });
+    }
     if (request.method === "POST" && path === "auth/unlock") {
       const limited = await rateLimit(env, request, "auth-unlock", 10, 60);
       if (limited) return limited;
@@ -1444,6 +1557,8 @@ export async function onRequest(context) {
       const session = await sessionFromRequest(request, env);
       if (!session || session.role !== "coordinator")
         return json({ error: "Solo il coordinatore può creare inviti" }, 403);
+      const stepUpRequired = await requireAdminStepUp(request, env, session);
+      if (stepUpRequired) return stepUpRequired;
       const body = await request.json();
       const profile = await env.DB.prepare(
         "SELECT id,name,surname,role FROM profiles WHERE id=?",
@@ -1491,6 +1606,8 @@ export async function onRequest(context) {
       const session = await sessionFromRequest(request, env);
       if (!session || session.role !== "coordinator")
         return json({ error: "Solo il coordinatore può revocare inviti" }, 403);
+      const stepUpRequired = await requireAdminStepUp(request, env, session);
+      if (stepUpRequired) return stepUpRequired;
       const inviteId = path.slice("auth/invites/".length);
       if (!/^[a-f0-9]{64}$/i.test(inviteId))
         return json({ error: "Invito non valido" }, 400);
@@ -1504,6 +1621,8 @@ export async function onRequest(context) {
       const session = await sessionFromRequest(request, env);
       if (!session || session.role !== "coordinator")
         return json({ error: "Solo il coordinatore può consultare il registro di sicurezza" }, 403);
+      const stepUpRequired = await requireAdminStepUp(request, env, session);
+      if (stepUpRequired) return stepUpRequired;
       const events = await env.DB.prepare(
         `SELECT id,event_type,actor_profile_id,actor_role,device_id,
                 resource_type,resource_id,result,created_at
@@ -1815,6 +1934,8 @@ export async function onRequest(context) {
       const session = await sessionFromRequest(request, env);
       if (!session || session.role !== "coordinator")
         return json({ error: "Solo il coordinatore può inviare una notifica di prova" }, 403);
+      const stepUpRequired = await requireAdminStepUp(request, env, session);
+      if (stepUpRequired) return stepUpRequired;
       const limited = await rateLimit(env, request, "push-test", 3, 300, session.profile_id);
       if (limited) return limited;
       const delivery = await notifySubscribers(env, {
@@ -1946,6 +2067,10 @@ export async function onRequest(context) {
             document.profile_id !== session.profile_id)
         )
           return json({ error: "Documento non autorizzato" }, 403);
+        if (session.role === "coordinator" && document.profile_id !== session.profile_id) {
+          const stepUpRequired = await requireAdminStepUp(request, env, session);
+          if (stepUpRequired) return stepUpRequired;
+        }
         if (request.method === "GET")
           await writeSecurityAudit(env, {
             event_type: "document_opened",
@@ -2026,6 +2151,8 @@ export async function onRequest(context) {
       const session = await sessionFromRequest(request, env);
       if (!session || session.role !== "coordinator")
         return json({ error: "Solo il coordinatore può creare profili" }, 403);
+      const stepUpRequired = await requireAdminStepUp(request, env, session);
+      if (stepUpRequired) return stepUpRequired;
       const form = await request.formData();
       const name = String(form.get("name") || "").trim();
       if (!name) return json({ error: "Nome richiesto" }, 400);
@@ -2081,6 +2208,10 @@ export async function onRequest(context) {
         (session.role !== "coordinator" && session.profile_id !== profileId)
       )
         return json({ error: "Non puoi modificare questo profilo" }, 403);
+      if (session.role === "coordinator" && session.profile_id !== profileId) {
+        const stepUpRequired = await requireAdminStepUp(request, env, session);
+        if (stepUpRequired) return stepUpRequired;
+      }
       const current = await env.DB.prepare(
         "SELECT * FROM profiles WHERE id=?",
       )
@@ -2134,6 +2265,10 @@ export async function onRequest(context) {
       const session = await sessionFromRequest(request, env);
       if (!session || (session.role !== "coordinator" && session.profile_id !== profileId))
         return json({ error: "Non puoi eliminare questo profilo" }, 403);
+      if (session.role === "coordinator" && session.profile_id !== profileId) {
+        const stepUpRequired = await requireAdminStepUp(request, env, session);
+        if (stepUpRequired) return stepUpRequired;
+      }
       const profile = await env.DB.prepare("SELECT id,role FROM profiles WHERE id=?")
         .bind(profileId).first();
       if (!profile) return json({ error: "Viaggiatore non trovato" }, 404);
@@ -2727,6 +2862,8 @@ export async function onRequest(context) {
       const session = await sessionFromRequest(request, env);
       if (!session || session.role !== "coordinator")
         return json({ error: "Solo la coordinatrice può autorizzare una proroga" }, 403);
+      const stepUpRequired = await requireAdminStepUp(request, env, session);
+      if (stepUpRequired) return stepUpRequired;
       const profileId = decodeURIComponent(path.slice("retention-extension/".length));
       const body = await request.json().catch(() => ({}));
       const status = body.decision === "approve" ? "approved" : body.decision === "reject" ? "rejected" : "";
@@ -2753,18 +2890,20 @@ export async function onRequest(context) {
     if (path === "private" && request.method === "GET") {
       const session = await sessionFromRequest(request, env);
       if (!session) return json({ error: "Accesso personale richiesto" }, 401);
+      const adminVerified = session.role === "coordinator" && await validAdminStepUp(request, env, session);
       const [docs, locations, retentionExtensions] = await Promise.all([
-        session.role === "coordinator"
+        adminVerified
           ? env.DB.prepare("SELECT * FROM document_status").all()
           : env.DB.prepare(
               "SELECT * FROM document_status WHERE profile_id=?",
             )
               .bind(session.profile_id)
               .all(),
-        env.DB.prepare(
-          "SELECT * FROM locations ORDER BY updated_at DESC",
-        ).all(),
-        session.role === "coordinator"
+        adminVerified
+          ? env.DB.prepare("SELECT * FROM locations ORDER BY updated_at DESC").all()
+          : env.DB.prepare("SELECT * FROM locations WHERE profile_id=? ORDER BY updated_at DESC")
+            .bind(session.profile_id).all(),
+        adminVerified
           ? env.DB.prepare("SELECT * FROM retention_extensions ORDER BY requested_at DESC").all()
           : env.DB.prepare("SELECT * FROM retention_extensions WHERE profile_id=?")
             .bind(session.profile_id).all(),
@@ -2776,6 +2915,7 @@ export async function onRequest(context) {
         viewer: {
           profile_id: session.profile_id,
           role: session.role,
+          admin_verified: adminVerified,
         },
       });
     }
@@ -2859,6 +2999,10 @@ export async function onRequest(context) {
         session?.role === "coordinator" && !requestsFileChange;
       if (!session || (!coordinatorVerificationOnly && !(ownsDocument && requestsFileChange)))
         return json({ error: "Documento non autorizzato" }, 403);
+      if (coordinatorVerificationOnly && profileId !== session.profile_id) {
+        const stepUpRequired = await requireAdminStepUp(request, env, session);
+        if (stepUpRequired) return stepUpRequired;
+      }
       const type = String(form.get("doc_type"));
       if (!["passport", "visa", "tickets", "insurance"].includes(type) && !/^other-[a-f0-9-]{36}$/.test(type))
         return json({ error: "Tipo documento non valido" }, 400);

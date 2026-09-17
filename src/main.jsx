@@ -226,11 +226,93 @@ const deviceKey = () => {
   }
   return key;
 };
-const sessionHeaders = (token, additional = {}) => ({
-  ...additional,
-  ...(token ? { authorization: `Bearer ${token}` } : {}),
-  ...(token ? { "x-device-key": deviceKey() } : {}),
-});
+const storedAdminStepUpToken = () => {
+  try {
+    const token = sessionStorage.getItem("thailand-admin-step-up") || "";
+    const expiresAt = Date.parse(sessionStorage.getItem("thailand-admin-step-up-expires") || "");
+    if (!token || !Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
+      sessionStorage.removeItem("thailand-admin-step-up");
+      sessionStorage.removeItem("thailand-admin-step-up-expires");
+      return "";
+    }
+    return token;
+  } catch {
+    return "";
+  }
+};
+const sessionHeaders = (token, additional = {}) => {
+  const adminToken = token ? storedAdminStepUpToken() : "";
+  return {
+    ...additional,
+    ...(token ? { authorization: `Bearer ${token}` } : {}),
+    ...(token ? { "x-device-key": deviceKey() } : {}),
+    ...(adminToken ? { "x-admin-step-up": adminToken } : {}),
+  };
+};
+function AdminStepUpPanel({ sessionToken, onUnlocked, onLocked }) {
+  const [password, setPassword] = useState("");
+  const [status, setStatus] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [unlocked, setUnlocked] = useState(() => Boolean(storedAdminStepUpToken()));
+  useEffect(() => {
+    if (!unlocked) return undefined;
+    const expiresAt = Date.parse(sessionStorage.getItem("thailand-admin-step-up-expires") || "");
+    const delay = Math.max(0, expiresAt - Date.now());
+    const timer = setTimeout(() => {
+      sessionStorage.removeItem("thailand-admin-step-up");
+      sessionStorage.removeItem("thailand-admin-step-up-expires");
+      setUnlocked(false);
+      setStatus("Conferma scaduta: reinserisci la password.");
+      onLocked?.();
+    }, delay);
+    return () => clearTimeout(timer);
+  }, [unlocked]);
+  const unlock = async (event) => {
+    event.preventDefault();
+    if (!password || busy) return;
+    setBusy(true);
+    setStatus("Verifico i due fattori…");
+    try {
+      const response = await fetch(`${API}/auth/admin-step-up`, {
+        method: "POST",
+        headers: sessionHeaders(sessionToken, { "content-type": "application/json" }),
+        body: JSON.stringify({ password }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(result.error || "Verifica non riuscita");
+      sessionStorage.setItem("thailand-admin-step-up", result.token);
+      sessionStorage.setItem("thailand-admin-step-up-expires", result.expires_at);
+      setUnlocked(true);
+      setPassword("");
+      setStatus("Funzioni amministrative attive per 10 minuti su questo dispositivo.");
+      onUnlocked?.();
+    } catch (error) {
+      setStatus(error.message || "Verifica non riuscita");
+    } finally {
+      setBusy(false);
+    }
+  };
+  if (unlocked)
+    return <div className="formStatus success" role="status">Due fattori verificati · amministrazione attiva per questo dispositivo.</div>;
+  return (
+    <form className="adminStepUp" onSubmit={unlock}>
+      <div>
+        <ShieldCheck />
+        <span><b>Conferma amministrativa</b><small>Sessione del telefono + password comune.</small></span>
+      </div>
+      <input
+        type="password"
+        autoComplete="current-password"
+        value={password}
+        onChange={(event) => setPassword(event.target.value)}
+        placeholder="Password del gruppo"
+        aria-label="Password per funzioni amministrative"
+      />
+      <button type="submit" disabled={busy || !password}>{busy ? "Verifico…" : "Attiva per 10 minuti"}</button>
+      {status && <small role="status">{status}</small>}
+    </form>
+  );
+}
 async function guestHeaders(displayName) {
   const normalizedName = String(displayName || "").trim();
   let token = localStorage.getItem("india-guest-token") || "";
@@ -4803,7 +4885,9 @@ function People({
     [inviteStatus, setInviteStatus] = useState(""),
     [archiveBusy, setArchiveBusy] = useState(false),
     [archiveStatus, setArchiveStatus] = useState("");
-  const canManageGroup = sessionProfile?.role === "coordinator";
+  const [adminUnlocked, setAdminUnlocked] = useState(() => Boolean(storedAdminStepUpToken()));
+  const isCoordinatorProfile = sessionProfile?.role === "coordinator";
+  const canManageGroup = isCoordinatorProfile && adminUnlocked;
   const canEdit = (profileId) =>
     canManageGroup || sessionProfile?.id === profileId;
   const createInvite = async (person) => {
@@ -4919,6 +5003,13 @@ function People({
     <section>
       <span className="eyebrow">IL NOSTRO GRUPPO</span>
       <h2>Facce, nomi e storie</h2>
+      {isCoordinatorProfile && (
+        <AdminStepUpPanel
+          sessionToken={sessionToken}
+          onUnlocked={() => setAdminUnlocked(true)}
+          onLocked={() => setAdminUnlocked(false)}
+        />
+      )}
       {sessionToken && (canManageGroup || editingId === sessionProfile?.id) ? (
         <div className="profileForm">
           {editingId && (
@@ -5454,6 +5545,8 @@ function VaultOnline({
     localStorage.removeItem("india-guest-token");
     localStorage.removeItem("india-guest-name");
     localStorage.removeItem("india-visitor-id");
+    sessionStorage.removeItem("thailand-admin-step-up");
+    sessionStorage.removeItem("thailand-admin-step-up-expires");
     setSessionToken("");
     setGroupCode("");
   };
@@ -5526,7 +5619,7 @@ function VaultOnline({
   );
   const selectedProfile = people.find((person) => person.id === profileId);
   const viewerIsCoordinator = privateData.viewer?.role === "coordinator";
-  const isCoordinator = viewerIsCoordinator && viewMode === "coordinator";
+  const isCoordinator = viewerIsCoordinator && privateData.viewer?.admin_verified === true && viewMode === "coordinator";
   return (
     <section>
       <button type="button" className="vaultBackButton" onClick={onBackHome}>
@@ -5534,6 +5627,9 @@ function VaultOnline({
       </button>
       <span className="eyebrow">AREA RISERVATA</span>
       <h2>Documenti e sicurezza</h2>
+      {viewerIsCoordinator && (
+        <AdminStepUpPanel sessionToken={sessionToken} onUnlocked={refresh} onLocked={refresh} />
+      )}
       <div className="privateTop">
         <div className="privateBadge">
           <ShieldCheck /> Dispositivo sbloccato
