@@ -1,0 +1,29 @@
+{
+  "scope": "Funzioni dichiarate come disponibili nella documentazione operativa corrente; le checklist descrivono controlli, non promesse di prodotto.",
+  "functions": [
+    { "id": "F001", "name": "Accesso con password del gruppo", "ui": ["Password del gruppo"] },
+    { "id": "F002", "name": "Registrazione e collegamento del profilo", "ui": ["Entra nel gruppo", "collega questo telefono"] },
+    { "id": "F003", "name": "Blocco della sessione personale", "ui": ["Blocca"] },
+    { "id": "F004", "name": "Navigazione Bacheca", "ui": ["Bacheca"] },
+    { "id": "F005", "name": "Itinerario giornaliero", "ui": ["Viaggio", "SCEGLI LA GIORNATA"] },
+    { "id": "F006", "name": "Mappa reale del viaggio", "ui": ["Mappa interattiva reale", "Mappa"] },
+    { "id": "F007", "name": "Informazioni complete sulla città", "ui": ["CONOSCIAMO LA TAPPA"] },
+    { "id": "F008", "name": "Elenco viaggiatori", "ui": ["Apri elenco viaggiatori"] },
+    { "id": "F009", "name": "Mappa italiana delle provenienze", "ui": ["Apri la cartina di provenienza"] },
+    { "id": "F010", "name": "Pubblicazione di testo e media", "ui": ["Pubblica", "Aggiungi foto, video o audio"] },
+    { "id": "F011", "name": "Fotocamera e posizione nella pubblicazione", "ui": ["Scatta", "Usa posizione"] },
+    { "id": "F012", "name": "Registrazione audio", "ui": ["Registra un messaggio audio", "Registra"] },
+    { "id": "F013", "name": "Condivisione Spotify", "ui": ["Aggiungi una canzone da Spotify", "Apri in Spotify"] },
+    { "id": "F014", "name": "Commenti e risposte", "ui": ["Commenta", "Rispondi"] },
+    { "id": "F015", "name": "Reazioni ai contenuti", "ui": ["commentReactions", "const react = async"] },
+    { "id": "F016", "name": "Centro notifiche", "ui": ["Attività recenti", "Cancella tutte"] },
+    { "id": "F017", "name": "Preferenze notifiche", "ui": ["Quali notifiche vuoi ricevere"] },
+    { "id": "F018", "name": "Area documenti privata", "ui": ["Documenti e sicurezza", "Altri documenti"] },
+    { "id": "F019", "name": "Anteprima e download documenti", "ui": ["Apri a schermo intero", "Scarica il documento"] },
+    { "id": "F020", "name": "Condivisione posizione", "ui": ["Posizione condivisa", "Aggiorna ora", "Cancella posizione"] },
+    { "id": "F021", "name": "Invito personale", "ui": ["Crea invito personale"] },
+    { "id": "F022", "name": "Esportazione dati del gruppo", "ui": ["Scarica dati", "Scarica pubblicazioni, foto, video e audio"] },
+    { "id": "F023", "name": "Amministrazione protetta", "ui": ["Attiva per 10 minuti", "Griglia coordinatore"] },
+    { "id": "F024", "name": "Gestione offline degli invii", "ui": ["Invii in attesa"] }
+  ]
+}
