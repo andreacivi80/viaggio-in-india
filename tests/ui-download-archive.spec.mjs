@@ -17,6 +17,8 @@ test.skip(
 test.use({ ...devices["Galaxy S9+"], viewport: { width: 360, height: 740 }, serviceWorkers: "block" });
 
 test("Scarica dati è disponibile nel Gruppo autenticato e produce uno ZIP", async ({ context, page }) => {
+  const pageErrors = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
   await context.addInitScript(({ token, id, name, key }) => {
     localStorage.setItem("india-session-token", token);
     localStorage.setItem("india-profile-id", id);
@@ -40,6 +42,17 @@ test("Scarica dati è disponibile nel Gruppo autenticato e produce uno ZIP", asy
   expect(album).toContain("Album offline · Thailandia Insieme");
   expect(album).not.toMatch(/<script/i);
   await expect(page.getByText(/Archivio scaricato/)).toBeVisible();
+
+  for (const [name, filename] of [["PDF viaggio", "viaggio-thailandia.pdf"], ["PDF diario", "diario-thailandia.pdf"]]) {
+    const pdfDownload = page.waitForEvent("download");
+    await page.getByRole("button", { name, exact: true }).tap();
+    await expect.poll(() => pageErrors.join(" | "), { timeout: 1000 }).toBe("");
+    const result = await pdfDownload;
+    expect(result.suggestedFilename()).toBe(filename);
+    const bytes = await readFile(await result.path());
+    expect(bytes.subarray(0, 8).toString()).toBe("%PDF-1.4");
+    expect(bytes.length).toBeGreaterThan(500);
+  }
 });
 
 test("il visitatore pubblico non vede Scarica dati", async ({ browser }) => {
@@ -48,6 +61,8 @@ test("il visitatore pubblico non vede Scarica dati", async ({ browser }) => {
   await page.goto(baseUrl, { waitUntil: "networkidle" });
   await page.getByRole("button", { name: "Gruppo", exact: true }).tap();
   await expect(page.getByRole("button", { name: "Scarica dati", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "PDF viaggio", exact: true })).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "PDF diario", exact: true })).toHaveCount(0);
   await expect(page.getByText("Gruppo privato", { exact: true })).toBeVisible();
   await context.close();
 });

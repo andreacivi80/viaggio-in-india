@@ -277,7 +277,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0262 | 16 | Modifica di un post pubblicato. | NON ESEGUITO | — |
 | T-0263 | 16 | Mostra al tassista in inglese e hindi. | NON ESEGUITO | — |
 | T-0264 | 16 | non danneggia altre funzioni; | NON ESEGUITO | — |
-| T-0265 | 16 | PDF del viaggio. | NON ESEGUITO | — |
+| T-0265 | 16 | PDF del viaggio. | SUPERATO | Revisione 1.48.53: PDF multipagina valido con tutte le 11 giornate, tratte, mezzi, descrizioni e attività. Parser PDF 3/3; download touch Galaxy S9+ verificato e non disponibile al pubblico. |
 | T-0266 | 16 | Preferiti salvati nel database. | NON ESEGUITO | — |
 | T-0267 | 16 | Preferiti sincronizzati tra dispositivi. | NON ESEGUITO | — |
 | T-0268 | 16 | produce un risultato persistente; | NON ESEGUITO | — |
@@ -1736,7 +1736,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1721 | 96 | Manifesto con elenco dei contenuti. | NON ESEGUITO | — |
 | T-1722 | 96 | Nessun documento privato inserito senza consenso. | NON ESEGUITO | — |
 | T-1723 | 96 | Pausa e ripresa. | NON ESEGUITO | — |
-| T-1724 | 96 | PDF del diario. | NON ESEGUITO | — |
+| T-1724 | 96 | PDF del diario. | SUPERATO | Revisione 1.48.53: PDF del diario con pubblicazioni, luoghi e commenti visibili; testo non affidabile neutralizzato. Parser PDF 3/3; download touch Galaxy S9+ verificato e non disponibile al pubblico. |
 | T-1725 | 96 | Ripresa dopo perdita della rete. | NON ESEGUITO | — |
 | T-1726 | 96 | Suddivisione in più parti se troppo grande. | SUPERATO | resumable-upload: file da 9 MB suddiviso e completato in tre parti |
 | T-1727 | 96 | ZIP completo. | NON ESEGUITO | — |

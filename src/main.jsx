@@ -63,6 +63,7 @@ import { filterPostsOffline } from "./offlineSearch.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 import { createTravelArchive, visibleArchiveMedia } from "./travelArchive.js";
+import { createTravelPdf, diaryPdfLines, tripPdfLines } from "./travelPdf.js";
 import {
   AUTHENTICATED_SYNC_INTERVAL_MS,
   PRIVATE_SYNC_INTERVAL_MS,
@@ -86,7 +87,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.52",
+const VERSION = "1.48.53",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -5121,6 +5122,29 @@ function People({
       setArchiveBusy(false);
     }
   };
+  const downloadPdf = (kind) => {
+    if (!sessionToken) return;
+    const diary = kind === "diary";
+    setArchiveStatus(`Preparo ${diary ? "il diario" : "il programma"} PDF…`);
+    try {
+      const blob = createTravelPdf(
+        diary ? "Diario del viaggio" : "Programma del viaggio",
+        diary ? diaryPdfLines(posts) : tripPdfLines(days),
+      );
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = diary ? "diario-thailandia.pdf" : "viaggio-thailandia.pdf";
+      link.hidden = true;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+      setArchiveStatus(`${diary ? "Diario" : "Programma"} PDF scaricato.`);
+    } catch {
+      setArchiveStatus("PDF non creato. Riprova su questo dispositivo.");
+    }
+  };
   const add = async () => {
     if (!form.name.trim()) {
       setFormStatus({ type: "error", text: "Inserisci almeno il nome." });
@@ -5409,6 +5433,12 @@ function People({
         <button type="button" onClick={downloadArchive} disabled={archiveBusy}>
           <Download aria-hidden="true" />
           {archiveBusy ? "Preparazione…" : "Scarica dati"}
+        </button>
+        <button type="button" onClick={() => downloadPdf("trip")}>
+          <Download aria-hidden="true" /> PDF viaggio
+        </button>
+        <button type="button" onClick={() => downloadPdf("diary")}>
+          <Download aria-hidden="true" /> PDF diario
         </button>
         <small className="groupArchiveCount">
           {visibleArchiveMedia(posts).length} contenuti multimediali disponibili
