@@ -58,6 +58,7 @@ import {
   inspectOfflineReadiness,
   networkDescription,
 } from "./offlineCenter.js";
+import { filterPostsOffline } from "./offlineSearch.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 import { createTravelArchive, visibleArchiveMedia } from "./travelArchive.js";
@@ -84,7 +85,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.48",
+const VERSION = "1.48.49",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -3312,6 +3313,7 @@ function Diary({
     [fileStatus, setFileStatus] = useState(""),
     [publishNotice, setPublishNotice] = useState(""),
     [feedFilter, setFeedFilter] = useState("all"),
+    [feedQuery, setFeedQuery] = useState(""),
     [placeName, setPlaceName] = useState(""),
     [postCoordinates, setPostCoordinates] = useState(null),
     [locatingPost, setLocatingPost] = useState(false),
@@ -3410,7 +3412,7 @@ function Diary({
       return [...current, ...selected];
     });
   };
-  const visiblePosts = posts.filter((p) => {
+  const visiblePosts = filterPostsOffline(posts, feedQuery).filter((p) => {
     if (feedFilter === "all") return true;
     if (feedFilter === "before") return Number(p.day_index) < 0;
     if (feedFilter === "today") return Number(p.day_index) === liveIndex;
@@ -3639,6 +3641,17 @@ function Diary({
           <small>Rimarrà memorizzato soltanto su questo dispositivo</small>
         </div>
       )}
+      <label className="offlineFeedSearch">
+        <span>Cerca nei contenuti disponibili</span>
+        <input
+          type="search"
+          value={feedQuery}
+          onChange={(event) => setFeedQuery(event.target.value)}
+          placeholder="Luogo, persona, racconto…"
+          autoComplete="off"
+        />
+        <small>Ricerca locale · funziona anche offline</small>
+      </label>
       <div className="feedFilters" aria-label="Filtri della bacheca">
         {[
           ["all", "Recenti"],
@@ -3674,8 +3687,8 @@ function Diary({
       ) : (
         <Empty
           icon={Camera}
-          title="Il diario è pronto"
-          text="Il primo ricordo pubblicato apparirà qui per tutti."
+          title={feedQuery.trim() ? "Nessun contenuto trovato" : "Il diario è pronto"}
+          text={feedQuery.trim() ? "Prova con un’altra parola o cancella la ricerca." : "Il primo ricordo pubblicato apparirà qui per tutti."}
         />
       )}
       {composeOpen && (

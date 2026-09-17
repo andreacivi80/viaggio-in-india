@@ -969,7 +969,7 @@ P1,sync-rete,passed,rete utilizzata;,globale:T-1256,"QA 1.48.48: Network Informa
 P1,sync-rete,passed,Riapertura offline.,globale:T-1231,ui-network-india e ui-p0-cache-recovery QA: dopo la prima apertura la bacheca pubblica si riapre senza rete anche dopo pulizia delle cache difettose.
 P1,sync-rete,passed,Riaprire offline.,globale:T-0549,ui-network-india e ui-p0-cache-recovery QA: riapertura mobile offline completata senza pagina bianca.
 P1,sync-rete,passed,Riattivare la rete.,globale:T-0550,ui-offline QA: al ritorno online la richiesta accodata parte una sola volta e viene sincronizzata.
-P1,sync-rete,pending,Ricerca offline sui dati disponibili.,globale:T-1696,
+P1,sync-rete,passed,Ricerca offline sui dati disponibili.,globale:T-1696,"QA 1.48.49: offline-search 2/2 + Galaxy S9+ touch 1/1; ricerca su contenuti visibili locali senza richieste API, verificata anche con rete disattivata."
 P1,sync-rete,passed,Ricevere una sincronizzazione.,globale:T-1400,P1_SOCIAL_COMMENTS 18/18 + P1_SOCIAL_CONCURRENCY 12/12 su QA 1.48.37: commenti e reazioni convergono allo stesso stato su tutte le sessioni senza refresh del database.
 P1,sync-rete,passed,Ridurre frequenza di sincronizzazione.,globale:T-1651,"runtime-resilience 6/6: polling visibile ridotto da 2,5 a 5 secondi, completamente sospeso quando pagina nascosta o offline, con controllo immediato agli eventi online e visibilitychange."
 P1,sync-rete,passed,Ripresa dopo perdita della rete.,globale:T-1725,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: perdita rete, chiusura pagina, riapertura e ripresa automatica verificate con coda IndexedDB reale."

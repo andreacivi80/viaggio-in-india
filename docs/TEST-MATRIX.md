@@ -1708,7 +1708,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1693 | 95 | Ricerca con accenti. | NON ESEGUITO | — |
 | T-1694 | 95 | Ricerca con errore di battitura. | NON ESEGUITO | — |
 | T-1695 | 95 | Ricerca maiuscole/minuscole. | NON ESEGUITO | — |
-| T-1696 | 95 | Ricerca offline sui dati disponibili. | NON ESEGUITO | — |
+| T-1696 | 95 | Ricerca offline sui dati disponibili. | SUPERATO | QA 1.48.49 Galaxy S9+ touch 1/1: ricerca locale su racconto, autore, luogo, media e commenti; accenti normalizzati, più termini combinati e zero richieste API anche offline. |
 | T-1697 | 95 | Ricerca per cognome. | NON ESEGUITO | — |
 | T-1698 | 95 | Ricerca per commento. | NON ESEGUITO | — |
 | T-1699 | 95 | Ricerca per giornata. | NON ESEGUITO | — |
