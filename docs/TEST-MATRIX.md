@@ -128,7 +128,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0113 | 8 | Sincronizzazione delle eliminazioni. | NON ESEGUITO | — |
 | T-0114 | 8 | Sincronizzazione immediata al ritorno della rete. | NON ESEGUITO | — |
 | T-0115 | 8 | SSE, WebSocket o polling incrementale sostenibile. | NON ESEGUITO | — |
-| T-0116 | 9 | Centro “Pronto per l’offline”. | NON ESEGUITO | — |
+| T-0116 | 9 | Centro “Pronto per l’offline”. | SUPERATO | QA 1.48.48 Galaxy S9+ touch 1/1: pannello personale mostra shell salvata, rete, ultima sincronizzazione e numero invii locali. |
 | T-0117 | 9 | Coda automatica degli invii. | NON ESEGUITO | — |
 | T-0118 | 9 | Controllo che l’operazione venga inviata una sola volta. | NON ESEGUITO | — |
 | T-0119 | 9 | Hotel e indirizzi offline. | NON ESEGUITO | — |
@@ -138,7 +138,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0123 | 9 | Invio automatico al ritorno della rete. | NON ESEGUITO | — |
 | T-0124 | 9 | Mappe e coordinate essenziali offline. | NON ESEGUITO | — |
 | T-0125 | 9 | Outbox offline. | SUPERATO | offline-queue: accodamento, persistenza e svuotamento verificati |
-| T-0126 | 9 | Pulsante per cancellare i dati offline. | NON ESEGUITO | — |
+| T-0126 | 9 | Pulsante per cancellare i dati offline. | SUPERATO | QA 1.48.48 Galaxy S9+ touch 1/1: doppia conferma elimina solo cache applicativa e copie pubbliche locali; sessioni, invii in coda e dati server restano intatti. |
 | T-0127 | 9 | Riapertura della coda dopo chiusura forzata. | NON ESEGUITO | — |
 | T-0128 | 9 | Salvataggio offline degli audio selezionati. | SUPERATO | offline-queue: file MP3 conservato con nome, MIME e contenuto |
 | T-0129 | 9 | Salvataggio offline dei commenti. | NON ESEGUITO | — |
@@ -1268,7 +1268,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1253 | 67 | gravità del difetto; | NON ESEGUITO | — |
 | T-1254 | 67 | log browser; | NON ESEGUITO | — |
 | T-1255 | 67 | log Cloudflare; | NON ESEGUITO | — |
-| T-1256 | 67 | rete utilizzata; | NON ESEGUITO | — |
+| T-1256 | 67 | rete utilizzata; | SUPERATO | QA 1.48.48: centro offline descrive tipo/effectiveType, risparmio dati e passaggio offline; unit 3/3 + touch Galaxy S9+ 1/1. |
 | T-1257 | 67 | risultato atteso; | NON ESEGUITO | — |
 | T-1258 | 67 | risultato ottenuto; | NON ESEGUITO | — |
 | T-1259 | 67 | screenshot; | NON ESEGUITO | — |

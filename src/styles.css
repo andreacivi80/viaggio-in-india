@@ -2118,6 +2118,36 @@ footer small {
   font-weight: 800;
 }
 .offlineQueuePanel button svg { width: 16px; height: 16px; }
+.offlineCenter {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #b9d9cd;
+  border-radius: var(--radius-medium);
+  background: #f0faf6;
+  color: var(--color-text-primary);
+}
+.offlineCenter > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.offlineCenter small { color: var(--color-text-secondary); }
+.offlineCenter button {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #326f5c;
+  border-radius: var(--radius-small);
+  background: #fff;
+  color: #215746;
+  font-weight: 800;
+}
+.offlineCenter button svg { width: 16px; height: 16px; }
+.offlineCenter .offlineClearWarning { color: #8a3d20; font-weight: 700; }
 .sessionNotice {
   position: fixed;
   z-index: 1000;

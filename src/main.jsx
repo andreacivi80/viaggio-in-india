@@ -53,6 +53,11 @@ import { validateMediaSelection } from "./mediaValidation.js";
 import { compressMobilePhoto } from "./mediaCompression.js";
 import { cameraSelectionFeedback } from "./mediaSelectionFeedback.js";
 import { syncStatusLabel } from "./syncStatus.js";
+import {
+  clearOfflineCopies,
+  inspectOfflineReadiness,
+  networkDescription,
+} from "./offlineCenter.js";
 import { spotifyLink, splitSpotifyCaption } from "./spotify.js";
 import pdfWorkerUrl from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url";
 import { createTravelArchive, visibleArchiveMedia } from "./travelArchive.js";
@@ -79,7 +84,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.47",
+const VERSION = "1.48.48",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -1236,6 +1241,8 @@ function App() {
     [quickStatus, setQuickStatus] = useState(""),
     [offlineItems, setOfflineItems] = useState([]),
     [pendingOfflineDelete, setPendingOfflineDelete] = useState(null),
+    [offlineReadiness, setOfflineReadiness] = useState({ ready: false, cacheCount: 0 }),
+    [offlineClearConfirm, setOfflineClearConfirm] = useState(false),
     [stateLoaded, setStateLoaded] = useState(false),
     [lastSyncedAt, setLastSyncedAt] = useState(
       () => Number(localStorage.getItem("thailand-last-sync-at") || 0),
@@ -1391,12 +1398,34 @@ function App() {
     try { setOfflineItems(await queuedRequests()); }
     catch { setOfflineItems([]); }
   };
+  const refreshOfflineReadiness = async () => {
+    try { setOfflineReadiness(await inspectOfflineReadiness()); }
+    catch { setOfflineReadiness({ ready: false, cacheCount: 0 }); }
+  };
   useEffect(() => {
     const onQueueChanged = () => refreshOfflineItems();
     refreshOfflineItems();
     addEventListener("offline-queue-changed", onQueueChanged);
     return () => removeEventListener("offline-queue-changed", onQueueChanged);
   }, []);
+  useEffect(() => {
+    if (!quickProfileOpen) return;
+    refreshOfflineReadiness();
+  }, [quickProfileOpen, isOnline]);
+  const removeOfflineCopies = async () => {
+    if (!offlineClearConfirm) {
+      setOfflineClearConfirm(true);
+      return;
+    }
+    try {
+      await clearOfflineCopies();
+      setQuickStatus("Copie offline eliminate. Pubblicazioni e documenti sul server non sono stati toccati.");
+      setOfflineClearConfirm(false);
+      await refreshOfflineReadiness();
+    } catch {
+      setQuickStatus("Non è stato possibile eliminare le copie offline su questo dispositivo.");
+    }
+  };
   useEffect(() => {
     sessionTokenRef.current = effectiveSessionToken;
     refresh();
@@ -2534,6 +2563,29 @@ function App() {
               </div>
             )}
             {quickStatus && <small className="quickStatus">{quickStatus}</small>}
+            <section className="offlineCenter" aria-label="Pronto per l’offline">
+              <div>
+                <b>Pronto per l’offline</b>
+                <small role="status">
+                  {offlineReadiness.ready
+                    ? "App pronta: interfaccia salvata sul dispositivo"
+                    : "Interfaccia offline non ancora salvata"}
+                </small>
+                <small>
+                  Rete: {networkDescription(navigator.connection, isOnline)} · {syncStatusLabel(lastSyncedAt, isOnline)}
+                </small>
+                <small>{offlineItems.length} invii locali in attesa · non vengono cancellati da questo comando</small>
+              </div>
+              <button type="button" onClick={removeOfflineCopies}>
+                <Trash2 aria-hidden="true" />
+                {offlineClearConfirm ? "Conferma elimina copie" : "Cancella copie offline"}
+              </button>
+              {offlineClearConfirm && (
+                <small className="offlineClearWarning">
+                  Elimina solo cache e copie pubbliche di questo telefono; non elimina dati dal server.
+                </small>
+              )}
+            </section>
             {offlineItems.length > 0 && (
               <section className="offlineQueuePanel" aria-label="Invii in attesa">
                 <b>{offlineItems.length} {offlineItems.length === 1 ? "invio in attesa" : "invii in attesa"}</b>
