@@ -1184,7 +1184,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1169 | 63 | Ripristinare il backup in un ambiente vuoto. | SUPERATO | verify-d1-backup: export importato in database temporaneo vuoto |
 | T-1170 | 63 | Verificare apertura di ogni documento ripristinato. | NON ESEGUITO | — |
 | T-1171 | 63 | Verificare consistenza temporale del backup. | NON ESEGUITO | — |
-| T-1172 | 64 | Documentare procedura e tempo di rollback. | NON ESEGUITO | — |
+| T-1172 | 64 | Documentare procedura e tempo di rollback. | SUPERATO | rollback-procedure 3/3: rollback applicazione/dati distinti; responsabile autorizzato; RTO 15/30 minuti e RPO zero; backup verificato, doppio smoke e criteri dati obbligatori. |
 | T-1173 | 64 | Pubblicare una versione di collaudo successiva. | NON ESEGUITO | — |
 | T-1174 | 64 | Simulare errore bloccante. | NON ESEGUITO | — |
 | T-1175 | 64 | Tornare alla versione 1.21.5. | NON ESEGUITO | — |
