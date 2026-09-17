@@ -10,6 +10,22 @@ const videoPath = fileURLToPath(new URL("../public/video/india-insieme-demo.webm
 test.skip(!baseUrl || !sessionToken || !deviceKey || !isSafeMutationTarget(baseUrl), "Sessione e URL QA richiesti");
 test.use({ serviceWorkers: "block" });
 
+const fetchRetry = async (url, init, attempts = 3) => {
+  let lastError;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch(url, init);
+      if (response.status < 500 || attempt === attempts) return response;
+      lastError = new Error(`HTTP ${response.status}`);
+    } catch (error) {
+      lastError = error;
+      if (attempt === attempts) throw error;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 400 * attempt));
+  }
+  throw lastError;
+};
+
 test("un video reale oltre 25 MB viene caricato e riprodotto con rete lenta", async ({ browser }) => {
   test.setTimeout(180_000);
   const authHeaders = { authorization: `Bearer ${sessionToken}`, "x-device-key": deviceKey };
@@ -19,7 +35,7 @@ test("un video reale oltre 25 MB viene caricato e riprodotto con rete lenta", as
   let postId = "";
   let uploadId = "";
   try {
-    const init = await fetch(`${baseUrl}/api/uploads/init`, {
+    const init = await fetchRetry(`${baseUrl}/api/uploads/init`, {
       method: "POST",
       headers: { ...authHeaders, "content-type": "application/json" },
       body: JSON.stringify({
@@ -35,7 +51,7 @@ test("un video reale oltre 25 MB viene caricato e riprodotto con rete lenta", as
     uploadId = upload.upload_id;
     let partNumber = 1;
     for (let offset = 0; offset < video.length; offset += upload.part_size) {
-      const part = await fetch(`${baseUrl}/api/uploads/${uploadId}/parts/${partNumber}`, {
+      const part = await fetchRetry(`${baseUrl}/api/uploads/${uploadId}/parts/${partNumber}`, {
         method: "PUT",
         headers: { ...authHeaders, "content-type": "application/octet-stream" },
         body: video.subarray(offset, Math.min(video.length, offset + upload.part_size)),
@@ -44,7 +60,7 @@ test("un video reale oltre 25 MB viene caricato e riprodotto con rete lenta", as
       partNumber += 1;
     }
     expect(partNumber - 1).toBe(7);
-    const complete = await fetch(`${baseUrl}/api/uploads/${uploadId}/complete`, { method: "POST", headers: authHeaders });
+    const complete = await fetchRetry(`${baseUrl}/api/uploads/${uploadId}/complete`, { method: "POST", headers: authHeaders });
     expect(complete.status).toBe(200);
 
     const marker = `Video lento 26 MB QA ${process.env.QA_RUN_ID}`;
@@ -53,7 +69,7 @@ test("un video reale oltre 25 MB viene caricato e riprodotto con rete lenta", as
     form.set("day_index", "0");
     form.set("text", marker);
     form.set("upload_ids", JSON.stringify([uploadId]));
-    const create = await fetch(`${baseUrl}/api/posts`, {
+    const create = await fetchRetry(`${baseUrl}/api/posts`, {
       method: "POST",
       headers: { ...authHeaders, "x-idempotency-key": crypto.randomUUID(), "x-qa-silent": "true" },
       body: form,

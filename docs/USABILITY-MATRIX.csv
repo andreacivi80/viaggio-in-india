@@ -711,7 +711,7 @@
 "U0710","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","matrice dei ruoli;","pending","","1.31.0"
 "U0711","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","elenco di tutti i pulsanti testati;","pending","","1.31.0"
 "U0712","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","screenshot dei test;","pending","","1.31.0"
-"U0713","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","video dei percorsi completi;","pending","","1.31.0"
+"U0713","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","video dei percorsi completi;","passed","QA 1/1: video reale WebM da 26 MB caricato in 7 parti e riprodotto su Galaxy S9+ con rete rallentata; pulizia QA completata.","1.48.55"
 "U0714","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","risposte HTTP;","pending","","1.31.0"
 "U0715","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","controlli database;","pending","","1.31.0"
 "U0716","38. CONSEGNA OBBLIGATORIA DEL PROGRAMMATORE","test iPhone;","pending","","1.31.0"
