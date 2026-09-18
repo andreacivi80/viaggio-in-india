@@ -7,9 +7,10 @@ const coordinator = {
   token: process.env.QA_COORDINATOR_TOKEN,
   key: process.env.QA_COORDINATOR_DEVICE_KEY,
 };
+const groupCode = process.env.QA_UI_GROUP_CODE;
 
 test.skip(
-  !baseUrl || !isSafeMutationTarget(baseUrl) || Object.values(coordinator).some((value) => !value),
+  !baseUrl || !groupCode || !isSafeMutationTarget(baseUrl) || Object.values(coordinator).some((value) => !value),
   "Sessione coordinatrice QA richiesta",
 );
 
@@ -43,6 +44,11 @@ test("la coordinatrice crea due viaggiatori e tutti i telefoni leggono lo stesso
       return (await response.json()).profiles.length;
     });
     await page.locator(".tabs").getByRole("button", { name: "Gruppo" }).tap();
+    const stepUp = page.locator(".adminStepUp");
+    await expect(stepUp).toBeVisible();
+    await stepUp.getByLabel("Password per funzioni amministrative").fill(groupCode);
+    await stepUp.getByRole("button", { name: "Attiva per 10 minuti" }).tap();
+    await expect(page.getByText(/amministrazione attiva/i)).toBeVisible();
     const form = page.locator(".profileForm");
     await expect(form).toBeVisible();
 
@@ -76,6 +82,7 @@ test("la coordinatrice crea due viaggiatori e tutti i telefoni leggono lo stesso
         headers: {
           authorization: `Bearer ${localStorage.getItem("india-session-token")}`,
           "x-device-key": localStorage.getItem("india-device-key"),
+          "x-admin-step-up": sessionStorage.getItem("thailand-admin-step-up") || "",
         },
       }), id).catch(() => {});
     await context.close();

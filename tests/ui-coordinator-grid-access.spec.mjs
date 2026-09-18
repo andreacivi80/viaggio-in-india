@@ -105,6 +105,11 @@ test("la griglia è disponibile soltanto alla sessione coordinatore verificata",
     await expect(coordinatorPage.getByRole("button", { name: "Vista gruppo", exact: true })).toHaveCount(0);
     await expect(coordinatorPage.getByRole("button", { name: "Griglia coordinatore" })).toBeVisible();
     await coordinatorPage.getByRole("button", { name: "Griglia coordinatore" }).tap();
+    const adminStepUp = coordinatorPage.locator(".adminStepUp");
+    await expect(adminStepUp).toBeVisible();
+    await adminStepUp.getByLabel("Password per funzioni amministrative").fill(groupCode);
+    await adminStepUp.getByRole("button", { name: "Attiva per 10 minuti" }).tap();
+    await expect(coordinatorPage.getByText(/amministrazione attiva/i)).toBeVisible();
     await expect(coordinatorPage.locator(".coordinatorDashboard")).toBeVisible();
     await expect(coordinatorPage.getByRole("heading", { name: "Controllo documenti" })).toBeVisible();
     expect(await coordinatorPage.evaluate(() => ({

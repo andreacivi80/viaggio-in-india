@@ -303,7 +303,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0288 | 17 | Screenshot | NON ESEGUITO | — |
 | T-0289 | 17 | SÌ | NON ESEGUITO | — |
 | T-0290 | 17 | SUPERATO | NON ESEGUITO | — |
-| T-0291 | 17 | Viaggiatore | NON ESEGUITO | — |
+| T-0291 | 17 | Viaggiatore | SUPERATO | QA touch `ui-own-profile` 1/1 + `ui-public-access-boundary` 3/3 + `ui-coordinator-grid-access` 1/1 su Galaxy S9+. |
 | T-0292 | 17 | Video | NON ESEGUITO | — |
 | T-0293 | 18 | Android Chrome; | NON ESEGUITO | — |
 | T-0294 | 18 | Android PWA; | NON ESEGUITO | — |
@@ -355,7 +355,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0340 | 20 | Verificare che l’invito funzioni una sola volta. | NON ESEGUITO | — |
 | T-0341 | 20 | Verificare che non possa diventare Coordinatore. | NON ESEGUITO | — |
 | T-0342 | 21 | Caricare fotografia. | NON ESEGUITO | — |
-| T-0343 | 21 | Creare un profilo. | NON ESEGUITO | — |
+| T-0343 | 21 | Creare un profilo. | SUPERATO | QA touch `ui-profile-creation` 1/1: coordinatrice con step-up crea due viaggiatori, HTTP 201 e conteggio server +2. |
 | T-0344 | 21 | Inserire apostrofi e accenti. | NON ESEGUITO | — |
 | T-0345 | 21 | Inserire biografia. | NON ESEGUITO | — |
 | T-0346 | 21 | Inserire caratteri HTML e script. | NON ESEGUITO | — |
@@ -686,7 +686,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0671 | 38 | gli invii non vengono duplicati; | SUPERATO | production-smoke: doppio invio conserva un solo record |
 | T-0672 | 38 | gli upload riprendono dopo perdita della rete; | NON ESEGUITO | — |
 | T-0673 | 38 | i dati dei profili rispettano la privacy; | NON ESEGUITO | — |
-| T-0674 | 38 | il codice comune non permette di impersonare un profilo; | NON ESEGUITO | — |
+| T-0674 | 38 | il codice comune non permette di impersonare un profilo; | SUPERATO | QA touch `ui-public-access-boundary` 3/3: la password non crea sessione/profile_id e non autorizza API private, profili o post. |
 | T-0675 | 38 | il Coordinatore è autorizzato lato server; | NON ESEGUITO | — |
 | T-0676 | 38 | il dominio mostra REV 1.21.5; | NON ESEGUITO | — |
 | T-0677 | 38 | l’applicazione funziona con il computer del programmatore spento; | NON ESEGUITO | — |
@@ -756,7 +756,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0741 | 40 | modifica commento proprio; | SUPERATO | QA 1.31.0: modifica commento proprio completata |
 | T-0742 | 40 | modifica posizione altrui; | NON ESEGUITO | — |
 | T-0743 | 40 | modifica profilo altrui; | NON ESEGUITO | — |
-| T-0744 | 40 | modifica profilo proprio; | NON ESEGUITO | — |
+| T-0744 | 40 | modifica profilo proprio; | SUPERATO | QA touch Galaxy S9+ `ui-own-profile` 1/1: modifica propria sincronizzata sul secondo telefono. |
 | T-0745 | 40 | modifica ruolo; | NON ESEGUITO | — |
 | T-0746 | 40 | nessun file creato; | NON ESEGUITO | — |
 | T-0747 | 40 | nessuna informazione sensibile nella risposta. | NON ESEGUITO | — |
@@ -1228,7 +1228,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1213 | 66 | Controllo itinerario. | NON ESEGUITO | — |
 | T-1214 | 66 | Controllo log. | NON ESEGUITO | — |
 | T-1215 | 66 | Controllo posizioni. | NON ESEGUITO | — |
-| T-1216 | 66 | Controllo profilo. | NON ESEGUITO | — |
+| T-1216 | 66 | Controllo profilo. | SUPERATO | QA touch `ui-own-profile` 1/1 + `ui-coordinator-grid-access` 1/1: proprietà e ruolo derivano dalla sessione server. |
 | T-1217 | 66 | Controllo programma. | NON ESEGUITO | — |
 | T-1218 | 66 | Creazione invito. | NON ESEGUITO | — |
 | T-1219 | 66 | Impossibilità di vedere documenti e posizioni private. | NON ESEGUITO | — |
@@ -1405,7 +1405,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1390 | 74 | Aprire la mappa. | NON ESEGUITO | — |
 | T-1391 | 74 | Aprire la tastiera. | NON ESEGUITO | — |
 | T-1392 | 74 | Aprire un post specifico. | NON ESEGUITO | — |
-| T-1393 | 74 | Aprire un profilo. | NON ESEGUITO | — |
+| T-1393 | 74 | Aprire un profilo. | SUPERATO | QA touch Galaxy S9+ `ui-own-profile` 1/1: apertura della propria scheda dal Gruppo. |
 | T-1394 | 74 | Aprire una fotografia del carosello. | NON ESEGUITO | — |
 | T-1395 | 74 | Aprire una giornata specifica. | NON ESEGUITO | — |
 | T-1396 | 74 | Bloccare e sbloccare lo schermo. | NON ESEGUITO | — |
@@ -1587,8 +1587,8 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1572 | 85 | posizione cancellata; | NON ESEGUITO | — |
 | T-1573 | 85 | posizione condivisa; | NON ESEGUITO | — |
 | T-1574 | 85 | post eliminato; | NON ESEGUITO | — |
-| T-1575 | 85 | profilo creato; | NON ESEGUITO | — |
-| T-1576 | 85 | profilo modificato; | NON ESEGUITO | — |
+| T-1575 | 85 | profilo creato; | SUPERATO | QA touch `ui-profile-creation` 1/1: due profili viaggiatore creati e riletti nello stato condiviso. |
+| T-1576 | 85 | profilo modificato; | SUPERATO | QA touch `ui-own-profile` 1/1: dati modificati riletti sul secondo telefono. |
 | T-1577 | 85 | profilo; | NON ESEGUITO | — |
 | T-1578 | 85 | rate limit raggiunto; | NON ESEGUITO | — |
 | T-1579 | 85 | risorsa coinvolta; | NON ESEGUITO | — |

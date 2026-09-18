@@ -4,6 +4,8 @@ import { dirname, join, resolve } from "node:path";
 import { spawnSync } from "node:child_process";
 
 const root = resolve(import.meta.dirname, "..");
+const qaGroupCodePath = join(root, ".wrangler", "qa-group-code.txt");
+const qaGroupCode = existsSync(qaGroupCodePath) ? readFileSync(qaGroupCodePath, "utf8").trim() : "";
 const option = (name, fallback = "") => process.argv.find((item) => item.startsWith(`--${name}=`))?.slice(name.length + 3) || fallback;
 const baseUrl = option("base-url", "https://viaggio-in-india-2026-qa.pages.dev").replace(/\/$/, "");
 const testFiles = option("test").split(",").filter(Boolean);
@@ -177,6 +179,7 @@ try {
     QA_EXPIRED_DEVICE_KEY: deviceKeys.expired, QA_SECOND_DEVICE_KEY: deviceKeys.secondary,
     QA_DELETE_PROFILE_DEVICE_KEY: deviceKeys.deleting,
     QA_PUSH_MEMBERS: JSON.stringify(pushMembers),
+    ...(qaGroupCode ? { QA_GROUP_CODE: qaGroupCode } : {}),
   };
   const uiEnvironment = {
     ...environment,
@@ -191,6 +194,7 @@ try {
     QA_UI_MANAGED_PROFILE_NAME: managedProfileName,
     QA_UI_EXPIRED_SESSION_TOKEN: tokens.expired,
     QA_UI_ALLOW_REGISTRATION: "true",
+    ...(qaGroupCode ? { QA_UI_GROUP_CODE: qaGroupCode } : {}),
   };
   for (const testFile of testFiles) {
     if (testFile.endsWith(".spec.mjs")) {

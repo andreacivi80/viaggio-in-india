@@ -1050,40 +1050,40 @@ P2,profili-ruoli,passed,Accedere come Viaggiatore.,addendum:A0088,Playwright liv
 P2,profili-ruoli,passed,Aggiungere funzione di cancellazione del proprio profilo.,globale:T-0045,"P0_PROFILE_DELETION 44/44: cancellazione del proprio profilo disponibile e atomica; dati collegati rimossi, con protezione dell’ultimo coordinatore."
 P2,profili-ruoli,passed,Aprire il proprio profilo.,usabilita:U0070;usabilita:U0370,"ui-own-profile Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: il viaggiatore apre la propria scheda, modifica nome e cognome con touch, mantiene lo stesso profile_id e vede la modifica sincronizzata sul secondo telefono; l’altro viaggiatore non può modificarla, nessun profilo compare nel feed e i dati originali vengono ripristinati a fine prova."
 P2,profili-ruoli,passed,Aprire la Bacheca come Viaggiatore.,usabilita:U0097,"ui-all-members-publish Thailandia 1.48.12 Samsung S20 FE 1/1: due sessioni viaggiatore distinte hanno aperto la Bacheca personale, visualizzato l’identità corretta e usato Pubblica tramite touch."
-P2,profili-ruoli,pending,Aprire un profilo.,globale:T-1393,
+P2,profili-ruoli,passed,Aprire un profilo.,globale:T-1393,QA touch Galaxy S9+ ui-own-profile 1/1: il viaggiatore apre la propria scheda dal Gruppo
 P2,profili-ruoli,passed,Assegnare ruolo.,usabilita:U0376,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,passed,Cambiare il ruolo in Viaggiatore.,addendum:A0096,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P2,profili-ruoli,passed,Cambiare profilo sullo stesso dispositivo.,globale:T-0858,"ui-same-device-profile-switch Thailandia 1.48.19 Samsung S20 FE QA 1/1: lo stesso telefono apre il deep link personale del viaggiatore, blocca volontariamente l’accesso con gesto touch e invalida realmente il vecchio token; senza ricaricare manualmente apre nello stesso tab il deep link della coordinatrice, riceve un nuovo profile_id e un nuovo token, elimina il segreto dall’URL e mostra soltanto la Griglia coordinatore. Il difetto hashchange riprodotto sulla 1.48.18 è stato corretto; L1/L2 QA 18/18, produzione read-only 8/8 e disponibilità esatta/stabile verificate."
 P2,profili-ruoli,passed,Commento come Viaggiatore.,usabilita:U0297,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P2,profili-ruoli,pending,condizione dopo cambio ruolo;,addendum:A0288,
 P2,profili-ruoli,passed,Confrontare numero di profili.,globale:T-1162,"ui-profile-multidevice Thailandia 1.48.18 Samsung S20 FE QA 1/1: due sessioni reali dello stesso profilo su due telefoni leggono lo stesso numero di profili; il secondo telefono modifica nome, cognome ed età e il primo riceve il profilo aggiornato; due salvataggi touch concorrenti restituiscono entrambi 200 e lo stato finale coincide integralmente con una delle due versioni, senza campi mescolati o profilo corrotto. Dati originali ripristinati e pulizia QA completata."
-P2,profili-ruoli,pending,Controllo profilo.,globale:T-1216,
+P2,profili-ruoli,passed,Controllo profilo.,globale:T-1216,QA touch ui-own-profile 1/1 + ui-coordinator-grid-access 1/1: proprietà e ruolo derivano dalla sessione server
 P2,profili-ruoli,passed,Creare il profilo del Viaggiatore A.,globale:T-0698,"ui-profile-creation Thailandia 1.48.18 Samsung S20 FE QA 1/1: una coordinatrice autenticata crea tramite interfaccia touch due profili distinti, Viaggiatore A e Viaggiatore B; entrambe le risposte sono 201, le schede risultano visibili come Partecipante, il ruolo persistito è traveler e il conteggio condiviso aumenta esattamente di due. I profili di prova vengono eliminati a fine esecuzione."
 P2,profili-ruoli,passed,Creare il profilo del Viaggiatore B.,globale:T-0699,"ui-profile-creation Thailandia 1.48.18 Samsung S20 FE QA 1/1: una coordinatrice autenticata crea tramite interfaccia touch due profili distinti, Viaggiatore A e Viaggiatore B; entrambe le risposte sono 201, le schede risultano visibili come Partecipante, il ruolo persistito è traveler e il conteggio condiviso aumenta esattamente di due. I profili di prova vengono eliminati a fine esecuzione."
 P2,profili-ruoli,passed,Creare profilo.,usabilita:U0374,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
-P2,profili-ruoli,pending,Creare un profilo.,globale:T-0343,
+P2,profili-ruoli,passed,Creare un profilo.,globale:T-0343,QA touch ui-profile-creation 1/1: coordinatrice con step-up crea due viaggiatori e il conteggio server aumenta di due
 P2,profili-ruoli,passed,creazione profilo;,globale:T-0733;usabilita:U0653,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,passed,da Familiare a Viaggiatore.,addendum:A0087,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P2,profili-ruoli,passed,da Viaggiatore a Pubblico;,addendum:A0085,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P2,profili-ruoli,passed,Deep link del profilo.,globale:T-0242,"ui-same-device-profile-switch Thailandia 1.48.19 Samsung S20 FE QA 1/1: lo stesso telefono apre il deep link personale del viaggiatore, blocca volontariamente l’accesso con gesto touch e invalida realmente il vecchio token; senza ricaricare manualmente apre nello stesso tab il deep link della coordinatrice, riceve un nuovo profile_id e un nuovo token, elimina il segreto dall’URL e mostra soltanto la Griglia coordinatore. Il difetto hashchange riprodotto sulla 1.48.18 è stato corretto; L1/L2 QA 18/18, produzione read-only 8/8 e disponibilità esatta/stabile verificate."
 P2,profili-ruoli,pending,è visibile al ruolo corretto;,usabilita:U0667,
 P2,profili-ruoli,pending,elenco degli endpoint per ruolo;,addendum:A0468,
-P2,profili-ruoli,pending,elenco dei tasti disabilitati per ruolo;,addendum:A0471,
-P2,profili-ruoli,pending,elenco dei tasti nascosti per ruolo;,addendum:A0470,
+P2,profili-ruoli,passed,elenco dei tasti disabilitati per ruolo;,addendum:A0471,QA touch access-boundary 3/3 e coordinator-grid 1/1: password comune senza profilo resta disabilitata; comandi amministrativi richiedono coordinatrice e step-up
+P2,profili-ruoli,passed,elenco dei tasti nascosti per ruolo;,addendum:A0470,QA touch coordinator-grid 1/1: griglia e dati privati assenti per pubblico/password/viaggiatore e presenti solo per coordinatrice verificata
 P2,profili-ruoli,pending,esiste un solo profilo;,addendum:A0298,
 P2,profili-ruoli,passed,Feed differente in base al ruolo.,globale:T-0068,"QA 1.31.0: feed pubblico, ospite e viaggiatore restituiscono contenuti differenti"
-P2,profili-ruoli,pending,il codice comune non permette di impersonare un profilo;,globale:T-0674,
+P2,profili-ruoli,passed,il codice comune non permette di impersonare un profilo;,globale:T-0674,QA touch ui-public-access-boundary 3/3: password verificata non crea sessione né profile_id e non autorizza private/profiles/posts
 P2,profili-ruoli,passed,il ruolo restituito dal server prevale sempre sul ruolo locale;,addendum:A0060,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P2,profili-ruoli,pending,il server restituisce soltanto i dati necessari al ruolo;,addendum:A0455,
 P2,profili-ruoli,passed,il Viaggiatore agisca soltanto sulle proprie risorse;,addendum:A0379,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P2,profili-ruoli,passed,Il Viaggiatore non deve poter scrivere il nome di un’altra persona.,usabilita:U0168,"P0_ROLES_AND_SHARED_CONTROLS 30/30 + P0_AUTHORIZATION_MATRIX 86/86: il viaggiatore ha inviato author_name e profile_id falsificati e ha alterato i dati locali; il server ha ignorato il nome proposto, derivato autore e profilo dalla sessione e impedito la pubblicazione come un altro viaggiatore."
 P2,profili-ruoli,passed,Impedire definitivamente di selezionare l’identità di un altro Viaggiatore.,globale:T-0035,QA 1.31.0: nomi e identita inviati dal browser vengono ignorati dal server
-P2,profili-ruoli,pending,l’Ospite non erediti privilegi da un profilo memorizzato;,addendum:A0378,
+P2,profili-ruoli,passed,l’Ospite non erediti privilegi da un profilo memorizzato;,addendum:A0378,QA touch access-boundary 3/3: codice storico rimosso e sessione personale assente; coordinator-grid impedisce esposizione privata
 P2,profili-ruoli,pending,lettura profilo;,globale:T-0738,
 P2,profili-ruoli,pending,Manipolare profile_id nell’URL.,globale:T-0483,
 P2,profili-ruoli,passed,menu del ruolo;,addendum:A0080,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P2,profili-ruoli,pending,modifica profilo altrui;,globale:T-0743,
-P2,profili-ruoli,pending,modifica profilo proprio;,globale:T-0744;usabilita:U0644,
+P2,profili-ruoli,passed,modifica profilo proprio;,globale:T-0744;usabilita:U0644,QA touch Galaxy S9+ ui-own-profile 1/1: modifica propria sincronizzata sul secondo telefono
 P2,profili-ruoli,passed,Modifica profilo.,usabilita:U0654,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,pending,modifica ruolo;,globale:T-0745,
 P2,profili-ruoli,passed,Modificare contemporaneamente lo stesso profilo da due dispositivi.,globale:T-0797,"ui-profile-multidevice Thailandia 1.48.18 Samsung S20 FE QA 1/1: due sessioni reali dello stesso profilo su due telefoni leggono lo stesso numero di profili; il secondo telefono modifica nome, cognome ed età e il primo riceve il profilo aggiornato; due salvataggi touch concorrenti restituiscono entrambi 200 e lo stato finale coincide integralmente con una delle due versioni, senza campi mescolati o profilo corrotto. Dati originali ripristinati e pulizia QA completata."
@@ -1109,30 +1109,30 @@ P2,profili-ruoli,passed,Non modificare profili.,usabilita:U0368,Playwright mobil
 P2,profili-ruoli,passed,Passare a vista Viaggiatore.,usabilita:U0453,"ui-traveler-view Thailandia 1.48.31 Samsung S20 FE QA reale 1/1: una sessione Viaggiatore parte con ruolo coordinator e profile_id manipolati nel telefono; il server ripristina identità e ruolo traveler, la UI touch mostra Gruppo, Documenti e Scarica dati, non monta la Griglia coordinatore e l'endpoint riservato agli inviti risponde 403."
 P2,profili-ruoli,passed,profile_id;,addendum:A0073,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P2,profili-ruoli,passed,profilo corretto;,usabilita:U0590;usabilita:U0599;usabilita:U0604;usabilita:U0640,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
-P2,profili-ruoli,pending,profilo creato;,globale:T-1575,
+P2,profili-ruoli,passed,profilo creato;,globale:T-1575,QA touch ui-profile-creation 1/1: due profili traveler creati con HTTP 201 e riletti dallo stato server
 P2,profili-ruoli,pending,profilo di un’altra persona;,addendum:A0121,
-P2,profili-ruoli,pending,profilo modificato;,globale:T-1576,
+P2,profili-ruoli,passed,profilo modificato;,globale:T-1576,QA touch ui-own-profile 1/1: dati modificati riletti sul secondo telefono
 P2,profili-ruoli,pending,profilo non collegato;,usabilita:U0496,
 P2,profili-ruoli,pending,profilo o ospite corretto;,usabilita:U0597,
 P2,profili-ruoli,pending,profilo;,globale:T-1577,
 P2,profili-ruoli,passed,Protezione contro modifica manuale del profile_id.,globale:T-0225,P0_ROLES 20/20 + P0_AUTHORIZATION_MATRIX 86/86: modifica manuale di profile_id ignorata o rifiutata per ogni comando protetto.
 P2,profili-ruoli,passed,Protezione contro modifica manuale del ruolo.,globale:T-0226,P0_ROLES 20/20 + ui-role-live Thailandia 1.48.4 1/1: ruolo manuale non concede privilegi; promozione/revoca sono server-side e aggiornano il telefono aperto.
 P2,profili-ruoli,passed,reinviarla dopo cambio ruolo;,addendum:A0329,Live demotion command 403 + authenticated remote QA 20/20; preview a4b05356; 2026-08-04
-P2,profili-ruoli,pending,risultati dei test API per ruolo;,addendum:A0475,
-P2,profili-ruoli,pending,risultati dei test di cambio ruolo;,addendum:A0478,
+P2,profili-ruoli,passed,risultati dei test API per ruolo;,addendum:A0475,QA touch coordinator-grid 1/1 + access-boundary 3/3: API private 401 pubblico; sessione viaggiatore senza griglia; sessione coordinatrice valida
+P2,profili-ruoli,passed,risultati dei test di cambio ruolo;,addendum:A0478,QA touch coordinator-grid 1/1: manipolazione locale traveler→coordinator annullata dal server; same-device-switch 1/1 richiede blocco volontario
 P2,profili-ruoli,passed,Risultati filtrati in base al ruolo.,globale:T-1704,"P0_AUTHORIZATION_MATRIX 86/86 + ui-public-access-boundary 2/2: stato e comandi sono filtrati per pubblico, viaggiatore e coordinatore."
-P2,profili-ruoli,pending,ruolo corrente;,addendum:A0414,
+P2,profili-ruoli,passed,ruolo corrente;,addendum:A0414,QA touch coordinator-grid 1/1: ruolo corrente riletto dalla sessione verificata
 P2,profili-ruoli,pending,ruolo modificato;,globale:T-1581,
-P2,profili-ruoli,pending,ruolo mostrato;,addendum:A0045,
+P2,profili-ruoli,passed,ruolo mostrato;,addendum:A0045,QA touch coordinator-grid 1/1: pill e comandi mostrano traveler/coordinator restituito dal server
 P2,profili-ruoli,passed,ruolo;,globale:T-1582;usabilita:U0388,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
-P2,profili-ruoli,pending,se è Viaggiatore;,addendum:A0429,
+P2,profili-ruoli,passed,se è Viaggiatore;,addendum:A0429,QA touch ui-own-profile 1/1 e coordinator-grid 1/1: percorso viaggiatore reale senza privilegi coordinatrice
 P2,profili-ruoli,passed,"Se la pubblicazione richiede obbligatoriamente un profilo personale, non mostrare il compositore finché il dispositivo non è associato a un profilo.",usabilita:U0003,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P2,profili-ruoli,pending,telefono B – Viaggiatore 1;,globale:T-0302,
 P2,profili-ruoli,pending,telefono C – Viaggiatore 2;,globale:T-0303,
 P2,profili-ruoli,passed,Tentare di accedere come Viaggiatore B usando il codice comune.,globale:T-0334,P0_ACCESS_SESSION_BOUNDARIES 17/17 + P0_AUTHORIZATION_MATRIX 86/86: la password comune non apre endpoint personali e non può essere usata per impersonare il Viaggiatore B o un profilo esistente; è richiesta una sessione personale legata al dispositivo.
 P2,profili-ruoli,passed,Tentare di modificare un profilo.,usabilita:U0622,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,passed,Tentare di scegliere un profilo esistente.,usabilita:U0634,"ui-people Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: dopo creazione e modifica di un altro viaggiatore il profilo locale resta quello del coordinatore autenticato; un viaggiatore vede la persona esistente ma non riceve comandi per sceglierla, modificarla, crearle inviti o aprirne i documenti."
-P2,profili-ruoli,pending,test come Viaggiatore;,usabilita:U0721,
+P2,profili-ruoli,passed,test come Viaggiatore;,usabilita:U0721,QA touch ui-own-profile 1/1 + coordinator-grid 1/1 su Galaxy S9+
 P2,profili-ruoli,pending,test del percorso completo del Viaggiatore;,globale:T-1806,
 P2,profili-ruoli,passed,Tutti controllano il proprio profilo.,globale:T-1733,ui-own-profile Thailandia 1.48.18 Samsung S20 FE QA 1/1: il viaggiatore apre e modifica con touch soltanto la propria scheda; un secondo viaggiatore vede l'aggiornamento ma non riceve il comando Modifica profilo e conserva la propria identità. Dati originali ripristinati a fine prova.
 P2,profili-ruoli,passed,Verificare che il cambio di anteprima non modifichi il ruolo reale.,usabilita:U0455,ui-session-history 2/2 + P0_ROLES 20/20: il cambio di anteprima modifica soltanto la vista e non il ruolo reale verificato dal server.
@@ -1148,9 +1148,9 @@ P2,profili-ruoli,passed,Verificare profile_id o guest_id corretto.,usabilita:U00
 P2,profili-ruoli,passed,Verificare profili precedenti conservati.,globale:T-1039,P0_MIGRATION_CHAIN 23/23 + P0_LEGACY_DATA_PRESERVATION 3/3: i profili precedenti restano presenti e invariati attraverso l’intera catena di migrazione.
 P2,profili-ruoli,pending,Verificare profilo colore.,globale:T-1437,
 P2,profili-ruoli,passed,Verificare profilo corretto.,globale:T-1610;usabilita:U0405,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P2,profili-ruoli,pending,Verificare ruolo effettivo.,usabilita:U0626,
-P2,profili-ruoli,pending,Verificare ruolo mostrato.,usabilita:U0069,
-P2,profili-ruoli,pending,Viaggiatore,globale:T-0291;addendum:A0211,
+P2,profili-ruoli,passed,Verificare ruolo effettivo.,usabilita:U0626,QA touch coordinator-grid 1/1: localStorage falsificato viene corretto dalla sessione server
+P2,profili-ruoli,passed,Verificare ruolo mostrato.,usabilita:U0069,QA touch coordinator-grid 1/1: ruolo visivo coincide con il ruolo della sessione
+P2,profili-ruoli,passed,Viaggiatore,globale:T-0291;addendum:A0211,QA touch ui-own-profile 1/1 + access-boundary 3/3 + coordinator-grid 1/1
 P2,social,pending,1.000 commenti.,globale:T-0558,
 P2,social,pending,10.000 commenti.,globale:T-1098,
 P2,social,pending,10.000 reazioni.,globale:T-0562,
