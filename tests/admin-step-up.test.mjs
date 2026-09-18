@@ -30,9 +30,9 @@ test("lo step-up firmato è breve e vincolato a profilo e dispositivo", async ()
   assert.equal(await validAdminStepUp(request, env, { ...session, profile_id: "coordinator-2" }), false);
   assert.equal(await validAdminStepUp(request, env, { ...session, role: "traveler" }), false);
   const [payload, signature] = issued.token.split(".");
-  const replacement = signature.endsWith("x") ? "y" : "x";
+  const replacement = signature.startsWith("x") ? "y" : "x";
   const tampered = new Request("https://qa.example/api/private", {
-    headers: { "x-admin-step-up": `${payload}.${signature.slice(0, -1)}${replacement}` },
+    headers: { "x-admin-step-up": `${payload}.${replacement}${signature.slice(1)}` },
   });
   assert.equal(await validAdminStepUp(tampered, env, session), false);
   assert.ok(Date.parse(issued.expires_at) - Date.now() <= 10 * 60 * 1000);

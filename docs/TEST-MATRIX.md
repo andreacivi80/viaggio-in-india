@@ -595,7 +595,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0580 | 33 | Lasciare l’app aperta per 24 ore. | NON ESEGUITO | — |
 | T-0581 | 33 | Lasciare l’app aperta per 8 ore. | NON ESEGUITO | — |
 | T-0582 | 33 | Misurare apertura iniziale. | NON ESEGUITO | — |
-| T-0583 | 33 | Misurare apertura mappa. | NON ESEGUITO | — |
+| T-0583 | 33 | Misurare apertura mappa. | SUPERATO | QA reale Galaxy S9+: apertura misurata in 2689 ms; `ui-map-touch-drag` 1/1. |
 | T-0584 | 33 | Misurare apertura successiva. | NON ESEGUITO | — |
 | T-0585 | 33 | Misurare batteria in un’ora. | NON ESEGUITO | — |
 | T-0586 | 33 | Misurare caricamento documento. | NON ESEGUITO | — |
@@ -988,7 +988,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0973 | 52 | Premere Indietro del browser. | NON ESEGUITO | — |
 | T-0974 | 52 | Tornare da Google Maps. | NON ESEGUITO | — |
 | T-0975 | 52 | Tornare da un documento. | NON ESEGUITO | — |
-| T-0976 | 52 | Tornare dalla mappa. | NON ESEGUITO | — |
+| T-0976 | 52 | Tornare dalla mappa. | SUPERATO | QA reale Galaxy S9+: ritorno a Bacheca dopo trascinamento; `ui-google-maps-return` 2/2. |
 | T-0977 | 52 | Tornare dopo la visualizzazione di una fotografia. | NON ESEGUITO | — |
 | T-0978 | 52 | Verificare apertura del commento preciso. | NON ESEGUITO | — |
 | T-0979 | 52 | Verificare apertura del giorno preciso. | NON ESEGUITO | — |
@@ -1215,7 +1215,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1200 | 66 | Apertura della giornata corrente. | NON ESEGUITO | — |
 | T-1201 | 66 | Apertura documento autorizzato. | NON ESEGUITO | — |
 | T-1202 | 66 | Apertura invito. | NON ESEGUITO | — |
-| T-1203 | 66 | Apertura mappa. | NON ESEGUITO | — |
+| T-1203 | 66 | Apertura mappa. | SUPERATO | QA reale Galaxy S9+: `ui-maps-1.37.23` 6/6 e `ui-map-touch-drag` 1/1. |
 | T-1204 | 66 | Apertura pubblica. | NON ESEGUITO | — |
 | T-1205 | 66 | Attivazione notifiche. | NON ESEGUITO | — |
 | T-1206 | 66 | Attivazione sessione. | NON ESEGUITO | — |
@@ -1402,7 +1402,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1387 | 73 | posizione precisa disattiva; | NON ESEGUITO | — |
 | T-1388 | 73 | silenziose; | NON ESEGUITO | — |
 | T-1389 | 74 | Applicare un filtro al feed. | NON ESEGUITO | — |
-| T-1390 | 74 | Aprire la mappa. | NON ESEGUITO | — |
+| T-1390 | 74 | Aprire la mappa. | SUPERATO | QA reale Galaxy S9+: tutte le 11 mappe giornaliere aperte e trascinamento touch verificato. |
 | T-1391 | 74 | Aprire la tastiera. | NON ESEGUITO | — |
 | T-1392 | 74 | Aprire un post specifico. | NON ESEGUITO | — |
 | T-1393 | 74 | Aprire un profilo. | SUPERATO | QA touch Galaxy S9+ `ui-own-profile` 1/1: apertura della propria scheda dal Gruppo. |
@@ -1781,7 +1781,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1766 | 98 | spazio disponibile; | NON ESEGUITO | — |
 | T-1767 | 98 | ultimo backup; | NON ESEGUITO | — |
 | T-1768 | 98 | versione corretta; | NON ESEGUITO | — |
-| T-1769 | 99 | aprire la mappa; | NON ESEGUITO | — |
+| T-1769 | 99 | aprire la mappa; | SUPERATO | QA reale Galaxy S9+: tutte le 11 mappe giornaliere aperte e trascinamento touch verificato. |
 | T-1770 | 99 | attivare le notifiche; | NON ESEGUITO | — |
 | T-1771 | 99 | cancellare la posizione; | NON ESEGUITO | — |
 | T-1772 | 99 | commentare un post; | NON ESEGUITO | — |

@@ -89,7 +89,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.58",
+const VERSION = "1.48.59",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -491,7 +491,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
         zoom: 5.2,
         minZoom: 4,
         attributionControl: false,
-        cooperativeGestures: true,
+        cooperativeGestures: false,
         antialias: true,
         fadeDuration: 0,
       });
@@ -1148,7 +1148,7 @@ function ItalyTravelerMap({ people }) {
         zoom: 4.5,
         minZoom: 4,
         attributionControl: false,
-        cooperativeGestures: true,
+        cooperativeGestures: false,
         antialias: true,
       });
       map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
