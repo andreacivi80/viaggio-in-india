@@ -67,6 +67,12 @@ const locationAgeFixtures = testFiles.includes("ui-location-age-labels.spec.mjs"
 INSERT INTO locations(profile_id,display_name,latitude,longitude,accuracy,updated_at) VALUES(${sql(profiles.owner)},'Posizione recente QA',13.7563,100.5018,25,${sql(new Date(Date.now() - 5 * 60000).toISOString())});
 INSERT INTO locations(profile_id,display_name,latitude,longitude,accuracy,updated_at) VALUES(${sql(profiles.other)},'Posizione vecchia QA',13.7463,100.5118,50,${sql(new Date(Date.now() - 2 * 3600000).toISOString())});
 INSERT INTO locations(profile_id,display_name,latitude,longitude,accuracy,updated_at) VALUES(${sql(profiles.coordinator)},'Posizione scaduta QA',13.7363,100.5218,75,${sql(new Date(Date.now() - 18 * 3600000).toISOString())});` : "";
+const mediaCapUploadIds = [value("qa-media-cap-a"), value("qa-media-cap-b")];
+const mediaCapFixtures = testFiles.includes("extended-p3-media-post-cap.mjs") ? `
+INSERT INTO upload_sessions(id,profile_id,upload_id,object_key,scope,visibility,content_type,file_name,file_size,status,created_at,expires_at,completed_at)
+VALUES(${sql(mediaCapUploadIds[0])},${sql(profiles.owner)},${sql(mediaCapUploadIds[0])},${sql(`chunked/public/${mediaCapUploadIds[0]}.mp4`)},'post','public','video/mp4','cap-a.mp4',325058560,'completed',${sql(created)},${sql(expires)},${sql(created)});
+INSERT INTO upload_sessions(id,profile_id,upload_id,object_key,scope,visibility,content_type,file_name,file_size,status,created_at,expires_at,completed_at)
+VALUES(${sql(mediaCapUploadIds[1])},${sql(profiles.owner)},${sql(mediaCapUploadIds[1])},${sql(`chunked/public/${mediaCapUploadIds[1]}.mp4`)},'post','public','video/mp4','cap-b.mp4',325058560,'completed',${sql(created)},${sql(expires)},${sql(created)});` : "";
 const setup = `
 UPDATE profiles SET role='traveler' WHERE role='coordinator' AND id LIKE 'qa-%';
 ${profileInsert(profiles.owner, "Proprietario")}
@@ -87,7 +93,8 @@ INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_
 INSERT INTO posts(id,author_name,profile_id,day_index,visibility,text,created_at) VALUES(${sql(referencePostId)},'Proprietario QA',${sql(profiles.owner)},-1,'public',${sql(`Pubblicazione di riferimento QA ${runId}`)},${sql(created)});
 ${pushSql}
 ${retentionFixtures}
-${locationAgeFixtures}`;
+${locationAgeFixtures}
+${mediaCapFixtures}`;
 const quotedIds = ids.map(sql).join(",");
 const quotedActors = ids.map((id) => sql(`profile:${id}`)).join(",");
 const cleanup = `
@@ -162,6 +169,7 @@ try {
     QA_SECOND_DEVICE_ID: value("device-owner-secondary"), QA_SECOND_DEVICE_TOKEN: tokens.secondary,
     QA_OTHER_DEVICE_ID: value("device-other"),
     QA_RUN_ID: runId, QA_REFERENCE_POST_ID: referencePostId,
+    QA_MEDIA_CAP_UPLOAD_IDS: JSON.stringify(mediaCapUploadIds),
     QA_DELETE_PROFILE_ID: profiles.deleting, QA_DELETE_PROFILE_TOKEN: tokens.deleting,
     QA_OWNER_DEVICE_KEY: deviceKeys.owner, QA_OTHER_DEVICE_KEY: deviceKeys.other,
     QA_COORDINATOR_DEVICE_KEY: deviceKeys.coordinator,

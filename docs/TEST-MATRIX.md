@@ -157,7 +157,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0142 | 10 | Un solo post dopo dieci retry. | NON ESEGUITO | — |
 | T-0143 | 10 | Una sola posizione dopo dieci retry. | NON ESEGUITO | — |
 | T-0144 | 10 | Una sola reazione dopo dieci retry. | NON ESEGUITO | — |
-| T-0145 | 11 | bonifica periodica dei file orfani. | NON ESEGUITO | — |
+| T-0145 | 11 | bonifica periodica dei file orfani. | SUPERATO | `media-quota` 3/3 + `upload-failure-compensation` 2/2: cleanup ogni 6 ore degli upload scaduti; rollback immediato delle parti MEDIA prive di record D1. |
 | T-0146 | 11 | compressione fotografie; | SUPERATO | MEDIA_COMPRESSION 4/4: JPEG/WebP oltre 2 MiB ricodificati a qualità 0,88 e lato massimo 2560 px, orientamento rispettato, proporzioni integre e fallback all’originale. |
 | T-0147 | 11 | compressione video; | SUPERATO | Revisione 1.48.56: comando touch opzionale oltre 25 MiB, ricodifica locale a bitrate ridotto con avanzamento e originale del telefono invariato. QA Galaxy S9+ 1/1: MP4 da 26 MiB ridotto, pubblicato, riaperto e riprodotto; fallback sicuro se il browser non supporta la ricodifica. |
 | T-0148 | 11 | continuazione dopo chiusura dell’app; | NON ESEGUITO | — |
@@ -1024,7 +1024,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1009 | 54 | Aggiungere chiavi esterne o controlli equivalenti. | NON ESEGUITO | — |
 | T-1010 | 54 | Eliminando un post, eliminare media, commenti e reazioni. | NON ESEGUITO | — |
 | T-1011 | 54 | Eliminando un profilo, gestire documenti, posizioni, sessioni e inviti. | NON ESEGUITO | — |
-| T-1012 | 54 | Non devono esistere file nell’archivio MEDIA senza riferimento. | NON ESEGUITO | — |
+| T-1012 | 54 | Non devono esistere file nell’archivio MEDIA senza riferimento. | SUPERATO | `upload-failure-compensation` 2/2 + manutenzione: scrittura D1 fallita elimina subito la parte MEDIA e gli upload scaduti vengono rimossi. |
 | T-1013 | 54 | Non devono esistere riferimenti nel database a file mancanti. | NON ESEGUITO | — |
 | T-1014 | 54 | Ogni allegato deve essere collegato a un post esistente. | NON ESEGUITO | — |
 | T-1015 | 54 | Ogni commento deve essere collegato a un post esistente. | NON ESEGUITO | — |
@@ -1068,7 +1068,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1053 | 56 | Distinguere limiti per IP, sessione e profilo. | NON ESEGUITO | — |
 | T-1054 | 56 | Mostrare tempo prima di poter riprovare. | NON ESEGUITO | — |
 | T-1055 | 56 | Non bloccare permanentemente un utente legittimo. | NON ESEGUITO | — |
-| T-1056 | 56 | Proteggere Cloudflare D1 e MEDIA da consumi anomali. | NON ESEGUITO | — |
+| T-1056 | 56 | Proteggere Cloudflare D1 e MEDIA da consumi anomali. | SUPERATO | `media-quota` 3/3 + QA reale: due upload completati da 310 MB respinti insieme con HTTP 413; rate limit init/parti, massimo 6 upload attivi, quota 1 GB attiva, 600 MB per post, scadenza 48 ore. |
 | T-1057 | 56 | Registrare eventi sospetti. | NON ESEGUITO | — |
 | T-1058 | 56 | Verificare risposta 429. | NON ESEGUITO | — |
 | T-1059 | 57 | Chiusura modale mediante tastiera. | NON ESEGUITO | — |
@@ -1525,7 +1525,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1510 | 82 | Verificare certificato HTTPS. | NON ESEGUITO | — |
 | T-1511 | 82 | Verificare che i test non utilizzino dati di produzione. | NON ESEGUITO | — |
 | T-1512 | 82 | Verificare configurazione del dominio. | NON ESEGUITO | — |
-| T-1513 | 82 | Verificare limiti dell’archivio MEDIA. | NON ESEGUITO | — |
+| T-1513 | 82 | Verificare limiti dell’archivio MEDIA. | SUPERATO | `media-quota` 3/3 + QA reale 2×310 MB respinto con HTTP 413: documento 80 MB; foto/audio 120 MB; video 500 MB; post 600 MB; upload attivi 1 GB. |
 | T-1514 | 82 | Verificare limiti delle Functions. | NON ESEGUITO | — |
 | T-1515 | 82 | Verificare limiti di D1. | NON ESEGUITO | — |
 | T-1516 | 82 | Verificare log di deploy. | NON ESEGUITO | — |
@@ -1536,7 +1536,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1521 | 82 | Verificare VAPID_PUBLIC_KEY. | SUPERATO | Static 264/264 `vapid-secret-boundary`: endpoint `push/config` restituisce esclusivamente `VAPID_PUBLIC_KEY`. |
 | T-1522 | 82 | Verificare variabile GROUP_CODE. | SUPERATO | Build 1.48.57: `GROUP_CODE` resta binding server e il valore non entra in sorgente o bundle client. |
 | T-1523 | 83 | Calcolare consumo giornaliero previsto. | NON ESEGUITO | — |
-| T-1524 | 83 | Calcolare consumo massimo di un post con 10 allegati. | NON ESEGUITO | — |
+| T-1524 | 83 | Calcolare consumo massimo di un post con 10 allegati. | SUPERATO | `media-quota` 3/3 + QA reale: due upload completati da 310 MB respinti insieme con HTTP 413; massimo 10 allegati e 600 MB complessivi per post. |
 | T-1525 | 83 | Calcolare consumo per 14 giorni. | NON ESEGUITO | — |
 | T-1526 | 83 | Calcolare numero di richieste per utente al giorno. | NON ESEGUITO | — |
 | T-1527 | 83 | Calcolare peso medio di un audio. | NON ESEGUITO | — |
@@ -1556,7 +1556,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1541 | 84 | Aumento improvviso dei tempi di risposta. | NON ESEGUITO | — |
 | T-1542 | 84 | Backup non eseguito. | NON ESEGUITO | — |
 | T-1543 | 84 | Errore API 500. | NON ESEGUITO | — |
-| T-1544 | 84 | Errore archivio MEDIA. | NON ESEGUITO | — |
+| T-1544 | 84 | Errore archivio MEDIA. | SUPERATO | `upload-failure-compensation` 2/2: errore MEDIA non registra la parte e il retry completa senza duplicati. |
 | T-1545 | 84 | Errore conversione HEIC. | NON ESEGUITO | — |
 | T-1546 | 84 | Errore database. | NON ESEGUITO | — |
 | T-1547 | 84 | Errore JavaScript frontend. | NON ESEGUITO | — |

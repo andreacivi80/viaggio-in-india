@@ -1392,14 +1392,14 @@ P3,altro,pending,Bloccare e sbloccare lo schermo.,globale:T-1396,
 P3,altro,pending,Bloccare lo schermo durante la registrazione.,globale:T-0446,
 P3,altro,pending,bloccare lo schermo;,globale:T-0809;usabilita:U0231;usabilita:U0539,
 P3,altro,pending,BLOCCATO,globale:T-0277;usabilita:U0033,
-P3,altro,pending,bonifica periodica dei file orfani.,globale:T-0145,
+P3,altro,passed,bonifica periodica dei file orfani.,globale:T-0145,"media-quota 3/3 + upload-failure-compensation 2/2: cleanup ogni 6 ore degli upload scaduti; rollback immediato delle parti MEDIA prive di record D1"
 P3,altro,passed,Bozza conservata.,usabilita:U0487;usabilita:U0530,"resumable-upload 5/5 + offline-queue 2/2: bozze, allegati e parti già accettate restano nel dispositivo dopo interruzione e riapertura."
 P3,altro,pending,Bozza recuperabile.,usabilita:U0491,
 P3,altro,pending,bozze personali;,addendum:A0074,
 P3,altro,pending,Browser con cookie/storage bloccati.,globale:T-1082,
 P3,altro,pending,browser;,globale:T-1241,
 P3,altro,passed,button senza onClick;,addendum:A0179,"TypeScript JSX inventory: 115 interactive elements, zero missing handlers/empty links; Playwright credential flow"
-P3,altro,pending,Calcolare consumo massimo di un post con 10 allegati.,globale:T-1524,
+P3,altro,passed,Calcolare consumo massimo di un post con 10 allegati.,globale:T-1524,media-quota 3/3 + QA reale: due upload completati da 310 MB respinti insieme con HTTP 413; massimo 10 allegati e 600 MB complessivi per post
 P3,altro,pending,Calcolare consumo per 14 giorni.,globale:T-1525,
 P3,altro,pending,Calcolare hash dei file.,globale:T-1157,
 P3,altro,pending,Calcolare numero di richieste per utente al giorno.,globale:T-1526,
@@ -2739,9 +2739,9 @@ P3,media-upload,pending,aggiornare immediatamente tutte le schermate coinvolte;,
 P3,media-upload,pending,Arresto immediato.,globale:T-0201,
 P3,media-upload,pending,Chiusura modale mediante tastiera.,globale:T-1059,
 P3,media-upload,pending,consumo MEDIA;,globale:T-1113,
-P3,media-upload,pending,Errore archivio MEDIA.,globale:T-1544,
-P3,media-upload,pending,Non devono esistere file nell’archivio MEDIA senza riferimento.,globale:T-1012,
-P3,media-upload,pending,Proteggere Cloudflare D1 e MEDIA da consumi anomali.,globale:T-1056,
+P3,media-upload,passed,Errore archivio MEDIA.,globale:T-1544,upload-failure-compensation 2/2: errore MEDIA non registra la parte e il retry completa senza duplicati
+P3,media-upload,passed,Non devono esistere file nell’archivio MEDIA senza riferimento.,globale:T-1012,upload-failure-compensation 2/2 + manutenzione: scrittura D1 fallita elimina subito la parte MEDIA e gli upload scaduti vengono rimossi
+P3,media-upload,passed,Proteggere Cloudflare D1 e MEDIA da consumi anomali.,globale:T-1056,"media-quota 3/3 + QA reale 2x310 MB respinto HTTP 413: rate limit init/parti; massimo 6 upload attivi; quota 1 GB attiva; 600 MB per post; scadenza 48 ore"
 P3,media-upload,pending,quali tasti sono immediatamente disponibili;,addendum:A0313,
 P3,media-upload,pending,Ruotare immediatamente qualsiasi segreto eventualmente esposto.,globale:T-1503,
 P3,media-upload,pending,test dei formati multimediali;,globale:T-0014,
@@ -2750,7 +2750,7 @@ P3,media-upload,pending,Verificare blocco immediato.,globale:T-1617,
 P3,media-upload,passed,Verificare comparsa immediata nel feed.,usabilita:U0020,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P3,media-upload,passed,Verificare comparsa immediata.,usabilita:U0261,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
 P3,media-upload,pending,Verificare la tappa intermedia di Ranakpur.,globale:T-0192,
-P3,media-upload,pending,Verificare limiti dell’archivio MEDIA.,globale:T-1513,
+P3,media-upload,passed,Verificare limiti dell’archivio MEDIA.,globale:T-1513,"media-quota 3/3 + QA reale 2x310 MB respinto HTTP 413: documento 80 MB; foto/audio 120 MB; video 500 MB; post 600 MB; upload attivi 1 GB"
 P3,media-upload,pending,Verificare ordinamento corretto mediante timestamp server.,globale:T-0804,
 P3,media-upload,pending,Verificare ordinamento dei post mediante ora server.,globale:T-0944,
 P3,media-upload,passed,Verificare protezione mediante CSP frame-ancestors.,globale:T-1491,deployment-boundaries 4/4: sito limitato a self e API a none; embedding esterno bloccato

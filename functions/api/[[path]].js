@@ -770,6 +770,7 @@ async function saveMedia(env, file, prefix = "public") {
 }
 
 const UPLOAD_PART_SIZE = 4 * 1024 * 1024;
+export const MAX_POST_MEDIA_BYTES = 600 * 1024 * 1024;
 const uploadLimit = (contentType, scope) => {
   if (scope === "document") return 80 * 1024 * 1024;
   if (contentType.startsWith("video/")) return 500 * 1024 * 1024;
@@ -2384,6 +2385,12 @@ export async function onRequest(context) {
         if (!upload) return json({ error: "Caricamento grande non valido o già utilizzato" }, 409);
         uploadedMedia.push({ uploadId: upload.id, key: upload.object_key, type: upload.content_type, name: upload.file_name, size: upload.file_size });
       }
+      const requestedMediaBytes = files.reduce((total, file) => total + Number(file.size || 0), 0)
+        + uploadedMedia.reduce((total, media) => total + Number(media.size || 0), 0);
+      if (requestedMediaBytes > MAX_POST_MEDIA_BYTES)
+        return json({
+          error: "Gli allegati del post superano il limite complessivo di 600 MB. Riduci i video o pubblicali in post separati.",
+        }, 413);
       const row = {
         id: id(),
         author_name: `${session.name} ${session.surname || ""}`.trim(),
