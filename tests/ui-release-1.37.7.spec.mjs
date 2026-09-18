@@ -31,6 +31,8 @@ async function mockApi(page, authenticated = false, profileCreation = [], initia
       localStorage.setItem("india-profile-id", "p01");
       localStorage.setItem("india-visitor-name", "Valentina C");
       localStorage.setItem("india-role", "coordinator");
+      sessionStorage.setItem("thailand-admin-step-up", "qa-step-up");
+      sessionStorage.setItem("thailand-admin-step-up-expires", new Date(Date.now() + 600000).toISOString());
     });
   }
   await page.route("**/api/**", async (route) => {
@@ -44,7 +46,7 @@ async function mockApi(page, authenticated = false, profileCreation = [], initia
       return route.fulfill({ status: 201, contentType: "application/json", body: JSON.stringify({ id: profile.id }) });
     }
     if (path === "/api/auth/session") return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ profile: profiles[0] }) });
-    if (path === "/api/private") return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ viewer: { profile_id: "p01", role: "coordinator" }, documents, locations: [] }) });
+    if (path === "/api/private") return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ viewer: { profile_id: "p01", role: "coordinator", admin_verified: true }, documents, locations: [] }) });
     if (path === "/api/auth/devices") return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ devices: [] }) });
     if (path === "/api/sync/version") return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ version: 1 }) });
     if (path === "/api/health") return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, version: 1 }) });
@@ -174,6 +176,29 @@ test("18 viaggiatori scorrono fino ad Andrea, mantengono ordine e colori, la X r
     modalClass: document.documentElement.classList.contains("travelerDirectoryOpen"),
     bodyPosition: document.body.style.position,
   }))).toEqual({ modalClass: false, bodyPosition: "" });
+});
+
+test("zero profili mantiene la bacheca utilizzabile e mostra un elenco vuoto", async ({ page }) => {
+  await mockApi(page, false, [], []);
+  await page.goto("/", { waitUntil: "networkidle" });
+  await expect(page.locator(".heroTravelersMain")).toHaveAccessibleName("Apri elenco viaggiatori, 0 persone");
+  await page.locator(".heroTravelersMain").tap();
+  const dialog = page.getByRole("dialog", { name: "Elenco dei viaggiatori" });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator(".directoryPerson")).toHaveCount(0);
+  await dialog.getByRole("button", { name: "Chiudi elenco viaggiatori" }).tap();
+  await expect(page.getByRole("button", { name: "Bacheca", exact: true })).toBeVisible();
+});
+
+test("un solo profilo mantiene conteggio identità e scheda senza duplicati", async ({ page }) => {
+  await mockApi(page, false, [], profiles.slice(0, 1));
+  await page.goto("/", { waitUntil: "networkidle" });
+  await expect(page.locator(".heroTravelersMain")).toHaveAccessibleName("Apri elenco viaggiatori, 1 persone");
+  await page.locator(".heroTravelersMain").tap();
+  const rows = page.getByRole("dialog", { name: "Elenco dei viaggiatori" }).locator(".directoryPerson");
+  await expect(rows).toHaveCount(1);
+  await expect(rows.first()).toContainText("Valentina Careri");
+  await expect(rows.first()).toContainText("Coordinatrice");
 });
 
 test("audio e video si fermano quando il telefono manda l'app in background", async ({ page }) => {

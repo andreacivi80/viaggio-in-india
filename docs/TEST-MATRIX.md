@@ -1449,7 +1449,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1434 | 76 | Verificare fotografie HDR. | SUPERATO | Collaudo reale QA Galaxy S9+ 1/1 con PNG HDR 16 bit, primarie BT.2020 e curva PQ: selezione touch, pubblicazione, riapertura 4×2 e download identico; chunk colore cICP conservato e dati QA rimossi. |
 | T-1435 | 76 | Verificare Live Photo iPhone. | NON ESEGUITO | — |
 | T-1436 | 76 | Verificare orientamento EXIF. | NON ESEGUITO | — |
-| T-1437 | 76 | Verificare profilo colore. | NON ESEGUITO | — |
+| T-1437 | 76 | Verificare profilo colore. | SUPERATO | UI corrente Galaxy S9+ 7/7: donna, uomo e genere non indicato hanno classi e colori distinti. |
 | T-1438 | 76 | Verificare rimozione dei metadati sensibili dalle copie pubbliche. | NON ESEGUITO | — |
 | T-1439 | 76 | Verificare se i metadati vengono conservati o eliminati. | NON ESEGUITO | — |
 | T-1440 | 77 | Inviare coordinate fuori dall’India. | NON ESEGUITO | — |
@@ -1818,7 +1818,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1803 | 100 | test Android; | NON ESEGUITO | — |
 | T-1804 | 100 | test del Familiare; | NON ESEGUITO | — |
 | T-1805 | 100 | test del percorso completo del Coordinatore; | NON ESEGUITO | — |
-| T-1806 | 100 | test del percorso completo del Viaggiatore; | NON ESEGUITO | — |
+| T-1806 | 100 | test del percorso completo del Viaggiatore; | SUPERATO | QA reale `ui-traveler-view` 1/1, profilo 1/1, social 1/1 e matrice autorizzativa 88/88. |
 | T-1807 | 100 | test iPhone; | NON ESEGUITO | — |
 | T-1808 | 100 | test modalità aereo; | NON ESEGUITO | — |
 | T-1809 | 100 | test multidispositivo; | NON ESEGUITO | — |
