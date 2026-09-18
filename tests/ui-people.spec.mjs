@@ -6,10 +6,11 @@ const travelerName = process.env.QA_UI_PROFILE_NAME;
 const travelerInvite = process.env.QA_UI_INVITE_TOKEN;
 const coordinatorInvite = process.env.QA_UI_COORDINATOR_INVITE_TOKEN;
 const managedName = process.env.QA_UI_MANAGED_PROFILE_NAME;
+const groupCode = process.env.QA_UI_GROUP_CODE;
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 
 test.skip(
-  !travelerName || !travelerInvite || !coordinatorInvite || !managedName || !baseUrl,
+  !travelerName || !travelerInvite || !coordinatorInvite || !managedName || !groupCode || !baseUrl,
   "Profili QA e URL richiesti",
 );
 
@@ -54,6 +55,11 @@ test("il coordinatore crea e aggiorna una persona mentre gli altri vedono i perm
     const coordinatorProfileId = await coordinatorPage.evaluate(() => localStorage.getItem("india-profile-id"));
     expect(coordinatorProfileId).toBeTruthy();
     await tapBottom(coordinatorPage, "Gruppo");
+    const stepUp = coordinatorPage.locator(".adminStepUp");
+    await expect(stepUp).toBeVisible();
+    await stepUp.getByLabel("Password per funzioni amministrative").fill(groupCode);
+    await stepUp.getByRole("button", { name: "Attiva per 10 minuti" }).tap();
+    await expect(coordinatorPage.getByText(/amministrazione attiva/i)).toBeVisible();
     const form = coordinatorPage.locator(".profileForm");
     await expect(form).toBeVisible();
     await form.getByRole("button", { name: "Inserisci viaggiatore" }).tap();

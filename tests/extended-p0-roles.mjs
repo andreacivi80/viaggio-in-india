@@ -5,6 +5,7 @@ const travelerId = process.env.QA_PROFILE_ID;
 const otherId = process.env.QA_SECOND_PROFILE_ID;
 const inviteTargetId = process.env.QA_UNCLAIMED_PROFILE_ID;
 const coordinatorId = process.env.QA_COORDINATOR_PROFILE_ID;
+const groupCode = process.env.QA_GROUP_CODE;
 const traveler = {
   authorization: `Bearer ${process.env.QA_SESSION_TOKEN}`,
   "x-device-key": process.env.QA_OWNER_DEVICE_KEY,
@@ -18,7 +19,7 @@ const coordinator = {
   "x-device-key": process.env.QA_COORDINATOR_DEVICE_KEY,
 };
 const request = (path, init = {}) => fetch(`${base}${path}`, { cache: "no-store", ...init });
-if (!base || !travelerId || !otherId || !inviteTargetId || !coordinatorId) throw new Error("Ambiente QA P0 ruoli incompleto");
+if (!base || !travelerId || !otherId || !inviteTargetId || !coordinatorId || !groupCode) throw new Error("Ambiente QA P0 ruoli incompleto");
 
 const profileForm = (name, role) => {
   const form = new FormData();
@@ -39,6 +40,13 @@ const sessionRole = async (headers) => {
 };
 
 assert.equal(await sessionRole(coordinator), "coordinator");
+const stepUpResponse = await request("/api/auth/admin-step-up", {
+  method: "POST",
+  headers: { ...coordinator, "content-type": "application/json" },
+  body: JSON.stringify({ password: groupCode }),
+});
+assert.equal(stepUpResponse.status, 200);
+const coordinatorAdmin = { ...coordinator, "x-admin-step-up": (await stepUpResponse.json()).token };
 
 assert.equal((await request("/api/profiles", {
   method: "POST",
@@ -58,7 +66,7 @@ assert.equal((await request("/api/auth/invites", {
 
 assert.equal((await request(`/api/profiles/${travelerId}`, {
   method: "PUT",
-  headers: coordinator,
+  headers: coordinatorAdmin,
   body: profileForm("Proprietario", "coordinator"),
 })).status, 200);
 assert.equal(await sessionRole(traveler), "traveler");
@@ -70,7 +78,7 @@ assert.equal((await request("/api/auth/invites", {
 
 assert.equal((await request(`/api/profiles/${travelerId}`, {
   method: "PUT",
-  headers: coordinator,
+  headers: coordinatorAdmin,
   body: profileForm("Proprietario", "traveler"),
 })).status, 200);
 assert.equal(await sessionRole(traveler), "traveler");
@@ -82,7 +90,7 @@ assert.equal((await request("/api/auth/invites", {
 
 assert.equal((await request(`/api/profiles/${coordinatorId}`, {
   method: "PUT",
-  headers: coordinator,
+  headers: coordinatorAdmin,
   body: profileForm("Coordinatore", "traveler"),
 })).status, 200);
 assert.equal(await sessionRole(coordinator), "coordinator");

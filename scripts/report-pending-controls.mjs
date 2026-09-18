@@ -37,6 +37,11 @@ function parseCsv(text) {
 const controls = parseCsv(readFileSync(new URL("../docs/CONTROL-COVERAGE.csv", import.meta.url), "utf8"));
 const pending = controls.filter((control) => control.status !== "passed");
 const urgent = pending.filter((control) => control.priority === "P0" || control.priority === "P1");
+const summary = new Map();
+for (const control of pending) {
+  const key = `${control.priority}|${control.category}`;
+  summary.set(key, (summary.get(key) || 0) + 1);
+}
 
 console.log(`COLUMNS=${Object.keys(controls[0] || {}).join("|")}`);
 console.log(`PENDING_TOTAL=${pending.length}`);
@@ -50,3 +55,10 @@ for (const control of urgent) {
     control.evidence,
   ].join(" | "));
 }
+console.log("PENDING_BY_PRIORITY_CATEGORY");
+for (const [key, count] of [...summary].sort(([left], [right]) => left.localeCompare(right)))
+  console.log(`${key}|${count}`);
+const nextP2 = pending.filter((control) => control.priority === "P2").slice(0, 40);
+console.log(`NEXT_P2=${nextP2.length}`);
+for (const control of nextP2)
+  console.log([control.category, control.control, control.source_rows].join(" | "));

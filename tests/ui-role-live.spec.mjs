@@ -8,14 +8,15 @@ const travelerInvite = process.env.QA_UI_INVITE_TOKEN;
 const secondTravelerInvite = process.env.QA_UI_SWITCH_INVITE_TOKEN;
 const coordinatorInvite = process.env.QA_UI_COORDINATOR_INVITE_TOKEN;
 const expiredSessionToken = process.env.QA_UI_EXPIRED_SESSION_TOKEN;
+const groupCode = process.env.QA_UI_GROUP_CODE;
 const baseUrl = (process.env.TEST_BASE_URL || "").replace(/\/$/, "");
 
 test.skip(
-  !travelerName || !coordinatorName || !travelerInvite || !secondTravelerInvite || !coordinatorInvite || !baseUrl,
+  !travelerName || !coordinatorName || !travelerInvite || !secondTravelerInvite || !coordinatorInvite || !groupCode || !baseUrl,
   "Profili QA, due inviti Viaggiatore e invito Coordinatore richiesti",
 );
 
-const changeRole = (page, profileId, role) => page.evaluate(async ({ id, nextRole, name }) => {
+const changeRole = (page, profileId, role, adminToken) => page.evaluate(async ({ id, nextRole, name, stepUp }) => {
   const form = new FormData();
   form.set("name", name);
   form.set("surname", "");
@@ -29,11 +30,12 @@ const changeRole = (page, profileId, role) => page.evaluate(async ({ id, nextRol
     headers: {
       authorization: `Bearer ${localStorage.getItem("india-session-token")}`,
       "x-device-key": localStorage.getItem("india-device-key"),
+      "x-admin-step-up": stepUp,
     },
     body: form,
   });
   return response.status;
-}, { id: profileId, nextRole: role, name: travelerName });
+}, { id: profileId, nextRole: role, name: travelerName, stepUp: adminToken });
 
 test("il coordinatore resta unico e la revoca aggiorna subito un telefono già aperto", async ({ browser }) => {
   test.slow();
@@ -52,8 +54,22 @@ test("il coordinatore resta unico e la revoca aggiorna subito un telefono già a
     await expect(coordinatorPage.locator(".accessPill")).toContainText(coordinatorName.split(" ")[0]);
     const profileId = await travelerPage.evaluate(() => localStorage.getItem("india-profile-id"));
     expect(profileId).toBeTruthy();
+    const adminToken = await coordinatorPage.evaluate(async (password) => {
+      const response = await fetch("/api/auth/admin-step-up", {
+        method: "POST",
+        headers: {
+          authorization: `Bearer ${localStorage.getItem("india-session-token")}`,
+          "x-device-key": localStorage.getItem("india-device-key"),
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ password }),
+      });
+      if (!response.ok) return "";
+      return (await response.json()).token || "";
+    }, groupCode);
+    expect(adminToken).toBeTruthy();
 
-    expect(await changeRole(coordinatorPage, profileId, "coordinator")).toBe(200);
+    expect(await changeRole(coordinatorPage, profileId, "coordinator", adminToken)).toBe(200);
     await expect.poll(
       () => travelerPage.evaluate(() => localStorage.getItem("india-role")),
       { timeout: 12_000 },

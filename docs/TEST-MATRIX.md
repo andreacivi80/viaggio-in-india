@@ -314,8 +314,8 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0299 | 18 | iPhone Safari; | NON ESEGUITO | — |
 | T-0300 | 18 | tablet; | NON ESEGUITO | — |
 | T-0301 | 18 | telefono A – Coordinatore; | NON ESEGUITO | — |
-| T-0302 | 18 | telefono B – Viaggiatore 1; | NON ESEGUITO | — |
-| T-0303 | 18 | telefono C – Viaggiatore 2; | NON ESEGUITO | — |
+| T-0302 | 18 | telefono B – Viaggiatore 1; | SUPERATO | QA reale `ui-role-live` 2/2 e matrice autorizzativa 88/88 su contesti e chiavi dispositivo distinti. |
+| T-0303 | 18 | telefono C – Viaggiatore 2; | SUPERATO | QA reale `ui-role-live` 2/2 e matrice autorizzativa 88/88 su contesti e chiavi dispositivo distinti. |
 | T-0304 | 18 | telefono D – Familiare; | NON ESEGUITO | — |
 | T-0305 | 19 | Aprire il dominio senza cache. | NON ESEGUITO | — |
 | T-0306 | 19 | Aprire nuovamente la PWA. | NON ESEGUITO | — |
@@ -338,7 +338,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0323 | 20 | Aprire l’app come pubblico. | NON ESEGUITO | — |
 | T-0324 | 20 | Creare invito per Viaggiatore A. | NON ESEGUITO | — |
 | T-0325 | 20,99 | Eseguire logout. | SUPERATO | QA 1.31.0: logout eseguito e token successivamente respinto |
-| T-0326 | 20 | Modificare manualmente profile_id. | NON ESEGUITO | — |
+| T-0326 | 20 | Modificare manualmente profile_id. | SUPERATO | QA reale `ui-role-live` 2/2: il server revocato rimuove profile_id, ruolo e nome locali falsificati. |
 | T-0327 | 20 | Modificare manualmente role. | NON ESEGUITO | — |
 | T-0328 | 20,88 | Revocare il dispositivo. | SUPERATO | production-smoke: dispositivo secondario revocato |
 | T-0329 | 20 | Risultato atteso definitivo: impossibile. | NON ESEGUITO | — |
@@ -495,7 +495,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0480 | 28 | Coordinatore: documenti autorizzati del gruppo. | NON ESEGUITO | — |
 | T-0481 | 28 | Eliminare documento. | NON ESEGUITO | — |
 | T-0482 | 28 | Familiare: nessun accesso. | NON ESEGUITO | — |
-| T-0483 | 28 | Manipolare profile_id nell’URL. | NON ESEGUITO | — |
+| T-0483 | 28 | Manipolare profile_id nell’URL. | SUPERATO | QA reale matrice 88/88: l’identità deriva dalla sessione server e non dall’URL o dal client. |
 | T-0484 | 28 | Pubblico: nessun accesso. | NON ESEGUITO | — |
 | T-0485 | 28 | Scaricare documento. | NON ESEGUITO | — |
 | T-0486 | 28 | Sostituire documento. | NON ESEGUITO | — |
@@ -750,14 +750,14 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0735 | 40 | eliminazione documento proprio; | NON ESEGUITO | — |
 | T-0736 | 40 | eliminazione post altrui; | SUPERATO | QA 1.31.0: attacco eliminazione post altrui respinto |
 | T-0737 | 40 | eliminazione post proprio; | NON ESEGUITO | — |
-| T-0738 | 40 | lettura profilo; | NON ESEGUITO | — |
+| T-0738 | 40 | lettura profilo; | SUPERATO | QA touch `ui-people` 1/1: profilo creato, aggiornato e riletto con visibilità per ruolo. |
 | T-0739 | 40 | messaggio comprensibile nell’interfaccia; | NON ESEGUITO | — |
 | T-0740 | 40 | modifica commento altrui; | SUPERATO | QA 1.31.0: attacco modifica commento altrui respinto |
 | T-0741 | 40 | modifica commento proprio; | SUPERATO | QA 1.31.0: modifica commento proprio completata |
 | T-0742 | 40 | modifica posizione altrui; | NON ESEGUITO | — |
-| T-0743 | 40 | modifica profilo altrui; | NON ESEGUITO | — |
+| T-0743 | 40 | modifica profilo altrui; | SUPERATO | QA reale matrice 88/88: negata al viaggiatore e consentita solo alla coordinatrice con step-up. |
 | T-0744 | 40 | modifica profilo proprio; | SUPERATO | QA touch Galaxy S9+ `ui-own-profile` 1/1: modifica propria sincronizzata sul secondo telefono. |
-| T-0745 | 40 | modifica ruolo; | NON ESEGUITO | — |
+| T-0745 | 40 | modifica ruolo; | SUPERATO | QA reale ruoli 30/30 e `ui-role-live` 2/2: coordinatrice unica e ruolo autoritativo server. |
 | T-0746 | 40 | nessun file creato; | NON ESEGUITO | — |
 | T-0747 | 40 | nessuna informazione sensibile nella risposta. | NON ESEGUITO | — |
 | T-0748 | 40 | nessuna modifica nel database; | NON ESEGUITO | — |
@@ -1589,11 +1589,11 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1574 | 85 | post eliminato; | NON ESEGUITO | — |
 | T-1575 | 85 | profilo creato; | SUPERATO | QA touch `ui-profile-creation` 1/1: due profili viaggiatore creati e riletti nello stato condiviso. |
 | T-1576 | 85 | profilo modificato; | SUPERATO | QA touch `ui-own-profile` 1/1: dati modificati riletti sul secondo telefono. |
-| T-1577 | 85 | profilo; | NON ESEGUITO | — |
+| T-1577 | 85 | profilo; | SUPERATO | QA touch `ui-people` 1/1 e `ui-role-live` 2/2: ciclo profilo e revoca verificati. |
 | T-1578 | 85 | rate limit raggiunto; | NON ESEGUITO | — |
 | T-1579 | 85 | risorsa coinvolta; | NON ESEGUITO | — |
 | T-1580 | 85 | risultato; | NON ESEGUITO | — |
-| T-1581 | 85 | ruolo modificato; | NON ESEGUITO | — |
+| T-1581 | 85 | ruolo modificato; | SUPERATO | QA reale ruoli 30/30: tentativi di promozione non autorizzati non cambiano il ruolo server. |
 | T-1582 | 85 | ruolo; | NON ESEGUITO | — |
 | T-1583 | 85 | sessione scaduta; | SUPERATO | QA 1.31.0: sessione inattiva respinta |
 | T-1584 | 85 | tentativo non autorizzato; | NON ESEGUITO | — |

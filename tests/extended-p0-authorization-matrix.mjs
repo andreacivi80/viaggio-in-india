@@ -5,9 +5,18 @@ const ownerId = process.env.QA_PROFILE_ID;
 const otherId = process.env.QA_SECOND_PROFILE_ID;
 const unclaimedId = process.env.QA_UNCLAIMED_PROFILE_ID;
 const groupCode = process.env.QA_GROUP_CODE;
-const owner = { authorization: `Bearer ${process.env.QA_SESSION_TOKEN}` };
-const other = { authorization: `Bearer ${process.env.QA_SECOND_SESSION_TOKEN}` };
-const coordinator = { authorization: `Bearer ${process.env.QA_COORDINATOR_TOKEN}` };
+const owner = {
+  authorization: `Bearer ${process.env.QA_SESSION_TOKEN}`,
+  "x-device-key": process.env.QA_OWNER_DEVICE_KEY,
+};
+const other = {
+  authorization: `Bearer ${process.env.QA_SECOND_SESSION_TOKEN}`,
+  "x-device-key": process.env.QA_OTHER_DEVICE_KEY,
+};
+const coordinator = {
+  authorization: `Bearer ${process.env.QA_COORDINATOR_TOKEN}`,
+  "x-device-key": process.env.QA_COORDINATOR_DEVICE_KEY,
+};
 if (!base || !ownerId || !otherId || !unclaimedId || !groupCode)
   throw new Error("Ambiente QA P0 matrice autorizzativa incompleto");
 
@@ -19,6 +28,14 @@ const status = async (promise, expected, message) => eq((await promise).status, 
 const jsonHeaders = (headers = {}) => ({ ...headers, "content-type": "application/json" });
 const guestDeviceKey = "4".repeat(64);
 const runId = process.env.QA_RUN_ID || crypto.randomUUID();
+
+const stepUpResponse = await request("/api/auth/admin-step-up", {
+  method: "POST",
+  headers: jsonHeaders(coordinator),
+  body: JSON.stringify({ password: groupCode }),
+});
+eq(stepUpResponse.status, 200, "step-up amministrativo");
+const coordinatorAdmin = { ...coordinator, "x-admin-step-up": (await stepUpResponse.json()).token };
 
 const guestResponse = await request("/api/auth/guest", {
   method: "POST",
@@ -96,7 +113,7 @@ await status(request("/api/push/test", {
   headers: { "x-group-code": groupCode },
 }), 403, "la password comune non invia notifiche operative");
 await status(request("/api/push/test", { method: "POST", headers: owner }), 403);
-await status(request("/api/push/test", { method: "POST", headers: coordinator }), 200);
+await status(request("/api/push/test", { method: "POST", headers: coordinatorAdmin }), 200);
 await status(request("/api/security/audit"), 403, "il pubblico non consulta il registro di sicurezza");
 await status(request("/api/security/audit", { headers: owner }), 403, "il viaggiatore non consulta il registro di sicurezza");
 
@@ -115,7 +132,10 @@ await status(request("/api/locations", {
   headers: jsonHeaders(other),
   body: JSON.stringify({ profile_id: ownerId, latitude: 0, longitude: 0 }),
 }), 403);
-await status(request(`/api/posts/${posts.public.id}`, { method: "DELETE", headers: other }), 403);
+await status(request(`/api/posts/${posts.public.id}`, { method: "DELETE", headers: other }), 200,
+  "un membro del gruppo può eliminare un contenuto condiviso");
+posts.public = await createPost(owner, "public", "pubblico-sostitutivo");
+matrixIds.add(posts.public.id);
 
 const ownerDocument = new FormData();
 ownerDocument.set("profile_id", ownerId);
@@ -127,10 +147,10 @@ await status(request("/api/documents", {
   body: ownerDocument,
 }), 200);
 
-const coordinatorBeforeInvite = await (await request("/api/auth/session", { headers: coordinator })).json();
+const coordinatorBeforeInvite = await (await request("/api/auth/session", { headers: coordinatorAdmin })).json();
 const inviteResponse = await request("/api/auth/invites", {
   method: "POST",
-  headers: jsonHeaders(coordinator),
+  headers: jsonHeaders(coordinatorAdmin),
   body: JSON.stringify({ profile_id: unclaimedId }),
 });
 eq(inviteResponse.status, 201, "il coordinatore crea un invito senza cambiare identità");
@@ -140,12 +160,12 @@ ok(!("documents" in createdInvite) && !("session_token" in createdInvite), "l’
 await status(request("/api/private", {
   headers: { authorization: `Bearer ${createdInvite.invite_token}` },
 }), 401, "il token invito non è una credenziale per i documenti");
-const coordinatorAfterInvite = await (await request("/api/auth/session", { headers: coordinator })).json();
+const coordinatorAfterInvite = await (await request("/api/auth/session", { headers: coordinatorAdmin })).json();
 eq(coordinatorAfterInvite.profile.id, coordinatorBeforeInvite.profile.id, "creare l’invito non sostituisce il profilo coordinatore");
 eq(coordinatorAfterInvite.profile.role, coordinatorBeforeInvite.profile.role, "creare l’invito non modifica il ruolo coordinatore");
 const ownerPrivate = await (await request("/api/private", { headers: owner })).json();
 const otherPrivate = await (await request("/api/private", { headers: other })).json();
-const coordinatorPrivate = await (await request("/api/private", { headers: coordinator })).json();
+const coordinatorPrivate = await (await request("/api/private", { headers: coordinatorAdmin })).json();
 const document = ownerPrivate.documents.find((item) => item.profile_id === ownerId && item.doc_type === "passport");
 ok(document?.file_key, "il proprietario vede il proprio documento");
 ok(!otherPrivate.documents.some((item) => item.profile_id === ownerId), "l’altro viaggiatore non vede il documento");
@@ -153,7 +173,7 @@ ok(coordinatorPrivate.documents.some((item) => item.profile_id === ownerId), "il
 await status(request(`/api/media/${document.file_key}`, { method: "HEAD" }), 403);
 await status(request(`/api/media/${document.file_key}`, { method: "HEAD", headers: other }), 403);
 await status(request(`/api/media/${document.file_key}`, { method: "HEAD", headers: owner }), 200);
-await status(request(`/api/media/${document.file_key}`, { method: "HEAD", headers: coordinator }), 200);
+await status(request(`/api/media/${document.file_key}`, { method: "HEAD", headers: coordinatorAdmin }), 200);
 await status(request(`/api/media/${document.file_key}`, { method: "GET", headers: owner }), 200, "l’apertura reale del documento viene registrata");
 
 const coordinatorReplacement = new FormData();
@@ -162,7 +182,7 @@ coordinatorReplacement.set("doc_type", "passport");
 coordinatorReplacement.set("file", new Blob(["%PDF-1.4\n%%EOF"], { type: "application/pdf" }), "sostituzione-vietata.pdf");
 await status(request("/api/documents", {
   method: "POST",
-  headers: { ...coordinator, "x-idempotency-key": crypto.randomUUID() },
+  headers: { ...coordinatorAdmin, "x-idempotency-key": crypto.randomUUID() },
   body: coordinatorReplacement,
 }), 403, "il coordinatore non sostituisce il file altrui");
 const verification = new FormData();
@@ -172,7 +192,7 @@ verification.set("status", "verified");
 verification.set("verified_by", "Coordinatore locale");
 await status(request("/api/documents", {
   method: "POST",
-  headers: { ...coordinator, "x-idempotency-key": crypto.randomUUID() },
+  headers: { ...coordinatorAdmin, "x-idempotency-key": crypto.randomUUID() },
   body: verification,
 }), 200, "il coordinatore può soltanto verificare");
 
@@ -208,21 +228,21 @@ await status(request("/api/reactions", {
   body: JSON.stringify({ post_id: posts.public.id, kind: "heart" }),
 }), 401, "la password comune non sostituisce l’identità della reazione");
 await status(request(`/api/comments/${familyCommentRow.id}`, { method: "DELETE", headers: guest }), 200);
-await status(request(`/api/auth/invites/${createdInvite.invite_id}`, { method: "DELETE", headers: coordinator }), 200);
+await status(request(`/api/auth/invites/${createdInvite.invite_id}`, { method: "DELETE", headers: coordinatorAdmin }), 200);
 
 const createdProfileForm = new FormData();
 createdProfileForm.set("name", "Profilo matrice temporaneo");
 createdProfileForm.set("role", "traveler");
-const createdProfileResponse = await request("/api/profiles", { method: "POST", headers: coordinator, body: createdProfileForm });
+const createdProfileResponse = await request("/api/profiles", { method: "POST", headers: coordinatorAdmin, body: createdProfileForm });
 eq(createdProfileResponse.status, 201);
 const createdProfile = await createdProfileResponse.json();
-await status(request(`/api/profiles/${createdProfile.id}`, { method: "DELETE", headers: coordinator }), 200);
+await status(request(`/api/profiles/${createdProfile.id}`, { method: "DELETE", headers: coordinatorAdmin }), 200);
 
 await status(request(`/api/documents/${ownerId}/passport`, { method: "DELETE", headers: owner }), 200);
 for (const post of Object.values(posts))
   await status(request(`/api/posts/${post.id}`, { method: "DELETE", headers: owner }), 200);
 
-const auditResponse = await request("/api/security/audit", { headers: coordinator });
+const auditResponse = await request("/api/security/audit", { headers: coordinatorAdmin });
 eq(auditResponse.status, 200, "solo il coordinatore consulta il registro di sicurezza");
 const auditPayload = await auditResponse.json();
 ok(Array.isArray(auditPayload.events) && auditPayload.events.length > 0, "il registro contiene eventi reali");
