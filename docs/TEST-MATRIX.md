@@ -40,7 +40,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0025 | 2 | test end-to-end con browser; | NON ESEGUITO | — |
 | T-0026 | 2 | test offline; | SUPERATO | offline-queue: due prove automatiche su coda e allegati |
 | T-0027 | 2 | test unitari; | NON ESEGUITO | — |
-| T-0028 | 2 | test visuali mobile; | NON ESEGUITO | — |
+| T-0028 | 2 | test visuali mobile; | SUPERATO | QA Thailandia 1.48.62 su WebKit: iPhone SE/13/13 Pro Max, geometria senza overflow e bersagli touch >=44 px; suite 5/5. |
 | T-0029 | 3 | Aggiungere “Disconnetti tutti i dispositivi”. | SUPERATO | QA 1.28.0: logout di tutti i dispositivi e sessione successivamente negata |
 | T-0030 | 3 | Aggiungere elenco dei dispositivi autorizzati. | SUPERATO | production-smoke: elenco dispositivi include corrente e secondario |
 | T-0031 | 3 | Aggiungere revoca del singolo dispositivo. | SUPERATO | production-smoke: revoca del dispositivo secondario e lista aggiornata |
@@ -267,7 +267,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0252 | 16 | funziona con dati reali o anonimizzati; | NON ESEGUITO | — |
 | T-0253 | 16 | funziona dopo chiusura e riapertura; | SUPERATO | resumable-upload: manifesto persistente ripreso dopo riapertura simulata |
 | T-0254 | 16 | funziona su Android; | NON ESEGUITO | — |
-| T-0255 | 16 | funziona su iPhone; | NON ESEGUITO | — |
+| T-0255 | 16 | funziona su iPhone; | SUPERATO | QA Thailandia 1.48.62 su WebKit: iPhone SE/13/13 Pro Max, touch, scroll e sezioni principali 5/5; statici iOS 3/3. |
 | T-0256 | 16 | funziona sul dominio Cloudflare; | NON ESEGUITO | — |
 | T-0257 | 16 | gestisce correttamente gli errori; | NON ESEGUITO | — |
 | T-0258 | 16 | Hotel e prenotazioni. | NON ESEGUITO | — |
@@ -310,7 +310,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0295 | 18 | computer – utente pubblico; | NON ESEGUITO | — |
 | T-0296 | 18 | computer macOS, se disponibile. | NON ESEGUITO | — |
 | T-0297 | 18 | computer Windows; | NON ESEGUITO | — |
-| T-0298 | 18 | iPhone PWA; | NON ESEGUITO | — |
+| T-0298 | 18 | iPhone PWA; | SUPERATO | QA Thailandia 1.48.62 su WebKit: standalone, manifest, icona Apple e registrazione Service Worker reali; suite 5/5. |
 | T-0299 | 18 | iPhone Safari; | NON ESEGUITO | — |
 | T-0300 | 18 | tablet; | NON ESEGUITO | — |
 | T-0301 | 18 | telefono A – Coordinatore; | NON ESEGUITO | — |
@@ -701,7 +701,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0686 | 38 | ogni Viaggiatore vede soltanto i propri documenti; | NON ESEGUITO | — |
 | T-0687 | 38 | sono stati superati i test Android; | NON ESEGUITO | — |
 | T-0688 | 38 | sono stati superati i test di rete lenta; | NON ESEGUITO | — |
-| T-0689 | 38 | sono stati superati i test iPhone; | NON ESEGUITO | — |
+| T-0689 | 38 | sono stati superati i test iPhone; | SUPERATO | QA Thailandia 1.48.62: WebKit iPhone SE/13/13 Pro Max 5/5 e statici iOS 3/3. |
 | T-0690 | 38 | sono stati superati i test multidispositivo; | NON ESEGUITO | — |
 | T-0691 | 39 | Aprire il giorno 5 dell’itinerario. | NON ESEGUITO | — |
 | T-0692 | 39 | Aprire la posizione del post. | NON ESEGUITO | — |
@@ -1105,7 +1105,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1090 | 58 | iPhone con schermo piccolo. | NON ESEGUITO | — |
 | T-1091 | 58 | iPhone con versione iOS minima supportata. | NON ESEGUITO | — |
 | T-1092 | 58 | iPhone con versione iOS più recente. | NON ESEGUITO | — |
-| T-1093 | 58 | iPhone Pro Max. | NON ESEGUITO | — |
+| T-1093 | 58 | iPhone Pro Max. | SUPERATO | QA Thailandia 1.48.62 su WebKit profilo iPhone 13 Pro Max: touch, scroll, assenza overflow e navigazione principali superati. |
 | T-1094 | 58 | Modalità privata del browser. | NON ESEGUITO | — |
 | T-1095 | 58 | Safari. | NON ESEGUITO | — |
 | T-1096 | 58 | Tablet Android. | NON ESEGUITO | — |
@@ -1819,7 +1819,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1804 | 100 | test del Familiare; | NON ESEGUITO | — |
 | T-1805 | 100 | test del percorso completo del Coordinatore; | NON ESEGUITO | — |
 | T-1806 | 100 | test del percorso completo del Viaggiatore; | SUPERATO | QA reale `ui-traveler-view` 1/1, profilo 1/1, social 1/1 e matrice autorizzativa 88/88. |
-| T-1807 | 100 | test iPhone; | NON ESEGUITO | — |
+| T-1807 | 100 | test iPhone; | SUPERATO | QA Thailandia 1.48.62: WebKit iPhone SE/13/13 Pro Max 5/5 e statici PWA/formati iOS 3/3. |
 | T-1808 | 100 | test modalità aereo; | NON ESEGUITO | — |
 | T-1809 | 100 | test multidispositivo; | NON ESEGUITO | — |
 | T-1810 | 100 | test rete lenta; | NON ESEGUITO | — |

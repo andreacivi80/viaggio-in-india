@@ -1237,21 +1237,21 @@ P2,usabilita-mobile,pending,Aggiornamento in automobile.,globale:T-1459,
 P2,usabilita-mobile,pending,Attivarle su iPhone PWA.,globale:T-0518,
 P2,usabilita-mobile,passed,Confrontare iPhone e Android.,globale:T-1653,"ui-publish-complete Thailandia 1.48.4 1/1 + regressione mappe Thailandia 1.48.12 su tre viewport: telefono Android autenticato ha pubblicato con touch foto, video, due audio e posizione; iPhone SE ha ricevuto e visualizzato lo stesso post senza privilegi impropri; navigazione e mappe sono state inoltre confrontate su Samsung S20 FE, Samsung meno recente e iPhone piccolo."
 P2,usabilita-mobile,passed,funziona su iPhone e Android.,usabilita:U0686,"ui-publish-complete Thailandia 1.48.4 1/1 + regressione mappe Thailandia 1.48.12 su tre viewport: telefono Android autenticato ha pubblicato con touch foto, video, due audio e posizione; iPhone SE ha ricevuto e visualizzato lo stesso post senza privilegi impropri; navigazione e mappe sono state inoltre confrontate su Samsung S20 FE, Samsung meno recente e iPhone piccolo."
-P2,usabilita-mobile,pending,funziona su iPhone;,globale:T-0255,
+P2,usabilita-mobile,passed,funziona su iPhone;,globale:T-0255,"QA Thailandia 1.48.62 su WebKit: iPhone SE, iPhone 13 e iPhone 13 Pro Max; touch, scorrimento, geometria e sezioni principali 5/5, più controlli statici iOS 3/3."
 P2,usabilita-mobile,pending,Installare la PWA su iPhone.,globale:T-0308,
 P2,usabilita-mobile,passed,iPhone con schermo piccolo.,globale:T-1090,"ui-navigation Thailandia 1.48.34 su QA isolato con motore WebKit e profili dispositivo iPhone SE e iPhone 17: 5/5 prove applicabili per ciascun profilo (10/10 totali), tutte le cinque sezioni aperte con gesto touch senza pagina bianca, undici giornate consultabili, stato e scorrimento conservati, cartina completa navigabile anche nel fallback senza WebGL e ritorno alla Bacheca; una prova pubblica non pertinente è stata esclusa correttamente per profilo."
 P2,usabilita-mobile,pending,iPhone con versione iOS minima supportata.,globale:T-1091,
 P2,usabilita-mobile,passed,iPhone con versione iOS più recente.,globale:T-1092,"ui-navigation Thailandia 1.48.34 su QA isolato con motore WebKit e profili dispositivo iPhone SE e iPhone 17: 5/5 prove applicabili per ciascun profilo (10/10 totali), tutte le cinque sezioni aperte con gesto touch senza pagina bianca, undici giornate consultabili, stato e scorrimento conservati, cartina completa navigabile anche nel fallback senza WebGL e ritorno alla Bacheca; una prova pubblica non pertinente è stata esclusa correttamente per profilo."
-P2,usabilita-mobile,pending,iPhone piccolo;,addendum:A0234,
-P2,usabilita-mobile,pending,iPhone Pro Max.,globale:T-1093;addendum:A0235,
-P2,usabilita-mobile,pending,iPhone PWA;,globale:T-0298,
+P2,usabilita-mobile,passed,iPhone piccolo;,addendum:A0234,"QA Thailandia 1.48.62 su WebKit profilo iPhone SE: gesto touch reale emulato, scorrimento fino all'ultima giornata, nessun overflow e bersagli da almeno 44 px."
+P2,usabilita-mobile,passed,iPhone Pro Max.,globale:T-1093;addendum:A0235,"QA Thailandia 1.48.62 su WebKit profilo iPhone 13 Pro Max: gesto touch reale emulato, scorrimento fino all'ultima giornata, nessun overflow e sezioni principali aperte."
+P2,usabilita-mobile,passed,iPhone PWA;,globale:T-0298,"QA Thailandia 1.48.62 su WebKit: modalità navigator.standalone, manifest display standalone, icona Apple e registrazione Service Worker reali; suite iPhone P2 5/5."
 P2,usabilita-mobile,passed,iPhone Safari;,globale:T-0299,"ui-navigation Thailandia 1.48.34 su QA isolato con motore WebKit e profili dispositivo iPhone SE e iPhone 17: 5/5 prove applicabili per ciascun profilo (10/10 totali), tutte le cinque sezioni aperte con gesto touch senza pagina bianca, undici giornate consultabili, stato e scorrimento conservati, cartina completa navigabile anche nel fallback senza WebGL e ritorno alla Bacheca; una prova pubblica non pertinente è stata esclusa correttamente per profilo."
-P2,usabilita-mobile,pending,sono stati superati i test iPhone;,globale:T-0689,
-P2,usabilita-mobile,pending,test iPhone;,globale:T-1807;usabilita:U0716,
+P2,usabilita-mobile,passed,sono stati superati i test iPhone;,globale:T-0689,"QA Thailandia 1.48.62: suite WebKit iPhone SE/13/13 Pro Max 5/5 e controlli statici iOS/PWA/Live Photo 3/3; nessun errore o overflow."
+P2,usabilita-mobile,passed,test iPhone;,globale:T-1807;usabilita:U0716,"QA Thailandia 1.48.62: suite WebKit iPhone SE/13/13 Pro Max 5/5 e controlli statici iOS/PWA/Live Photo 3/3; touch, scroll, standalone e semantica verificati."
 P2,usabilita-mobile,pending,Test Push su iPhone con PWA installata.,globale:T-0097,
-P2,usabilita-mobile,pending,test visuali mobile;,globale:T-0028,
+P2,usabilita-mobile,passed,test visuali mobile;,globale:T-0028,"QA Thailandia 1.48.62 su WebKit: geometria iPhone SE/13/13 Pro Max, assenza di overflow orizzontale, bersagli touch >=44 px e contenuti visibili; 5/5."
 P2,usabilita-mobile,pending,Utilizzare l’app in automobile come passeggero.,globale:T-0597,
-P2,usabilita-mobile,pending,Verificare formato iPhone.,usabilita:U0228,
+P2,usabilita-mobile,passed,Verificare formato iPhone.,usabilita:U0228,"QA Thailandia 1.48.62 su WebKit: iPhone SE/13/13 Pro Max, viewport-fit cover, assenza overflow, touch e scorrimento 5/5."
 P2,usabilita-mobile,pending,Verificare Live Photo iPhone.,globale:T-1435,
 P2,usabilita-mobile,pending,VoiceOver su iPhone.,globale:T-1077,
 P3,altro,pending,“Visibile al gruppo” significhi controllo effettivo della visibilità.,addendum:A0393,
