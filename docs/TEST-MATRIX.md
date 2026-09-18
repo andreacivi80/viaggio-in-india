@@ -206,7 +206,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0191 | 13 | Verificare che ogni marker corrisponda alla città corretta. | NON ESEGUITO | — |
 | T-0192 | 13 | Verificare la tappa intermedia di Ranakpur. | NON ESEGUITO | — |
 | T-0193 | 13 | Verificare manualmente ogni coordinata. | NON ESEGUITO | — |
-| T-0194 | 13 | Verificare ogni itinerario giornaliero. | NON ESEGUITO | — |
+| T-0194 | 13 | Verificare ogni itinerario giornaliero. | SUPERATO | QA Thailandia 1.48.62 WebKit: 11/11 itinerari aperti e verificati per foto, testo, km, mezzo, obiettivo, checklist e minimappa. |
 | T-0195 | 13 | Verificare partenza e ritorno a Delhi. | NON ESEGUITO | — |
 | T-0196 | 13 | Verificare percorsi aerei. | NON ESEGUITO | — |
 | T-0197 | 13 | Verificare percorsi ferroviari. | NON ESEGUITO | — |
@@ -394,7 +394,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0379 | 22 | Verificare Udaipur. | NON ESEGUITO | — |
 | T-0380 | 22 | Verificare Varanasi. | NON ESEGUITO | — |
 | T-0381 | 23 | Aprire la mappa generale. | NON ESEGUITO | — |
-| T-0382 | 23 | Aprire ogni singola giornata. | NON ESEGUITO | — |
+| T-0382 | 23 | Aprire ogni singola giornata. | SUPERATO | QA Thailandia 1.48.62 WebKit: 11/11 giornate aperte con gesto touch, una sola scheda attiva e contenuti caricati. |
 | T-0383 | 23 | Aprire una mappa tramite collegamento. | NON ESEGUITO | — |
 | T-0384 | 23 | Controllare Delhi iniziale e finale. | NON ESEGUITO | — |
 | T-0385 | 23 | Controllare gesture con una mano. | NON ESEGUITO | — |
@@ -551,7 +551,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0536 | 31 | Chiudere completamente l’app. | NON ESEGUITO | — |
 | T-0537 | 31 | Consultare checklist. | NON ESEGUITO | — |
 | T-0538 | 31 | Consultare informazioni di emergenza. | NON ESEGUITO | — |
-| T-0539 | 31 | Consultare itinerario. | NON ESEGUITO | — |
+| T-0539 | 31 | Consultare itinerario. | SUPERATO | QA Thailandia 1.48.62 WebKit: consultazione completa di 11/11 giornate; ui-navigation 5/5 applicabili. |
 | T-0540 | 31 | Consultare post già scaricati. | NON ESEGUITO | — |
 | T-0541 | 31 | Interrompere upload al 25%. | NON ESEGUITO | — |
 | T-0542 | 31 | Interrompere upload al 50%. | NON ESEGUITO | — |
@@ -703,7 +703,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0688 | 38 | sono stati superati i test di rete lenta; | NON ESEGUITO | — |
 | T-0689 | 38 | sono stati superati i test iPhone; | SUPERATO | QA Thailandia 1.48.62: WebKit iPhone SE/13/13 Pro Max 5/5 e statici iOS 3/3. |
 | T-0690 | 38 | sono stati superati i test multidispositivo; | NON ESEGUITO | — |
-| T-0691 | 39 | Aprire il giorno 5 dell’itinerario. | NON ESEGUITO | — |
+| T-0691 | 39 | Aprire il giorno 5 dell’itinerario. | SUPERATO | QA Thailandia 1.48.62 WebKit: giorno 5 aperto con foto, testo, percorso, mezzo, checklist e minimappa. |
 | T-0692 | 39 | Aprire la posizione del post. | NON ESEGUITO | — |
 | T-0693 | 39 | Avviare Naviga. | NON ESEGUITO | — |
 | T-0694 | 39 | Cancellare la posizione dal telefono A. | NON ESEGUITO | — |
@@ -998,7 +998,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0983 | 52 | Verificare funzionamento dopo ricaricamento della pagina. | NON ESEGUITO | — |
 | T-0984 | 52 | Verificare mantenimento del filtro. | NON ESEGUITO | — |
 | T-0985 | 52 | Verificare mantenimento del testo non inviato. | NON ESEGUITO | — |
-| T-0986 | 52 | Verificare mantenimento della giornata. | NON ESEGUITO | — |
+| T-0986 | 52 | Verificare mantenimento della giornata. | SUPERATO | QA Thailandia 1.48.62 WebKit: giorno 7 e posizione di scorrimento conservati al ritorno dal percorso entro 2 px. |
 | T-0987 | 52 | Verificare mantenimento dello scorrimento. | NON ESEGUITO | — |
 | T-0988 | 53 | Aprire lo stesso documento da due dispositivi. | NON ESEGUITO | — |
 | T-0989 | 53 | Caricare due file con lo stesso nome. | NON ESEGUITO | — |
@@ -1223,9 +1223,9 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1208 | 66 | Chiusura app. | NON ESEGUITO | — |
 | T-1209 | 66 | Chiusura e riapertura. | NON ESEGUITO | — |
 | T-1210 | 66 | Consultazione emergenze. | NON ESEGUITO | — |
-| T-1211 | 66 | Consultazione itinerario. | NON ESEGUITO | — |
+| T-1211 | 66 | Consultazione itinerario. | SUPERATO | QA Thailandia 1.48.62 WebKit: 11/11 giornate consultabili e ritorno al punto conservato. |
 | T-1212 | 66 | Controllo documenti del gruppo. | NON ESEGUITO | — |
-| T-1213 | 66 | Controllo itinerario. | NON ESEGUITO | — |
+| T-1213 | 66 | Controllo itinerario. | SUPERATO | QA Thailandia 1.48.62 WebKit: contenuti di 11 giornate e otto tappe mappa navigati; 5/5 applicabili. |
 | T-1214 | 66 | Controllo log. | NON ESEGUITO | — |
 | T-1215 | 66 | Controllo posizioni. | NON ESEGUITO | — |
 | T-1216 | 66 | Controllo profilo. | SUPERATO | QA touch `ui-own-profile` 1/1 + `ui-coordinator-grid-access` 1/1: proprietà e ruolo derivano dalla sessione server. |
@@ -1248,7 +1248,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1233 | 66 | Ricezione invito. | NON ESEGUITO | — |
 | T-1234 | 66 | Ricezione notifica consentita. | NON ESEGUITO | — |
 | T-1235 | 66 | Risposta al commento. | NON ESEGUITO | — |
-| T-1236 | 66 | Ritorno al programma della giornata. | NON ESEGUITO | — |
+| T-1236 | 66 | Ritorno al programma della giornata. | SUPERATO | QA Thailandia 1.48.62 WebKit: dal percorso del giorno 7 ritorno alla stessa scheda e allo stesso scroll. |
 | T-1237 | 66 | Ritorno della rete. | NON ESEGUITO | — |
 | T-1238 | 66 | Tutti i dati devono rimanere corretti. | NON ESEGUITO | — |
 | T-1239 | 66 | Visualizzazione contenuti autorizzati. | NON ESEGUITO | — |
@@ -1407,19 +1407,19 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1392 | 74 | Aprire un post specifico. | NON ESEGUITO | — |
 | T-1393 | 74 | Aprire un profilo. | SUPERATO | QA touch Galaxy S9+ `ui-own-profile` 1/1: apertura della propria scheda dal Gruppo. |
 | T-1394 | 74 | Aprire una fotografia del carosello. | NON ESEGUITO | — |
-| T-1395 | 74 | Aprire una giornata specifica. | NON ESEGUITO | — |
+| T-1395 | 74 | Aprire una giornata specifica. | SUPERATO | QA Thailandia 1.48.62 WebKit: selezione diretta di ciascuna delle 11 giornate con contenuto coerente. |
 | T-1396 | 74 | Bloccare e sbloccare lo schermo. | NON ESEGUITO | — |
 | T-1397 | 74 | Cambiare sezione. | NON ESEGUITO | — |
 | T-1398 | 74 | Espandere tutti i commenti. | NON ESEGUITO | — |
 | T-1399 | 74 | Iniziare a scrivere un commento. | NON ESEGUITO | — |
 | T-1400 | 74 | Ricevere una sincronizzazione. | NON ESEGUITO | — |
 | T-1401 | 74 | Ruotare il telefono. | NON ESEGUITO | — |
-| T-1402 | 74 | Scorrere a metà giornata. | NON ESEGUITO | — |
+| T-1402 | 74 | Scorrere a metà giornata. | SUPERATO | QA Thailandia 1.48.62 WebKit: scorrimento touch attraverso i contenuti di tutte le giornate e posizione conservata al ritorno. |
 | T-1403 | 74 | Tornare al post. | NON ESEGUITO | — |
 | T-1404 | 74 | Verificare che tastiera e campo rimangano aperti. | NON ESEGUITO | — |
 | T-1405 | 74 | Verificare filtro ancora attivo. | NON ESEGUITO | — |
 | T-1406 | 74 | Verificare mantenimento dello stato. | NON ESEGUITO | — |
-| T-1407 | 74 | Verificare stessa giornata e stesso punto. | NON ESEGUITO | — |
+| T-1407 | 74 | Verificare stessa giornata e stesso punto. | SUPERATO | QA Thailandia 1.48.62 WebKit: ritorno dal percorso conserva giorno 7 e scroll con scarto massimo 2 px. |
 | T-1408 | 74 | Verificare stesso post, stessi commenti e stessa fotografia. | NON ESEGUITO | — |
 | T-1409 | 74 | Verificare testo non perso. | NON ESEGUITO | — |
 | T-1410 | 75 | Bacheca → post → commenti → indietro. | NON ESEGUITO | — |
@@ -1769,7 +1769,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1754 | 98 | dominio raggiungibile; | NON ESEGUITO | — |
 | T-1755 | 98 | eventuali errori annotati. | NON ESEGUITO | — |
 | T-1756 | 98 | fotografie e video presenti; | NON ESEGUITO | — |
-| T-1757 | 98 | itinerario della giornata; | NON ESEGUITO | — |
+| T-1757 | 98 | itinerario della giornata; | SUPERATO | QA Thailandia 1.48.62 WebKit: ogni giornata mostra partenza, arrivo, distanza, mezzo, obiettivo, checklist, minimappa e Percorso. |
 | T-1758 | 98 | mappe; | NON ESEGUITO | — |
 | T-1759 | 98 | nessun errore critico nelle ultime 24 ore; | NON ESEGUITO | — |
 | T-1760 | 98 | nessun upload bloccato; | NON ESEGUITO | — |

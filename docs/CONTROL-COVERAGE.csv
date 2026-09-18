@@ -2683,21 +2683,21 @@ P3,itinerario,pending,Aggiungere hotel e punti di incontro.,globale:T-0183,
 P3,itinerario,pending,Android con Chrome aggiornato.,globale:T-1078,
 P3,itinerario,pending,Apertura della giornata corrente.,globale:T-1200,
 P3,itinerario,pending,Aprire “Aggiungi ricordo” direttamente dall’itinerario.,usabilita:U0181,
-P3,itinerario,pending,Aprire il giorno 5 dell’itinerario.,globale:T-0691,
+P3,itinerario,passed,Aprire il giorno 5 dell’itinerario.,globale:T-0691,"QA Thailandia 1.48.62 WebKit: tutte le 11 giornate aperte con gesto touch; giorno 5 visibile con foto, testo, percorso, mezzo, checklist e minimappa; ui-navigation 5/5 applicabili."
 P3,itinerario,passed,Aprire ogni giornata.,usabilita:U0317,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
-P3,itinerario,pending,Aprire ogni singola giornata.,globale:T-0382,
-P3,itinerario,pending,Aprire una giornata specifica.,globale:T-1395,
+P3,itinerario,passed,Aprire ogni singola giornata.,globale:T-0382,"QA Thailandia 1.48.62 WebKit: 11/11 giornate aperte singolarmente con gesto touch e una sola scheda attiva; foto e contenuti caricati; ui-navigation 5/5."
+P3,itinerario,passed,Aprire una giornata specifica.,globale:T-1395,"QA Thailandia 1.48.62 WebKit: selezione diretta di ciascuna delle 11 giornate, una sola scheda attiva e contenuto coerente; ui-navigation 5/5."
 P3,itinerario,passed,Aprire Viaggio.,usabilita:U0315,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P3,itinerario,passed,Chiudere ogni giornata.,usabilita:U0318,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P3,itinerario,pending,Confrontare ogni giornata con il programma definitivo dell’agenzia.,globale:T-1265,
-P3,itinerario,pending,Consultare itinerario.,globale:T-0539,
-P3,itinerario,pending,Consultazione itinerario.,globale:T-1211,
-P3,itinerario,pending,Controllo itinerario.,globale:T-1213,
+P3,itinerario,passed,Consultare itinerario.,globale:T-0539,"QA Thailandia 1.48.62 WebKit: Viaggio apre e rende consultabili 11/11 giornate con foto, testo, distanze, mezzi e mappe; ui-navigation 5/5."
+P3,itinerario,passed,Consultazione itinerario.,globale:T-1211,"QA Thailandia 1.48.62 WebKit: consultazione touch completa di 11/11 giornate e ritorno dal percorso conservando il punto; ui-navigation 5/5."
+P3,itinerario,passed,Controllo itinerario.,globale:T-1213,"QA Thailandia 1.48.62 WebKit: 11/11 giornate con contenuti obbligatori e otto tappe mappa navigate; ui-navigation 5/5 applicabili."
 P3,itinerario,pending,Definire cosa accade al termine del viaggio.,globale:T-1339,
 P3,itinerario,pending,Definire il periodo di conservazione dei dati dopo il viaggio.,globale:T-0049,
 P3,itinerario,pending,giornata corretta;,usabilita:U0591,
 P3,itinerario,pending,Hotel e prenotazioni.,globale:T-0258,
-P3,itinerario,pending,itinerario della giornata;,globale:T-1757,
+P3,itinerario,passed,itinerario della giornata;,globale:T-1757,"QA Thailandia 1.48.62 WebKit: ogni giornata espone partenza, arrivo, distanza, mezzo, obiettivo, checklist, minimappa e comando Percorso; 11/11."
 P3,itinerario,pending,Link esterno → giornata → indietro.,globale:T-1415,
 P3,itinerario,pending,Mantenere sempre disponibili itinerario ed emergenze.,globale:T-1648,
 P3,itinerario,pending,Prima del viaggio.,usabilita:U0114,
@@ -2705,8 +2705,8 @@ P3,itinerario,pending,Provare una data precedente al viaggio.,usabilita:U0185,
 P3,itinerario,pending,Provare una data successiva al viaggio.,usabilita:U0186,
 P3,itinerario,pending,Quota massima per giornata.,globale:T-0173,
 P3,itinerario,pending,Ricerca per giornata.,globale:T-1699,
-P3,itinerario,pending,Ritorno al programma della giornata.,globale:T-1236,
-P3,itinerario,pending,Scorrere a metà giornata.,globale:T-1402,
+P3,itinerario,passed,Ritorno al programma della giornata.,globale:T-1236,"QA Thailandia 1.48.62 WebKit: dal percorso del giorno 7 il ritorno riapre la medesima giornata e ripristina lo scorrimento entro 2 px."
+P3,itinerario,passed,Scorrere a metà giornata.,globale:T-1402,"QA Thailandia 1.48.62 WebKit: scorrimento touch fino ai contenuti e alle fotografie di tutte le 11 giornate, inclusa conservazione della posizione al ritorno."
 P3,itinerario,pending,Selezionare ogni giornata dal 10 al 23 agosto.,usabilita:U0176,
 P3,itinerario,pending,Tutti controllano l’itinerario.,globale:T-1734,
 P3,itinerario,pending,Verificare assegnazione alla giornata corretta.,globale:T-0936,
@@ -2721,10 +2721,10 @@ P3,itinerario,pending,Verificare giornata associata.,usabilita:U0102,
 P3,itinerario,pending,Verificare giornata corretta.,usabilita:U0134,
 P3,itinerario,pending,Verificare giornata già selezionata.,usabilita:U0182,
 P3,itinerario,pending,Verificare indirizzo completo di ogni hotel.,globale:T-1274,
-P3,itinerario,pending,Verificare mantenimento della giornata.,globale:T-0986;usabilita:U0184,
+P3,itinerario,passed,Verificare mantenimento della giornata.,globale:T-0986;usabilita:U0184,"QA Thailandia 1.48.62 WebKit: percorso del giorno 7 e ritorno mantengono giorno selezionato e posizione di scorrimento entro 2 px."
 P3,itinerario,pending,Verificare nome esatto di ogni hotel.,globale:T-1275,
-P3,itinerario,pending,Verificare ogni itinerario giornaliero.,globale:T-0194,
-P3,itinerario,pending,Verificare stessa giornata e stesso punto.,globale:T-1407,
+P3,itinerario,passed,Verificare ogni itinerario giornaliero.,globale:T-0194,"QA Thailandia 1.48.62 WebKit: 11/11 itinerari aperti e verificati per foto, testo, km, mezzo, obiettivo, checklist, minimappa e comandi."
+P3,itinerario,passed,Verificare stessa giornata e stesso punto.,globale:T-1407,"QA Thailandia 1.48.62 WebKit: ritorno dal percorso conserva giorno 7 e scroll originario con scarto massimo 2 px."
 P3,itinerario,pending,Verificare telefono di ogni hotel.,globale:T-1284,
 P3,itinerario,passed,Verificare tutte le 14 giornate.,globale:T-0378;usabilita:U0316,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P3,itinerario,passed,Viaggio.,usabilita:U0078,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
@@ -2845,5 +2845,5 @@ P3,usabilita-mobile,pending,Ruotare il telefono durante la visualizzazione.,glob
 P3,usabilita-mobile,pending,spiegazione di chi può visualizzarli;,addendum:A0370,
 P3,usabilita-mobile,pending,Visualizzare ambasciata italiana.,globale:T-1195,
 P3,usabilita-mobile,pending,Visualizzare hotel della giornata.,globale:T-1197,
-P3,usabilita-mobile,pending,Visualizzare l’itinerario.,usabilita:U0614,
+P3,usabilita-mobile,passed,Visualizzare l’itinerario.,usabilita:U0614,"QA pubblica Thailandia 1.48.62 WebKit: visitatore senza password apre Viaggio e consulta tutte le 11 giornate; ui-navigation 5/5 applicabili."
 P3,usabilita-mobile,pending,Visualizzare numero dell’assicurazione.,globale:T-1198,
