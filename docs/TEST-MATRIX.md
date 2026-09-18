@@ -1535,17 +1535,17 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1520 | 82 | Verificare VAPID_PRIVATE_KEY. | NON ESEGUITO | — |
 | T-1521 | 82 | Verificare VAPID_PUBLIC_KEY. | SUPERATO | Static 264/264 `vapid-secret-boundary`: endpoint `push/config` restituisce esclusivamente `VAPID_PUBLIC_KEY`. |
 | T-1522 | 82 | Verificare variabile GROUP_CODE. | SUPERATO | Build 1.48.57: `GROUP_CODE` resta binding server e il valore non entra in sorgente o bundle client. |
-| T-1523 | 83 | Calcolare consumo giornaliero previsto. | NON ESEGUITO | — |
+| T-1523 | 83 | Calcolare consumo giornaliero previsto. | SUPERATO | `operational-capacity-plan` 4/4: 95.480 richieste/giorno inclusa riserva di 8.000 azioni e 74.432.498 byte di media/giorno nel profilo prudenziale. |
 | T-1524 | 83 | Calcolare consumo massimo di un post con 10 allegati. | SUPERATO | `media-quota` 3/3 + QA reale: due upload completati da 310 MB respinti insieme con HTTP 413; massimo 10 allegati e 600 MB complessivi per post. |
-| T-1525 | 83 | Calcolare consumo per 14 giorni. | NON ESEGUITO | — |
-| T-1526 | 83 | Calcolare numero di richieste per utente al giorno. | NON ESEGUITO | — |
-| T-1527 | 83 | Calcolare peso medio di un audio. | NON ESEGUITO | — |
-| T-1528 | 83 | Calcolare peso medio di un video. | NON ESEGUITO | — |
-| T-1529 | 83 | Calcolare peso medio di una fotografia. | NON ESEGUITO | — |
-| T-1530 | 83 | Calcolare richieste Push. | NON ESEGUITO | — |
-| T-1531 | 83 | Calcolare spazio necessario per documenti. | NON ESEGUITO | — |
-| T-1532 | 83 | Calcolare traffico generato dal polling ogni 2,5 secondi. | NON ESEGUITO | — |
-| T-1533 | 83 | Definire comportamento quando la quota viene superata. | NON ESEGUITO | — |
+| T-1525 | 83 | Calcolare consumo per 14 giorni. | SUPERATO | `operational-capacity-plan` 4/4: 1.336.720 richieste previste e 1.042.054.965 byte di media in 14 giorni. |
+| T-1526 | 83 | Calcolare numero di richieste per utente al giorno. | SUPERATO | `operational-capacity-plan` 4/4: 3.420 richieste periodiche/giorno per viaggiatore attivo; 1.440 per familiare attivo. |
+| T-1527 | 83 | Calcolare peso medio di un audio. | SUPERATO | `media-capacity` 1/1: campione audio reale dei collaudi, media 617.444 byte. |
+| T-1528 | 83 | Calcolare peso medio di un video. | SUPERATO | `media-capacity` 1/1: tre video WebM/MOV/MP4 reali dei collaudi, media 715.859 byte. |
+| T-1529 | 83 | Calcolare peso medio di una fotografia. | SUPERATO | `media-capacity` 1/1: undici immagini Thailandia JPG/PNG reali, media 556.455 byte. |
+| T-1530 | 83 | Calcolare richieste Push. | SUPERATO | `operational-capacity-plan` 4/4: massimo operativo atteso 5.040 consegne/giorno e 70.560 in 14 giorni. |
+| T-1531 | 83 | Calcolare spazio necessario per documenti. | SUPERATO | `P0_DOCUMENT_CAPACITY` 8/8 su QA: 18 viaggiatori × 4 documenti principali × 80 MiB = 5.760 MiB (5,625 GiB) di capacità teorica massima. |
+| T-1532 | 83 | Calcolare traffico generato dal polling ogni 2,5 secondi. | SUPERATO | `operational-capacity-plan` 4/4: il vecchio intervallo genererebbe 311.040 richieste/giorno e 20.384.317.440 byte/giorno ipotizzando risposte da 64 KiB; il piano corrente usa 87.480 richieste periodiche. |
+| T-1533 | 83 | Definire comportamento quando la quota viene superata. | SUPERATO | `operational-capacity-plan` 4/4: HTTP 429 con `Retry-After` per rate limit/upload attivi, HTTP 413 oltre 600 MB e nessun post parziale. |
 | T-1534 | 83 | Impedire che un singolo utente esaurisca la quota. | NON ESEGUITO | — |
 | T-1535 | 83 | Impostare allarme al 95% della quota. | NON ESEGUITO | — |
 | T-1536 | 83 | Impostare allarme all’80% della quota. | NON ESEGUITO | — |

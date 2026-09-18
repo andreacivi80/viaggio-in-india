@@ -1400,11 +1400,11 @@ P3,altro,pending,Browser con cookie/storage bloccati.,globale:T-1082,
 P3,altro,pending,browser;,globale:T-1241,
 P3,altro,passed,button senza onClick;,addendum:A0179,"TypeScript JSX inventory: 115 interactive elements, zero missing handlers/empty links; Playwright credential flow"
 P3,altro,passed,Calcolare consumo massimo di un post con 10 allegati.,globale:T-1524,media-quota 3/3 + QA reale: due upload completati da 310 MB respinti insieme con HTTP 413; massimo 10 allegati e 600 MB complessivi per post
-P3,altro,pending,Calcolare consumo per 14 giorni.,globale:T-1525,
+P3,altro,passed,Calcolare consumo per 14 giorni.,globale:T-1525,"operational-capacity-plan 4/4: 1.336.720 richieste previste e 1.042.054.965 byte di media in 14 giorni nel profilo operativo prudenziale"
 P3,altro,pending,Calcolare hash dei file.,globale:T-1157,
-P3,altro,pending,Calcolare numero di richieste per utente al giorno.,globale:T-1526,
-P3,altro,pending,Calcolare richieste Push.,globale:T-1530,
-P3,altro,pending,"Calcolare traffico generato dal polling ogni 2,5 secondi.",globale:T-1532,
+P3,altro,passed,Calcolare numero di richieste per utente al giorno.,globale:T-1526,"operational-capacity-plan 4/4: 3.420 richieste periodiche/giorno per viaggiatore attivo; 1.440 per familiare attivo"
+P3,altro,passed,Calcolare richieste Push.,globale:T-1530,"operational-capacity-plan 4/4: massimo operativo atteso 5.040 consegne/giorno e 70.560 in 14 giorni"
+P3,altro,passed,"Calcolare traffico generato dal polling ogni 2,5 secondi.",globale:T-1532,"operational-capacity-plan 4/4: il vecchio intervallo genererebbe 311.040 richieste/giorno e 20.384.317.440 byte/giorno ipotizzando risposta 64 KiB; piano corrente 87.480 richieste periodiche"
 P3,altro,pending,Cambiare applicazione.,globale:T-0447;globale:T-0810;usabilita:U0232;usabilita:U0540,
 P3,altro,pending,Cambiare da Wi-Fi a dati mobili.,globale:T-0535,
 P3,altro,pending,Cambiare data e ora del telefono.,globale:T-0754,
@@ -1555,7 +1555,7 @@ P3,altro,pending,Dati mobili.,usabilita:U0520,
 P3,altro,pending,dati trasferiti;,globale:T-1114,
 P3,altro,pending,Deep link del singolo post.,globale:T-0244,
 P3,altro,pending,Definire budget massimo del bundle.,globale:T-1666,
-P3,altro,pending,Definire comportamento quando la quota viene superata.,globale:T-1533,
+P3,altro,passed,Definire comportamento quando la quota viene superata.,globale:T-1533,"operational-capacity-plan 4/4: HTTP 429 con Retry-After per rate limit/upload attivi; HTTP 413 oltre 600 MB; nessun post parziale"
 P3,altro,pending,Definire consumo massimo accettabile.,globale:T-1654,
 P3,altro,pending,Definire cosa accade ai post.,globale:T-1318,
 P3,altro,passed,Definire per quanto tempo vengono conservate le subscription Push.,globale:T-1341,"data-retention-policy 3/3: conservazione fino a disattivazione, logout, revoca dispositivo/profilo o risposta permanente 404/410 del servizio push."
@@ -2674,7 +2674,7 @@ P3,altro,passed,X-Content-Type-Options: nosniff.,globale:T-1484,production-smoke
 P3,altro,pending,ZIP completo.,globale:T-1727,
 P3,altro,pending,ZIP dei contenuti.,globale:T-0276,
 P3,documenti,pending,Biglietti collegati alle giornate.,globale:T-0236,
-P3,documenti,pending,Calcolare consumo giornaliero previsto.,globale:T-1523,
+P3,documenti,passed,Calcolare consumo giornaliero previsto.,globale:T-1523,"operational-capacity-plan 4/4: 95.480 richieste/giorno inclusa riserva di 8.000 azioni e 74.432.498 byte di media/giorno nel profilo prudenziale"
 P3,documenti,pending,Confrontare gli orari con i biglietti ferroviari reali.,globale:T-1263,
 P3,documenti,pending,Confrontare le date con i biglietti aerei reali.,globale:T-1264,
 P3,documenti,pending,Verificare comportamento previsto.,usabilita:U0048;usabilita:U0129,
