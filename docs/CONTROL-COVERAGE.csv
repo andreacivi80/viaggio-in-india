@@ -1208,11 +1208,11 @@ P2,social,passed,non esistono commenti;,addendum:A0300,QA reale P0 social 12/12:
 P2,social,passed,Nuovo commento.,globale:T-0526,P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: nuovo commento creato e ricevuto coerentemente da tre sessioni personali.
 P2,social,passed,Ogni commento deve essere collegato a un post esistente.,globale:T-1015,P0_RATE_LIMIT_DIMENSIONS 10/10 su QA isolato: trenta reazioni e dieci commenti riferiti ogni volta a post inesistenti sono stati rifiutati con 404 prima di qualsiasi inserimento; nessun commento o reazione orfano è stato creato.
 P2,social,passed,Ogni reazione deve essere collegata a un post esistente.,globale:T-1020,P0_RATE_LIMIT_DIMENSIONS 10/10 su QA isolato: trenta reazioni e dieci commenti riferiti ogni volta a post inesistenti sono stati rifiutati con 404 prima di qualsiasi inserimento; nessun commento o reazione orfano è stato creato.
-P2,social,pending,Paginazione dei commenti.,globale:T-0108,
+P2,social,passed,Paginazione dei commenti.,globale:T-0108,QA reale isolato: API 60 commenti 8/8 e UI touch Galaxy S9+ 1/1; 50 iniziali più 10 precedenti senza duplicati e pulizia completa.
 P2,social,passed,Protezione contro modifica di commenti altrui.,globale:T-0224,QA 1.31.0: secondo viaggiatore non puo modificare il commento altrui
 P2,social,passed,Reazione Mi piace.,globale:T-0469,"P1_SOCIAL_CONCURRENCY 12/12 + comment-conversations 31/31 su QA 1.48.37: cuore inserito, conteggiato e sincronizzato senza duplicazioni."
 P2,social,passed,reazione;,globale:T-0751;usabilita:U0643,P1_SOCIAL_CONCURRENCY 12/12 su QA 1.48.37: tre reazioni di tre identità producono firme identiche in tutte le viste.
-P2,social,pending,Ricerca per commento.,globale:T-1698,
+P2,social,passed,Ricerca per commento.,globale:T-1698,QA reale isolato: ricerca server INSTR su 60 commenti e UI touch Galaxy S9+ trovano esattamente il testo più vecchio; 8/8 API più 1/1 UI.
 P2,social,passed,Ricezione commento.,globale:T-1232,"P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: ogni commento viene ricevuto da proprietario, secondo viaggiatore e coordinatrice con autore e timestamp invariati."
 P2,social,passed,Rimozione reazione.,globale:T-0470,reaction-concurrency 2/2 + comment-conversations 31/31: secondo tocco sulla stessa reazione la elimina; stato finale senza record duplicati.
 P2,social,passed,Rimuovere reazione.,usabilita:U0252,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"

@@ -89,7 +89,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.59",
+const VERSION = "1.48.60",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -4517,12 +4517,54 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
     [deletingCommentId, setDeletingCommentId] = useState(""),
     [hiddenCommentIds, setHiddenCommentIds] = useState([]),
     [replyingToComment, setReplyingToComment] = useState(null),
+    [loadedComments, setLoadedComments] = useState(null),
+    [commentCursor, setCommentCursor] = useState(""),
+    [commentSearch, setCommentSearch] = useState(""),
+    [commentSearchInput, setCommentSearchInput] = useState(""),
+    [loadingComments, setLoadingComments] = useState(false),
     [showAllComments, setShowAllComments] = useState(opensLinkedComment);
   const replyInputRef = useRef(null);
   const commentOperationRef = useRef("");
   const reactionOperationRef = useRef({});
   const commentReactionOperationRef = useRef({});
   useEffect(() => setSaved(Boolean(p.saved)), [p.saved]);
+  const latestInitialCommentId = p.comments?.[p.comments.length - 1]?.id || "";
+  useEffect(() => {
+    setLoadedComments(null);
+    setCommentCursor("");
+    setCommentSearch("");
+    setCommentSearchInput("");
+  }, [p.comment_count, latestInitialCommentId]);
+  const loadCommentPage = async ({ reset = false, query = commentSearch } = {}) => {
+    setLoadingComments(true);
+    try {
+      const params = new URLSearchParams({ post_id: p.id, limit: "50" });
+      if (!reset && commentCursor) params.set("cursor", commentCursor);
+      if (query.trim()) params.set("q", query.trim());
+      const identityHeaders = sessionToken
+        ? sessionHeaders(sessionToken)
+        : author.trim()
+          ? await guestHeaders(author.trim())
+          : {};
+      const response = await fetch(`${API}/comments?${params}`, { headers: identityHeaders });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok) throw Error(result.error || "Commenti non disponibili.");
+      setLoadedComments((current) => reset || !current
+        ? result.comments || []
+        : [...(result.comments || []), ...current]);
+      setCommentCursor(result.next_cursor || "");
+      setCommentSearch(query.trim());
+      setCommentStatus(result.query
+        ? `${result.total || 0} commenti trovati.`
+        : "");
+      return true;
+    } catch (error) {
+      setCommentStatus(error.message || "Commenti non disponibili.");
+      return false;
+    } finally {
+      setLoadingComments(false);
+    }
+  };
   const toggleSaved = async () => {
     if (!sessionToken) {
       setCommentStatus("Collega il tuo profilo per salvare questo ricordo.");
@@ -4764,7 +4806,7 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
       reaction.author_name?.trim() || "Una persona",
     ),
   );
-  const visibleComments = (p.comments || []).filter(
+  const visibleComments = (loadedComments || p.comments || []).filter(
     (commentItem) => !hiddenCommentIds.includes(commentItem.id),
   );
   const visibleCommentIds = new Set(visibleComments.map(({ id: commentId }) => commentId));
@@ -5028,14 +5070,48 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
             )}
           </div>
         ))}
-        {visibleComments.length > 2 && (
+        {showAllComments && Number(p.comment_count || visibleComments.length) > 10 && (
+          <form className="commentSearch" onSubmit={async (event) => {
+            event.preventDefault();
+            await loadCommentPage({ reset: true, query: commentSearchInput });
+          }}>
+            <input
+              type="search"
+              value={commentSearchInput}
+              onChange={(event) => setCommentSearchInput(event.target.value)}
+              placeholder="Cerca nei commenti"
+              aria-label="Cerca nei commenti"
+            />
+            <button type="submit" disabled={loadingComments}>Cerca</button>
+            {commentSearch && (
+              <button type="button" onClick={async () => {
+                setCommentSearchInput("");
+                await loadCommentPage({ reset: true, query: "" });
+              }}>Azzera</button>
+            )}
+          </form>
+        )}
+        {showAllComments && commentCursor && (
           <button
             className="allComments"
-            onClick={() => setShowAllComments(!showAllComments)}
+            disabled={loadingComments}
+            onClick={() => loadCommentPage()}
+          >
+            {loadingComments ? "Caricamento…" : "Carica commenti precedenti"}
+          </button>
+        )}
+        {Number(p.comment_count || visibleComments.length) > 2 && (
+          <button
+            className="allComments"
+            onClick={async () => {
+              if (!showAllComments && Number(p.comment_count || 0) > (p.comments || []).length)
+                await loadCommentPage({ reset: true, query: "" });
+              setShowAllComments(!showAllComments);
+            }}
           >
             {showAllComments
               ? "Mostra soltanto gli ultimi commenti"
-              : `Visualizza tutti i ${visibleComments.length} commenti`}
+              : `Visualizza tutti i ${Number(p.comment_count || visibleComments.length)} commenti`}
           </button>
         )}
         {replyingToComment && (

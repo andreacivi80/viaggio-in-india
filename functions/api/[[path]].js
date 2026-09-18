@@ -608,6 +608,39 @@ export function notificationPreferenceAllows(subscription, payload) {
   return !preference || !subscription.profile_id || Number(subscription[`pref_${preference}`] ?? 1) === 1;
 }
 
+const INITIAL_COMMENTS_PER_POST = 50;
+const MAX_COMMENTS_PER_PAGE = 100;
+
+export function normalizeCommentPageLimit(value) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed) || parsed < 1) return INITIAL_COMMENTS_PER_POST;
+  return Math.min(parsed, MAX_COMMENTS_PER_PAGE);
+}
+
+export function encodeCommentCursor(comment) {
+  if (!comment?.created_at || !comment?.id) return "";
+  const bytes = new TextEncoder().encode(JSON.stringify([String(comment.created_at), String(comment.id)]));
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary)
+    .replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+export function decodeCommentCursor(value) {
+  if (!value) return null;
+  try {
+    const normalized = String(value).replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized + "=".repeat((4 - normalized.length % 4) % 4);
+    const binary = atob(padded);
+    const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+    const parsed = JSON.parse(new TextDecoder().decode(bytes));
+    if (!Array.isArray(parsed) || parsed.length !== 2 || !parsed[0] || !parsed[1]) return null;
+    return { created_at: String(parsed[0]), id: String(parsed[1]) };
+  } catch {
+    return null;
+  }
+}
+
 export function authorizedNotificationSubscriptions(
   subscriptions,
   payload,
@@ -1078,16 +1111,28 @@ async function chunkedMedia(env, request, key, headers) {
 }
 
 async function readState(env, session = null, guest = null) {
-  const [profiles, posts, comments, reactions, commentReactions, postMedia, tripChecks, syncState, activityState, bookmarks] = await Promise.all([
+  const [profiles, posts, comments, commentCounts, reactions, commentReactions, postMedia, tripChecks, syncState, activityState, bookmarks] = await Promise.all([
     env.DB.prepare("SELECT * FROM profiles ORDER BY created_at").all(),
     env.DB.prepare("SELECT * FROM posts ORDER BY created_at DESC").all(),
-    env.DB.prepare("SELECT * FROM comments ORDER BY created_at").all(),
+    env.DB.prepare(
+      `SELECT * FROM (
+         SELECT c.*,ROW_NUMBER() OVER (PARTITION BY post_id ORDER BY created_at DESC,id DESC) AS page_rank
+         FROM comments c
+       ) WHERE page_rank<=? ORDER BY created_at,id`,
+    ).bind(INITIAL_COMMENTS_PER_POST).all(),
+    env.DB.prepare("SELECT post_id,COUNT(*) AS total FROM comments GROUP BY post_id").all(),
     env.DB.prepare(
       "SELECT post_id, kind, author_name, COUNT(*) AS total, MAX(created_at) AS created_at FROM reactions GROUP BY post_id, kind, author_name",
     ).all(),
     env.DB.prepare(
-      "SELECT comment_id,actor_id,kind,author_name,created_at FROM comment_reactions ORDER BY created_at",
-    ).all(),
+      `SELECT comment_id,actor_id,kind,author_name,created_at FROM comment_reactions
+       WHERE comment_id IN (
+         SELECT id FROM (
+           SELECT id,ROW_NUMBER() OVER (PARTITION BY post_id ORDER BY created_at DESC,id DESC) AS page_rank
+           FROM comments
+         ) WHERE page_rank<=?
+       ) ORDER BY created_at`,
+    ).bind(INITIAL_COMMENTS_PER_POST).all(),
     env.DB.prepare("SELECT * FROM post_media ORDER BY position").all(),
     env.DB.prepare("SELECT check_key,checked FROM trip_checks ORDER BY check_key").all(),
     env.DB.prepare("SELECT version,updated_at FROM sync_state WHERE id=1").first(),
@@ -1184,6 +1229,7 @@ async function readState(env, session = null, guest = null) {
             position: m.position,
           })),
       ],
+      comment_count: Number(commentCounts.results.find((item) => item.post_id === p.id)?.total || 0),
       comments: comments.results
         .filter((c) => c.post_id === p.id)
         .map((c) => {
@@ -1191,6 +1237,7 @@ async function readState(env, session = null, guest = null) {
             profile_id: commentProfileId,
             visitor_id: commentVisitorId,
             media_key: commentMediaKey,
+            page_rank: _pageRank,
             ...commentFields
           } = c;
           return {
@@ -2544,6 +2591,87 @@ export async function onRequest(context) {
       });
       return json({ ok: true });
     }
+    if (request.method === "GET" && path === "comments") {
+      const session = await sessionFromRequest(request, env);
+      const guest = session ? null : await guestFromRequest(request, env);
+      const url = new URL(request.url);
+      const postId = String(url.searchParams.get("post_id") || "");
+      if (!postId) return json({ error: "Pubblicazione richiesta" }, 400);
+      const targetPost = await env.DB.prepare(
+        "SELECT id,profile_id,visibility FROM posts WHERE id=?",
+      ).bind(postId).first();
+      if (!targetPost || !canViewPost(targetPost, session, guest))
+        return json({ error: "Pubblicazione non disponibile" }, 404);
+      const limited = await rateLimit(env, request, "comments-read", 120, 60, session?.profile_id || guest?.visitor_id || "");
+      if (limited) return limited;
+      const limit = normalizeCommentPageLimit(url.searchParams.get("limit"));
+      const query = String(url.searchParams.get("q") || "").trim().slice(0, 120);
+      const cursorValue = url.searchParams.get("cursor") || "";
+      const cursor = decodeCommentCursor(cursorValue);
+      if (cursorValue && !cursor) return json({ error: "Cursore commenti non valido" }, 400);
+      const normalizedQuery = query.toLocaleLowerCase("it-IT");
+      const rows = await env.DB.prepare(
+        `SELECT * FROM comments
+         WHERE post_id=?
+           AND (?='' OR INSTR(LOWER(text), ?)>0)
+           AND (?='' OR created_at<? OR (created_at=? AND id<?))
+         ORDER BY created_at DESC,id DESC LIMIT ?`,
+      ).bind(
+        postId, query, normalizedQuery,
+        cursor?.created_at || "", cursor?.created_at || "", cursor?.created_at || "", cursor?.id || "",
+        limit + 1,
+      ).all();
+      const pageRows = rows.results.slice(0, limit);
+      const commentIds = pageRows.map((comment) => comment.id);
+      const [profiles, reactionRows, countRow] = await Promise.all([
+        env.DB.prepare("SELECT id,name,surname FROM profiles").all(),
+        commentIds.length
+          ? env.DB.prepare(
+              `SELECT comment_id,actor_id,kind,author_name,created_at FROM comment_reactions
+               WHERE comment_id IN (${commentIds.map(() => "?").join(",")}) ORDER BY created_at`,
+            ).bind(...commentIds).all()
+          : Promise.resolve({ results: [] }),
+        env.DB.prepare(
+          "SELECT COUNT(*) AS total FROM comments WHERE post_id=? AND (?='' OR INSTR(LOWER(text), ?)>0)",
+        ).bind(postId, query, normalizedQuery).first(),
+      ]);
+      const profileById = new Map(profiles.results.map((profile) => [profile.id, profile]));
+      const publicName = (profileId, fallback) => {
+        if (session) return fallback;
+        const profile = profileById.get(profileId);
+        if (!profile) return fallback;
+        const initial = String(profile.surname || "").trim().slice(0, 1);
+        return `${profile.name}${initial ? ` ${initial}.` : ""}`;
+      };
+      const currentActorId = session ? `profile:${session.profile_id}` : guest ? `guest:${guest.visitor_id}` : "";
+      const cursorAnchor = pageRows[pageRows.length - 1];
+      const pageComments = [...pageRows].reverse().map((comment) => {
+        const { profile_id: profileId, visitor_id: visitorId, media_key: mediaKey, ...fields } = comment;
+        return {
+          ...fields,
+          can_manage: Boolean(session ? session.role === "coordinator" || profileId === session.profile_id : guest && visitorId === guest.visitor_id),
+          can_delete: Boolean(session || (guest && visitorId === guest.visitor_id)),
+          author_name: publicName(profileId, comment.author_name),
+          media_url: mediaUrl(mediaKey),
+          reactions: reactionRows.results.filter((reaction) => reaction.comment_id === comment.id).map((reaction) => ({
+            kind: reaction.kind,
+            author_name: reaction.actor_id.startsWith("profile:")
+              ? publicName(reaction.actor_id.slice(8), reaction.author_name)
+              : reaction.author_name,
+            reacted: reaction.actor_id === currentActorId,
+            created_at: reaction.created_at,
+          })),
+        };
+      });
+      const hasMore = rows.results.length > limit;
+      return json({
+        comments: pageComments,
+        total: Number(countRow?.total || 0),
+        query,
+        next_cursor: hasMore ? encodeCommentCursor(cursorAnchor) : "",
+        has_more: hasMore,
+      });
+    }
     if (request.method === "POST" && path === "comments") {
       const session = await sessionFromRequest(request, env);
       const guest = session ? null : await guestFromRequest(request, env);
@@ -3240,7 +3368,10 @@ export async function onRequest(context) {
       else await reporting;
     }
     return json(
-      { error: publicMessage, ...(errorId ? { error_id: errorId } : {}) },
+      {
+        error: publicMessage,
+        ...(errorId ? { error_id: errorId } : {}),
+      },
       status,
       status === 503 ? { "retry-after": "3" } : {},
     );

@@ -120,7 +120,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0105 | 8 | Indicazione “Ultima sincronizzazione”. | SUPERATO | QA 1.48.47: orario aggiornato solo dopo /api/state valido, conservato sul dispositivo e distinto dallo stato offline; indicatore accessibile sempre visibile. |
 | T-0106 | 8 | Nessun salto della pagina durante l’aggiornamento. | NON ESEGUITO | — |
 | T-0107 | 8 | Nessuna chiusura involontaria di modali e tastiera. | NON ESEGUITO | — |
-| T-0108 | 8 | Paginazione dei commenti. | NON ESEGUITO | — |
+| T-0108 | 8 | Paginazione dei commenti. | SUPERATO | QA reale isolato: API 60 commenti 8/8 e UI touch Galaxy S9+ 1/1; 50 iniziali più 10 precedenti senza duplicati. |
 | T-0109 | 8 | Paginazione dei post. | NON ESEGUITO | — |
 | T-0110 | 8 | Pulsante “Riprova”. | NON ESEGUITO | — |
 | T-0111 | 8 | Riduzione del controllo ogni 2,5 secondi. | NON ESEGUITO | — |
@@ -1710,7 +1710,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1695 | 95 | Ricerca maiuscole/minuscole. | NON ESEGUITO | — |
 | T-1696 | 95 | Ricerca offline sui dati disponibili. | SUPERATO | QA 1.48.49 Galaxy S9+ touch 1/1: ricerca locale su racconto, autore, luogo, media e commenti; accenti normalizzati, più termini combinati e zero richieste API anche offline. |
 | T-1697 | 95 | Ricerca per cognome. | NON ESEGUITO | — |
-| T-1698 | 95 | Ricerca per commento. | NON ESEGUITO | — |
+| T-1698 | 95 | Ricerca per commento. | SUPERATO | QA reale isolato: ricerca server e UI touch su 60 commenti trovano esattamente il testo più vecchio. |
 | T-1699 | 95 | Ricerca per giornata. | NON ESEGUITO | — |
 | T-1700 | 95 | Ricerca per luogo. | NON ESEGUITO | — |
 | T-1701 | 95 | Ricerca per nome. | NON ESEGUITO | — |

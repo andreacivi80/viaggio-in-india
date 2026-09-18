@@ -177,6 +177,11 @@
       "access": "authenticated-group-member"
     },
     {
+      "method": "GET",
+      "path": "comments",
+      "access": "post-visibility-filtered"
+    },
+    {
       "method": "POST",
       "path": "comments",
       "access": "profile-or-guest"
