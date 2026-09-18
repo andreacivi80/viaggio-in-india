@@ -62,6 +62,13 @@ test("il runner prepara le posizioni di scadenza solo per il relativo controllo"
   assert.match(source, /48 \* 86400000/);
 });
 
+test("il runner attende che D1 sia stabile prima dei test remoti", () => {
+  assert.match(source, /const waitForQaDatabase = async/);
+  assert.match(source, /authenticatedProfileVisible/);
+  assert.match(source, /consecutiveReady >= 2/);
+  assert.match(source, /await waitForQaDatabase\(baseUrl, tokens\.owner, deviceKeys\.owner, profiles\.owner\)/);
+});
+
 test("il runner distingue il secondo telefono proprio dal telefono di un altro profilo", () => {
   assert.match(source, /QA_SECOND_DEVICE_ID: value\("device-owner-secondary"\)/);
   assert.match(source, /QA_OTHER_DEVICE_ID: value\("device-other"\)/);

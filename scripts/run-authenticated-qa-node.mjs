@@ -185,6 +185,28 @@ const d1File = (path) => {
   throw lastError;
 };
 
+const waitForQaDatabase = async (url, tokenValue, deviceKey, profileId) => {
+  let consecutiveReady = 0;
+  let lastStatus = 0;
+  for (let attempt = 0; attempt < 20; attempt += 1) {
+    try {
+      const response = await fetch(`${url}/api/state`, {
+        cache: "no-store",
+        headers: { authorization: `Bearer ${tokenValue}`, "x-device-key": deviceKey },
+      });
+      lastStatus = response.status;
+      const state = response.status === 200 ? await response.json().catch(() => null) : null;
+      const authenticatedProfileVisible = state?.profiles?.some((profile) => profile.id === profileId);
+      consecutiveReady = authenticatedProfileVisible ? consecutiveReady + 1 : 0;
+      if (consecutiveReady >= 2) return;
+    } catch {
+      consecutiveReady = 0;
+    }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(500 + attempt * 250, 2500)));
+  }
+  throw new Error(`Database QA non stabile prima dei test (ultimo stato ${lastStatus || "rete"})`);
+};
+
 let succeeded = false;
 try {
   d1File(setupPath);
@@ -225,6 +247,7 @@ try {
     QA_UI_ALLOW_REGISTRATION: "true",
     ...(qaGroupCode ? { QA_UI_GROUP_CODE: qaGroupCode } : {}),
   };
+  await waitForQaDatabase(baseUrl, tokens.owner, deviceKeys.owner, profiles.owner);
   for (const testFile of testFiles) {
     if (testFile.endsWith(".spec.mjs")) {
       const testSource = testSources.get(testFile);

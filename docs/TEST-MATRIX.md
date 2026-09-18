@@ -1518,12 +1518,12 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1503 | 81 | Ruotare immediatamente qualsiasi segreto eventualmente esposto. | NON ESEGUITO | — |
 | T-1504 | 81 | Verificare che soltanto la chiave pubblica VAPID sia inviata al browser. | SUPERATO | Static 264/264 `vapid-secret-boundary`: `push/config` espone `public_key` e nessun campo o riferimento alla chiave privata. |
 | T-1505 | 82 | Verificare accesso amministrativo con autenticazione a più fattori. | SUPERATO | QA API 7/7 + Galaxy S9+ touch 1/1 + statico 218/218: sessione coordinatrice/device + password, token firmato di 10 minuti vincolato a profilo e dispositivo; rifiutati password errata, viaggiatore, alterazione e riuso su secondo telefono. |
-| T-1506 | 82 | Verificare ambiente di collaudo separato. | NON ESEGUITO | — |
-| T-1507 | 82 | Verificare ambiente produzione. | NON ESEGUITO | — |
-| T-1508 | 82 | Verificare binding D1 corretto. | NON ESEGUITO | — |
-| T-1509 | 82 | Verificare binding MEDIA corretto. | SUPERATO | `deployment-boundaries` 4/4: binding MEDIA presente e distinto tra produzione e QA; Worker usa solo `env.MEDIA`; ID assenti dal client. |
+| T-1506 | 82 | Verificare ambiente di collaudo separato. | SUPERATO | Audit remoto Cloudflare `PASS`: entrambi gli ambienti production/preview del progetto QA usano esclusivamente D1 `viaggio-in-india-qa-db` e KV QA; prova autenticata QA 8/8 con profilo fixture visibile. |
+| T-1507 | 82 | Verificare ambiente produzione. | SUPERATO | Audit remoto Cloudflare `PASS`: il progetto ufficiale `viaggio-in-thailandia-2026` usa esclusivamente D1 e KV ufficiali, diversi da QA; verifica eseguita in sola lettura. |
+| T-1508 | 82 | Verificare binding D1 corretto. | SUPERATO | `audit-cloudflare-bindings`: D1 ufficiale `6521ae69…7489`; D1 QA `26221574…13f73` su production e preview QA; separazione verificata anche sui binding remoti effettivi. |
+| T-1509 | 82 | Verificare binding MEDIA corretto. | SUPERATO | `deployment-boundaries` 4/4 + audit remoto: KV ufficiale `1c59ca1f…7284`, KV QA `6e21cccc…c75b`; Worker usa solo `env.MEDIA`; ID assenti dal client. |
 | T-1510 | 82 | Verificare certificato HTTPS. | NON ESEGUITO | — |
-| T-1511 | 82 | Verificare che i test non utilizzino dati di produzione. | NON ESEGUITO | — |
+| T-1511 | 82 | Verificare che i test non utilizzino dati di produzione. | SUPERATO | Audit remoto Cloudflare + runner autenticato 8/8: alias QA, production QA e preview QA puntano soltanto a D1/KV QA; fixture creata, riletta e ripulita nel database QA separato. |
 | T-1512 | 82 | Verificare configurazione del dominio. | NON ESEGUITO | — |
 | T-1513 | 82 | Verificare limiti dell’archivio MEDIA. | SUPERATO | `media-quota` 3/3 + QA reale 2×310 MB respinto con HTTP 413: documento 80 MB; foto/audio 120 MB; video 500 MB; post 600 MB; upload attivi 1 GB. |
 | T-1514 | 82 | Verificare limiti delle Functions. | NON ESEGUITO | — |

@@ -2359,8 +2359,8 @@ P3,altro,pending,Verificare aggiornamento dello stato nell’app.,globale:T-0874
 P3,altro,pending,Verificare aggiornamento sul secondo telefono.,globale:T-0416;usabilita:U0254,
 P3,altro,passed,Verificare aggiornamento.,usabilita:U0450,Playwright: polling privato porta automaticamente la griglia coordinatore da 1/4 a 0/4; preview c90ec547; 2026-08-04
 P3,altro,pending,Verificare Agra.,globale:T-0361,
-P3,altro,pending,Verificare ambiente di collaudo separato.,globale:T-1506,
-P3,altro,pending,Verificare ambiente produzione.,globale:T-1507,
+P3,altro,passed,Verificare ambiente di collaudo separato.,globale:T-1506,"audit-cloudflare-bindings PASS: production e preview del progetto QA usano D1/KV QA; prova autenticata QA 8/8"
+P3,altro,passed,Verificare ambiente produzione.,globale:T-1507,"audit-cloudflare-bindings PASS in sola lettura: progetto ufficiale su D1/KV ufficiali distinti da QA"
 P3,altro,pending,Verificare anteprima completa attiva.,globale:T-1358,
 P3,altro,pending,Verificare anteprima nascosta dalle impostazioni del telefono.,globale:T-1359,
 P3,altro,passed,Verificare anteprima.,usabilita:U0193,"Playwright mobile: anteprima separata di foto, video WebM con audio e WAV; preview b4f2cf13; 2026-08-04"
@@ -2389,7 +2389,7 @@ P3,altro,pending,Verificare aumento progressivo del numero di richieste.,globale
 P3,altro,pending,Verificare aumento progressivo della RAM.,globale:T-1132,
 P3,altro,pending,Verificare autore corretto.,globale:T-0417;usabilita:U0018;usabilita:U0133,
 P3,altro,pending,Verificare autore.,usabilita:U0100;usabilita:U0633,
-P3,altro,pending,Verificare binding D1 corretto.,globale:T-1508,
+P3,altro,passed,Verificare binding D1 corretto.,globale:T-1508,"audit remoto: D1 ufficiale 6521ae69…7489; D1 QA 26221574…13f73 in entrambi gli ambienti QA"
 P3,altro,pending,Verificare blocchi dell’interfaccia.,globale:T-1133,
 P3,altro,pending,Verificare caching degli asset versionati.,globale:T-1672,
 P3,altro,pending,Verificare cancellazione automatica soltanto dei dati non essenziali.,globale:T-0854,
@@ -2398,7 +2398,7 @@ P3,altro,pending,Verificare carosello.,usabilita:U0107,
 P3,altro,pending,Verificare certificato HTTPS.,globale:T-1510,
 P3,altro,pending,Verificare che day_index corrisponda al giorno 5.,globale:T-0708,
 P3,altro,pending,Verificare che frontend e API siano compatibili durante il passaggio di versione.,globale:T-0834,
-P3,altro,pending,Verificare che i test non utilizzino dati di produzione.,globale:T-1511,
+P3,altro,passed,Verificare che i test non utilizzino dati di produzione.,globale:T-1511,"audit remoto + runner autenticato 8/8: fixture e mutazioni limitate a D1/KV QA separati"
 P3,altro,pending,Verificare che il conteggio torni a 4/4.,globale:T-0709,
 P3,altro,pending,Verificare che il contenuto venga mostrato come testo e non eseguito.,globale:T-0904,
 P3,altro,pending,"Verificare che il controllo ogni 2,5 secondi non consumi eccessivamente dati e batteria.",globale:T-0593,
@@ -2745,7 +2745,7 @@ P3,media-upload,passed,Proteggere Cloudflare D1 e MEDIA da consumi anomali.,glob
 P3,media-upload,pending,quali tasti sono immediatamente disponibili;,addendum:A0313,
 P3,media-upload,pending,Ruotare immediatamente qualsiasi segreto eventualmente esposto.,globale:T-1503,
 P3,media-upload,pending,test dei formati multimediali;,globale:T-0014,
-P3,media-upload,passed,Verificare binding MEDIA corretto.,globale:T-1509,deployment-boundaries 4/4: binding MEDIA presente e distinto tra produzione e QA; Worker usa solo env.MEDIA; ID assenti dal client
+P3,media-upload,passed,Verificare binding MEDIA corretto.,globale:T-1509,"deployment-boundaries 4/4 + audit remoto: KV ufficiale e QA distinti; Worker usa solo env.MEDIA; ID assenti dal client"
 P3,media-upload,pending,Verificare blocco immediato.,globale:T-1617,
 P3,media-upload,passed,Verificare comparsa immediata nel feed.,usabilita:U0020,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P3,media-upload,passed,Verificare comparsa immediata.,usabilita:U0261,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"

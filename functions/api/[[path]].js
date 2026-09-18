@@ -142,6 +142,22 @@ const mediaUrl = (key) => {
   return `/api/media/${key}`;
 };
 async function ensureStaticPosts(env) {
+  const expectedText = "Il gruppo si sta formando: preparativi in corso, zaini quasi pronti e la Thailandia sempre più vicina. Da Bangkok a Khao Sok, Phi Phi e Krabi: si parte insieme con WEROAD!";
+  const expectedCreatedAt = "2026-09-05 12:00:00";
+  const expectedMediaKey = "static:/thailand/thailandia-insieme.png";
+  const expectedMediaName = "Thailandia Insieme · preparativi WEROAD";
+  const current = await env.DB.prepare(
+    `SELECT p.author_name,p.text,p.created_at,
+            m.media_key,m.media_type,m.media_name,m.media_size
+     FROM posts p
+     LEFT JOIN post_media m ON m.id='weroad-predeparture-photo' AND m.post_id=p.id
+     WHERE p.id='weroad-predeparture'`,
+  ).first();
+  if (current?.author_name === "Thailandia insieme" &&
+      current?.text === expectedText && current?.created_at === expectedCreatedAt &&
+      current?.media_key === expectedMediaKey && current?.media_type === "image/png" &&
+      current?.media_name === expectedMediaName && Number(current?.media_size) === 2615298)
+    return;
   await env.DB.batch([
     env.DB.prepare(
       `DELETE FROM post_media
@@ -157,16 +173,13 @@ async function ensureStaticPosts(env) {
         media_key,media_type,media_name,media_size,created_at
       ) VALUES('weroad-predeparture','Thailandia insieme','',-1,'public',?,'',NULL,NULL,NULL,0,?)
       ON CONFLICT(id) DO UPDATE SET author_name=excluded.author_name,text=excluded.text,created_at=excluded.created_at`,
-    ).bind(
-      "Il gruppo si sta formando: preparativi in corso, zaini quasi pronti e la Thailandia sempre più vicina. Da Bangkok a Khao Sok, Phi Phi e Krabi: si parte insieme con WEROAD!",
-      "2026-09-05 12:00:00",
-    ),
+    ).bind(expectedText, expectedCreatedAt),
     env.DB.prepare(
       `INSERT OR IGNORE INTO post_media(
         id,post_id,media_key,media_type,media_name,media_size,position,created_at
       ) VALUES('weroad-predeparture-photo','weroad-predeparture','static:/thailand/thailandia-insieme.png','image/png',?,2615298,0,?)
       ON CONFLICT(id) DO UPDATE SET media_key=excluded.media_key,media_type=excluded.media_type,media_name=excluded.media_name,media_size=excluded.media_size`,
-    ).bind("Thailandia Insieme · preparativi WEROAD", "2026-09-05 12:00:00"),
+    ).bind(expectedMediaName, expectedCreatedAt),
   ]);
 }
 const futureIso = (hours) =>
@@ -453,7 +466,7 @@ async function beginIdempotentOperation(env, request, scope, actorId) {
     .run();
   if (Number(inserted?.meta?.changes || 0) > 0) return { operationHash };
   const existing = await env.DB.prepare(
-    "SELECT state,response_status,response_json FROM idempotency_operations WHERE operation_hash=?",
+    "SELECT state,response_status,response_json,created_at FROM idempotency_operations WHERE operation_hash=?",
   )
     .bind(operationHash)
     .first();
@@ -465,6 +478,16 @@ async function beginIdempotentOperation(env, request, scope, actorId) {
         { "idempotency-replayed": "true" },
       ),
     };
+  }
+  const staleProcessing = existing?.state === "processing"
+    && Date.parse(String(existing.created_at || "")) <= Date.now() - 2 * 60 * 1000;
+  if (staleProcessing) {
+    const reclaimed = await env.DB.prepare(
+      `UPDATE idempotency_operations
+       SET created_at=?,expires_at=?,response_status=NULL,response_json=NULL
+       WHERE operation_hash=? AND state='processing' AND created_at=?`,
+    ).bind(createdAt, expiresAt, operationHash, existing.created_at).run();
+    if (Number(reclaimed?.meta?.changes || 0) > 0) return { operationHash };
   }
   return {
     response: json(
@@ -3377,6 +3400,14 @@ export async function onRequest(context) {
       ? "Servizio temporaneamente non disponibile. Riprova."
       : error?.message || "Richiesta non completata";
     const errorId = status >= 500 ? id() : "";
+    if (errorId)
+      console.error("API request failed", {
+        error_id: errorId,
+        method: request.method,
+        path,
+        status,
+        message: String(error?.message || error),
+      });
     if (errorId) {
       const reporting = reportTechnicalFailure(env, {
         error_id: errorId,
