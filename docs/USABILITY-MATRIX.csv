@@ -356,7 +356,7 @@
 "U0355","18. PULSANTI DELLE MAPPE","Verificare ritorno allo stesso punto.","pending","","1.31.0"
 "U0356","18. PULSANTI DELLE MAPPE","Aprire Google Maps.","pending","","1.31.0"
 "U0357","18. PULSANTI DELLE MAPPE","Verificare destinazione.","pending","","1.31.0"
-"U0358","18. PULSANTI DELLE MAPPE","Premere Naviga.","pending","","1.31.0"
+"U0358","18. PULSANTI DELLE MAPPE","Premere Naviga.","passed","QA Thailandia 1.48.62 WebKit mobile: gesto touch sul collegamento Google Maps apre la tappa e il ritorno conserva la mappa; 2/2.","1.48.62"
 "U0359","18. PULSANTI DELLE MAPPE","Verificare percorso corretto.","pending","","1.31.0"
 "U0360","18. PULSANTI DELLE MAPPE","Provare senza rete.","pending","","1.31.0"
 "U0361","18. PULSANTI DELLE MAPPE","Mostrare alternativa con coordinate e indirizzo.","pending","","1.31.0"

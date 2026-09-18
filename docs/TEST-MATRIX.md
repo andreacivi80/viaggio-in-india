@@ -516,7 +516,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0501 | 29 | Posizione con GPS preciso. | NON ESEGUITO | — |
 | T-0502 | 29 | Posizione in movimento. | NON ESEGUITO | — |
 | T-0503 | 29 | Tentare di modificare posizione altrui. | NON ESEGUITO | — |
-| T-0504 | 29 | Utilizzare Naviga. | NON ESEGUITO | — |
+| T-0504 | 29 | Utilizzare Naviga. | SUPERATO | QA Thailandia 1.48.62 WebKit: percorso Google Maps aperto e ritorno all'app senza reset; 2/2. |
 | T-0505 | 29 | Verificare che non siano invertite. | NON ESEGUITO | — |
 | T-0506 | 29 | Verificare fuso orario. | NON ESEGUITO | — |
 | T-0507 | 29 | Verificare latitudine. | NON ESEGUITO | — |
@@ -617,7 +617,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0602 | 34 | Verificare contrasto colori. | NON ESEGUITO | — |
 | T-0603 | 34 | Verificare focus visibile. | NON ESEGUITO | — |
 | T-0604 | 34 | Verificare messaggi di errore comprensibili. | NON ESEGUITO | — |
-| T-0605 | 34 | Verificare navigazione da tastiera. | NON ESEGUITO | — |
+| T-0605 | 34 | Verificare navigazione da tastiera. | SUPERATO | QA Thailandia 1.48.62 WebKit: focus e Invio aprono Mappa e Google Maps; ui-google-maps-return 3/3. |
 | T-0606 | 34 | Verificare orientamento orizzontale. | NON ESEGUITO | — |
 | T-0607 | 34 | Verificare orientamento verticale. | NON ESEGUITO | — |
 | T-0608 | 34 | Verificare pulsanti di almeno 44×44 pixel. | NON ESEGUITO | — |
@@ -705,7 +705,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0690 | 38 | sono stati superati i test multidispositivo; | NON ESEGUITO | — |
 | T-0691 | 39 | Aprire il giorno 5 dell’itinerario. | SUPERATO | QA Thailandia 1.48.62 WebKit: giorno 5 aperto con foto, testo, percorso, mezzo, checklist e minimappa. |
 | T-0692 | 39 | Aprire la posizione del post. | NON ESEGUITO | — |
-| T-0693 | 39 | Avviare Naviga. | NON ESEGUITO | — |
+| T-0693 | 39 | Avviare Naviga. | SUPERATO | QA Thailandia 1.48.62 WebKit: gesto touch apre Google Maps con origine e destinazione della tappa; 2/2. |
 | T-0694 | 39 | Cancellare la posizione dal telefono A. | NON ESEGUITO | — |
 | T-0695 | 39 | Caricare quattro documenti dal telefono B. | NON ESEGUITO | — |
 | T-0696 | 39 | Collegare il telefono A tramite invito personale. | SUPERATO | QA 1.31.0: telefono tecnico collegato tramite invito personale |
@@ -994,7 +994,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0979 | 52 | Verificare apertura del giorno preciso. | NON ESEGUITO | — |
 | T-0980 | 52 | Verificare apertura del post preciso. | NON ESEGUITO | — |
 | T-0981 | 52 | Verificare apertura della mappa precisa. | NON ESEGUITO | — |
-| T-0982 | 52 | Verificare fallback “Copia link” quando navigator.share non è disponibile. | NON ESEGUITO | — |
+| T-0982 | 52 | Verificare fallback “Copia link” quando navigator.share non è disponibile. | SUPERATO | QA Thailandia 1.48.62 WebKit: URL copiato apre sul secondo telefono la stessa giornata ed esclude il parametro QA; 1/1. |
 | T-0983 | 52 | Verificare funzionamento dopo ricaricamento della pagina. | NON ESEGUITO | — |
 | T-0984 | 52 | Verificare mantenimento del filtro. | NON ESEGUITO | — |
 | T-0985 | 52 | Verificare mantenimento del testo non inviato. | NON ESEGUITO | — |
@@ -1238,8 +1238,8 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1223 | 66 | Invio automatico una sola volta. | NON ESEGUITO | — |
 | T-1224 | 66 | Modalità aereo. | NON ESEGUITO | — |
 | T-1225 | 66 | Moderazione contenuto. | NON ESEGUITO | — |
-| T-1226 | 66 | Navigazione verso una tappa. | NON ESEGUITO | — |
-| T-1227 | 66 | Nessuna perdita del punto di navigazione. | NON ESEGUITO | — |
+| T-1226 | 66 | Navigazione verso una tappa. | SUPERATO | QA Thailandia 1.48.62 WebKit: Google Maps riceve origine/destinazione corrette del giorno 5 e la tappa resta selezionata. |
+| T-1227 | 66 | Nessuna perdita del punto di navigazione. | SUPERATO | QA Thailandia 1.48.62 WebKit: ritorno da Google Maps, anche non disponibile, conserva giorno, mappa e selezione; 2/2. |
 | T-1228 | 66 | Preparazione post con allegati. | NON ESEGUITO | — |
 | T-1229 | 66 | Pubblicazione fotografia con posizione. | NON ESEGUITO | — |
 | T-1230 | 66 | Revoca dispositivo. | NON ESEGUITO | — |

@@ -10,7 +10,15 @@ test("il link copiato apre sul secondo telefono la stessa giornata della mappa",
     isMobile: true,
     hasTouch: true,
   });
-  await context.grantPermissions(["clipboard-read", "clipboard-write"], { origin: new URL(baseUrl).origin });
+  await context.addInitScript(() => {
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: {
+        writeText: async (value) => { window.__qaCopiedText = String(value); },
+        readText: async () => window.__qaCopiedText || "",
+      },
+    });
+  });
   const page = await context.newPage();
   await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Mappa", exact: true }).tap();

@@ -2728,13 +2728,13 @@ P3,itinerario,passed,Verificare stessa giornata e stesso punto.,globale:T-1407,"
 P3,itinerario,pending,Verificare telefono di ogni hotel.,globale:T-1284,
 P3,itinerario,passed,Verificare tutte le 14 giornate.,globale:T-0378;usabilita:U0316,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P3,itinerario,passed,Viaggio.,usabilita:U0078,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
-P3,mappe-posizione,pending,Avviare Naviga.,globale:T-0693,
-P3,mappe-posizione,pending,Navigazione verso una tappa.,globale:T-1226,
-P3,mappe-posizione,pending,Nessuna perdita del punto di navigazione.,globale:T-1227,
-P3,mappe-posizione,pending,Premere Naviga.,usabilita:U0358,
-P3,mappe-posizione,pending,Utilizzare Naviga.,globale:T-0504,
-P3,mappe-posizione,pending,Verificare fallback “Copia link” quando navigator.share non è disponibile.,globale:T-0982,
-P3,mappe-posizione,pending,Verificare navigazione da tastiera.,globale:T-0605,
+P3,mappe-posizione,passed,Avviare Naviga.,globale:T-0693,"QA Thailandia 1.48.62 WebKit: tocco su Google Maps apre percorso con origine e destinazione della tappa selezionata; ritorno conserva giornata e mappa, 2/2."
+P3,mappe-posizione,passed,Navigazione verso una tappa.,globale:T-1226,"QA Thailandia 1.48.62 WebKit: Google Maps riceve origine/destinazione corrette del giorno 5; al ritorno la tappa resta selezionata."
+P3,mappe-posizione,passed,Nessuna perdita del punto di navigazione.,globale:T-1227,"QA Thailandia 1.48.62 WebKit: ritorno da Google Maps e simulazione Internet assente conservano giorno, mappa e selezione; 2/2."
+P3,mappe-posizione,passed,Premere Naviga.,usabilita:U0358,"QA Thailandia 1.48.62 WebKit mobile: gesto touch sul collegamento Google Maps apre il percorso della tappa; 2/2."
+P3,mappe-posizione,passed,Utilizzare Naviga.,globale:T-0504,"QA Thailandia 1.48.62 WebKit: apertura percorso esterno, coordinate logiche e ritorno all'app senza reset; 2/2."
+P3,mappe-posizione,passed,Verificare fallback “Copia link” quando navigator.share non è disponibile.,globale:T-0982,"QA Thailandia 1.48.62 WebKit: collegamento copiato senza navigator.share apre su un secondo telefono la stessa giornata, senza parametro QA; 1/1."
+P3,mappe-posizione,passed,Verificare navigazione da tastiera.,globale:T-0605,"QA Thailandia 1.48.62 WebKit: focus e Invio aprono prima Mappa e poi Google Maps; destinazione esterna caricata correttamente, ui-google-maps-return 3/3."
 P3,media-upload,pending,aggiornare immediatamente tutte le schermate coinvolte;,addendum:A0259,
 P3,media-upload,pending,Arresto immediato.,globale:T-0201,
 P3,media-upload,pending,Chiusura modale mediante tastiera.,globale:T-1059,

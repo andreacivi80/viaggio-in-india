@@ -69,3 +69,28 @@ test("Google Maps non disponibile non blocca o resetta la cartina dell'app", asy
   await expect(page.locator(".routeChips button").nth(chosenDay - 1)).toHaveClass(/active/);
   await context.close();
 });
+
+test("la navigazione verso Google Maps è azionabile interamente da tastiera", async ({ browser }) => {
+  const context = await browser.newContext({ baseURL: baseUrl, viewport: { width: 1024, height: 768 } });
+  await context.route("https://www.google.com/maps/**", (route) => route.fulfill({
+    status: 200,
+    contentType: "text/html",
+    body: "<!doctype html><title>Google Maps</title><h1>Percorso aperto</h1>",
+  }));
+  const page = await context.newPage();
+  await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
+  const mapTab = page.getByRole("button", { name: "Mappa", exact: true });
+  await mapTab.focus();
+  await page.keyboard.press("Enter");
+  await expect(page.locator(".mapSection")).toBeVisible();
+
+  const navigate = page.getByRole("link", { name: "Apri questo percorso in Google Maps" });
+  await navigate.focus();
+  await expect(navigate).toBeFocused();
+  const popupPromise = page.waitForEvent("popup");
+  await page.keyboard.press("Enter");
+  const googleMaps = await popupPromise;
+  await expect(googleMaps.getByRole("heading", { name: "Percorso aperto" })).toBeVisible();
+  await googleMaps.close();
+  await context.close();
+});
