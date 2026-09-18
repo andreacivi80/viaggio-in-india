@@ -1480,7 +1480,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1465 | 78 | Verificare consumo batteria. | NON ESEGUITO | — |
 | T-1466 | 78 | Verificare frequenza degli aggiornamenti. | NON ESEGUITO | — |
 | T-1467 | 78 | Verificare scadenza dopo 15, 30 e 60 minuti. | NON ESEGUITO | — |
-| T-1468 | 79 | API sensibili con no-store. | NON ESEGUITO | — |
+| T-1468 | 79 | API sensibili con no-store. | SUPERATO | `deployment-boundaries` 4/4: helper JSON applica `Cache-Control: no-store` e intestazioni di sicurezza a ogni risposta API. |
 | T-1469 | 79 | Cache-Control corretto. | NON ESEGUITO | — |
 | T-1470 | 79 | Content-Disposition corretto. | NON ESEGUITO | — |
 | T-1471 | 79 | Content-Security-Policy. | NON ESEGUITO | — |
@@ -1503,7 +1503,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1488 | 80 | Tentare clickjacking sui pulsanti Elimina. | NON ESEGUITO | — |
 | T-1489 | 80 | Tentare di incorporare l’app in un iframe esterno. | NON ESEGUITO | — |
 | T-1490 | 80 | Verificare che pagine pubbliche eventualmente incorporabili siano separate da quelle private. | NON ESEGUITO | — |
-| T-1491 | 80 | Verificare protezione mediante CSP frame-ancestors. | NON ESEGUITO | — |
+| T-1491 | 80 | Verificare protezione mediante CSP frame-ancestors. | SUPERATO | `deployment-boundaries` 4/4: sito limitato a `self` e API a `none`; embedding esterno bloccato. |
 | T-1492 | 81 | Aggiungere scansione automatica dei segreti nella pipeline. | SUPERATO | Static 264/264: ogni build esegue `scan-client-secrets` e fallisce su credenziali client vietate. |
 | T-1493 | 81 | Cercare chiavi private VAPID nel bundle JavaScript. | SUPERATO | scan-client-secrets: build bloccata se compare VAPID_PRIVATE_KEY nel client |
 | T-1494 | 81 | Cercare file .env nello ZIP. | SUPERATO | Static 264/264 `clean-source-archive`: archivio riproducibile privo di `.env`, token e artefatti locali. |
@@ -1511,7 +1511,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1496 | 81 | Cercare ID o credenziali non necessarie. | SUPERATO | Static 264/264 `repository-secrets` + `security-surface`: nessun token API, chiave privata, file credenziale o ID riservato nel client. |
 | T-1497 | 81 | Cercare segreti nei file sorgenti. | SUPERATO | Static 264/264 `repository-secrets`: file tracciati e sorgenti applicativi scansionati senza credenziali attive. |
 | T-1498 | 81 | Cercare segreti nei log GitHub Actions. | NON ESEGUITO | — |
-| T-1499 | 81 | Cercare segreti nei messaggi di errore. | NON ESEGUITO | — |
+| T-1499 | 81 | Cercare segreti nei messaggi di errore. | SUPERATO | `deployment-boundaries` 4/4: errori 5xx restituiscono solo messaggio generico ed `error_id`, senza stack, binding o segreti. |
 | T-1500 | 81 | Cercare segreti nel Service Worker. | NON ESEGUITO | — |
 | T-1501 | 81 | Cercare segreti nella cronologia Git. | NON ESEGUITO | — |
 | T-1502 | 81 | Cercare token Cloudflare. | SUPERATO | repository-secrets e scan-client-secrets: token Cloudflare assenti da file tracciati e bundle |
@@ -1521,7 +1521,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1506 | 82 | Verificare ambiente di collaudo separato. | NON ESEGUITO | — |
 | T-1507 | 82 | Verificare ambiente produzione. | NON ESEGUITO | — |
 | T-1508 | 82 | Verificare binding D1 corretto. | NON ESEGUITO | — |
-| T-1509 | 82 | Verificare binding MEDIA corretto. | NON ESEGUITO | — |
+| T-1509 | 82 | Verificare binding MEDIA corretto. | SUPERATO | `deployment-boundaries` 4/4: binding MEDIA presente e distinto tra produzione e QA; Worker usa solo `env.MEDIA`; ID assenti dal client. |
 | T-1510 | 82 | Verificare certificato HTTPS. | NON ESEGUITO | — |
 | T-1511 | 82 | Verificare che i test non utilizzino dati di produzione. | NON ESEGUITO | — |
 | T-1512 | 82 | Verificare configurazione del dominio. | NON ESEGUITO | — |

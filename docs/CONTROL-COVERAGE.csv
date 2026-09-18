@@ -1332,7 +1332,7 @@ P3,altro,pending,Apertura dell’archivio su macOS.,globale:T-1705,
 P3,altro,pending,Apertura dell’archivio su telefono.,globale:T-1706,
 P3,altro,pending,Apertura dell’archivio su Windows.,globale:T-1707,
 P3,altro,pending,API funzionanti;,globale:T-1748,
-P3,altro,pending,API sensibili con no-store.,globale:T-1468,
+P3,altro,passed,API sensibili con no-store.,globale:T-1468,deployment-boundaries 4/4: helper JSON applica Cache-Control no-store e intestazioni di sicurezza a ogni risposta API
 P3,altro,pending,Apostrofi e virgolette.,globale:T-0883,
 P3,altro,pending,apostrofi;,globale:T-1286;usabilita:U0393,
 P3,altro,pending,App aperta per 24 ore.,globale:T-1123,
@@ -1424,7 +1424,7 @@ P3,altro,passed,Cercare GROUP_CODE nel bundle JavaScript.,globale:T-1495,Build 1
 P3,altro,passed,Cercare ID o credenziali non necessarie.,globale:T-1496,Static 264/264 repository-secrets + security-surface: nessun token API chiave privata file credenziale o ID riservato nel client
 P3,altro,passed,Cercare segreti nei file sorgenti.,globale:T-1497,Static 264/264 repository-secrets: file tracciati e sorgenti applicativi scansionati senza credenziali attive
 P3,altro,pending,Cercare segreti nei log GitHub Actions.,globale:T-1498,
-P3,altro,pending,Cercare segreti nei messaggi di errore.,globale:T-1499,
+P3,altro,passed,Cercare segreti nei messaggi di errore.,globale:T-1499,deployment-boundaries 4/4: errori 5xx restituiscono solo messaggio generico ed error_id senza stack binding o segreti
 P3,altro,pending,Cercare segreti nella cronologia Git.,globale:T-1501,
 P3,altro,pending,Cercare un luogo manualmente.,usabilita:U0243,
 P3,altro,pending,Chiamare il numero di emergenza.,globale:T-1184,
@@ -2745,7 +2745,7 @@ P3,media-upload,pending,Proteggere Cloudflare D1 e MEDIA da consumi anomali.,glo
 P3,media-upload,pending,quali tasti sono immediatamente disponibili;,addendum:A0313,
 P3,media-upload,pending,Ruotare immediatamente qualsiasi segreto eventualmente esposto.,globale:T-1503,
 P3,media-upload,pending,test dei formati multimediali;,globale:T-0014,
-P3,media-upload,pending,Verificare binding MEDIA corretto.,globale:T-1509,
+P3,media-upload,passed,Verificare binding MEDIA corretto.,globale:T-1509,deployment-boundaries 4/4: binding MEDIA presente e distinto tra produzione e QA; Worker usa solo env.MEDIA; ID assenti dal client
 P3,media-upload,pending,Verificare blocco immediato.,globale:T-1617,
 P3,media-upload,passed,Verificare comparsa immediata nel feed.,usabilita:U0020,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P3,media-upload,passed,Verificare comparsa immediata.,usabilita:U0261,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
@@ -2753,7 +2753,7 @@ P3,media-upload,pending,Verificare la tappa intermedia di Ranakpur.,globale:T-01
 P3,media-upload,pending,Verificare limiti dell’archivio MEDIA.,globale:T-1513,
 P3,media-upload,pending,Verificare ordinamento corretto mediante timestamp server.,globale:T-0804,
 P3,media-upload,pending,Verificare ordinamento dei post mediante ora server.,globale:T-0944,
-P3,media-upload,pending,Verificare protezione mediante CSP frame-ancestors.,globale:T-1491,
+P3,media-upload,passed,Verificare protezione mediante CSP frame-ancestors.,globale:T-1491,deployment-boundaries 4/4: sito limitato a self e API a none; embedding esterno bloccato
 P3,media-upload,passed,Verificare rifiuto immediato.,addendum:A0103,Playwright stale commands rejected 403; preview a4b05356; 2026-08-04
 P3,social,passed,“Pubblicato” significhi record e allegati confermati dal server;,addendum:A0392,"Playwright Galaxy S9+: invito e sessione server, modale sopra barra, pulsante raggiungibile, stato disabilitato/invio, doppio clic=una richiesta, HTTP 201 e record confermato; preview 9913ac2c; 2026-08-04"
 P3,social,passed,"A pubblica, B riceve.",usabilita:U0555,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
