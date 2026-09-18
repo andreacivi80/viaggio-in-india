@@ -1181,7 +1181,7 @@ P2,social,passed,Commenti periodici durante la prova.,globale:T-1126,"P1_SOCIAL_
 P2,social,pending,Commento con emoji.,usabilita:U0305,
 P2,social,pending,Commento con menzione.,usabilita:U0306,
 P2,social,pending,Commento molto lungo.,usabilita:U0304,
-P2,social,pending,commento non pubblico;,addendum:A0124,
+P2,social,passed,commento non pubblico;,addendum:A0124,QA reale matrice autorizzativa 88/88: il familiare commenta family ma riceve 403 su group; il pubblico senza identità riceve 401.
 P2,social,passed,Commento testuale.,globale:T-0463;usabilita:U0299,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P2,social,pending,Commento vuoto.,usabilita:U0303,
 P2,social,passed,commento;,globale:T-0730;usabilita:U0546;usabilita:U0642,P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: commento reale verificato su tre identità e rimosso con la pubblicazione di prova.
@@ -1199,12 +1199,12 @@ P2,social,passed,Iniziare a scrivere un commento.,globale:T-1399,"ui-social Thai
 P2,social,passed,Inserimento commento.,globale:T-1220,P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: tre POST multipart autenticati restituiscono 201 e compaiono nello stato delle tre sessioni.
 P2,social,passed,Inserimento reazione.,globale:T-1221,"P1_SOCIAL_CONCURRENCY 12/12 su QA 1.48.37: reazioni concorrenti di proprietario, altro viaggiatore e coordinatrice persistono una sola volta per identità."
 P2,social,passed,Inviare commento.,usabilita:U0260,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
-P2,social,pending,Moderazione commenti.,usabilita:U0662,
+P2,social,passed,Moderazione commenti.,usabilita:U0662,QA touch ui-social 1/1 e P0 social 12/12: modifica proprietaria eliminazione condivisa conferma e propagazione su secondo telefono.
 P2,social,passed,modifica commento altrui;,globale:T-0740,QA 1.31.0: attacco modifica commento altrui respinto
 P2,social,passed,modifica commento proprio;,globale:T-0741;usabilita:U0307,QA 1.31.0: modifica commento proprio completata | Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P2,social,passed,Modifica commento.,globale:T-0468,QA 1.31.0: proprietario modifica correttamente il proprio commento
 P2,social,passed,Modificare contemporaneamente la stessa reazione.,globale:T-0796,"P1_SOCIAL_CONCURRENCY Thailandia 1.48.13 su QA isolato 12/12 + L1/L2 autenticato 18/18 applicabili + produzione read-only 8/8: due dispositivi dello stesso profilo modificano contemporaneamente la stessa reazione e convergono a una sola riga; due viaggiatori e la coordinatrice aggiungono una reazione ciascuno e tutti e tre i dispositivi leggono identico conteggio, autori e tipi. Il difetto concorrente trovato su 1.48.12 è stato corretto con vincolo unico persona/post e upsert; backup D1 eseguito prima della migrazione e rilascio ufficiale 1.48.13 verificato."
-P2,social,pending,non esistono commenti;,addendum:A0300,
+P2,social,passed,non esistono commenti;,addendum:A0300,QA reale P0 social 12/12: dopo le eliminazioni il post resta valido con elenco commenti vuoto.
 P2,social,passed,Nuovo commento.,globale:T-0526,P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: nuovo commento creato e ricevuto coerentemente da tre sessioni personali.
 P2,social,passed,Ogni commento deve essere collegato a un post esistente.,globale:T-1015,P0_RATE_LIMIT_DIMENSIONS 10/10 su QA isolato: trenta reazioni e dieci commenti riferiti ogni volta a post inesistenti sono stati rifiutati con 404 prima di qualsiasi inserimento; nessun commento o reazione orfano è stato creato.
 P2,social,passed,Ogni reazione deve essere collegata a un post esistente.,globale:T-1020,P0_RATE_LIMIT_DIMENSIONS 10/10 su QA isolato: trenta reazioni e dieci commenti riferiti ogni volta a post inesistenti sono stati rifiutati con 404 prima di qualsiasi inserimento; nessun commento o reazione orfano è stato creato.
@@ -1232,7 +1232,7 @@ P2,social,passed,Verificare ora dei commenti.,globale:T-0942,"P1_SOCIAL_COMMENTS
 P2,social,passed,Verificare presenza di una sola reazione per persona.,globale:T-0805,QA autenticata Thailandia 1.48.8: dieci invii della stessa reazione con la stessa identità e chiave idempotente producono un solo cambiamento; i replay non creano reazioni duplicate né consumano la quota antispam.
 P2,social,passed,Verificare una sola reazione.,usabilita:U0256,QA autenticata Thailandia 1.48.8: dieci invii della stessa reazione con la stessa identità e chiave idempotente producono un solo cambiamento; i replay non creano reazioni duplicate né consumano la quota antispam.
 P2,social,passed,Visualizza tutti i commenti.,usabilita:U0312,"ui-comment-deep-link Thailandia 1.48.14 Samsung Galaxy S9+ locale e pacchetto QA 2/2: il test touch ha prima riprodotto il difetto sul commento vecchio non renderizzato; dopo la correzione il link apre il commento preciso, la sincronizzazione aggiunge un nuovo commento senza richiudere la discussione, i comandi touch chiudono e riaprono tutti i commenti, il reload conserva il bersaglio e il ritorno alla bacheca mantiene il post. Regressione locale 164/164 applicabili, gate QA autenticato completato e produzione read-only 8/8."
-P2,social,pending,Visualizza ultimi commenti.,usabilita:U0311,
+P2,social,passed,Visualizza ultimi commenti.,usabilita:U0311,QA reale commenti multidispositivo 18/18: tre commenti con timestamp server identici sono riletti nello stesso ordine da tre sessioni.
 P2,usabilita-mobile,pending,Aggiornamento in automobile.,globale:T-1459,
 P2,usabilita-mobile,pending,Attivarle su iPhone PWA.,globale:T-0518,
 P2,usabilita-mobile,passed,Confrontare iPhone e Android.,globale:T-1653,"ui-publish-complete Thailandia 1.48.4 1/1 + regressione mappe Thailandia 1.48.12 su tre viewport: telefono Android autenticato ha pubblicato con touch foto, video, due audio e posizione; iPhone SE ha ricevuto e visualizzato lo stesso post senza privilegi impropri; navigazione e mappe sono state inoltre confrontate su Samsung S20 FE, Samsung meno recente e iPhone piccolo."
