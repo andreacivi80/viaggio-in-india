@@ -30,6 +30,9 @@ test("state is bounded and the comments endpoint supports pagination and search"
   assert.match(worker, /request\.method === "GET" && path === "comments"/);
   assert.match(worker, /INSTR\(LOWER\(text\), \?\)>0/);
   assert.match(worker, /next_cursor:/);
+  assert.match(worker, /json_group_array\(name\)/);
+  assert.match(worker, /SELECT post_id,kind,COUNT\(\*\) AS total/);
+  assert.match(app, /heartCount - likerNames\.slice\(0, 2\)\.length/);
   assert.match(app, /placeholder="Cerca nei commenti"/);
   assert.match(app, /Carica commenti precedenti/);
 });

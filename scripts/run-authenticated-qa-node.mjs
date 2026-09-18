@@ -73,6 +73,22 @@ const commentPaginationFixtures = testFiles.some((file) => [
       return `INSERT INTO comments(id,post_id,author_name,profile_id,visitor_id,text,media_key,media_type,parent_comment_id,created_at) VALUES(${sql(commentId)},${sql(referencePostId)},'Proprietario QA',${sql(profiles.owner)},'',${sql(text)},NULL,NULL,'',${sql(timestamp)});`;
     }).join("\n")
   : "";
+const socialScaleFixtures = testFiles.includes("extended-p2-social-scale.mjs")
+  ? [
+      ...Array.from({ length: 10 }, (_, batch) => {
+        const offset = batch * 1000;
+        return `WITH RECURSIVE cnt(x) AS (VALUES(1) UNION ALL SELECT x+1 FROM cnt WHERE x<1000)
+INSERT INTO comments(id,post_id,author_name,profile_id,visitor_id,text,media_key,media_type,parent_comment_id,created_at)
+SELECT printf('qa-scale-comment-${runId}-%05d',${offset}+x),${sql(referencePostId)},'Carico QA',${sql(profiles.owner)},'',printf('Commento di carico %05d',${offset}+x),NULL,NULL,'',datetime('2026-08-10','+'||(${offset}+x)||' seconds') FROM cnt;`;
+      }),
+      ...Array.from({ length: 20 }, (_, batch) => {
+        const offset = batch * 1000;
+        return `WITH RECURSIVE cnt(x) AS (VALUES(1) UNION ALL SELECT x+1 FROM cnt WHERE x<1000)
+INSERT INTO reactions(id,post_id,visitor_id,author_name,kind,created_at)
+SELECT printf('qa-scale-reaction-${runId}-%05d',${offset}+x),${sql(referencePostId)},printf('qa-scale-visitor-${runId}-%05d',${offset}+x),printf('Reazione %05d',${offset}+x),'heart',datetime('2026-08-10','+'||(${offset}+x)||' seconds') FROM cnt;`;
+      }),
+    ].join("\n")
+  : "";
 const retentionFixtures = testFiles.includes("extended-p0-location-retention.mjs") ? `
 INSERT INTO locations(profile_id,display_name,latitude,longitude,accuracy,updated_at) VALUES(${sql(profiles.owner)},'Posizione scaduta QA',28.6139,77.209,50,${sql(new Date(Date.now() - 48 * 86400000).toISOString())});
 INSERT INTO locations(profile_id,display_name,latitude,longitude,accuracy,updated_at) VALUES(${sql(profiles.other)},'Posizione recente QA',13.7563,100.5018,50,${sql(created)});` : "";
@@ -105,6 +121,7 @@ INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_
 INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at) VALUES(${sql(digest(tokens.coordinatorInvite))},${sql(profiles.coordinator)},${sql(profiles.coordinator)},${sql(created)},${sql(expires)},NULL);
 INSERT INTO posts(id,author_name,profile_id,day_index,visibility,text,created_at) VALUES(${sql(referencePostId)},'Proprietario QA',${sql(profiles.owner)},-1,'public',${sql(`Pubblicazione di riferimento QA ${runId}`)},${sql(created)});
 ${commentPaginationFixtures}
+${socialScaleFixtures}
 ${pushSql}
 ${retentionFixtures}
 ${locationAgeFixtures}
@@ -114,7 +131,7 @@ const quotedActors = ids.map((id) => sql(`profile:${id}`)).join(",");
 const cleanup = `
 DELETE FROM comment_reactions WHERE actor_id IN (${quotedActors}) OR comment_id IN (SELECT id FROM comments WHERE profile_id IN (${quotedIds}));
 DELETE FROM comments WHERE profile_id IN (${quotedIds});
-DELETE FROM reactions WHERE visitor_id IN (${quotedIds});
+DELETE FROM reactions WHERE visitor_id IN (${quotedIds}) OR post_id IN (SELECT id FROM posts WHERE profile_id IN (${quotedIds}));
 DELETE FROM trip_checks WHERE updated_by IN (${quotedIds});
 DELETE FROM post_media WHERE post_id IN (SELECT id FROM posts WHERE profile_id IN (${quotedIds}));
 DELETE FROM posts WHERE profile_id IN (${quotedIds});

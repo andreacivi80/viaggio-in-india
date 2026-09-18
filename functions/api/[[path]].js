@@ -1122,7 +1122,16 @@ async function readState(env, session = null, guest = null) {
     ).bind(INITIAL_COMMENTS_PER_POST).all(),
     env.DB.prepare("SELECT post_id,COUNT(*) AS total FROM comments GROUP BY post_id").all(),
     env.DB.prepare(
-      "SELECT post_id, kind, author_name, COUNT(*) AS total, MAX(created_at) AS created_at FROM reactions GROUP BY post_id, kind, author_name",
+      `SELECT grouped.post_id,grouped.kind,grouped.total,grouped.created_at,
+              (SELECT json_group_array(name) FROM (
+                 SELECT author_name AS name FROM reactions recent
+                 WHERE recent.post_id=grouped.post_id AND recent.kind=grouped.kind
+                 ORDER BY recent.created_at DESC LIMIT 3
+               )) AS author_names_json
+       FROM (
+         SELECT post_id,kind,COUNT(*) AS total,MAX(created_at) AS created_at
+         FROM reactions GROUP BY post_id,kind
+       ) grouped`,
     ).all(),
     env.DB.prepare(
       `SELECT comment_id,actor_id,kind,author_name,created_at FROM comment_reactions
@@ -1264,7 +1273,18 @@ async function readState(env, session = null, guest = null) {
               })),
           };
         }),
-      reactions: reactions.results.filter((r) => r.post_id === p.id),
+      reactions: reactions.results.filter((r) => r.post_id === p.id).map((reaction) => {
+        let authorNames = [];
+        try { authorNames = JSON.parse(reaction.author_names_json || "[]").filter(Boolean); } catch { /* D1 JSON non valido: nessun nome */ }
+        return {
+          post_id: reaction.post_id,
+          kind: reaction.kind,
+          total: Number(reaction.total || 0),
+          created_at: reaction.created_at,
+          author_name: authorNames[0] || "",
+          author_names: authorNames,
+        };
+      }),
     };
     }),
   };

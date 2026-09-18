@@ -89,7 +89,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.60",
+const VERSION = "1.48.61",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
@@ -4802,9 +4802,9 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
     0,
   );
   const likerNames = heartReactions.flatMap((reaction) =>
-    Array(Number(reaction.total || 0)).fill(
-      reaction.author_name?.trim() || "Una persona",
-    ),
+    (reaction.author_names?.length ? reaction.author_names : [reaction.author_name])
+      .map((name) => String(name || "").trim())
+      .filter(Boolean),
   );
   const visibleComments = (loadedComments || p.comments || []).filter(
     (commentItem) => !hiddenCommentIds.includes(commentItem.id),
@@ -4948,8 +4948,8 @@ function Post({ p, author, groupCode, sessionToken, people, refresh }) {
       {heartCount > 0 && (
         <div className="likesBlock">
           <button className="likesSummary" onClick={() => setLikesOpen(!likesOpen)}>
-            Piace a {likerNames.slice(0, 2).join(", ")}
-            {likerNames.length > 2 ? ` e altre ${likerNames.length - 2}` : ""}
+            Piace a {likerNames.slice(0, 2).join(", ") || "una persona"}
+            {heartCount > likerNames.slice(0, 2).length ? ` e altre ${heartCount - likerNames.slice(0, 2).length}` : ""}
           </button>
           {likesOpen && (
             <div className="likerList">

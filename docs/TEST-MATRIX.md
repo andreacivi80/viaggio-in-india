@@ -570,11 +570,11 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0555 | 31 | Verificare invio automatico una sola volta. | NON ESEGUITO | — |
 | T-0556 | 31 | Verificare presenza della bozza e degli allegati. | NON ESEGUITO | — |
 | T-0557 | 31 | Verificare ripresa senza duplicazione. | SUPERATO | resumable-upload: parte già confermata non viene inviata due volte |
-| T-0558 | 32 | 1.000 commenti. | NON ESEGUITO | — |
+| T-0558 | 32 | 1.000 commenti. | SUPERATO | QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo di 10.000 commenti, 100 pagine e 10.000 ID unici; P2_SOCIAL_SCALE 14/14. |
 | T-0559 | 32,59 | 1.000 post. | NON ESEGUITO | — |
 | T-0560 | 32 | 10 allegati per post. | NON ESEGUITO | — |
 | T-0561 | 32 | 10 utenti contemporanei. | NON ESEGUITO | — |
-| T-0562 | 32 | 10.000 reazioni. | NON ESEGUITO | — |
+| T-0562 | 32 | 10.000 reazioni. | SUPERATO | QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo di 20.000 reazioni aggregate; P2_SOCIAL_SCALE 14/14. |
 | T-0563 | 32,59 | 100 post. | NON ESEGUITO | — |
 | T-0564 | 32 | 2 utenti contemporanei. | NON ESEGUITO | — |
 | T-0565 | 32 | 25 utenti contemporanei. | NON ESEGUITO | — |
@@ -1110,16 +1110,16 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1095 | 58 | Safari. | NON ESEGUITO | — |
 | T-1096 | 58 | Tablet Android. | NON ESEGUITO | — |
 | T-1097 | 58 | Tablet iPad. | NON ESEGUITO | — |
-| T-1098 | 59 | 10.000 commenti. | NON ESEGUITO | — |
-| T-1099 | 59 | 2.500 commenti. | NON ESEGUITO | — |
-| T-1100 | 59 | 20.000 reazioni. | NON ESEGUITO | — |
+| T-1098 | 59 | 10.000 commenti. | SUPERATO | QA reale isolato Thailandia 1.48.61: 10.000 commenti paginati in 100 pagine/10.000 ID unici, stato 1.183 ms e pulizia completa. |
+| T-1099 | 59 | 2.500 commenti. | SUPERATO | QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo di 10.000 commenti, 100 pagine e 10.000 ID unici; P2_SOCIAL_SCALE 14/14. |
+| T-1100 | 59 | 20.000 reazioni. | SUPERATO | QA reale isolato Thailandia 1.48.61: 20.000 reazioni aggregate con totale esatto e autori limitati, stato 1.183 ms e pulizia completa. |
 | T-1101 | 59 | 25 utenti attivi. | NON ESEGUITO | — |
 | T-1102 | 59 | 5 utenti attivi. | NON ESEGUITO | — |
-| T-1103 | 59 | 5.000 reazioni. | NON ESEGUITO | — |
+| T-1103 | 59 | 5.000 reazioni. | SUPERATO | QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo di 20.000 reazioni aggregate; P2_SOCIAL_SCALE 14/14. |
 | T-1104 | 59 | 50 utenti attivi. | NON ESEGUITO | — |
-| T-1105 | 59 | 500 commenti. | NON ESEGUITO | — |
+| T-1105 | 59 | 500 commenti. | SUPERATO | QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo di 10.000 commenti, 100 pagine e 10.000 ID unici; P2_SOCIAL_SCALE 14/14. |
 | T-1106 | 59 | 500 post. | NON ESEGUITO | — |
-| T-1107 | 59 | 500 reazioni. | NON ESEGUITO | — |
+| T-1107 | 59 | 500 reazioni. | SUPERATO | QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo di 20.000 reazioni aggregate; P2_SOCIAL_SCALE 14/14. |
 | T-1108 | 59 | assenza di duplicazioni; | NON ESEGUITO | — |
 | T-1109 | 59 | assenza di perdita dati. | NON ESEGUITO | — |
 | T-1110 | 59 | batteria telefono; | NON ESEGUITO | — |
