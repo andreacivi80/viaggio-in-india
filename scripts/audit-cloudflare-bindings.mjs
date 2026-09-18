@@ -49,8 +49,13 @@ for (const project of [productionProject, qaProject]) {
     throw new Error(`Lettura Cloudflare fallita per ${project}: HTTP ${response.status}`);
   }
 
+  const expectedDomain = `${project}.pages.dev`;
+  if (payload.result.subdomain !== expectedDomain) {
+    throw new Error(`${project}: dominio remoto inatteso.`);
+  }
+
   const environments = project === qaProject ? ["production", "preview"] : ["production"];
-  result[project] = {};
+  result[project] = { domain: expectedDomain };
   for (const environment of environments) {
     const deploymentConfig = payload.result.deployment_configs?.[environment] ?? {};
     const bindings = deploymentConfig.bindings ?? {};

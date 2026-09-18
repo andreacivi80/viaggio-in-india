@@ -2395,7 +2395,7 @@ P3,altro,pending,Verificare caching degli asset versionati.,globale:T-1672,
 P3,altro,pending,Verificare cancellazione automatica soltanto dei dati non essenziali.,globale:T-0854,
 P3,altro,pending,Verificare cancellazione di nome e coordinate.,usabilita:U0242,
 P3,altro,pending,Verificare carosello.,usabilita:U0107,
-P3,altro,pending,Verificare certificato HTTPS.,globale:T-1510,
+P3,altro,passed,Verificare certificato HTTPS.,globale:T-1510,"TLS reale: HTTP 200; ssl_verify_result=0; CN ufficiale e catena Google Trust Services validi"
 P3,altro,pending,Verificare che day_index corrisponda al giorno 5.,globale:T-0708,
 P3,altro,pending,Verificare che frontend e API siano compatibili durante il passaggio di versione.,globale:T-0834,
 P3,altro,passed,Verificare che i test non utilizzino dati di produzione.,globale:T-1511,"audit remoto + runner autenticato 8/8: fixture e mutazioni limitate a D1/KV QA separati"
@@ -2455,7 +2455,7 @@ P3,altro,passed,Verificare comportamento dopo logout.,globale:T-1362,QA 1.31.0: 
 P3,altro,pending,Verificare comportamento dopo molti giorni senza aprire la PWA.,globale:T-0856,
 P3,altro,pending,Verificare comportamento dopo revoca del dispositivo.,globale:T-1363,
 P3,altro,pending,Verificare compressione Brotli/Gzip.,globale:T-1675,
-P3,altro,pending,Verificare configurazione del dominio.,globale:T-1512,
+P3,altro,passed,Verificare configurazione del dominio.,globale:T-1512,"audit Cloudflare: progetto ufficiale associato al dominio Thailandia; home e API 200"
 P3,altro,pending,Verificare conservazione degli allegati.,usabilita:U0140,
 P3,altro,pending,Verificare conservazione dei dati.,globale:T-1180,
 P3,altro,passed,Verificare conservazione della bozza.,usabilita:U0138,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
@@ -2529,7 +2529,7 @@ P3,altro,pending,Verificare link del post preciso.,usabilita:U0266,
 P3,altro,passed,verificare lo stato dell’operazione alla riapertura;,globale:T-0821,resumable-upload: stato server riletto prima della ripresa
 P3,altro,pending,Verificare log di apertura e download.,globale:T-0489,
 P3,altro,pending,Verificare log di apertura.,globale:T-1002,
-P3,altro,pending,Verificare log di deploy.,globale:T-1516,
+P3,altro,passed,Verificare log di deploy.,globale:T-1516,"deploy 580d30bd: Worker asset headers e Functions completati; smoke 3/3 HTTP 200"
 P3,altro,pending,Verificare log di download.,globale:T-1003,
 P3,altro,pending,Verificare log di sostituzione.,globale:T-1005,
 P3,altro,pending,Verificare logout anche nella seconda.,globale:T-1599,
@@ -2603,7 +2603,7 @@ P3,altro,pending,Verificare quali dati restano nel localStorage.,globale:T-1628,
 P3,altro,passed,Verificare Ranakpur.,globale:T-0375;usabilita:U0346,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P3,altro,passed,Verificare rate limiting.,globale:T-0633,QA 1.28.0: raffica di accessi errati bloccata con HTTP 429
 P3,altro,pending,Verificare recupero corretto.,usabilita:U0233,
-P3,altro,pending,Verificare redirect da HTTP a HTTPS.,globale:T-1518,
+P3,altro,passed,Verificare redirect da HTTP a HTTPS.,globale:T-1518,"HTTP reale 301 verso HTTPS ufficiale; destinazione 200 e certificato valido"
 P3,altro,pending,Verificare REV 1.21.5.,globale:T-0320,
 P3,altro,pending,Verificare ricerca inversa.,usabilita:U0239,
 P3,altro,passed,Verificare richieste Range 206.,globale:T-0925,QA 1.29.0: lettura Range attraversa due parti e restituisce HTTP 206

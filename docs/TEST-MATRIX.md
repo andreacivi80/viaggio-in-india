@@ -1522,15 +1522,15 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1507 | 82 | Verificare ambiente produzione. | SUPERATO | Audit remoto Cloudflare `PASS`: il progetto ufficiale `viaggio-in-thailandia-2026` usa esclusivamente D1 e KV ufficiali, diversi da QA; verifica eseguita in sola lettura. |
 | T-1508 | 82 | Verificare binding D1 corretto. | SUPERATO | `audit-cloudflare-bindings`: D1 ufficiale `6521ae69…7489`; D1 QA `26221574…13f73` su production e preview QA; separazione verificata anche sui binding remoti effettivi. |
 | T-1509 | 82 | Verificare binding MEDIA corretto. | SUPERATO | `deployment-boundaries` 4/4 + audit remoto: KV ufficiale `1c59ca1f…7284`, KV QA `6e21cccc…c75b`; Worker usa solo `env.MEDIA`; ID assenti dal client. |
-| T-1510 | 82 | Verificare certificato HTTPS. | NON ESEGUITO | — |
+| T-1510 | 82 | Verificare certificato HTTPS. | SUPERATO | Verifica TLS reale sul dominio ufficiale: HTTP 200, `ssl_verify_result=0`, CN corretto `viaggio-in-thailandia-2026.pages.dev`, catena Google Trust Services valida. |
 | T-1511 | 82 | Verificare che i test non utilizzino dati di produzione. | SUPERATO | Audit remoto Cloudflare + runner autenticato 8/8: alias QA, production QA e preview QA puntano soltanto a D1/KV QA; fixture creata, riletta e ripulita nel database QA separato. |
-| T-1512 | 82 | Verificare configurazione del dominio. | NON ESEGUITO | — |
+| T-1512 | 82 | Verificare configurazione del dominio. | SUPERATO | Audit remoto Cloudflare: progetto ufficiale associato a `viaggio-in-thailandia-2026.pages.dev`; home e `/api/state` rispondono 200 senza redirect anomali. |
 | T-1513 | 82 | Verificare limiti dell’archivio MEDIA. | SUPERATO | `media-quota` 3/3 + QA reale 2×310 MB respinto con HTTP 413: documento 80 MB; foto/audio 120 MB; video 500 MB; post 600 MB; upload attivi 1 GB. |
 | T-1514 | 82 | Verificare limiti delle Functions. | NON ESEGUITO | — |
 | T-1515 | 82 | Verificare limiti di D1. | NON ESEGUITO | — |
-| T-1516 | 82 | Verificare log di deploy. | NON ESEGUITO | — |
+| T-1516 | 82 | Verificare log di deploy. | SUPERATO | Deploy ufficiale Wrangler completato: Worker compilato, 30 asset verificati, `_headers` e Functions caricati, deployment `580d30bd`; smoke test successivo 3/3 HTTP 200. |
 | T-1517 | 82 | Verificare protezione dagli abusi. | NON ESEGUITO | — |
-| T-1518 | 82 | Verificare redirect da HTTP a HTTPS. | NON ESEGUITO | — |
+| T-1518 | 82 | Verificare redirect da HTTP a HTTPS. | SUPERATO | Richiesta reale HTTP al dominio ufficiale: `301 Moved Permanently` con `Location: https://viaggio-in-thailandia-2026.pages.dev/`; destinazione HTTPS 200 e certificato valido. |
 | T-1519 | 82 | Verificare rollback del deploy. | NON ESEGUITO | — |
 | T-1520 | 82 | Verificare VAPID_PRIVATE_KEY. | NON ESEGUITO | — |
 | T-1521 | 82 | Verificare VAPID_PUBLIC_KEY. | SUPERATO | Static 264/264 `vapid-secret-boundary`: endpoint `push/config` restituisce esclusivamente `VAPID_PUBLIC_KEY`. |
