@@ -89,7 +89,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.62",
+const VERSION = "1.48.63",
   API = "/api";
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {

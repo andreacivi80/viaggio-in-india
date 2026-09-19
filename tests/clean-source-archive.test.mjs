@@ -24,6 +24,6 @@ test("lo ZIP prodotto è leggibile e contiene un manifesto coerente", () => {
   assert.ok(names.includes("SOURCE-ARCHIVE-MANIFEST.json"));
   assert.equal(names.some((name) => forbidden.test(name)), false);
   const manifest = JSON.parse(new TextDecoder().decode(archive["SOURCE-ARCHIVE-MANIFEST.json"]));
-  assert.equal(manifest.version, "1.48.38");
+  assert.equal(manifest.version, "1.48.63");
   assert.equal(manifest.files.length, fileCount - 1);
 });
