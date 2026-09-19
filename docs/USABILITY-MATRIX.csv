@@ -610,7 +610,7 @@
 "U0609","31. CONTROLLO DATABASE DOPO OGNI OPERAZIONE","nessun file orfano;","pending","","1.31.0"
 "U0610","31. CONTROLLO DATABASE DOPO OGNI OPERAZIONE","nessun duplicato;","pending","","1.31.0"
 "U0611","31. CONTROLLO DATABASE DOPO OGNI OPERAZIONE","nessun riferimento a file inesistente.","pending","","1.31.0"
-"U0612","32. TEST COMPLETO DEL VISITATORE SENZA PASSWORD","Aprire il dominio.","pending","","1.31.0"
+"U0612","32. TEST COMPLETO DEL VISITATORE SENZA PASSWORD","Aprire il dominio.","passed","REV 1.48.63: apertura pubblica HTTPS 200 su entrambi i domini; stato pubblico filtrato e API private negate senza sessione; production smoke 8/8.","1.48.63"
 "U0613","32. TEST COMPLETO DEL VISITATORE SENZA PASSWORD","Visualizzare la Bacheca pubblica.","pending","","1.31.0"
 "U0614","32. TEST COMPLETO DEL VISITATORE SENZA PASSWORD","Visualizzare l’itinerario.","passed","QA pubblica Thailandia 1.48.62 WebKit: visitatore senza password consulta tutte le 11 giornate.","1.48.62"
 "U0615","32. TEST COMPLETO DEL VISITATORE SENZA PASSWORD","Visualizzare le mappe pubbliche.","pending","","1.31.0"

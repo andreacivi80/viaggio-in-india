@@ -66,7 +66,7 @@ P0,accessi-privacy,passed,confrontare tutti i tasti visibili al Familiare con gl
 P0,accessi-privacy,passed,confrontare tutti i tasti visibili al Viaggiatore con gli endpoint accessibili al Viaggiatore;,addendum:A0040,endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,passed,confrontare tutti i tasti visibili per il Pubblico con gli endpoint accessibili al Pubblico;,addendum:A0038,endpoint-authorization-inventory 2/2 + ui-endpoint-authorization-alignment 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,passed,Consentire creazione di un nuovo invito sicuro.,globale:T-1613,"invite-link-privacy 3/3 + auth-lifecycle 61/61: invito casuale, hash nel database, scadenza 48 ore e uso singolo"
-P0,accessi-privacy,passed,Consentire proroga autorizzata della conservazione.,globale:T-1338,"P0_RETENTION_EXTENSION QA API 1/1 + Galaxy S9+ touch 1/1 + statico 4/4 + gate 215/215: il proprietario richiede soltanto per sé una data futura entro 12 mesi; la richiesta resta pendente, invisibile agli altri viaggiatori e diventa valida solo dopo decisione della coordinatrice. Pubblico e auto-approvazione negati; audit, stato, decisore e scadenza persistiti; pulizia QA completata."
+P0,accessi-privacy,passed,Consentire proroga autorizzata della conservazione.,globale:T-1338,"QA API 1/1 + Galaxy S9+ touch 1/1 + statico 4/4 + gate 215/215: richiesta solo propria, massimo 12 mesi, privata e pendente; approvazione/rifiuto esclusivi della coordinatrice; audit e persistenza verificati."
 P0,accessi-privacy,passed,CONSENTITO SOLTANTO SE PROPRIETARIO;,addendum:A0023,endpoint-authorization-inventory 2/2 + authorization-matrix 59/59
 P0,accessi-privacy,passed,Coordinatore apre documenti autorizzati.,usabilita:U0440,P0 locale documenti: coordinatore apre la chiave privata del documento del viaggiatore
 P0,accessi-privacy,passed,"Coordinatore revoca A, A perde accesso immediatamente.",usabilita:U0564,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
@@ -172,8 +172,8 @@ P0,accessi-privacy,passed,non riceve sessioni o inviti altrui.,addendum:A0149,Au
 P0,accessi-privacy,passed,non riceve token o segreti;,addendum:A0155,"security-surface L1: bundle pubblico privo di codice gruppo, token di sessione e token Cloudflare"
 P0,accessi-privacy,passed,Non riutilizzare token già revocati.,addendum:A0345,Live revoke command 403 + authenticated remote QA 20/20; preview a4b05356; 2026-08-04
 P0,accessi-privacy,passed,non utilizzare la password comune per aggirare il rifiuto.,addendum:A0274,access-state-documentation + access-session-boundaries 17/17: password comune non ripete né autorizza endpoint privati dopo 401/403
-P0,accessi-privacy,passed,Notifica per invito personale.,globale:T-0085,"QA Galaxy S9+ inviti 1/1 + routing/sanitizzazione 2/2 + gate statico 208/208: solo la coordinatrice crea l'invito; il push generico raggiunge esclusivamente i dispositivi già associati al profilo destinatario, escludendo autore, altri profili, familiari e pubblico. Token, password, link segreti e testo controllato dal client non entrano nel payload; tre inviti distinti sono consumabili una sola volta e i dati QA sono stati rimossi."
-P0,accessi-privacy,passed,"Notifica per posizione condivisa, soltanto se autorizzata.",globale:T-0087,"P0_LOCATION QA 30/30 + notification routing unit 1/1: solo una POST autenticata del proprietario crea la posizione e il push di gruppo; autore, familiari, pubblico e profili con preferenza posizione disattiva sono esclusi."
+P0,accessi-privacy,passed,Notifica per invito personale.,globale:T-0085,"QA Galaxy S9+ 1/1 + routing/sanitizzazione 2/2 + gate 208/208: consegna solo al profilo invitato già sottoscritto; autore, altri profili, familiari e pubblico esclusi; nessun token o link segreto nel push; inviti distinti e monouso."
+P0,accessi-privacy,passed,"Notifica per posizione condivisa, soltanto se autorizzata.",globale:T-0087,"P0_LOCATION QA 30/30 + routing 1/1: notifica soltanto dopo condivisione autenticata; autore, pubblico, familiari e preferenza disattiva esclusi."
 P0,accessi-privacy,passed,notifiche autorizzate correttamente;,globale:T-1793,push-audience 5/5: autorizzazione calcolata lato Worker prima di costruire ogni push
 P0,accessi-privacy,passed,Notifiche inviate soltanto agli utenti autorizzati a vedere il post.,globale:T-0070,"push-audience 5/5: matrice public/family/group/private verificata per pubblico, ospite e profilo"
 P0,accessi-privacy,passed,nuove funzioni basate sulla sessione;,addendum:A0400,ui-password-access touch 1/1: Pubblica usa la sessione personale verificata e non il codice comune
@@ -270,7 +270,7 @@ P0,accessi-privacy,passed,vecchie funzioni basate soltanto sulla password;,adden
 P0,accessi-privacy,passed,vecchio nome locale e nuova sessione;,addendum:A0057,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,vecchio profile_id e nuova sessione;,addendum:A0056,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
 P0,accessi-privacy,passed,Verificare “Elimina” soltanto per proprietario o Coordinatore.,usabilita:U0279,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
-P0,accessi-privacy,passed,Verificare accesso amministrativo con autenticazione a più fattori.,globale:T-1505,"P0_ADMIN_STEP_UP QA API 7/7 + Galaxy S9+ touch 1/1 + statico 218/218: le funzioni amministrative richiedono sessione coordinatrice legata al dispositivo più reinserimento della password comune; autorizzazione HMAC di 10 minuti, in sessionStorage, vincolata a profilo e device. Password errata, viaggiatore, token alterato e riuso da secondo telefono respinti; documenti altrui, inviti, audit, profili, push test e proroghe protetti; pulizia QA completata."
+P0,accessi-privacy,passed,Verificare accesso amministrativo con autenticazione a più fattori.,globale:T-1505,"QA API 7/7 + Galaxy S9+ touch 1/1 + statico 218/218: sessione coordinatrice/device + password, token firmato di 10 minuti vincolato a profilo e dispositivo; rifiutati password errata, viaggiatore, alterazione e riuso su secondo telefono."
 P0,accessi-privacy,passed,Verificare accesso negato immediato.,globale:T-0336,extended-p0-auth-lifecycle 28/28: la sessione revocata restituisce 401 senza ritardo
 P0,accessi-privacy,passed,Verificare accesso negato.,usabilita:U0414,access-session-boundaries 17/17: pubblico password comune token scaduto e token alterato sono negati
 P0,accessi-privacy,passed,Verificare aggiornamento della sessione.,addendum:A0091,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
@@ -374,7 +374,7 @@ P0,documenti,passed,Aprire ogni documento.,usabilita:U0451,ui-documents QA mobil
 P0,documenti,passed,area documenti;,addendum:A0119,"P0_DOCUMENTS 12/12 + P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: area privata autenticata, quattro tipologie documentali, apertura, sostituzione, eliminazione e visibilità per ruolo verificate."
 P0,documenti,passed,"B carica documento, Coordinatore vede aggiornamento.",usabilita:U0559,ui-documents QA: viaggiatore carica Visto e Biglietti; dashboard coordinatore passa live 1/4→3/4
 P0,documenti,passed,Bacheca → profilo → documenti → indietro.,globale:T-1411,"ui-protected-pdf Samsung S20 FE 1/1: Bacheca → pannello profilo → Documenti e sicurezza → Torna alla bacheca, con sessione e pagina corretta preservate."
-P0,documenti,passed,Calcolare spazio necessario per documenti.,globale:T-1531,"P0_DOCUMENT_CAPACITY 8/8 su QA: limite server 80 MiB per file; 18 viaggiatori × 4 documenti principali = 5.760 MiB (5,625 GiB) di capacita teorica massima, esclusi gli allegati facoltativi."
+P0,documenti,passed,Calcolare spazio necessario per documenti.,globale:T-1531,"`P0_DOCUMENT_CAPACITY` 8/8 su QA: 18 viaggiatori × 4 documenti principali × 80 MiB = 5.760 MiB (5,625 GiB) di capacità teorica massima. | P0_DOCUMENT_CAPACITY 8/8 su QA: limite server 80 MiB per file; 18 viaggiatori × 4 documenti principali = 5.760 MiB (5,625 GiB) di capacita teorica massima, esclusi gli allegati facoltativi."
 P0,documenti,passed,Caricamento documenti.,globale:T-1207,ui-documents QA mobile: upload PDF reali con risposta 200 e stato Presente
 P0,documenti,passed,caricamento documento altrui;,globale:T-0728,P0_DOCUMENTS 12/12 + P0_AUTHORIZATION_MATRIX 86/86: un viaggiatore non può caricare o sostituire documenti attribuiti a un altro profilo.
 P0,documenti,passed,caricamento documento proprio;,globale:T-0729,ui-documents QA ed extended-p0-documents: proprietario carica nel proprio profilo
@@ -391,10 +391,10 @@ P0,documenti,passed,Deep link del documento.,globale:T-0241,"ui-protected-pdf Sa
 P0,documenti,passed,Definire per quanto tempo vengono conservati i documenti.,globale:T-1343,"data-retention-policy 3/3: documenti validi conservati per la durata del profilo; eliminazione soltanto esplicita, per sostituzione o cancellazione profilo; manutenzione priva di DELETE document_status."
 P0,documenti,passed,Descrizione dello stato dei documenti.,globale:T-1065,"ui-documents QA: stati Non ancora caricato, Presente e conteggi 0/4–3/4 verificati"
 P0,documenti,passed,deve nascondere immediatamente documenti e posizioni;,addendum:A0279,"ui-coordinator-grid touch ripetuto due volte: nel contesto Pubblico sono assenti Documenti, Condividi posizione e Cancella posizione; /api/private risponde 401"
-P0,documenti,passed,Documentare e applicare una regola unica.,globale:T-0700,"CONCURRENT_WRITE_RULE statico 3/3 + precedente QA document-concurrency 28/28: unica regola server-authoritative documentata e applicata a profili, post, commenti, documenti, posizioni e spunte; retry idempotenti, aggiornamenti ordinati, sostituzione documento senza orfani, rilettura server dopo esito incerto e ruoli derivati dalla sessione."
-P0,documenti,passed,Documentare procedura e tempo di rollback.,globale:T-1172,"rollback-procedure 3/3: procedura separata per codice e dati, autorizzazione esplicita, RTO app 15 minuti, RTO dati 30 minuti, RPO zero per migrazioni pianificate, backup pre-migrazione verificato, doppio smoke, conteggi/documenti/orfani/sessioni come criteri di riuscita."
+P0,documenti,passed,Documentare e applicare una regola unica.,globale:T-0700,"CONCURRENT_WRITE_RULE 3/3 + QA document-concurrency 28/28: lo stato confermato dal server prevale; retry idempotenti, aggiornamenti D1 ordinati, sostituzioni senza orfani e rilettura dopo esito incerto."
+P0,documenti,passed,Documentare procedura e tempo di rollback.,globale:T-1172,"rollback-procedure 3/3: rollback applicazione/dati distinti; responsabile autorizzato; RTO 15/30 minuti e RPO zero; backup verificato, doppio smoke e criteri dati obbligatori."
 P0,documenti,passed,Documentare tempo necessario al ripristino.,globale:T-1165,verify-d1-backup: tempo di ripristino misurato automaticamente
-P0,documenti,passed,documentato come funzione non completata.,addendum:A0197,"INCOMPLETE_FUNCTIONS_AUDIT 1/1: inventario AST di 164 elementi interattivi; 0 anomalie e 0 funzioni dichiarate incomplete. Lo scanner distingue submit gestiti dal form e controlli disabilitati intenzionali, e fallisce su handler vuoti, link vuoti o segnaposto funzionali."
+P0,documenti,passed,documentato come funzione non completata.,addendum:A0197,INCOMPLETE_FUNCTIONS_AUDIT 1/1: scansione AST di 164 elementi; 0 tasti/handler/link anomali e 0 funzioni presentate come incomplete; submit ereditati dal form e controlli disabilitati intenzionali classificati senza falsi positivi.
 P0,documenti,passed,documenti essenziali disponibili;,globale:T-1753,"P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: passaporto, visto, biglietti e assicurazione caricati contemporaneamente e tutti e quattro riletti dal proprietario; sostituzioni e retry non ne perdono altri."
 P0,documenti,passed,Documenti propri.,usabilita:U0645,extended-p0-documents: il proprietario vede i propri documenti; altro viaggiatore no
 P0,documenti,passed,documenti;,addendum:A0075,"P0_DOCUMENTS 12/12 su QA 1.48.37: PDF reale disponibile al proprietario e alla coordinatrice, negato all'altro viaggiatore e al pubblico, poi eliminato insieme all'oggetto media."
@@ -417,7 +417,7 @@ P0,documenti,passed,la visualizzazione dei documenti sia separata dalla gestione
 P0,documenti,passed,Misurare caricamento documento.,globale:T-0586,"P0_DOCUMENT_CAPACITY 8/8 su QA: PDF reale da 2 MiB caricato end-to-end in 885 ms, riletto da MEDIA con Content-Length identico, limite 80 MiB verificato e fixture eliminata."
 P0,documenti,passed,Modificare document profile_id.,usabilita:U0574,P0_DOCUMENTS 12/12 + P0_ROLES 20/20: la modifica manuale di document profile_id non supera l’identità della sessione e riceve 403.
 P0,documenti,passed,nessun contenuto completo del documento;,globale:T-1569,security-audit 3/3 + authorization-matrix 86/86: contenuto e nome del PDF assenti da schema e risposta coordinatore | security-audit 3/3 + authorization-matrix 86/86: schema whitelist e risposta coordinatore escludono contenuto e nome del PDF
-P0,documenti,passed,nessuna funzione dichiarata nella documentazione sia assente dall’interfaccia;,addendum:A0019,"DOCUMENTED_FUNCTIONS_INTERFACE 1/1: docs/DOCUMENTED-FUNCTION-REGISTRY.json elenca 24 funzioni operative dichiarate e il test ne verifica automaticamente tutti i marker nell’interfaccia React; la checklist resta separata dalle promesse di prodotto."
+P0,documenti,passed,nessuna funzione dichiarata nella documentazione sia assente dall’interfaccia;,addendum:A0019,DOCUMENTED_FUNCTIONS_INTERFACE 1/1: registro operativo di 24 funzioni dichiarate; ogni funzione ha uno o più marker verificati direttamente nell’interfaccia React.
 P0,documenti,passed,Non cancellare documenti o bozze senza conferma.,globale:T-0845,ui-documents QA: Annulla mantiene il PDF; solo la successiva conferma esegue DELETE
 P0,documenti,passed,Non compromettere documenti e funzioni essenziali.,globale:T-1650,P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: sostituzione non valida lascia intatto il documento corrente; apertura/sostituzione/eliminazione concorrenti convergono senza record o media orfani.
 P0,documenti,passed,non deve contenere documenti;,addendum:A0423,P0_RESOURCE_ENUMERATION 17/17 su QA 1.48.37: pubblico e sessione familiare ricevono lo stesso diniego dall'area privata; un altro viaggiatore non riceve metadati né può distinguere la chiave reale da una inesistente.
@@ -428,11 +428,11 @@ P0,documenti,passed,Non mostrare numeri di passaporto.,globale:T-1354,"push-payl
 P0,documenti,passed,non riceve dati dei documenti;,addendum:A0143,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,documenti,passed,non riceve documenti;,addendum:A0148,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P0,documenti,passed,Non visualizzare documenti.,usabilita:U0363;usabilita:U0367,"P0_RESOURCE_ENUMERATION 17/17 + ui-public-access-boundary Thailandia 1.48.4 2/2: pubblico e profili non autorizzati non ricevono elenco, metadati o contenuto dei documenti."
-P0,documenti,passed,Notifica per documento mancante o aggiornato.,globale:T-0084,"P0_DOCUMENTS QA 12/12 + notification routing unit 1/1: caricamento/aggiornamento del proprietario avvisa solo la coordinatrice abilitata; stato mancante/verificato della coordinatrice avvisa soltanto il proprietario abilitato, con payload generico privo di dati del documento."
+P0,documenti,passed,Notifica per documento mancante o aggiornato.,globale:T-0084,"P0_DOCUMENTS QA 12/12 + routing 1/1: destinatario/proprietario e coordinatrice filtrati per ruolo, preferenza e autore; payload generico."
 P0,documenti,passed,Ogni documento deve essere collegato a un profilo esistente.,globale:T-1016,migration-safety 7/7 + P0_DOCUMENT_PROFILE_INTEGRITY 2/2: trigger D1 rifiutano INSERT e UPDATE di document_status verso profili inesistenti.
 P0,documenti,passed,ogni Viaggiatore vede soltanto i propri documenti;,globale:T-0686,"extended-p0-documents: owner vede il file, secondo viaggiatore non vede record né media"
 P0,documenti,passed,PDF nei documenti.,globale:T-0439,ui-documents QA mobile: 10 PDF reali renderizzati con PDF.js su Samsung e iPhone
-P0,documenti,passed,"Preferenze separate per post, commenti, reazioni, documenti e posizione.",globale:T-0090,"QA notification-preferences API 1/1 + Galaxy S9+ touch 1/1 + unit 3/3: cinque scelte indipendenti persistono per profilo, due tocchi rapidi non si sovrascrivono, pubblico 401, altro profilo isolato e filtro server applicato prima del push."
+P0,documenti,passed,"Preferenze separate per post, commenti, reazioni, documenti e posizione.",globale:T-0090,"QA API 1/1 + Galaxy S9+ touch 1/1 + unit 3/3: cinque preferenze indipendenti, persistenti, isolate per profilo e filtrate lato server."
 P0,documenti,passed,protezione dei documenti;,globale:T-1796,"ui-protected-pdf Thailandia 1.48.4 1/1 + P0_DOCUMENTS 12/12 + P0_RESOURCE_ENUMERATION 17/17: PDF privati protetti da sessione, proprietà/coordinamento e risposta no-store."
 P0,documenti,passed,Prova di ripristino documentata.,globale:T-0639,verify-d1-backup: procedura ripetibile di ripristino documentata nel repository
 P0,documenti,passed,quali profili hanno documenti;,addendum:A0355,ui-documents Thailandia 1.48.4 Samsung S20 FE 1/1: la griglia coordinatore mostra per profilo il conteggio esatto dei documenti presenti e consente l’apertura autorizzata.
@@ -521,13 +521,13 @@ P0,persistenza,passed,nessun dato precedente ripristinato erroneamente.,usabilit
 P0,persistenza,passed,nessuna modifica al database;,usabilita:U0584,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P0,persistenza,passed,nessuna modifica nel database;,globale:T-0748,"ui-clear-browser-data touch mobile 1/1: la cancellazione locale e il reload producono zero POST, PUT, PATCH o DELETE verso il server e lasciano il profilo remoto invariato."
 P0,persistenza,passed,Non devono esistere riferimenti nel database a file mancanti.,globale:T-1013,"P0_DOCUMENT_CONCURRENCY 18/18 + d1-media-atomicity: sostituzione ed eliminazione rimuovono chiave e riferimento, senza record verso file mancanti."
-P0,persistenza,passed,"ogni requisito è collegato a tasto, API, database e test;",addendum:A0460,"REQUIREMENT_TRACEABILITY 1/1: 24/24 funzioni operative collegate a comando/schermata, frontend, API, autorizzazione, database, risultato atteso e test automatico esistente."
+P0,persistenza,passed,"ogni requisito è collegato a tasto, API, database e test;",addendum:A0460,"REQUIREMENT_TRACEABILITY 1/1: 24/24 funzioni operative collegate a comando/schermata, frontend, API, autorizzazione, database, risultato e test esistente."
 P0,persistenza,passed,Preferiti salvati nel database.,globale:T-0266,"ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: PUT autenticato salva il post nel database, lo stato personale lo restituisce come salvato e DELETE lo rimuove; il pubblico non riceve preferiti."
 P0,persistenza,passed,Query database,globale:T-0287,"suite statica 199/199 e LOCAL_BACKUP_CONTENT_COMPLETE 2/2: query reali di profili, sessioni, post, documenti e media eseguite prima e dopo il ripristino; risultati riaperti e confrontati."
 P0,persistenza,passed,Registrazione data e ora backup.,globale:T-0640,"backup D1 registrato con data, ora e impronta SHA-256"
 P0,persistenza,passed,Ripristinare il backup in un ambiente vuoto.,globale:T-1169,verify-d1-backup: export importato in database temporaneo vuoto
 P0,persistenza,passed,Ripristino in ambiente di prova.,globale:T-0641,verify-d1-backup: ripristino eseguito in database temporaneo vuoto
-P0,persistenza,passed,tabella requisito → tasto → API → database → test;,addendum:A0480,"docs/REQUIREMENT-TRACEABILITY.csv + REQUIREMENT_TRACEABILITY 1/1: endpoint verificati contro l'inventario autorizzativo, tabelle contro lo schema D1 e file di test contro il repository."
+P0,persistenza,passed,tabella requisito → tasto → API → database → test;,addendum:A0480,"docs/REQUIREMENT-TRACEABILITY.csv + REQUIREMENT_TRACEABILITY 1/1: 24 righe complete; endpoint confrontati con inventario API, tabelle con schema D1 e test con filesystem."
 P0,persistenza,passed,test backup e ripristino;,usabilita:U0729,"LOCAL_BACKUP_CONTENT_COMPLETE 2/2 su D1 e MEDIA locali isolati: cinque post, cinque PDF, fotografie, audio e video esportati, eliminati, ripristinati e riaperti; nessun dato ufficiale modificato | LOCAL_BACKUP_CONTENT_COMPLETE 2/2 su database D1 e archivio MEDIA locali isolati: profilo e sessione creati tramite API, cinque post, cinque documenti PDF, fotografie, audio e video esportati, database e file eliminati, ripristinati e riaperti byte per byte; nessun dato ufficiale modificato"
 P0,persistenza,passed,test del database;,globale:T-0015,"migration-safety, database-unavailable, vincoli d'integrita e LOCAL_BACKUP_CONTENT_COMPLETE 2/2: catena D1, errori, contenuti e ripristino verificati senza dati ufficiali."
 P0,persistenza,passed,test delle migrazioni;,globale:T-0018,"schema, colonne, 10 tabelle e 21 trigger confrontati su QA e produzione"
@@ -590,7 +590,7 @@ P0,profili-ruoli,passed,Verificare che il profilo non compaia nella dashboard de
 P0,profili-ruoli,passed,Verificare che non possa diventare Coordinatore.,globale:T-0341,extended-p0-roles: sessione riletta dal server resta traveler
 P0,profili-ruoli,passed,Verificare notifica prioritaria al Coordinatore.,globale:T-1193,P1_TECHNICAL_ALERT=9/9 su QA: errore server con UUID e audit technical_error; test statico technical-alert verifica invio push soltanto alla subscription del coordinatore (1/1) e nessun invio al viaggiatore.
 P0,profili-ruoli,passed,Verificare profile_id corretto nel database.,globale:T-0422,P0_ROLES 20/20: il post conserva il profile_id della sessione anche quando il client invia un’identità diversa.
-P0,profili-ruoli,passed,Visualizzare contatto del Coordinatore.,globale:T-1196,"QA 1.48.41 + COORDINATOR_CONTACT 1/1 + migration-safety 10/10: contatto opzionale persistito con migrazione additiva, mostrato soltanto nel Gruppo autenticato come tel/mailto sicuro; proiezione pubblica priva del campo; QA /api/state 200."
+P0,profili-ruoli,passed,Visualizzare contatto del Coordinatore.,globale:T-1196,QA 1.48.41 + COORDINATOR_CONTACT 1/1: telefono/email opzionale persistito in D1 e mostrato nel Gruppo come link sicuro; il pubblico non riceve il campo.
 P0,social,passed,commento eliminato;,globale:T-1556,extended-p0-social: commenti di due autori eliminati e stato finale vuoto
 P0,social,passed,Commento mentre il post viene eliminato.,globale:T-0570,extended-p0-sync-delete: corsa commento/eliminazione senza residui
 P0,social,passed,Eliminare un commento mentre viene modificato da un altro dispositivo.,globale:T-0792,extended-p0-social: PUT/DELETE concorrenti gestiti senza residui
@@ -616,7 +616,7 @@ P1,altro,passed,Aprire una notifica.,usabilita:U0065,service-worker-push-groupin
 P1,altro,passed,attivare le notifiche;,globale:T-1770,"P1_ALL_PUSH_ACTIVATION 75/75 su QA 1.48.37: attivazione reale lato server per 18 sessioni personali, conteggio finale esatto e rimozione completa dei soli dati di prova."
 P1,altro,passed,Attivare notifiche.,usabilita:U0062,"P1_ALL_PUSH_ACTIVATION 75/75 su QA 1.48.37: endpoint autenticato verificato per tutti i 18 viaggiatori, senza duplicazioni e senza interferenze tra dispositivi."
 P1,altro,passed,Attivazione notifiche.,globale:T-1205,P1_ALL_PUSH_ACTIVATION 75/75 su QA 1.48.37: 18 profili con sessioni e dispositivi distinti registrano 18 sottoscrizioni uniche; la ripetizione è idempotente e la pulizia torna al conteggio iniziale.
-P1,altro,passed,Dieci notifiche contemporanee.,globale:T-0571,"SERVICE_WORKER_PUSH_GROUPING 1/1: Promise.all di dieci push simultanee; 10/10 tag, testi e deep link restano distinti e completi nel Service Worker."
+P1,altro,passed,Dieci notifiche contemporanee.,globale:T-0571,SERVICE_WORKER_PUSH_GROUPING 1/1: dieci eventi push concorrenti con tag e deep link distinti producono dieci avvisi completi senza sovrascrittura.
 P1,altro,passed,Disattivazione completa delle notifiche.,globale:T-0077,"P0_PUSH_UNSUBSCRIBE Thailandia 1.48.27 QA isolato 14/14: la disattivazione elimina esclusivamente la sottoscrizione appartenente alla sessione, il retry resta idempotente, un altro viaggiatore non può rimuoverla e un endpoint non valido viene respinto."
 P1,altro,passed,Disattivazione notifiche.,globale:T-0520,"P0_PUSH_UNSUBSCRIBE 14/14 su QA 1.48.37: disattivazione propria, tentativo altrui, retry idempotente, input invalido e revoca al logout verificati; audit finale QA vuoto."
 P1,altro,passed,Inviare due notifiche con lo stesso tag.,globale:T-0861,"service-worker-push-grouping Thailandia 1.48.27 runtime isolato 2/2: due eventi push reali eseguiti dal Service Worker con tag post-42 confluiscono in un unico avviso, il secondo contenuto sostituisce il primo e renotify resta attivo."
@@ -625,22 +625,22 @@ P1,altro,passed,Inviare notifica con emoji.,globale:T-0863,"push-payload-privacy
 P1,altro,passed,Inviare notifica con testo molto lungo.,globale:T-0864,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
 P1,altro,passed,Inviare notifica con titolo molto lungo.,globale:T-0865,"push-payload-privacy 4/4: caratteri speciali, emoji, corpo e titolo estremamente lunghi vengono trasformati in testo generico sicuro; tag limitato a 96 caratteri."
 P1,altro,passed,le notifiche aprono il contenuto preciso;,globale:T-0681,ui-notification-deep-link QA: pubblicazione e commento reali vengono aperti tramite i rispettivi parametri; un contenuto eliminato mostra un avviso chiaro.
-P1,altro,passed,Misurare batteria con notifiche attive.,globale:T-1660,QA Galaxy S9+ 3/3: sottoscrizione push attiva una sola volta; 5 secondi in attesa senza polling push o variazione batteria simulata e TaskDuration sotto 0.5 s; Service Worker event-driven 1/1.
+P1,altro,passed,Misurare batteria con notifiche attive.,globale:T-1660,"QA Galaxy S9+ 3/3: una sola sottoscrizione; attesa di 5 secondi senza polling push, livello batteria simulato stabile e TaskDuration inferiore a 0,5 s. Il Service Worker reagisce agli eventi push senza timer continui."
 P1,altro,passed,Negare notifiche.,globale:T-0522;usabilita:U0063,"ui-notification-permissions touch mobile 2/2: diniego del browser produce zero richieste push, mantiene Non attive e lascia disponibile il comando per riprovare."
-P1,altro,passed,nessuna notifica deve essere inviata;,addendum:A0036,"NOTIFICATION_NEGATIVE_CASES 1/1: post, commenti, posizioni e documenti applicano 401/403 prima di ogni percorso notifySubscribers."
-P1,altro,passed,nessuna notifica inviata;,globale:T-0749;usabilita:U0586,"NOTIFICATION_NEGATIVE_CASES 1/1: i dinieghi server precedono ogni invio push sui percorsi mutanti notificabili."
-P1,altro,passed,non esistono notifiche;,addendum:A0303,"NOTIFICATION_NEGATIVE_CASES 1/1: lista vuota stabile, messaggio Nessuna nuova attività e comando Cancella tutte non montato."
+P1,altro,passed,nessuna notifica deve essere inviata;,addendum:A0036,"NOTIFICATION_NEGATIVE_CASES 1/1: post, commenti, posizioni e documenti rifiutano la richiesta prima di ogni percorso notifySubscribers."
+P1,altro,passed,nessuna notifica inviata;,globale:T-0749;usabilita:U0586,NOTIFICATION_NEGATIVE_CASES 1/1: le richieste non autorizzate terminano con 401/403 prima di ogni chiamata a notifySubscribers. | NOTIFICATION_NEGATIVE_CASES 1/1: i dinieghi server precedono ogni invio push sui percorsi mutanti notificabili.
+P1,altro,passed,non esistono notifiche;,addendum:A0303,NOTIFICATION_NEGATIVE_CASES 1/1: lista vuota mostra Nessuna nuova attività; Cancella tutte non viene montato e nessun identificativo vuoto viene usato.
 P1,altro,passed,Non inviare all’autore la notifica della propria operazione.,globale:T-0081,push-audience 5/5: la subscription con profile_id o guest_id dell’autore viene esclusa prima dell’invio.
 P1,altro,passed,Notifica → post → indietro.,globale:T-1417,"ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: tocco sulla notifica, apertura del post preciso e gesto Indietro riaprono il centro notifiche senza perdere il contesto."
 P1,altro,passed,Notifica automatica al responsabile tecnico.,globale:T-1552,"P1_TECHNICAL_ALERT Thailandia 1.48.35 su QA isolato 9/9 + technical-alert runtime 1/1: un errore API 500 reale genera un error_id pubblico, registra automaticamente technical_error con metodo, endpoint, stato e ora nel registro consultabile soltanto dalla coordinatrice; il percorso push cifra e consegna l’avviso esclusivamente alla sottoscrizione coordinator, escludendo il viaggiatore. Messaggio e audit restano generici e non contengono payload o dati personali; pulizia QA completata."
 P1,altro,passed,Notifica con apertura del post preciso.,globale:T-0083,ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: la notifica di pubblicazione apre l'ID esatto del post e rende visibile il relativo anchor.
-P1,altro,passed,Notifica per menzione.,globale:T-0086,"NOTIFICATION_TARGETING 4/4: handle esatto anche con accenti, invio solo al profilo menzionato, autore e duplicati esclusi, preferenza commenti e deep link sicuro."
+P1,altro,passed,Notifica per menzione.,globale:T-0086,"NOTIFICATION_TARGETING 4/4: handle Unicode normalizzato, corrispondenza esatta, destinatario mirato, autore escluso, preferenza commenti e deep link privato verificati."
 P1,altro,passed,notifiche cliccabili;,addendum:A0012,service-worker-push-grouping 4/4: il tocco chiude l'avviso e apre il deep link; se l'app e gia aperta la naviga e la porta in primo piano.
 P1,altro,passed,Notifiche durante la prova.,globale:T-1127,"ui-activity-sync Thailandia 1.48.31 QA reale: durante il collaudo un commento di un terzo profilo genera nuovi badge su due telefoni; il telefono B apre il testo preciso e la lettura si sincronizza. | ui-activity-sync Thailandia 1.48.31 QA reale: notifica generata durante il test da un commento multi-identità, ricevuta su due telefoni, aperta sul telefono B e sincronizzata come letta."
 P1,altro,passed,notifiche negate;,usabilita:U0505,"ui-notification-permissions touch mobile 2/2: permission denied non crea subscription, non imposta india-push-enabled e mostra Notifiche non autorizzate."
 P1,altro,passed,notifiche non lette;,addendum:A0078,extended-p0-activity-sync su QA: stato letto sincronizzato tra due dispositivi dello stesso profilo; un timestamp arretrato non fa ricomparire notifiche gia lette e il piu recente raggiunge entrambi i telefoni.
 P1,altro,passed,notifiche;,globale:T-1762;usabilita:U0647,"P1_ALL_PUSH_ACTIVATION 75/75, P0_PUSH_UNSUBSCRIBE 14/14 e suite UI notifiche: ciclo completo di attivazione, ricezione, apertura e disattivazione verificato in QA isolato."
-P1,altro,passed,prima dell’invio della notifica;,addendum:A0117,"NOTIFICATION_TARGETING 1/1: sessione, proprietà e visibilità vengono convalidate prima di ogni invio sociale."
+P1,altro,passed,prima dell’invio della notifica;,addendum:A0117,"NOTIFICATION_TARGETING 1/1: proprietà, sessione e visibilità del post/commento sono convalidate prima di costruire o inviare qualsiasi notifica sociale."
 P1,altro,passed,"Rendere reali le menzioni: attualmente “@nome” viene evidenziato, ma non genera una notifica specifica.",globale:T-0065,notifications-spotify 5/5 + ui-notifications-spotify 1/1: @nome viene riconosciuto come menzione personale e compare come attività specifica nel centro notifiche.
 P1,altro,passed,Ricevere una notifica dopo logout.,globale:T-0869,P0_PUSH_UNSUBSCRIBE Thailandia 1.48.27 QA isolato 14/14: il logout revoca la sessione e rimuove tutte le sottoscrizioni push del profilo; il vecchio token non può inviare il test push e la verifica con una seconda identità conferma che l'endpoint non esiste più.
 P1,altro,passed,Ricevere una notifica dopo revoca del dispositivo.,globale:T-0870,"ui-device-revocation-notice Thailandia 1.48.17 Samsung S20 FE QA 1/1: il secondo telefono dello stesso profilo revoca realmente il primo; entro il controllo sessione il dispositivo revocato riceve un avviso role=alert chiaro e chiudibile, perde token e comandi privati e torna alla vista pubblica, mentre il secondo resta autorizzato. Regressione locale 167/167 applicabili, QA autenticata 18/18 e produzione read-only 8/8."
@@ -656,7 +656,7 @@ P1,altro,passed,Verifica notifiche Push.,globale:T-0660,"ui-notification-permiss
 P1,altro,passed,Verificare che il contenuto venga ricontrollato dal server quando la notifica viene aperta.,globale:T-1360,ui-notification-deep-link Thailandia 1.48.26 Samsung S20 FE QA reale 1/1: il contenuto eliminato viene ricontrollato tramite /api/state e non resta disponibile dalla copia locale; l'interfaccia restituisce l'avviso controllato.
 P1,altro,passed,Verificare che il telefono B riceva la notifica.,globale:T-0715,"ui-activity-sync Thailandia 1.48.31 QA reale 1/1: un terzo profilo pubblica un commento; due telefoni dello stesso destinatario ricevono il nuovo badge e il telefono B apre il testo esatto, poi la lettura si sincronizza tra dispositivi. | ui-activity-sync Thailandia 1.48.31 QA reale 1/1: un terzo profilo crea un commento e il telefono B riceve badge e testo esatto; lettura sincronizzata tra i due dispositivi del destinatario."
 P1,altro,passed,Verificare che una notifica “Solo io” non venga inviata a nessun altro.,globale:T-0876,"push-audience 5/5: un contenuto Solo io non viene inviato ad anonimi, familiari, altri profili né allo stesso autore."
-P1,altro,passed,Verificare preferenze notifiche.,globale:T-1608,"QA notification-preferences API 1/1 + Galaxy S9+ touch 1/1: modifica, ricarica, persistenza, concorrenza fra categorie, isolamento fra profili e ripristino finale verificati."
+P1,altro,passed,Verificare preferenze notifiche.,globale:T-1608,"QA API 1/1 + Galaxy S9+ touch 1/1: modifica rapida, reload, persistenza e isolamento fra profili verificati."
 P1,altro,passed,Verificare raggruppamento delle notifiche.,globale:T-0880,"service-worker-push-grouping Thailandia 1.48.27 runtime isolato 2/2: tag uguali mantengono un solo gruppo, mentre tag post e commento differenti restano due avvisi distinti conservando i deep link esatti."
 P1,altro,passed,Verificare ricezione della notifica.,usabilita:U0022,"ui-activity-sync Thailandia 1.48.31 QA reale 1/1: notifica in-app generata da un commento reale, ricevuta e aperta con gesto touch sul secondo telefono. | ui-activity-sync Thailandia 1.48.31 QA reale 1/1: ricezione e apertura touch della notifica in-app verificate sul secondo telefono."
 P1,altro,passed,Verificare una notifica con telefono bloccato.,globale:T-1364,"service-worker-push-grouping Thailandia 1.48.35 runtime isolato 4/4: con nessuna finestra dell’app aperta (stato equivalente a telefono bloccato/app chiusa) l’evento push mostra un avviso persistente; il tocco chiude l’avviso e apre l’URL preciso in una nuova finestra. Con app già presente, lo stesso tocco naviga al contenuto e porta la finestra in primo piano."
@@ -666,9 +666,9 @@ P1,documenti,passed,Caricare biglietti.,globale:T-0477;usabilita:U0418,"P0_DOCUM
 P1,documenti,passed,Caricare un PDF multipagina.,globale:T-0993,"ui-protected-pdf Samsung S20 FE 1/1: PDF reale a due pagine caricato via input touch; il visualizzatore renderizza esattamente due canvas, poi chiusura ed eliminazione completano senza pagina bianca."
 P1,documenti,passed,Caricare visto.,globale:T-0479;usabilita:U0417,P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: PDF visto caricato e sottoposto a dieci retry simultanei con la stessa chiave; resta una sola versione valida e apribile.
 P1,documenti,passed,Controllare PDF corrotti o pericolosi.,globale:T-0166,file-validation L1 + P0_DOCUMENT_CONCURRENCY 28/28: PDF corrotto o con firma non valida riceve 400 e non sostituisce il documento valido precedente.
-P1,documenti,passed,messaggio se il caricamento supera il tempo previsto;,addendum:A0321,"UPLOAD_FEEDBACK 3/3 + RESUMABLE_UPLOAD 6/6: avviso accessibile dopo 20 secondi, progresso lento esplicito, upload e retry idempotente proseguono senza duplicati."
-P1,documenti,passed,PDF del diario.,globale:T-1724,Revisione 1.48.53: PDF valido con post luoghi e commenti; parser 3/3 e download mobile QA superato.
-P1,documenti,passed,PDF del viaggio.,globale:T-0265,Revisione 1.48.53: PDF valido con 11 giornate; parser 3/3 e download mobile QA superato.
+P1,documenti,passed,messaggio se il caricamento supera il tempo previsto;,addendum:A0321,UPLOAD_FEEDBACK 3/3 + RESUMABLE_UPLOAD 6/6: dopo 20 secondi pubblicazioni e documenti mostrano un avviso accessibile di rete lenta; progresso e retry continuano senza duplicati e il timer viene sempre rimosso.
+P1,documenti,passed,PDF del diario.,globale:T-1724,"Revisione 1.48.53: PDF del diario con pubblicazioni, luoghi e commenti visibili; testo non affidabile neutralizzato. Parser PDF 3/3; download touch Galaxy S9+ verificato e non disponibile al pubblico."
+P1,documenti,passed,PDF del viaggio.,globale:T-0265,"Revisione 1.48.53: PDF multipagina valido con tutte le 11 giornate, tratte, mezzi, descrizioni e attività. Parser PDF 3/3; download touch Galaxy S9+ verificato e non disponibile al pubblico."
 P1,documenti,passed,PDF molto grande.,globale:T-0438,"production-smoke QA 1.48.40, 18/18 eseguiti: PDF reale da 9 MiB caricato a parti, completato in archivio privato, ritrovato nello stato personale, verificato con HEAD autenticato e cancellato; pulizia QA confermata."
 P1,mappe-posizione,passed,"A cancella posizione, B vede scomparsa.",usabilita:U0561,ui-location-permissions Samsung S20 FE 1/1: A cancella con gesto touch e la posizione scompare dal telefono B entro il ciclo di sincronizzazione.
 P1,mappe-posizione,passed,"A condivide posizione, B vede marker.",usabilita:U0560,ui-location-permissions Samsung S20 FE 1/1: A condivide con gesto touch e B vede il marker e le coordinate senza refresh manuale; il pubblico non vede la mappa privata.
@@ -696,7 +696,7 @@ P1,mappe-posizione,passed,le posizioni scadono automaticamente;,globale:T-0682,P
 P1,mappe-posizione,passed,Mappa con due posizioni identiche.,globale:T-0947,ui-location-permissions Samsung S20 FE 1/1: viaggiatore e coordinatore condividono coordinate identiche; la lista conserva due identità e la mappa renderizza due marker senza perdere persone.
 P1,mappe-posizione,passed,Mappa con nessuna posizione condivisa.,globale:T-0952,ui-location-permissions Samsung S20 FE 1/1: dopo la cancellazione la lista e la mappa non mostrano alcun marker residuo.
 P1,mappe-posizione,passed,Mappa con una posizione.,globale:T-0954,ui-location-permissions Samsung S20 FE 1/1: con una sola posizione la mappa India mostra un solo marker leggibile e i collegamenti Google Maps/Naviga corretti.
-P1,mappe-posizione,passed,Misurare batteria con posizione attiva.,globale:T-1662,QA Galaxy S9+ 1/1 + struttura 1/1: due rilevamenti GPS solo su tocco esplicito condividi/aggiorna; nessun watchPosition continuo; cancellazione posizione e pulizia QA completate.
+P1,mappe-posizione,passed,Misurare batteria con posizione attiva.,globale:T-1662,"QA Galaxy S9+ 1/1 e struttura 1/1: rilevamento soltanto dopo Condividi/Aggiorna, due coordinate reali simulate correttamente, nessun watchPosition continuo e cancellazione conclusiva."
 P1,mappe-posizione,passed,modifica posizione altrui;,globale:T-0742,P0_LOCATION 30/30 su QA 1.48.37: il secondo viaggiatore non può sovrascrivere la posizione del proprietario e riceve HTTP 403.
 P1,mappe-posizione,passed,Negare GPS.,usabilita:U0236,"ui-location QA 1.48.40: revoca del permesso geolocalizzazione sul telefono, messaggio Permesso posizione non disponibile e zero POST verso /api/locations."
 P1,mappe-posizione,passed,Negare posizione.,usabilita:U0457,"Playwright Galaxy: permesso rimosso, messaggio locale e zero richieste POST; preview 20382a40; 2026-08-04"
@@ -763,9 +763,9 @@ P1,media-upload,passed,Archivio di video.,globale:T-1714,ui-download-archive QA 
 P1,media-upload,passed,Audio.,usabilita:U0119,"ui-media QA 1.48.40: file WAV reale selezionato, mostrato in anteprima, pubblicato, riletto con durata valida e riprodotto dal controllo touch compatto."
 P1,media-upload,passed,Aumento improvviso degli upload.,globale:T-1540,"P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: quattro raffiche reali da cinque richieste concorrenti completate senza errori, perdita o duplicazione."
 P1,media-upload,passed,Bloccare lo schermo durante l’audio.,globale:T-0909,"ui-media Thailandia 1.48.4 1/1: l’audio avviato con touch viene messo in pausa al pagehide, quindi non continua con schermo/app in background."
-P1,media-upload,passed,Calcolare peso medio di un audio.,globale:T-1527,media-capacity 1/1: campione audio reale dei collaudi misurato a 617.444 byte medi; file non vuoto e sotto il limite server di 120 MiB.
-P1,media-upload,passed,Calcolare peso medio di un video.,globale:T-1528,media-capacity 1/1: tre video reali WebM/MOV/MP4 dei collaudi misurati a 715.859 byte medi; tutti sotto il limite server di 500 MiB.
-P1,media-upload,passed,Calcolare peso medio di una fotografia.,globale:T-1529,media-capacity 1/1: undici immagini reali Thailandia JPG/PNG misurate a 556.455 byte medi; tutte non vuote e sotto il limite server di 120 MiB.
+P1,media-upload,passed,Calcolare peso medio di un audio.,globale:T-1527,"`media-capacity` 1/1: campione audio reale dei collaudi, media 617.444 byte. | media-capacity 1/1: campione audio reale dei collaudi misurato a 617.444 byte medi; file non vuoto e sotto il limite server di 120 MiB."
+P1,media-upload,passed,Calcolare peso medio di un video.,globale:T-1528,"`media-capacity` 1/1: tre video WebM/MOV/MP4 reali dei collaudi, media 715.859 byte. | media-capacity 1/1: tre video reali WebM/MOV/MP4 dei collaudi misurati a 715.859 byte medi; tutti sotto il limite server di 500 MiB."
+P1,media-upload,passed,Calcolare peso medio di una fotografia.,globale:T-1529,"`media-capacity` 1/1: undici immagini Thailandia JPG/PNG reali, media 556.455 byte. | media-capacity 1/1: undici immagini reali Thailandia JPG/PNG misurate a 556.455 byte medi; tutte non vuote e sotto il limite server di 120 MiB."
 P1,media-upload,passed,caricamento post;,usabilita:U0545,"P1_MEDIA_ROBUSTNESS 220/220 su QA 1.48.37: 20 post con cinque fotografie ciascuno creati, riletti e rimossi senza residui."
 P1,media-upload,passed,caricamento;,addendum:A0162,"P1_MEDIA_ROBUSTNESS 220/220 + TEN_ATTACHMENTS 20/20 su QA 1.48.37: caricamenti autenticati multipli persistono nomi, ordine, MIME e contenuto riapribile."
 P1,media-upload,passed,Caricare assicurazione.,globale:T-0476;usabilita:U0419,"P0_DOCUMENTS 12/12 + P0_DOCUMENT_CONCURRENCY 28/28 su QA 1.48.37: PDF assicurazione caricato, rilevato nello stato privato, aperto dai ruoli autorizzati e rimosso dal proprietario."
@@ -788,21 +788,21 @@ P1,media-upload,passed,Commento con audio.,globale:T-0460;usabilita:U0302,"ui-co
 P1,media-upload,passed,Commento con fotografia.,globale:T-0461;usabilita:U0300,"ui-comment-media QA 1.48.40: fotografia JPEG reale allegata a un commento, salvata, riletta e decodificata con larghezza naturale superiore a 100 px."
 P1,media-upload,passed,Commento con video.,globale:T-0462;usabilita:U0301,"ui-comment-media QA 1.48.40: video WebM reale allegato a un commento, salvato, riletto e riconosciuto dal player con durata valida; pubblicazione di prova poi eliminata."
 P1,media-upload,passed,comportamento al ricaricamento;,addendum:A0049,ui-offline QA 1.48.40: dopo consegna differita il reload conserva una sola pubblicazione e non duplica l'operazione; token e chiave dispositivo restano validi.
-P1,media-upload,passed,compressione fotografie;,globale:T-0146,"MEDIA_COMPRESSION 4/4: immagini grandi compresse prima dell’upload a max 2560 px/qualità 0,88 senza ritaglio; orientamento EXIF richiesto e originale conservato su errore o mancato risparmio."
-P1,media-upload,passed,compressione video;,globale:T-0147,Revisione 1.48.56: comando touch opzionale sui video oltre 25 MB ricodifica a bitrate ridotto senza alterare l'originale; QA Galaxy S9+ 1/1 su MP4 da 26 MB con file ridotto pubblicato e riprodotto; fallback conserva l'originale.
-P1,media-upload,passed,condizione dopo caricamento dei dati;,addendum:A0290,"UPLOAD_STATE_AUTHORIZATION 1/1: caricamento dati non altera sessione o ruolo e i comandi restano subordinati allo stato verificato."
-P1,media-upload,passed,conferma prima del caricamento;,addendum:A0371,"DOCUMENT_UPLOAD_CONFIRMATION 2/2: conferma esplicita con nome file, categoria e destinatari prima di caricare o sostituire; annullamento senza invio."
+P1,media-upload,passed,compressione fotografie;,globale:T-0146,"MEDIA_COMPRESSION 4/4: JPEG/WebP oltre 2 MiB ricodificati a qualità 0,88 e lato massimo 2560 px, orientamento rispettato, proporzioni integre e fallback all’originale."
+P1,media-upload,passed,compressione video;,globale:T-0147,"Revisione 1.48.56: comando touch opzionale oltre 25 MiB, ricodifica locale a bitrate ridotto con avanzamento e originale del telefono invariato. QA Galaxy S9+ 1/1: MP4 da 26 MiB ridotto, pubblicato, riaperto e riprodotto; fallback sicuro se il browser non supporta la ricodifica."
+P1,media-upload,passed,condizione dopo caricamento dei dati;,addendum:A0290,UPLOAD_STATE_AUTHORIZATION 1/1: il refresh aggiorna dati e stato di caricamento ma non sessione/ruolo; il compositore resta derivato esclusivamente dalla sessione verificata.
+P1,media-upload,passed,conferma prima del caricamento;,addendum:A0371,"DOCUMENT_UPLOAD_CONFIRMATION 2/2: selezione e sostituzione mostrano file, tipo e destinatari; soltanto Carica ora/Sostituisci avvia l’upload, Annulla non invia dati."
 P1,media-upload,passed,Conservare possibilità di scaricare l’originale.,globale:T-1646,"travel-archive 3/3: foto, audio e video originali visibili vengono scaricati con byte reali in uno ZIP; un file indisponibile non annulla gli altri."
 P1,media-upload,passed,Consultare post già scaricati.,globale:T-0540,"travel-archive 3/3: foto, audio e video originali visibili vengono scaricati con byte reali in uno ZIP; un file indisponibile non annulla gli altri."
-P1,media-upload,passed,controllo server prima del caricamento;,addendum:A0136,"UPLOAD_STATE_AUTHORIZATION 1/1: sessione/proprietà precedono lettura byte; descrizione e firma reale precedono persistenza."
-P1,media-upload,passed,copertina video;,globale:T-0150,Revisione 1.48.52: copertina JPEG generata dal primo fotogramma; UI QA Galaxy S9+ con due video superata 1/1.
+P1,media-upload,passed,controllo server prima del caricamento;,addendum:A0136,"UPLOAD_STATE_AUTHORIZATION 1/1: sessione, proprietà, metadati e firma reale del primo blocco sono convalidati prima di leggere o persistere i byte."
+P1,media-upload,passed,copertina video;,globale:T-0150,"Revisione 1.48.52: il player genera dal primo fotogramma una copertina JPEG locale, senza upload aggiuntivo; fallback al player nativo se il browser nega il canvas. Collaudo reale Galaxy S9+ su due video: copertine presenti, swipe touch, riproduzione e pausa esclusiva superati 1/1."
 P1,media-upload,passed,Deep link della singola fotografia.,globale:T-0245,"ui-photo-deep-link Thailandia 1.48.9 Samsung S20 FE 1/1: URL della singola fotografia apre il media esatto, il reload conserva il visualizzatore e il comando touch Chiudi foto torna alla bacheca ripulendo il parametro; L1/L2 completo 18/18 applicabili."
-P1,media-upload,passed,Definire gestione della componente video della Live Photo.,globale:T-1429,QA Galaxy S9+ 1/1: MOV separato da foto caricato e riprodotto con MP4; 18.874.368 byte a batteria simulata 8% in 22.143 s.
-P1,media-upload,passed,Descrizione delle fotografie.,globale:T-1064,Revisione 1.48.54: descrizione per foto persistita e limitata a 280 caratteri; UI/API/accessibilità mobile QA 1/1 + struttura 2/2.
+P1,media-upload,passed,Definire gestione della componente video della Live Photo.,globale:T-1429,"La componente MOV viene trattata come video separato: selezione `.mov`, caricamento, copertina e riproduzione nativa senza confonderla con la foto HEIC/JPEG. Collaudo reale QA Galaxy S9+ a batteria simulata 8%: MOV + MP4 per 18.874.368 byte, caricamento e riproduzione superati 1/1 in 22,143 s."
+P1,media-upload,passed,Descrizione delle fotografie.,globale:T-1064,"Revisione 1.48.54: descrizione facoltativa fino a 280 caratteri per ogni fotografia, persistita in colonna additiva, limitata dal server, visibile sulla foto e usata come testo alternativo. Collaudo reale QA: pubblicazione, risposta API, feed e accessibilità mobile superati 1/1; controlli strutturali 2/2."
 P1,media-upload,passed,Disattivare caricamento automatico video.,globale:T-1647,ui-publish-complete Thailandia 1.48.4 1/1: il video resta solo in anteprima con conteggio allegati finché l’utente non preme esplicitamente Pubblica.
 P1,media-upload,passed,"dispone di screenshot, video o log come prova.",globale:T-0247,"Playwright Thailandia 1.48.4: ogni errore UI produce screenshot, video, trace e contesto; gli esiti riusciti conservano log nominativi del controllo."
 P1,media-upload,passed,Eseguire logout durante un caricamento.,globale:T-0759,"ui-upload-logout Thailandia 1.48.10 Samsung S20 FE 1/1 + resumable-upload 6/6: video reale portato a 9 MB, prima parte trattenuta, sessione revocata durante il trasferimento, fetch annullata, complete mai chiamato e nessun post visibile dal secondo account; manifesto locale conservato per ripresa autorizzata."
-P1,media-upload,passed,fotocamera negata;,usabilita:U0504,"QA 1.48.46: diniego/annullamento senza file intercettato prima di addFiles, nessun upload; stato accessibile con alternativa Galleria foto; camera-denied 3/3."
+P1,media-upload,passed,fotocamera negata;,usabilita:U0504,"QA 1.48.46: selezione fotocamera vuota/negata non avvia upload, annuncia un errore accessibile e indica Galleria foto come alternativa; test automatici camera-denied 3/3."
 P1,media-upload,passed,Fotografia → carosello → indietro.,globale:T-1413,"ui-media Thailandia 1.48.6 Samsung S20 FE 1/1: fotografia del carosello aperta con tocco in visualizzatore a schermo intero, resa con object-fit contain, chiusa dal comando sempre visibile e ritorno allo stesso post senza perdere lo scorrimento."
 P1,media-upload,passed,fotografia orizzontale.,globale:T-0430,"ui-media-orientation QA 1.48.40 Samsung S20 FE touch 1/1: JPEG reale 1200x600 pubblicato, riaperto con dimensioni naturali esatte e object-fit contain, senza taglio; pulizia QA completata."
 P1,media-upload,passed,fotografia verticale.,globale:T-0431,"ui-media-orientation QA 1.48.40 Samsung S20 FE touch 1/1: JPEG reale 600x1200 pubblicato, riaperto con dimensioni naturali esatte e object-fit contain, senza taglio; pulizia QA completata."
@@ -851,7 +851,7 @@ P1,media-upload,passed,Riprodurre il video con rete lenta.,globale:T-0915,"ui-la
 P1,media-upload,passed,Riprodurre un file audio.,globale:T-0916,"ui-media Thailandia 1.48.4 1/1 + ui-comment-media 1/1: audio reale caricato, durata valida e riproduzione avviata tramite touch."
 P1,media-upload,passed,Riprodurre un video con audio.,globale:T-0917,"ui-media Thailandia 1.48.4 1/1 + ui-comment-media 1/1: video con traccia multimediale caricato, salvato e riprodotto nel post/commento."
 P1,media-upload,passed,Riprodurre video.,usabilita:U0207,"ui-media QA 1.48.40: entrambi i player video espongono durata valida, avanzano nel tempo dopo play e possono essere messi in pausa."
-P1,media-upload,passed,rotazione e ritaglio fotografie;,globale:T-0161,Revisione 1.48.55: rotazione 90 gradi e ritaglio quadrato eseguiti localmente sulla copia selezionata; collaudo touch QA Galaxy S9+ 1/1 con pubblicazione e immagine quadrata verificata; originale del dispositivo invariato.
+P1,media-upload,passed,rotazione e ritaglio fotografie;,globale:T-0161,"Revisione 1.48.55: comandi touch Ruota 90° e Ritaglia applicati localmente alla copia selezionata. Collaudo QA Galaxy S9+ 1/1: anteprima e pubblicazione quadrate verificate, descrizione conservata e dati QA ripuliti."
 P1,media-upload,passed,Salvare una bozza con dieci fotografie.,globale:T-0850,"ui-offline-media-drafts Thailandia 1.48.12 Samsung S20 FE 1/1 + offline-queue 4/4: bozza con dieci JPEG reali, bozza con video WebM reale e bozza con fotografia singola salvate in IndexedDB senza rete; chiusura completa della pagina, riapertura online, retry automatico, tre pubblicazioni uniche con 10/1/1 media e apertura o riproduzione finale; pulizia QA completata."
 P1,media-upload,passed,Salvare una bozza con un video.,globale:T-0851,"ui-offline-media-drafts Thailandia 1.48.12 Samsung S20 FE 1/1 + offline-queue 4/4: bozza con dieci JPEG reali, bozza con video WebM reale e bozza con fotografia singola salvate in IndexedDB senza rete; chiusura completa della pagina, riapertura online, retry automatico, tre pubblicazioni uniche con 10/1/1 media e apertura o riproduzione finale; pulizia QA completata."
 P1,media-upload,passed,Salvare una bozza con una fotografia.,globale:T-0852,"ui-offline-media-drafts Thailandia 1.48.12 Samsung S20 FE 1/1 + offline-queue 4/4: bozza con dieci JPEG reali, bozza con video WebM reale e bozza con fotografia singola salvate in IndexedDB senza rete; chiusura completa della pagina, riapertura online, retry automatico, tre pubblicazioni uniche con 10/1/1 media e apertura o riproduzione finale; pulizia QA completata."
@@ -904,7 +904,7 @@ P1,media-upload,passed,Verificare che l’app non si ricarichi durante un upload
 P1,media-upload,passed,Verificare che l’audio non venga perso o corrotto.,globale:T-0458,"ui-media Thailandia 1.48.4 1/1 + ui-comment-media 1/1: Blob audio mantiene durata positiva dopo salvataggio, riapertura e riproduzione."
 P1,media-upload,passed,Verificare che la fotografia non venga mostrata ruotata.,globale:T-1433,"ui-protected-pdf Thailandia 1.48.4 1/1: immagine verticale reale conserva naturalHeight > naturalWidth, usa object-fit contain e resta interamente nel visualizzatore mobile."
 P1,media-upload,passed,Verificare fotografia della città.,usabilita:U0319,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
-P1,media-upload,passed,Verificare fotografie HDR.,globale:T-1434,QA Galaxy S9+ 1/1: PNG HDR sintetica 16 bit BT.2020 PQ caricata via touch riaperta 4x2 e scaricata byte per byte con profilo cICP intatto; pulizia QA completata.
+P1,media-upload,passed,Verificare fotografie HDR.,globale:T-1434,"Collaudo reale QA Galaxy S9+ 1/1 con PNG HDR 16 bit, primarie BT.2020 e curva PQ: selezione touch, pubblicazione, riapertura 4×2 e download identico; chunk colore cICP conservato e dati QA rimossi."
 P1,media-upload,passed,Verificare fotografie.,usabilita:U0104,ui-publish-complete su QA 1.48.37 touch 1/1: due fotografie reali risultano presenti nel carosello su entrambi i dispositivi dopo la pubblicazione.
 P1,media-upload,passed,Verificare funzionamento dopo ricaricamento della pagina.,globale:T-0983,"ui-offline e ui-publish-complete Thailandia 1.48.4: dopo reload sessione, post, fotografia e assenza di duplicati restano coerenti."
 P1,media-upload,passed,Verificare quali fotografie restano memorizzate.,globale:T-1631,P1_MEDIA_ROBUSTNESS su QA isolato 1.48.5: 100 URL media verificati prima della pulizia; dopo eliminazione dei 20 post tutti i 100 URL non restituiscono più 200.
@@ -912,34 +912,34 @@ P1,media-upload,passed,"Verificare stesso post, stessi commenti e stessa fotogra
 P1,media-upload,passed,Verificare streaming senza caricare tutto il file in memoria.,globale:T-1008,"QA autenticata 1.48.4: upload grande a parti completato con streaming, commit finale e lettura del contenuto senza caricamento monolitico del file."
 P1,media-upload,passed,Verificare video.,usabilita:U0105,ui-publish-complete su QA 1.48.37 touch 1/1: il video reale risulta presente nel post dell'autore e nel post ricevuto dall'iPhone pubblico.
 P1,media-upload,passed,Video,globale:T-0292;globale:T-1262;usabilita:U0035;usabilita:U0118,"ui-media QA 1.48.40: due video reali con traccia audio caricati, persistiti, riaperti e riprodotti; limite complessivo degli allegati verificato a 10."
-P1,media-upload,passed,video dei percorsi completi;,usabilita:U0713,QA 1/1: video reale WebM portato oltre 26 MB caricato in 7 parti riprodotto su Galaxy S9+ con ritardo rete di 1.2 secondi e dati QA ripuliti.
+P1,media-upload,passed,video dei percorsi completi;,usabilita:U0713,QA 1/1: video reale WebM da 26 MB caricato in 7 parti e riprodotto su Galaxy S9+ con rete rallentata; pulizia QA completata.
 P1,media-upload,passed,video oltre 25 MB.,globale:T-0441,"ui-large-slow-video Thailandia 1.48.11 Samsung S20 FE 1/1: video WebM reale portato a 26 MB, caricato in 7 parti, collegato a un post pubblico, servito con richieste media ritardate di 1,2 secondi e riprodotto realmente oltre 0,2 secondi; pausa e pulizia server completate."
 P1,media-upload,passed,video orizzontale.,globale:T-0442,"ui-media-orientation QA 1.48.40 Samsung S20 FE touch 1/1: WebM reale 640x360 pubblicato, metadati video riletti con dimensioni esatte e object-fit contain; pulizia QA completata."
 P1,media-upload,passed,video verticale.,globale:T-0443,"ui-media-orientation QA 1.48.40 Samsung S20 FE touch 1/1: WebM reale 360x640 pubblicato, metadati video riletti con dimensioni esatte e object-fit contain; pulizia QA completata."
 P1,social,passed,Notifica con apertura del commento preciso.,globale:T-0082,ui-notification-deep-link QA 1/1: una notifica reale apre esattamente il post e il commento indicati e mantiene visibile la discussione corretta.
-P1,social,passed,"Notifica per reazione, se scelta dall’utente.",globale:T-0088,"NOTIFICATION_TARGETING 4/4 + NOTIFICATION_PREFERENCES: aggiunta indirizzata al proprietario autorizzato, autore escluso, preferenza reazioni rispettata; nessun push sulla rimozione."
-P1,social,passed,Notifica per risposta a un commento.,globale:T-0089,"NOTIFICATION_TARGETING 4/4: risposta indirizzata al profilo o ospite autore del commento, senza duplicati e con deep link preciso."
+P1,social,passed,"Notifica per reazione, se scelta dall’utente.",globale:T-0088,"NOTIFICATION_TARGETING 4/4 + NOTIFICATION_PREFERENCES: la reazione aggiunta avvisa solo il proprietario del contenuto, esclude autore e preferenza reazioni disattiva; la rimozione non genera push."
+P1,social,passed,Notifica per risposta a un commento.,globale:T-0089,"NOTIFICATION_TARGETING 4/4: risposta collegata nello stesso post, destinatario profilo o ospite preciso, esclusione autore/duplicati, preferenza e deep link al commento."
 P1,social,passed,Verificare che una notifica relativa a un post Gruppo non venga inviata ai familiari pubblici.,globale:T-0877,push-audience 5/5: un contenuto Gruppo raggiunge soltanto profili autenticati e non viene inviato a familiari/visitatori pubblici.
 P1,sync-rete,passed,“Offline” significhi funzione realmente disponibile senza rete;,addendum:A0391,"ui-offline e ui-p0-cache-recovery QA 1.48.40: bacheca, diario, dati di emergenza, bozza con fotografia e coda locale usati con connessione realmente disattivata."
 P1,sync-rete,passed,“Sincronizzato” significhi conferma server e presenza sugli altri dispositivi;,addendum:A0390,"API pubblica minimizzata + Playwright tre telefoni: chiavi e ID interni assenti, permessi can_manage dal server, comandi vietati nascosti e sync automatica; preview c9d82d89; 2026-08-04"
 P1,sync-rete,passed,100 richieste di sincronizzazione in un minuto.,globale:T-1048,"P0_SYNC_DELETE 115/115: 100 richieste concorrenti a sync/version completano con 200, versione numerica coerente e nessuna mutazione dello stato."
-P1,sync-rete,passed,Aggiornare il Service Worker con due schede aperte.,globale:T-1587,"QA 1.48.46 Galaxy S9+ Playwright 1/1: due schede controllate, update esplicito senza reload/perdita stato, seconda scheda ricaricata correttamente e prima rimasta operativa."
+P1,sync-rete,passed,Aggiornare il Service Worker con due schede aperte.,globale:T-1587,"QA 1.48.46, Galaxy S9+: due schede controllate dallo stesso Service Worker; update esplicito senza reload o perdita stato, seconda scheda ricaricata sulla nuova shell e prima rimasta intatta; Playwright 1/1."
 P1,sync-rete,passed,Aggiungere alternativa offline.,globale:T-0181,"ui-p0-cache-recovery QA 1.48.40: shell offline, 11 giornate e sezione Emergenza e dati offline restano disponibili quando la cartografia e la rete non rispondono."
-P1,sync-rete,passed,Album HTML offline.,globale:T-0233,Revisione 1.48.51: ZIP con album-offline.html autosufficiente; 4/4 unitari e 2/2 UI QA Galaxy S9+ autenticato/pubblico.
+P1,sync-rete,passed,Album HTML offline.,globale:T-0233,"Revisione 1.48.51: lo ZIP del Gruppo include `album-offline.html` autosufficiente con foto, audio, video, testi e commenti già visibili. Verifica reale Galaxy S9+: download autenticato e apertura/contenuto ZIP validati; il visitatore non vede il comando. Test automatici 4/4 unitari + 2/2 UI QA."
 P1,sync-rete,passed,Aprire Emergenza senza rete.,globale:T-1183,ui-p0-cache-recovery Thailandia 1.48.4 Samsung S20 FE 1/1: dopo eliminazione di cache vecchie/difettose l’app si riapre offline e rende disponibili numeri di emergenza thailandesi e tappe essenziali.
 P1,sync-rete,passed,Aprire il dominio senza cache.,globale:T-0305,"ui-cache-recovery Samsung S20 FE 1/1: dominio aperto senza cache valida, vecchia cache e cache difettosa eliminate; nuova shell caricata e riaperta realmente offline."
 P1,sync-rete,passed,Attivazione automatica su rete lenta.,globale:T-1644,"ui-slow-activation Thailandia 1.48.8 Samsung S20 FE 1/1: ogni chiamata API ritardata di 1,5 secondi; apertura del link personale, consumo automatico dell’invito, sessione viaggiatore persistita, URL ripulito e nessuna promozione di ruolo."
 P1,sync-rete,passed,Badge sincronizzato dei contenuti non letti.,globale:T-0076,"activity-sync Thailandia 1.48.16: integrazione API QA 1/1 e Playwright touch Samsung S20 FE 1/1 con due telefoni distinti dello stesso profilo; badge inizialmente visibile su entrambi, apertura Attività recenti sul primo, stato letto persistito in D1 e badge rimosso automaticamente sul secondo entro il polling. Un aggiornamento più vecchio non regredisce lo stato; aggiornamento inverso converge sul primo dispositivo. Regressione locale 166/166 applicabili, QA autenticata 18/18 e produzione read-only 8/8; backup pre-migrazione verificato SHA-256 2ED6F5DA…204259."
 P1,sync-rete,passed,Cache-Control corretto.,globale:T-1469,"static gate 199/199 su 1.48.40: API e documenti privati impostano private, no-store; asset pubblici e Service Worker seguono la politica di cache versionata."
-P1,sync-rete,passed,Centro “Pronto per l’offline”.,globale:T-0116,"QA 1.48.48 Galaxy S9+ touch 1/1: stato shell, rete, ultima sincronizzazione e invii locali leggibili nel pannello personale."
+P1,sync-rete,passed,Centro “Pronto per l’offline”.,globale:T-0116,"QA 1.48.48 Galaxy S9+ touch 1/1: pannello personale mostra shell salvata, rete, ultima sincronizzazione e numero invii locali."
 P1,sync-rete,passed,Centro sincronizzazione visibile.,globale:T-0098,"ui-offline QA 1.48.40 Galaxy S9+ touch 1/1: durante l'assenza di rete il pannello accessibile Invii in attesa mostra conteggio e singolo elemento, consente ispezione, annullamento e cancellazione confermata."
 P1,sync-rete,passed,Cercare segreti nel Service Worker.,globale:T-1500,"suite 1.48.4 163/163 eseguiti (150 passati, 13 skip condizionati, 0 errori): scansione sorgente e Service Worker senza password, token o segreti incorporati."
 P1,sync-rete,passed,coda offline vuota oppure correttamente registrata;,globale:T-1750,ui-offline QA 1.48.40: IndexedDB passa da 0 a 1 durante l'invio senza rete e torna a 0 dopo eliminazione esplicita o consegna riuscita.
 P1,sync-rete,passed,commenti sincronizzati;,globale:T-1751,"P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: tre identità creano commenti distinti e proprietario, secondo viaggiatore e coordinatrice rileggono lo stesso insieme, autori, testo e timestamp."
 P1,sync-rete,passed,continuazione dopo perdita della rete;,globale:T-0149,ui-offline QA 1/1: un invio iniziato senza rete sopravvive alla chiusura e viene trasmesso una sola volta al ritorno della connessione.
-P1,sync-rete,passed,controlli richieste di rete;,addendum:A0205,"QA 1.48.48 Galaxy S9+ touch 1/1: zero richieste first-party fallite, HTTPS/blob same-origin, nessun segreto in query, API senza errori 5xx e cache pubblica solo per dati pubblici ammessi."
+P1,sync-rete,passed,controlli richieste di rete;,addendum:A0205,"QA 1.48.48 Galaxy S9+ touch 1/1: navigazione Bacheca/Viaggio senza richieste first-party fallite; solo HTTPS o blob same-origin, nessun segreto in query, API sotto 500 e cache pubblica limitata a meteo/sole/luoghi."
 P1,sync-rete,passed,dati di emergenza disponibili offline.,globale:T-1752,ui-cache-recovery Samsung S20 FE 1/1: con rete disattivata il pannello Emergenza e dati offline resta apribile e offre chiamata diretta al 112 e alla reperibilità dell’Ambasciata.
-P1,sync-rete,passed,è stata eseguita una prova dalla rete indiana;,globale:T-0666,"QA 1.48.47 Galaxy S9+ Playwright 7/7: profili 2G, Wi-Fi indiana debole, SIM 3G, roaming congestionato ed eSIM 4G; shell visibile, moduli pesanti differiti e riapertura offline."
+P1,sync-rete,passed,è stata eseguita una prova dalla rete indiana;,globale:T-0666,"QA 1.48.47 Galaxy S9+ 7/7: 2G cellulare, Wi-Fi indiana debole, SIM indiana 3G, roaming congestionato ed eSIM indiana 4G; nessuna pagina bianca, moduli pesanti differiti e riapertura offline verificata."
 P1,sync-rete,passed,Emergenza offline.,globale:T-0249,ui-p0-cache-recovery QA 1.48.40: con rete disattivata la sezione emergenza apre i numeri 1155 e +66 81 825 6103 come collegamenti telefonici.
 P1,sync-rete,passed,Errore Service Worker.,globale:T-1549,ui-p0-cache-recovery QA 1.48.40: cache con risposta HTML 500 e cache 1.37.18 vengono eliminate; l'app si riapre offline senza pagina bianca né contenuto corrotto.
 P1,sync-rete,passed,Eseguire logout senza rete.,globale:T-0760,"ui-offline-logout Thailandia 1.48.7 Samsung S20 FE 1/1: rete disattivata prima del tocco su Blocca; token, profilo, ruolo e codice locale rimossi, schermata privata chiusa e riapertura online rimasta pubblica."
@@ -948,7 +948,7 @@ P1,sync-rete,passed,gli allegati vengono persi offline;,usabilita:U0694,ui-offli
 P1,sync-rete,passed,Hotel e indirizzi offline.,globale:T-0119,ui-cache-recovery Samsung S20 FE 1/1: dopo riapertura completamente offline il Diario mostra nome e indirizzo del Rockland Hotel di Delhi dalla shell locale aggiornata.
 P1,sync-rete,passed,HTML utilizzabile offline.,globale:T-1718,"ui-network-india QA 7/7: HTML, JavaScript e CSS dell'app shell sono presenti con MIME corretto nella cache e la bacheca Android si riapre offline."
 P1,sync-rete,passed,idempotenza;,globale:T-1792,production-smoke: idempotenza coperta su quattro tipi di scrittura
-P1,sync-rete,passed,Indicazione “Ultima sincronizzazione”.,globale:T-0105,"QA 1.48.47: timestamp scritto solo dopo /api/state valido, persistito sul dispositivo e mostrato con stato online/offline; test sync-status 2/2."
+P1,sync-rete,passed,Indicazione “Ultima sincronizzazione”.,globale:T-0105,"QA 1.48.47: orario aggiornato solo dopo /api/state valido, conservato sul dispositivo e distinto dallo stato offline; indicatore accessibile sempre visibile."
 P1,sync-rete,passed,Informazioni di emergenza offline.,globale:T-0122,ui-cache-recovery Samsung S20 FE 1/1: numeri e descrizioni di emergenza sono inclusi nella shell locale e restano leggibili dopo riapertura completamente offline.
 P1,sync-rete,passed,Invio automatico al ritorno della rete.,globale:T-0123,ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: il post con foto accodato senza rete parte automaticamente al ritorno online.
 P1,sync-rete,passed,l’offline conserva testo e allegati;,globale:T-0678,"offline-queue: testo, foto, audio e video conservati nella coda"
@@ -959,24 +959,24 @@ P1,sync-rete,passed,Outbox offline.,globale:T-0125,"offline-queue: accodamento, 
 P1,sync-rete,passed,Preferiti sincronizzati tra dispositivi.,globale:T-0267,ui-favorites-sync Thailandia 1.48.23 Samsung S20 FE QA 1/1: due sessioni reali dello stesso profilo su due telefoni sincronizzano salvataggio e rimozione in entrambe le direzioni senza refresh manuale; pulizia QA completata.
 P1,sync-rete,passed,Preparare post testuale offline.,globale:T-0547,"ui-offline Samsung S20 FE 1/1: post testuale preparato senza rete, conservato dopo chiusura pagina e pubblicato una sola volta al ritorno online."
 P1,sync-rete,passed,Provare senza rete.,usabilita:U0360,"ui-offline e ui-offline-media-drafts su Galaxy S9+/S20 FE: invio accodato, chiusura, riapertura e consegna unica al ritorno online; tre bozze multimediali recuperate."
-P1,sync-rete,passed,Pulsante per cancellare i dati offline.,globale:T-0126,"QA 1.48.48 Galaxy S9+ touch 1/1: doppia conferma, sole cache applicative e copie pubbliche rimosse; sessioni, coda invii e server invariati."
+P1,sync-rete,passed,Pulsante per cancellare i dati offline.,globale:T-0126,"QA 1.48.48 Galaxy S9+ touch 1/1: doppia conferma elimina solo cache applicativa e copie pubbliche locali; sessioni, invii in coda e dati server restano intatti."
 P1,sync-rete,passed,Rete 3G.,usabilita:U0521,ui-network-india QA: profilo SIM indiana 3G reale emulato con banda e latenza limitate; bacheca caricata senza pagina bianca.
 P1,sync-rete,passed,rete assente;,usabilita:U0506;addendum:A0165,"ui-offline, ui-offline-media-drafts e ui-p0-cache-recovery QA: uso senza rete, persistenza locale e riapertura offline verificati."
 P1,sync-rete,passed,Rete interrotta al 50%.,usabilita:U0528,"resumable-upload 5/5: interruzione esatta al 50%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
 P1,sync-rete,passed,Rete interrotta al 90%.,usabilita:U0529,"resumable-upload 5/5: interruzione esatta al 90%, manifesto conservato, ripresa dalle parti confermate e completamento al 100% senza reinvio."
 P1,sync-rete,passed,Rete lenta.,usabilita:U0522,"ui-network-india QA: Wi-Fi debole, 3G e roaming congestionato superati; ui-slow-activation collega automaticamente il telefono con rete lenta."
-P1,sync-rete,passed,rete utilizzata;,globale:T-1256,"QA 1.48.48: Network Information API con fallback online/offline e risparmio dati; offline-center 3/3 + Galaxy S9+ touch 1/1."
+P1,sync-rete,passed,rete utilizzata;,globale:T-1256,"QA 1.48.48: centro offline descrive tipo/effectiveType, risparmio dati e passaggio offline; unit 3/3 + touch Galaxy S9+ 1/1."
 P1,sync-rete,passed,Riapertura offline.,globale:T-1231,ui-network-india e ui-p0-cache-recovery QA: dopo la prima apertura la bacheca pubblica si riapre senza rete anche dopo pulizia delle cache difettose.
 P1,sync-rete,passed,Riaprire offline.,globale:T-0549,ui-network-india e ui-p0-cache-recovery QA: riapertura mobile offline completata senza pagina bianca.
 P1,sync-rete,passed,Riattivare la rete.,globale:T-0550,ui-offline QA: al ritorno online la richiesta accodata parte una sola volta e viene sincronizzata.
-P1,sync-rete,passed,Ricerca offline sui dati disponibili.,globale:T-1696,"QA 1.48.49: offline-search 2/2 + Galaxy S9+ touch 1/1; ricerca su contenuti visibili locali senza richieste API, verificata anche con rete disattivata."
+P1,sync-rete,passed,Ricerca offline sui dati disponibili.,globale:T-1696,"QA 1.48.49 Galaxy S9+ touch 1/1: ricerca locale su racconto, autore, luogo, media e commenti; accenti normalizzati, più termini combinati e zero richieste API anche offline."
 P1,sync-rete,passed,Ricevere una sincronizzazione.,globale:T-1400,P1_SOCIAL_COMMENTS 18/18 + P1_SOCIAL_CONCURRENCY 12/12 su QA 1.48.37: commenti e reazioni convergono allo stesso stato su tutte le sessioni senza refresh del database.
 P1,sync-rete,passed,Ridurre frequenza di sincronizzazione.,globale:T-1651,"runtime-resilience 6/6: polling visibile ridotto da 2,5 a 5 secondi, completamente sospeso quando pagina nascosta o offline, con controllo immediato agli eventi online e visibilitychange."
 P1,sync-rete,passed,Ripresa dopo perdita della rete.,globale:T-1725,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: perdita rete, chiusura pagina, riapertura e ripresa automatica verificate con coda IndexedDB reale."
 P1,sync-rete,passed,Ritorno della rete.,globale:T-1237,"ui-offline QA: ritorno online, invio idempotente e stato aggiornato verificati end-to-end."
 P1,sync-rete,passed,Salvare più bozze offline.,globale:T-0849,offline-queue 3/3: due bozze post distinte restano contemporaneamente in IndexedDB con chiavi idempotenti differenti e vengono inviate una sola volta ciascuna.
 P1,sync-rete,passed,Salvataggio offline dei commenti.,globale:T-0129,"offline-queue 3/3: commento offline conserva post_id, testo e chiave idempotente come operazione separata e viene rimosso dalla coda soltanto dopo risposta positiva."
-P1,sync-rete,passed,Salvataggio offline delle posizioni.,globale:T-0132,"QA isolata 1.48.50 Galaxy S9+ touch 1/1: acquisizione GPS offline, coda JSON locale per profilo, invio automatico autenticato al ritorno rete, verifica privata e pulizia QA completa."
+P1,sync-rete,passed,Salvataggio offline delle posizioni.,globale:T-0132,"QA isolata 1.48.50 Galaxy S9+ touch 1/1: GPS acquisito offline, posizione JSON conservata per profilo sul telefono, inviata automaticamente con sessione e chiave dispositivo al ritorno rete, verificata in area privata e rimossa a fine test."
 P1,sync-rete,passed,Simulare rete 2G.,globale:T-0553,"ui-network-india QA 7/7: profilo cellulare 2G a 110 kbps, upload 50 kbps e 900 ms di latenza apre la bacheca mobile senza pagina bianca entro il limite."
 P1,sync-rete,passed,Simulare rete 3G.,globale:T-0554,ui-network-india QA: profilo 3G indiano simulato con throttling mobile e caricamento completo della bacheca.
 P1,sync-rete,passed,sincronizzazione fallita;,usabilita:U0510,"ui-offline QA 1.48.40 Galaxy S9+ touch 1/1: l'invio fallito offline resta in IndexedDB dopo chiusura pagina, riparte al ritorno della rete, crea esattamente un post con foto e svuota la coda senza duplicati; contenuto QA eliminato."
@@ -1011,10 +1011,10 @@ P1,sync-rete,passed,Verificare trigger della sincronizzazione.,globale:T-1042,ui
 P1,sync-rete,passed,Verificare unicità delle operazioni idempotenti.,globale:T-1025,production-smoke: unicita operazioni idempotenti verificata
 P1,sync-rete,passed,Viene simulata una rete lenta.,globale:T-1746,"ui-network-india Thailandia 1.48.4 6/6: Wi-Fi debole, 3G, roaming congestionato ed eSIM 4G emulati con latenza e banda limitate."
 P1,sync-rete,passed,Viene verificato il ritorno della rete.,globale:T-1747,"ui-offline Thailandia 1.48.4 Samsung S20 FE 1/1: ritorno online verificato dopo chiusura; sessione preservata, coda azzerata e singolo record persistito."
-P2,mappe-posizione,passed,Apertura mappa.,globale:T-1203,QA reale Galaxy S9+: suite mappe 6/6 e touch drag 1/1; apertura misurata in 2689 ms.
+P2,mappe-posizione,passed,Apertura mappa.,globale:T-1203,QA reale Galaxy S9+: `ui-maps-1.37.23` 6/6 e `ui-map-touch-drag` 1/1.
 P2,mappe-posizione,passed,Aprire la mappa completa.,usabilita:U0339,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P2,mappe-posizione,passed,Aprire la mappa generale.,globale:T-0381,"ui-significant-urls Thailandia 1.48.11 Samsung S20 FE 1/1 + map-origins Thailandia 1.48.12 su tre viewport: la mappa generale e la mappa precisa del giorno sono state aperte direttamente dai rispettivi URL, renderizzate su canvas e ricaricate due volte conservando la stessa vista senza pagina bianca; successiva regressione di tutte le 11 mappe giornaliere superata."
-P2,mappe-posizione,passed,Aprire la mappa.,globale:T-1390;globale:T-1769,QA reale Galaxy S9+: suite mappe 6/6 e touch drag 1/1; apertura e ritorno verificati su tutte le 11 giornate.
+P2,mappe-posizione,passed,Aprire la mappa.,globale:T-1390;globale:T-1769,QA reale Galaxy S9+: tutte le 11 mappe giornaliere aperte e trascinamento touch verificato.
 P2,mappe-posizione,passed,Aprire la mini-mappa della giornata.,usabilita:U0338,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P2,mappe-posizione,passed,Aprire mappa.,usabilita:U0461,Playwright mobile: cartina posizioni aperta su viaggiatore e coordinatore; preview 20382a40; 2026-08-04
 P2,mappe-posizione,passed,Aprire una mappa tramite collegamento.,globale:T-0383,"ui-significant-urls Thailandia 1.48.11 Samsung S20 FE 1/1 + map-origins Thailandia 1.48.12 su tre viewport: la mappa generale e la mappa precisa del giorno sono state aperte direttamente dai rispettivi URL, renderizzate su canvas e ricaricate due volte conservando la stessa vista senza pagina bianca; successiva regressione di tutte le 11 mappe giornaliere superata."
@@ -1031,109 +1031,109 @@ P2,mappe-posizione,passed,Mappa con longitudine -180.,globale:T-0950;globale:T-0
 P2,mappe-posizione,passed,Mappa con una persona fuori dall’India.,globale:T-0953,"P0_LOCATION Thailandia 1.48.23 QA 30/30: coordinate reali esterne alla Thailandia 45.4642,9.19 salvate e restituite senza errore o perdita dello stato."
 P2,mappe-posizione,passed,Mappa.,usabilita:U0080,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P2,mappe-posizione,passed,menu non nascosto dietro la mappa;,addendum:A0240,QA reale Galaxy S9+: dopo drag touch i tab restano visibili e utilizzabili.
-P2,mappe-posizione,passed,Misurare apertura mappa.,globale:T-0583,QA reale Galaxy S9+: apertura misurata in 2689 ms.
-P2,mappe-posizione,passed,Misurare batteria con mappa aperta.,globale:T-1659,"QA 1.48.57 Galaxy S9+ 1/1: posizione inviata e rimossa realmente; mappa stabilizzata senza animazioni continue; batteria simulata invariata e TaskDuration 0,013 s in 5 s; cleanup QA completato"
+P2,mappe-posizione,passed,Misurare apertura mappa.,globale:T-0583,QA reale Galaxy S9+: apertura misurata in 2689 ms; `ui-map-touch-drag` 1/1.
+P2,mappe-posizione,passed,Misurare batteria con mappa aperta.,globale:T-1659,"QA 1.48.57 Galaxy S9+ 1/1: posizione inviata e rimossa realmente; dopo la stabilizzazione della mappa il livello batteria simulato resta invariato e TaskDuration è 0,013 s in 5 s."
 P2,mappe-posizione,passed,nessun popup della mappa sopra una conferma di sicurezza;,addendum:A0248,QA reale Galaxy S9+: nessun overlay di conferma interferente durante apertura e trascinamento.
 P2,mappe-posizione,passed,Selezionare ogni giorno dai pulsanti della mappa.,usabilita:U0341,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
-P2,mappe-posizione,passed,Tornare dalla mappa.,globale:T-0976,QA reale Galaxy S9+: ritorno a Bacheca verificato; suite Google Maps return 2/2.
-P2,mappe-posizione,passed,Trascinare la mappa.,usabilita:U0351,QA reale Galaxy S9+: gesto touch a un dito via CDP sposta realmente il canvas di oltre 15 px; nessun overlay e ritorno a Bacheca verificato.
+P2,mappe-posizione,passed,Tornare dalla mappa.,globale:T-0976,QA reale Galaxy S9+: ritorno a Bacheca dopo trascinamento; `ui-google-maps-return` 2/2.
+P2,mappe-posizione,passed,Trascinare la mappa.,usabilita:U0351,QA reale Galaxy S9+: gesto touch a un dito sposta realmente il canvas di oltre 15 px; nessun overlay e ritorno a Bacheca verificato.
 P2,mappe-posizione,passed,Verificare apertura della mappa precisa.,globale:T-0981,"ui-significant-urls Thailandia 1.48.11 Samsung S20 FE 1/1 + map-origins Thailandia 1.48.12 su tre viewport: la mappa generale e la mappa precisa del giorno sono state aperte direttamente dai rispettivi URL, renderizzate su canvas e ricaricate due volte conservando la stessa vista senza pagina bianca; successiva regressione di tutte le 11 mappe giornaliere superata."
 P2,mappe-posizione,passed,Verificare che il collegamento riapra la stessa mappa.,globale:T-0398,"ui-significant-urls Thailandia 1.48.11 Samsung S20 FE 1/1 + map-origins Thailandia 1.48.12 su tre viewport: la mappa generale e la mappa precisa del giorno sono state aperte direttamente dai rispettivi URL, renderizzate su canvas e ricaricate due volte conservando la stessa vista senza pagina bianca; successiva regressione di tutte le 11 mappe giornaliere superata."
 P2,mappe-posizione,passed,Verificare mappa quando Google Maps non risponde.,globale:T-0961,"ui-google-maps-return Thailandia 1.48.30 Samsung S20 FE locale e produzione 2/2: Google Maps viene reso realmente irraggiungibile; chiuso il contesto esterno fallito, l'app conserva la giornata 7, non mostra schermate bloccate e consente subito di selezionare un'altra tappa. | ui-google-maps-return Thailandia 1.48.30 Samsung S20 FE locale e produzione 2/2: Google Maps irraggiungibile non blocca né resetta l'app; la giornata 7 resta selezionata e un successivo touch cambia correttamente tappa."
 P2,mappe-posizione,passed,Verificare mappa quando OpenFreeMap non risponde.,globale:T-0962,"ui-maps Thailandia 1.48.24 Galaxy mobile QA 2/2: richiesta dello stile OpenFreeMap interrotta realmente; sparisce il caricamento, compare il fallback leggibile con Bangkok, Phi Phi Island e Krabi, mentre la cartina normale conserva geometria e assenza di sovrapposizioni."
-P2,media-upload,passed,un cambio di ruolo viene applicato immediatamente;,addendum:A0452,QA reale: ui-role-live 2/2; il server mantiene il ruolo autoritativo e aggiorna/revoca subito il telefono già aperto.
+P2,media-upload,passed,un cambio di ruolo viene applicato immediatamente;,addendum:A0452,QA reale ui-role-live 2/2: il server mantiene il ruolo autoritativo e aggiorna o revoca subito il telefono già aperto.
 P2,media-upload,passed,Verificare cancellazione immediata dalla mappa.,globale:T-1463,"ui-location Thailandia 1.48.22 Samsung S20 FE QA 1/1: DELETE touch restituisce 200, messaggio Posizione cancellata visibile e posizione rimossa in tempo reale dal secondo telefono; retry e pulizia verificati."
 P2,profili-ruoli,passed,"A modifica profilo, B vede modifica.",usabilita:U0562,ui-people Thailandia 1.48.4 Samsung S20 FE 1/1: il coordinatore aggiorna origine e biografia; il secondo telefono vede subito il profilo aggiornato e i permessi corretti.
 P2,profili-ruoli,passed,Accedere come Viaggiatore A.,globale:T-0321;addendum:A0066,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
-P2,profili-ruoli,passed,accedere come Viaggiatore B;,addendum:A0069,QA reale: matrice autorizzativa 88/88 con due viaggiatori distinti e sessioni legate ai rispettivi dispositivi.
+P2,profili-ruoli,passed,accedere come Viaggiatore B;,addendum:A0069,QA reale matrice autorizzativa 88/88 con due viaggiatori distinti e sessioni legate ai rispettivi dispositivi.
 P2,profili-ruoli,passed,Accedere come Viaggiatore.,addendum:A0088,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P2,profili-ruoli,passed,Aggiungere funzione di cancellazione del proprio profilo.,globale:T-0045,"P0_PROFILE_DELETION 44/44: cancellazione del proprio profilo disponibile e atomica; dati collegati rimossi, con protezione dell’ultimo coordinatore."
 P2,profili-ruoli,passed,Aprire il proprio profilo.,usabilita:U0070;usabilita:U0370,"ui-own-profile Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: il viaggiatore apre la propria scheda, modifica nome e cognome con touch, mantiene lo stesso profile_id e vede la modifica sincronizzata sul secondo telefono; l’altro viaggiatore non può modificarla, nessun profilo compare nel feed e i dati originali vengono ripristinati a fine prova."
 P2,profili-ruoli,passed,Aprire la Bacheca come Viaggiatore.,usabilita:U0097,"ui-all-members-publish Thailandia 1.48.12 Samsung S20 FE 1/1: due sessioni viaggiatore distinte hanno aperto la Bacheca personale, visualizzato l’identità corretta e usato Pubblica tramite touch."
-P2,profili-ruoli,passed,Aprire un profilo.,globale:T-1393,QA touch Galaxy S9+ ui-own-profile 1/1: il viaggiatore apre la propria scheda dal Gruppo
+P2,profili-ruoli,passed,Aprire un profilo.,globale:T-1393,QA touch Galaxy S9+ `ui-own-profile` 1/1: apertura della propria scheda dal Gruppo.
 P2,profili-ruoli,passed,Assegnare ruolo.,usabilita:U0376,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,passed,Cambiare il ruolo in Viaggiatore.,addendum:A0096,Playwright live role/revoke 1/1; preview a4b05356; 2026-08-04
 P2,profili-ruoli,passed,Cambiare profilo sullo stesso dispositivo.,globale:T-0858,"ui-same-device-profile-switch Thailandia 1.48.19 Samsung S20 FE QA 1/1: lo stesso telefono apre il deep link personale del viaggiatore, blocca volontariamente l’accesso con gesto touch e invalida realmente il vecchio token; senza ricaricare manualmente apre nello stesso tab il deep link della coordinatrice, riceve un nuovo profile_id e un nuovo token, elimina il segreto dall’URL e mostra soltanto la Griglia coordinatore. Il difetto hashchange riprodotto sulla 1.48.18 è stato corretto; L1/L2 QA 18/18, produzione read-only 8/8 e disponibilità esatta/stabile verificate."
 P2,profili-ruoli,passed,Commento come Viaggiatore.,usabilita:U0297,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P2,profili-ruoli,passed,condizione dopo cambio ruolo;,addendum:A0288,QA reale: ui-role-live 2/2 e ruoli condivisi 30/30; il ruolo server prevale sul valore locale obsoleto.
+P2,profili-ruoli,passed,condizione dopo cambio ruolo;,addendum:A0288,QA reale ui-role-live 2/2 e ruoli condivisi 30/30: il ruolo server prevale sul valore locale obsoleto.
 P2,profili-ruoli,passed,Confrontare numero di profili.,globale:T-1162,"ui-profile-multidevice Thailandia 1.48.18 Samsung S20 FE QA 1/1: due sessioni reali dello stesso profilo su due telefoni leggono lo stesso numero di profili; il secondo telefono modifica nome, cognome ed età e il primo riceve il profilo aggiornato; due salvataggi touch concorrenti restituiscono entrambi 200 e lo stato finale coincide integralmente con una delle due versioni, senza campi mescolati o profilo corrotto. Dati originali ripristinati e pulizia QA completata."
-P2,profili-ruoli,passed,Controllo profilo.,globale:T-1216,QA touch ui-own-profile 1/1 + ui-coordinator-grid-access 1/1: proprietà e ruolo derivano dalla sessione server
+P2,profili-ruoli,passed,Controllo profilo.,globale:T-1216,QA touch `ui-own-profile` 1/1 + `ui-coordinator-grid-access` 1/1: proprietà e ruolo derivano dalla sessione server.
 P2,profili-ruoli,passed,Creare il profilo del Viaggiatore A.,globale:T-0698,"ui-profile-creation Thailandia 1.48.18 Samsung S20 FE QA 1/1: una coordinatrice autenticata crea tramite interfaccia touch due profili distinti, Viaggiatore A e Viaggiatore B; entrambe le risposte sono 201, le schede risultano visibili come Partecipante, il ruolo persistito è traveler e il conteggio condiviso aumenta esattamente di due. I profili di prova vengono eliminati a fine esecuzione."
 P2,profili-ruoli,passed,Creare il profilo del Viaggiatore B.,globale:T-0699,"ui-profile-creation Thailandia 1.48.18 Samsung S20 FE QA 1/1: una coordinatrice autenticata crea tramite interfaccia touch due profili distinti, Viaggiatore A e Viaggiatore B; entrambe le risposte sono 201, le schede risultano visibili come Partecipante, il ruolo persistito è traveler e il conteggio condiviso aumenta esattamente di due. I profili di prova vengono eliminati a fine esecuzione."
 P2,profili-ruoli,passed,Creare profilo.,usabilita:U0374,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
-P2,profili-ruoli,passed,Creare un profilo.,globale:T-0343,QA touch ui-profile-creation 1/1: coordinatrice con step-up crea due viaggiatori e il conteggio server aumenta di due
+P2,profili-ruoli,passed,Creare un profilo.,globale:T-0343,"QA touch `ui-profile-creation` 1/1: coordinatrice con step-up crea due viaggiatori, HTTP 201 e conteggio server +2."
 P2,profili-ruoli,passed,creazione profilo;,globale:T-0733;usabilita:U0653,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,passed,da Familiare a Viaggiatore.,addendum:A0087,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P2,profili-ruoli,passed,da Viaggiatore a Pubblico;,addendum:A0085,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P2,profili-ruoli,passed,Deep link del profilo.,globale:T-0242,"ui-same-device-profile-switch Thailandia 1.48.19 Samsung S20 FE QA 1/1: lo stesso telefono apre il deep link personale del viaggiatore, blocca volontariamente l’accesso con gesto touch e invalida realmente il vecchio token; senza ricaricare manualmente apre nello stesso tab il deep link della coordinatrice, riceve un nuovo profile_id e un nuovo token, elimina il segreto dall’URL e mostra soltanto la Griglia coordinatore. Il difetto hashchange riprodotto sulla 1.48.18 è stato corretto; L1/L2 QA 18/18, produzione read-only 8/8 e disponibilità esatta/stabile verificate."
-P2,profili-ruoli,passed,è visibile al ruolo corretto;,usabilita:U0667,QA touch: ui-people 1/1 su coordinatrice viaggiatore e pubblico con comandi e dati differenziati.
-P2,profili-ruoli,passed,elenco degli endpoint per ruolo;,addendum:A0468,QA reale: matrice autorizzativa completa 88/88 più inventario endpoint statico 275/275.
-P2,profili-ruoli,passed,elenco dei tasti disabilitati per ruolo;,addendum:A0471,QA touch access-boundary 3/3 e coordinator-grid 1/1: password comune senza profilo resta disabilitata; comandi amministrativi richiedono coordinatrice e step-up
-P2,profili-ruoli,passed,elenco dei tasti nascosti per ruolo;,addendum:A0470,QA touch coordinator-grid 1/1: griglia e dati privati assenti per pubblico/password/viaggiatore e presenti solo per coordinatrice verificata
-P2,profili-ruoli,passed,esiste un solo profilo;,addendum:A0298,UI corrente Galaxy S9+ con API isolata: conteggio 1 una sola scheda identità e nessun duplicato; 2/2 stati limite profili.
+P2,profili-ruoli,passed,è visibile al ruolo corretto;,usabilita:U0667,"QA touch ui-people 1/1 su coordinatrice, viaggiatore e pubblico con comandi e dati differenziati."
+P2,profili-ruoli,passed,elenco degli endpoint per ruolo;,addendum:A0468,QA reale matrice autorizzativa completa 88/88 più inventario endpoint statico 275/275.
+P2,profili-ruoli,passed,elenco dei tasti disabilitati per ruolo;,addendum:A0471,QA touch access-boundary 3/3 e coordinator-grid 1/1: password comune senza profilo resta disabilitata; comandi amministrativi richiedono coordinatrice e step-up.
+P2,profili-ruoli,passed,elenco dei tasti nascosti per ruolo;,addendum:A0470,"QA touch coordinator-grid 1/1: griglia e dati privati assenti per pubblico, password e viaggiatore; presenti solo per coordinatrice verificata."
+P2,profili-ruoli,passed,esiste un solo profilo;,addendum:A0298,"UI Galaxy S9+ con API isolata: conteggio 1, una sola scheda identità e nessun duplicato; 2/2 stati limite profili."
 P2,profili-ruoli,passed,Feed differente in base al ruolo.,globale:T-0068,"QA 1.31.0: feed pubblico, ospite e viaggiatore restituiscono contenuti differenti"
-P2,profili-ruoli,passed,il codice comune non permette di impersonare un profilo;,globale:T-0674,QA touch ui-public-access-boundary 3/3: password verificata non crea sessione né profile_id e non autorizza private/profiles/posts
+P2,profili-ruoli,passed,il codice comune non permette di impersonare un profilo;,globale:T-0674,"QA touch `ui-public-access-boundary` 3/3: la password non crea sessione/profile_id e non autorizza API private, profili o post."
 P2,profili-ruoli,passed,il ruolo restituito dal server prevale sempre sul ruolo locale;,addendum:A0060,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
-P2,profili-ruoli,passed,il server restituisce soltanto i dati necessari al ruolo;,addendum:A0455,QA reale: matrice autorizzativa 88/88 verifica viste pubblico familiare viaggiatore proprietario e coordinatrice.
+P2,profili-ruoli,passed,il server restituisce soltanto i dati necessari al ruolo;,addendum:A0455,"QA reale matrice autorizzativa 88/88 su viste pubblico, familiare, viaggiatore proprietario e coordinatrice."
 P2,profili-ruoli,passed,il Viaggiatore agisca soltanto sulle proprie risorse;,addendum:A0379,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P2,profili-ruoli,passed,Il Viaggiatore non deve poter scrivere il nome di un’altra persona.,usabilita:U0168,"P0_ROLES_AND_SHARED_CONTROLS 30/30 + P0_AUTHORIZATION_MATRIX 86/86: il viaggiatore ha inviato author_name e profile_id falsificati e ha alterato i dati locali; il server ha ignorato il nome proposto, derivato autore e profilo dalla sessione e impedito la pubblicazione come un altro viaggiatore."
 P2,profili-ruoli,passed,Impedire definitivamente di selezionare l’identità di un altro Viaggiatore.,globale:T-0035,QA 1.31.0: nomi e identita inviati dal browser vengono ignorati dal server
-P2,profili-ruoli,passed,l’Ospite non erediti privilegi da un profilo memorizzato;,addendum:A0378,QA touch access-boundary 3/3: codice storico rimosso e sessione personale assente; coordinator-grid impedisce esposizione privata
-P2,profili-ruoli,passed,lettura profilo;,globale:T-0738,QA touch ui-people 1/1: profilo creato aggiornato e riletto da coordinatrice e viaggiatore; invisibile al pubblico.
-P2,profili-ruoli,passed,Manipolare profile_id nell’URL.,globale:T-0483,QA reale: matrice autorizzativa 88/88 e ui-role-live 2/2; profile_id locale o richiesto non sostituisce la sessione server.
+P2,profili-ruoli,passed,l’Ospite non erediti privilegi da un profilo memorizzato;,addendum:A0378,QA touch access-boundary 3/3: codice storico rimosso e sessione personale assente; coordinator-grid impedisce esposizione privata.
+P2,profili-ruoli,passed,lettura profilo;,globale:T-0738,"QA touch `ui-people` 1/1: profilo creato, aggiornato e riletto con visibilità per ruolo."
+P2,profili-ruoli,passed,Manipolare profile_id nell’URL.,globale:T-0483,QA reale matrice 88/88: l’identità deriva dalla sessione server e non dall’URL o dal client.
 P2,profili-ruoli,passed,menu del ruolo;,addendum:A0080,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
-P2,profili-ruoli,passed,modifica profilo altrui;,globale:T-0743,QA reale: matrice autorizzativa 88/88 nega al viaggiatore e richiede coordinatrice con step-up firmato.
-P2,profili-ruoli,passed,modifica profilo proprio;,globale:T-0744;usabilita:U0644,QA touch Galaxy S9+ ui-own-profile 1/1: modifica propria sincronizzata sul secondo telefono
+P2,profili-ruoli,passed,modifica profilo altrui;,globale:T-0743,QA reale matrice 88/88: negata al viaggiatore e consentita solo alla coordinatrice con step-up.
+P2,profili-ruoli,passed,modifica profilo proprio;,globale:T-0744;usabilita:U0644,QA touch Galaxy S9+ `ui-own-profile` 1/1: modifica propria sincronizzata sul secondo telefono.
 P2,profili-ruoli,passed,Modifica profilo.,usabilita:U0654,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
-P2,profili-ruoli,passed,modifica ruolo;,globale:T-0745,QA reale: ruoli condivisi 30/30 e ui-role-live 2/2; coordinatrice unica e ruolo derivato dal server.
+P2,profili-ruoli,passed,modifica ruolo;,globale:T-0745,QA reale ruoli 30/30 e `ui-role-live` 2/2: coordinatrice unica e ruolo autoritativo server.
 P2,profili-ruoli,passed,Modificare contemporaneamente lo stesso profilo da due dispositivi.,globale:T-0797,"ui-profile-multidevice Thailandia 1.48.18 Samsung S20 FE QA 1/1: due sessioni reali dello stesso profilo su due telefoni leggono lo stesso numero di profili; il secondo telefono modifica nome, cognome ed età e il primo riceve il profilo aggiornato; due salvataggi touch concorrenti restituiscono entrambi 200 e lo stato finale coincide integralmente con una delle due versioni, senza campi mescolati o profilo corrotto. Dati originali ripristinati e pulizia QA completata."
 P2,profili-ruoli,passed,Modificare il nome del profilo A.,globale:T-0702,"ui-own-profile Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: il viaggiatore apre la propria scheda, modifica nome e cognome con touch, mantiene lo stesso profile_id e vede la modifica sincronizzata sul secondo telefono; l’altro viaggiatore non può modificarla, nessun profilo compare nel feed e i dati originali vengono ripristinati a fine prova."
 P2,profili-ruoli,passed,Modificare il profilo dalla seconda.,globale:T-1591,"ui-profile-multidevice Thailandia 1.48.18 Samsung S20 FE QA 1/1: due sessioni reali dello stesso profilo su due telefoni leggono lo stesso numero di profili; il secondo telefono modifica nome, cognome ed età e il primo riceve il profilo aggiornato; due salvataggi touch concorrenti restituiscono entrambi 200 e lo stato finale coincide integralmente con una delle due versioni, senza campi mescolati o profilo corrotto. Dati originali ripristinati e pulizia QA completata."
 P2,profili-ruoli,passed,Modificare il proprio profilo.,usabilita:U0371,"ui-own-profile Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: il viaggiatore apre la propria scheda, modifica nome e cognome con touch, mantiene lo stesso profile_id e vede la modifica sincronizzata sul secondo telefono; l’altro viaggiatore non può modificarla, nessun profilo compare nel feed e i dati originali vengono ripristinati a fine prova."
 P2,profili-ruoli,passed,Modificare localStorage con il nome di un altro Viaggiatore.,usabilita:U0171,"P0_ROLES_AND_SHARED_CONTROLS 30/30 + P0_AUTHORIZATION_MATRIX 86/86: il viaggiatore ha inviato author_name e profile_id falsificati e ha alterato i dati locali; il server ha ignorato il nome proposto, derivato autore e profilo dalla sessione e impedito la pubblicazione come un altro viaggiatore."
-P2,profili-ruoli,passed,Modificare location profile_id.,usabilita:U0575,QA reale matrice autorizzativa 88/88: un secondo viaggiatore non può scrivere la posizione del proprietario (403).
-P2,profili-ruoli,passed,Modificare manualmente profile_id.,globale:T-0326,QA reale: ui-role-live 2/2 altera il profile_id locale e il server revocato rimuove profilo ruolo e nome obsoleti.
+P2,profili-ruoli,passed,Modificare location profile_id.,usabilita:U0575,"QA reale matrice autorizzativa 88/88: un secondo viaggiatore non può scrivere la posizione del proprietario, risposta 403."
+P2,profili-ruoli,passed,Modificare manualmente profile_id.,globale:T-0326,"QA reale `ui-role-live` 2/2: il server revocato rimuove profile_id, ruolo e nome locali falsificati."
 P2,profili-ruoli,passed,Modificare profile_id nella richiesta.,usabilita:U0173,P0_ROLES 20/20: profile_id falsificato nella richiesta non sostituisce l’identità derivata dalla sessione server.
 P2,profili-ruoli,passed,Modificare profile_id.,globale:T-0621;usabilita:U0569,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P2,profili-ruoli,passed,Modificare profilo.,usabilita:U0375,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,passed,Moltiplicare per tutti i Viaggiatori e familiari.,globale:T-1537,"capacity-budget Thailandia 1.48.32 + QA reale: modello prudenziale 18 viaggiatori e 18 familiari, 6 ore/giorno attive e 30 minuti/giorno di area privata per viaggiatore; polling stimato 87.480 richieste/giorno, con oltre 12.000 richieste di margine sul limite Workers Free. Sincronizzazione reale verificata per attività su due telefoni, commenti familiari, documenti privati e 10 pubblicazioni concorrenti; L1 autenticato 39 eseguiti, 0 falliti nei tre profili standard/carico/abuso."
 P2,profili-ruoli,passed,Mostrare un messaggio preciso: “Per pubblicare devi prima collegare questo dispositivo al tuo profilo”.,usabilita:U0007,"ui-critical Thailandia 1.48.20 Samsung S20 FE QA 5/5 applicabili: toccando Pubblica senza sessione il compositore resta chiuso e mostra esattamente «Per pubblicare devi prima collegare questo dispositivo al tuo profilo»; lo stesso messaggio resta disponibile dopo la password ma prima della creazione del profilo. Regressione locale 168/168 applicabili, L1/L2 QA 18/18, produzione read-only 8/8 e disponibilità esatta/stabile verificate."
 P2,profili-ruoli,passed,nessun utente può risultare contemporaneamente Viaggiatore A e Viaggiatore B.,addendum:A0065,Playwright credential precedence 4/4; preview 06eec926; 2026-08-04
-P2,profili-ruoli,passed,nomi differenti per lo stesso ruolo;,addendum:A0410,QA touch ui-people 1/1: identità e nome visualizzato restano distinti dal ruolo Partecipante/Coordinatore.
+P2,profili-ruoli,passed,nomi differenti per lo stesso ruolo;,addendum:A0410,QA touch ui-people 1/1: identità e nome visualizzato restano distinti dal ruolo Partecipante o Coordinatore.
 P2,profili-ruoli,passed,Non associare automaticamente un profilo scelto dal client.,usabilita:U0482,"ui-people Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: dopo creazione e modifica di un altro viaggiatore il profilo locale resta quello del coordinatore autenticato; un viaggiatore vede la persona esistente ma non riceve comandi per sceglierla, modificarla, crearle inviti o aprirne i documenti."
 P2,profili-ruoli,passed,non deve modificare il ruolo reale;,addendum:A0277,"ui-coordinator-grid touch ripetuto due volte: token, profile-id e ruolo coordinatore restano identici durante navigazione e riapertura della griglia; ruolo confermato da auth/session"
-P2,profili-ruoli,passed,non deve poter scegliere il profilo di un Viaggiatore;,usabilita:U0026,QA reale: matrice 88/88 e ui-role-live 2/2; l’identità deriva dalla sessione personale e non dalla selezione client.
-P2,profili-ruoli,passed,non esistono profili;,addendum:A0297,UI corrente Galaxy S9+ con API isolata: bacheca utilizzabile conteggio 0 elenco vuoto apribile e richiudibile; 2/2.
+P2,profili-ruoli,passed,non deve poter scegliere il profilo di un Viaggiatore;,usabilita:U0026,QA reale matrice 88/88 e ui-role-live 2/2: l’identità deriva dalla sessione personale e non dalla selezione client.
+P2,profili-ruoli,passed,non esistono profili;,addendum:A0297,"UI Galaxy S9+ con API isolata: bacheca utilizzabile, conteggio zero, elenco vuoto apribile e richiudibile; 2/2."
 P2,profili-ruoli,passed,Non modificare profili altrui.,usabilita:U0373,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,passed,Non modificare profili.,usabilita:U0368,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,passed,Passare a vista Viaggiatore.,usabilita:U0453,"ui-traveler-view Thailandia 1.48.31 Samsung S20 FE QA reale 1/1: una sessione Viaggiatore parte con ruolo coordinator e profile_id manipolati nel telefono; il server ripristina identità e ruolo traveler, la UI touch mostra Gruppo, Documenti e Scarica dati, non monta la Griglia coordinatore e l'endpoint riservato agli inviti risponde 403."
 P2,profili-ruoli,passed,profile_id;,addendum:A0073,Playwright same-device identity switch 5/5; preview 39b1fb83; 2026-08-04
 P2,profili-ruoli,passed,profilo corretto;,usabilita:U0590;usabilita:U0599;usabilita:U0604;usabilita:U0640,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
-P2,profili-ruoli,passed,profilo creato;,globale:T-1575,QA touch ui-profile-creation 1/1: due profili traveler creati con HTTP 201 e riletti dallo stato server
-P2,profili-ruoli,passed,profilo di un’altra persona;,addendum:A0121,QA reale: matrice autorizzativa 88/88 separa lettura modifica documenti posizione e contenuti tra proprietario e altro viaggiatore.
-P2,profili-ruoli,passed,profilo modificato;,globale:T-1576,QA touch ui-own-profile 1/1: dati modificati riletti sul secondo telefono
+P2,profili-ruoli,passed,profilo creato;,globale:T-1575,QA touch `ui-profile-creation` 1/1: due profili viaggiatore creati e riletti nello stato condiviso.
+P2,profili-ruoli,passed,profilo di un’altra persona;,addendum:A0121,"QA reale matrice autorizzativa 88/88 separa lettura e modifica di documenti, posizione e contenuti tra proprietario e altro viaggiatore."
+P2,profili-ruoli,passed,profilo modificato;,globale:T-1576,QA touch `ui-own-profile` 1/1: dati modificati riletti sul secondo telefono.
 P2,profili-ruoli,passed,profilo non collegato;,usabilita:U0496,QA reale ui-public-access-boundary 3/3: password comune verificata mostra profilo non collegato ma non crea sessione né privilegi.
 P2,profili-ruoli,passed,profilo o ospite corretto;,usabilita:U0597,QA reale matrice 88/88: profili personali e ospite familiare sono distinti e legati al rispettivo dispositivo.
-P2,profili-ruoli,passed,profilo;,globale:T-1577,QA touch ui-people 1/1 e ui-role-live 2/2: creazione lettura modifica visibilità e revoca del profilo verificate.
+P2,profili-ruoli,passed,profilo;,globale:T-1577,QA touch `ui-people` 1/1 e `ui-role-live` 2/2: ciclo profilo e revoca verificati.
 P2,profili-ruoli,passed,Protezione contro modifica manuale del profile_id.,globale:T-0225,P0_ROLES 20/20 + P0_AUTHORIZATION_MATRIX 86/86: modifica manuale di profile_id ignorata o rifiutata per ogni comando protetto.
 P2,profili-ruoli,passed,Protezione contro modifica manuale del ruolo.,globale:T-0226,P0_ROLES 20/20 + ui-role-live Thailandia 1.48.4 1/1: ruolo manuale non concede privilegi; promozione/revoca sono server-side e aggiornano il telefono aperto.
 P2,profili-ruoli,passed,reinviarla dopo cambio ruolo;,addendum:A0329,Live demotion command 403 + authenticated remote QA 20/20; preview a4b05356; 2026-08-04
-P2,profili-ruoli,passed,risultati dei test API per ruolo;,addendum:A0475,QA touch coordinator-grid 1/1 + access-boundary 3/3: API private 401 pubblico; sessione viaggiatore senza griglia; sessione coordinatrice valida
-P2,profili-ruoli,passed,risultati dei test di cambio ruolo;,addendum:A0478,QA touch coordinator-grid 1/1: manipolazione locale traveler→coordinator annullata dal server; same-device-switch 1/1 richiede blocco volontario
+P2,profili-ruoli,passed,risultati dei test API per ruolo;,addendum:A0475,"QA touch coordinator-grid 1/1 e access-boundary 3/3: API private 401 al pubblico, sessione viaggiatore senza griglia, sessione coordinatrice valida."
+P2,profili-ruoli,passed,risultati dei test di cambio ruolo;,addendum:A0478,QA touch coordinator-grid 1/1: manipolazione locale traveler→coordinator annullata dal server; same-device-switch 1/1 richiede blocco volontario.
 P2,profili-ruoli,passed,Risultati filtrati in base al ruolo.,globale:T-1704,"P0_AUTHORIZATION_MATRIX 86/86 + ui-public-access-boundary 2/2: stato e comandi sono filtrati per pubblico, viaggiatore e coordinatore."
-P2,profili-ruoli,passed,ruolo corrente;,addendum:A0414,QA touch coordinator-grid 1/1: ruolo corrente riletto dalla sessione verificata
-P2,profili-ruoli,passed,ruolo modificato;,globale:T-1581,QA reale ruoli condivisi 30/30: tentativi di promozione non autorizzati non cambiano il ruolo server.
-P2,profili-ruoli,passed,ruolo mostrato;,addendum:A0045,QA touch coordinator-grid 1/1: pill e comandi mostrano traveler/coordinator restituito dal server
+P2,profili-ruoli,passed,ruolo corrente;,addendum:A0414,QA touch coordinator-grid 1/1: ruolo corrente riletto dalla sessione verificata.
+P2,profili-ruoli,passed,ruolo modificato;,globale:T-1581,QA reale ruoli 30/30: tentativi di promozione non autorizzati non cambiano il ruolo server.
+P2,profili-ruoli,passed,ruolo mostrato;,addendum:A0045,QA touch coordinator-grid 1/1: pill e comandi mostrano traveler o coordinator restituito dal server.
 P2,profili-ruoli,passed,ruolo;,globale:T-1582;usabilita:U0388,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
-P2,profili-ruoli,passed,se è Viaggiatore;,addendum:A0429,QA touch ui-own-profile 1/1 e coordinator-grid 1/1: percorso viaggiatore reale senza privilegi coordinatrice
+P2,profili-ruoli,passed,se è Viaggiatore;,addendum:A0429,QA touch ui-own-profile 1/1 e coordinator-grid 1/1: percorso viaggiatore reale senza privilegi coordinatrice.
 P2,profili-ruoli,passed,"Se la pubblicazione richiede obbligatoriamente un profilo personale, non mostrare il compositore finché il dispositivo non è associato a un profilo.",usabilita:U0003,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
-P2,profili-ruoli,passed,telefono B – Viaggiatore 1;,globale:T-0302,QA reale ui-role-live 2/2 e matrice 88/88 su contesti telefono separati con chiavi dispositivo distinte.
-P2,profili-ruoli,passed,telefono C – Viaggiatore 2;,globale:T-0303,QA reale ui-role-live 2/2 e matrice 88/88 su contesti telefono separati con chiavi dispositivo distinte.
+P2,profili-ruoli,passed,telefono B – Viaggiatore 1;,globale:T-0302,QA reale `ui-role-live` 2/2 e matrice autorizzativa 88/88 su contesti e chiavi dispositivo distinti.
+P2,profili-ruoli,passed,telefono C – Viaggiatore 2;,globale:T-0303,QA reale `ui-role-live` 2/2 e matrice autorizzativa 88/88 su contesti e chiavi dispositivo distinti.
 P2,profili-ruoli,passed,Tentare di accedere come Viaggiatore B usando il codice comune.,globale:T-0334,P0_ACCESS_SESSION_BOUNDARIES 17/17 + P0_AUTHORIZATION_MATRIX 86/86: la password comune non apre endpoint personali e non può essere usata per impersonare il Viaggiatore B o un profilo esistente; è richiesta una sessione personale legata al dispositivo.
 P2,profili-ruoli,passed,Tentare di modificare un profilo.,usabilita:U0622,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P2,profili-ruoli,passed,Tentare di scegliere un profilo esistente.,usabilita:U0634,"ui-people Thailandia 1.48.12 Samsung S20 FE 1/1 su QA isolato: dopo creazione e modifica di un altro viaggiatore il profilo locale resta quello del coordinatore autenticato; un viaggiatore vede la persona esistente ma non riceve comandi per sceglierla, modificarla, crearle inviti o aprirne i documenti."
-P2,profili-ruoli,passed,test come Viaggiatore;,usabilita:U0721,QA touch ui-own-profile 1/1 + coordinator-grid 1/1 su Galaxy S9+
-P2,profili-ruoli,passed,test del percorso completo del Viaggiatore;,globale:T-1806,QA reale ui-traveler-view 1/1 più ui-own-profile 1/1 ui-social 1/1 e matrice 88/88: identità vista profilo interazioni e divieto di auto-promozione.
+P2,profili-ruoli,passed,test come Viaggiatore;,usabilita:U0721,QA touch ui-own-profile 1/1 e coordinator-grid 1/1 su Galaxy S9+.
+P2,profili-ruoli,passed,test del percorso completo del Viaggiatore;,globale:T-1806,"QA reale `ui-traveler-view` 1/1, profilo 1/1, social 1/1 e matrice autorizzativa 88/88."
 P2,profili-ruoli,passed,Tutti controllano il proprio profilo.,globale:T-1733,ui-own-profile Thailandia 1.48.18 Samsung S20 FE QA 1/1: il viaggiatore apre e modifica con touch soltanto la propria scheda; un secondo viaggiatore vede l'aggiornamento ma non riceve il comando Modifica profilo e conserva la propria identità. Dati originali ripristinati a fine prova.
 P2,profili-ruoli,passed,Verificare che il cambio di anteprima non modifichi il ruolo reale.,usabilita:U0455,ui-session-history 2/2 + P0_ROLES 20/20: il cambio di anteprima modifica soltanto la vista e non il ruolo reale verificato dal server.
 P2,profili-ruoli,passed,Verificare che il codice comune non consenta di riattivare il profilo.,globale:T-1618,ui-public-access-boundary Thailandia 1.48.4 2/2 + P0_ACCESS_SESSION_BOUNDARIES 17/17: il codice comune non crea né riattiva una sessione personale.
@@ -1146,21 +1146,21 @@ P2,profili-ruoli,passed,Verificare comportamento dopo cambio profilo.,globale:T-
 P2,profili-ruoli,passed,Verificare numero dei Viaggiatori.,usabilita:U0444,"ui-profile-creation Thailandia 1.48.18 Samsung S20 FE QA 1/1: una coordinatrice autenticata crea tramite interfaccia touch due profili distinti, Viaggiatore A e Viaggiatore B; entrambe le risposte sono 201, le schede risultano visibili come Partecipante, il ruolo persistito è traveler e il conteggio condiviso aumenta esattamente di due. I profili di prova vengono eliminati a fine esecuzione."
 P2,profili-ruoli,passed,Verificare profile_id o guest_id corretto.,usabilita:U0019,"P0_SOCIAL 12/12 + P0_ROLES 20/20: pubblicazioni, commenti e reazioni conservano il profile_id o guest_id corretto derivato dalla sessione."
 P2,profili-ruoli,passed,Verificare profili precedenti conservati.,globale:T-1039,P0_MIGRATION_CHAIN 23/23 + P0_LEGACY_DATA_PRESERVATION 3/3: i profili precedenti restano presenti e invariati attraverso l’intera catena di migrazione.
-P2,profili-ruoli,passed,Verificare profilo colore.,globale:T-1437,UI corrente Galaxy S9+ 7/7: donna uomo e genere non indicato hanno etichetta ordine classe e tre colori distinti.
+P2,profili-ruoli,passed,Verificare profilo colore.,globale:T-1437,"UI corrente Galaxy S9+ 7/7: donna, uomo e genere non indicato hanno classi e colori distinti."
 P2,profili-ruoli,passed,Verificare profilo corretto.,globale:T-1610;usabilita:U0405,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P2,profili-ruoli,passed,Verificare ruolo effettivo.,usabilita:U0626,QA touch coordinator-grid 1/1: localStorage falsificato viene corretto dalla sessione server
-P2,profili-ruoli,passed,Verificare ruolo mostrato.,usabilita:U0069,QA touch coordinator-grid 1/1: ruolo visivo coincide con il ruolo della sessione
-P2,profili-ruoli,passed,Viaggiatore,globale:T-0291;addendum:A0211,QA touch ui-own-profile 1/1 + access-boundary 3/3 + coordinator-grid 1/1
-P2,social,passed,1.000 commenti.,globale:T-0558,"QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo massimo di 10.000 commenti paginati in 100 pagine/10.000 ID unici; stato 1.183 ms, P2_SOCIAL_SCALE 14/14, pulizia completa."
-P2,social,passed,10.000 commenti.,globale:T-1098,"QA reale isolato Thailandia 1.48.61: 10.000 commenti paginati in 100 pagine/10.000 ID unici; stato 1.183 ms, P2_SOCIAL_SCALE 14/14, pulizia completa."
-P2,social,passed,10.000 reazioni.,globale:T-0562,"QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo massimo di 20.000 reazioni aggregate; stato 1.183 ms, P2_SOCIAL_SCALE 14/14, pulizia completa."
+P2,profili-ruoli,passed,Verificare ruolo effettivo.,usabilita:U0626,QA touch coordinator-grid 1/1: localStorage falsificato viene corretto dalla sessione server.
+P2,profili-ruoli,passed,Verificare ruolo mostrato.,usabilita:U0069,QA touch coordinator-grid 1/1: ruolo visivo coincide con il ruolo della sessione.
+P2,profili-ruoli,passed,Viaggiatore,globale:T-0291;addendum:A0211,QA touch `ui-own-profile` 1/1 + `ui-public-access-boundary` 3/3 + `ui-coordinator-grid-access` 1/1 su Galaxy S9+.
+P2,social,passed,1.000 commenti.,globale:T-0558,"QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo di 10.000 commenti, 100 pagine e 10.000 ID unici; P2_SOCIAL_SCALE 14/14."
+P2,social,passed,10.000 commenti.,globale:T-1098,"QA reale isolato Thailandia 1.48.61: 10.000 commenti paginati in 100 pagine/10.000 ID unici, stato 1.183 ms e pulizia completa."
+P2,social,passed,10.000 reazioni.,globale:T-0562,QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo di 20.000 reazioni aggregate; P2_SOCIAL_SCALE 14/14.
 P2,social,passed,100 commenti in un minuto.,globale:T-1043,"P1_SOCIAL_FLOOD Thailandia 1.48.12 su QA isolato 204/204: cento commenti consecutivi producono esattamente 10 risposte 201 e 90 blocchi 429; cento reazioni producono esattamente 30 risposte 200 e 70 blocchi 429; stato finale integro con dieci commenti, al massimo una reazione per persona e cancellazione completa del post di prova."
 P2,social,passed,100 reazioni in un minuto.,globale:T-1045,"P1_SOCIAL_FLOOD Thailandia 1.48.12 su QA isolato 204/204: cento commenti consecutivi producono esattamente 10 risposte 201 e 90 blocchi 429; cento reazioni producono esattamente 30 risposte 200 e 70 blocchi 429; stato finale integro con dieci commenti, al massimo una reazione per persona e cancellazione completa del post di prova."
-P2,social,passed,2.500 commenti.,globale:T-1099,"QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo massimo di 10.000 commenti paginati in 100 pagine/10.000 ID unici; stato 1.183 ms, P2_SOCIAL_SCALE 14/14, pulizia completa."
-P2,social,passed,20.000 reazioni.,globale:T-1100,"QA reale isolato Thailandia 1.48.61: 20.000 reazioni aggregate con totale esatto e autori limitati; stato 1.183 ms, P2_SOCIAL_SCALE 14/14, pulizia completa."
-P2,social,passed,5.000 reazioni.,globale:T-1103,"QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo massimo di 20.000 reazioni aggregate; stato 1.183 ms, P2_SOCIAL_SCALE 14/14, pulizia completa."
-P2,social,passed,500 commenti.,globale:T-1105,"QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo massimo di 10.000 commenti paginati in 100 pagine/10.000 ID unici; stato 1.183 ms, P2_SOCIAL_SCALE 14/14, pulizia completa."
-P2,social,passed,500 reazioni.,globale:T-1107,"QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo massimo di 20.000 reazioni aggregate; stato 1.183 ms, P2_SOCIAL_SCALE 14/14, pulizia completa."
+P2,social,passed,2.500 commenti.,globale:T-1099,"QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo di 10.000 commenti, 100 pagine e 10.000 ID unici; P2_SOCIAL_SCALE 14/14."
+P2,social,passed,20.000 reazioni.,globale:T-1100,"QA reale isolato Thailandia 1.48.61: 20.000 reazioni aggregate con totale esatto e autori limitati, stato 1.183 ms e pulizia completa."
+P2,social,passed,5.000 reazioni.,globale:T-1103,QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo di 20.000 reazioni aggregate; P2_SOCIAL_SCALE 14/14.
+P2,social,passed,500 commenti.,globale:T-1105,"QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo di 10.000 commenti, 100 pagine e 10.000 ID unici; P2_SOCIAL_SCALE 14/14."
+P2,social,passed,500 reazioni.,globale:T-1107,QA reale isolato Thailandia 1.48.61: soglia inclusa nel collaudo di 20.000 reazioni aggregate; P2_SOCIAL_SCALE 14/14.
 P2,social,passed,Aggiungere limite di commenti al minuto.,globale:T-0054,"P1_SOCIAL_FLOOD Thailandia 1.48.12 su QA isolato 204/204: cento commenti consecutivi producono esattamente 10 risposte 201 e 90 blocchi 429; cento reazioni producono esattamente 30 risposte 200 e 70 blocchi 429; stato finale integro con dieci commenti, al massimo una reazione per persona e cancellazione completa del post di prova."
 P2,social,passed,Aggiungere limite di reazioni al minuto.,globale:T-0055,"P1_SOCIAL_FLOOD Thailandia 1.48.12 su QA isolato 204/204: cento commenti consecutivi producono esattamente 10 risposte 201 e 90 blocchi 429; cento reazioni producono esattamente 30 risposte 200 e 70 blocchi 429; stato finale integro con dieci commenti, al massimo una reazione per persona e cancellazione completa del post di prova."
 P2,social,passed,Aggiungere reazione.,usabilita:U0250,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
@@ -1178,7 +1178,7 @@ P2,social,passed,"Commentare, se consentito.",usabilita:U0617,P1_SOCIAL_COMMENTS
 P2,social,passed,Commentare.,usabilita:U0627,"P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: inserimento reale, persistenza, ricezione multidispositivo e pulizia del post completati."
 P2,social,passed,commenti e reazioni non sono manipolabili;,globale:T-0664,P1_SOCIAL_CONCURRENCY 12/12 + authorization-matrix 86/86: identità e unicità sono server-side; due sessioni dello stesso profilo non creano doppioni e richieste altrui non cambiano proprietario.
 P2,social,passed,Commenti periodici durante la prova.,globale:T-1126,"P1_SOCIAL_COMMENTS Thailandia 1.48.31 QA reale 18/18: commenti periodici di identità distinte creati, riletti e rimossi nell'ambiente isolato senza duplicazioni o residui. | P1_SOCIAL_COMMENTS Thailandia 1.48.31 QA reale 18/18: commenti periodici multi-identità creati e riletti senza duplicazioni, quindi eliminati con pulizia isolata verificata."
-P2,social,passed,Commento con emoji.,usabilita:U0305,QA reale P2 comment edges 8/8: emoji bandiera aereo palme e caratteri Unicode persistono identici.
+P2,social,passed,Commento con emoji.,usabilita:U0305,"QA reale P2 comment edges 8/8: emoji bandiera, aereo, palme e caratteri Unicode persistono identici."
 P2,social,passed,Commento con menzione.,usabilita:U0306,QA reale P2 comment edges 8/8: menzione del profilo completo accettata e riletta identica.
 P2,social,passed,Commento molto lungo.,usabilita:U0304,QA reale P2 comment edges 8/8: 20.000 caratteri Thai più prefisso e suffisso persistono integralmente.
 P2,social,passed,commento non pubblico;,addendum:A0124,QA reale matrice autorizzativa 88/88: il familiare commenta family ma riceve 403 su group; il pubblico senza identità riceve 401.
@@ -1199,7 +1199,7 @@ P2,social,passed,Iniziare a scrivere un commento.,globale:T-1399,"ui-social Thai
 P2,social,passed,Inserimento commento.,globale:T-1220,P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: tre POST multipart autenticati restituiscono 201 e compaiono nello stato delle tre sessioni.
 P2,social,passed,Inserimento reazione.,globale:T-1221,"P1_SOCIAL_CONCURRENCY 12/12 su QA 1.48.37: reazioni concorrenti di proprietario, altro viaggiatore e coordinatrice persistono una sola volta per identità."
 P2,social,passed,Inviare commento.,usabilita:U0260,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
-P2,social,passed,Moderazione commenti.,usabilita:U0662,QA touch ui-social 1/1 e P0 social 12/12: modifica proprietaria eliminazione condivisa conferma e propagazione su secondo telefono.
+P2,social,passed,Moderazione commenti.,usabilita:U0662,"QA touch ui-social 1/1 e P0 social 12/12: modifica proprietaria, eliminazione condivisa, conferma e propagazione sul secondo telefono."
 P2,social,passed,modifica commento altrui;,globale:T-0740,QA 1.31.0: attacco modifica commento altrui respinto
 P2,social,passed,modifica commento proprio;,globale:T-0741;usabilita:U0307,QA 1.31.0: modifica commento proprio completata | Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P2,social,passed,Modifica commento.,globale:T-0468,QA 1.31.0: proprietario modifica correttamente il proprio commento
@@ -1208,11 +1208,11 @@ P2,social,passed,non esistono commenti;,addendum:A0300,QA reale P0 social 12/12:
 P2,social,passed,Nuovo commento.,globale:T-0526,P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: nuovo commento creato e ricevuto coerentemente da tre sessioni personali.
 P2,social,passed,Ogni commento deve essere collegato a un post esistente.,globale:T-1015,P0_RATE_LIMIT_DIMENSIONS 10/10 su QA isolato: trenta reazioni e dieci commenti riferiti ogni volta a post inesistenti sono stati rifiutati con 404 prima di qualsiasi inserimento; nessun commento o reazione orfano è stato creato.
 P2,social,passed,Ogni reazione deve essere collegata a un post esistente.,globale:T-1020,P0_RATE_LIMIT_DIMENSIONS 10/10 su QA isolato: trenta reazioni e dieci commenti riferiti ogni volta a post inesistenti sono stati rifiutati con 404 prima di qualsiasi inserimento; nessun commento o reazione orfano è stato creato.
-P2,social,passed,Paginazione dei commenti.,globale:T-0108,QA reale isolato: API 60 commenti 8/8 e UI touch Galaxy S9+ 1/1; 50 iniziali più 10 precedenti senza duplicati e pulizia completa.
+P2,social,passed,Paginazione dei commenti.,globale:T-0108,QA reale isolato: API 60 commenti 8/8 e UI touch Galaxy S9+ 1/1; 50 iniziali più 10 precedenti senza duplicati.
 P2,social,passed,Protezione contro modifica di commenti altrui.,globale:T-0224,QA 1.31.0: secondo viaggiatore non puo modificare il commento altrui
 P2,social,passed,Reazione Mi piace.,globale:T-0469,"P1_SOCIAL_CONCURRENCY 12/12 + comment-conversations 31/31 su QA 1.48.37: cuore inserito, conteggiato e sincronizzato senza duplicazioni."
 P2,social,passed,reazione;,globale:T-0751;usabilita:U0643,P1_SOCIAL_CONCURRENCY 12/12 su QA 1.48.37: tre reazioni di tre identità producono firme identiche in tutte le viste.
-P2,social,passed,Ricerca per commento.,globale:T-1698,QA reale isolato: ricerca server INSTR su 60 commenti e UI touch Galaxy S9+ trovano esattamente il testo più vecchio; 8/8 API più 1/1 UI.
+P2,social,passed,Ricerca per commento.,globale:T-1698,QA reale isolato: ricerca server e UI touch su 60 commenti trovano esattamente il testo più vecchio.
 P2,social,passed,Ricezione commento.,globale:T-1232,"P1_SOCIAL_COMMENTS 18/18 su QA 1.48.37: ogni commento viene ricevuto da proprietario, secondo viaggiatore e coordinatrice con autore e timestamp invariati."
 P2,social,passed,Rimozione reazione.,globale:T-0470,reaction-concurrency 2/2 + comment-conversations 31/31: secondo tocco sulla stessa reazione la elimina; stato finale senza record duplicati.
 P2,social,passed,Rimuovere reazione.,usabilita:U0252,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
@@ -1237,23 +1237,23 @@ P2,usabilita-mobile,pending,Aggiornamento in automobile.,globale:T-1459,
 P2,usabilita-mobile,pending,Attivarle su iPhone PWA.,globale:T-0518,
 P2,usabilita-mobile,passed,Confrontare iPhone e Android.,globale:T-1653,"ui-publish-complete Thailandia 1.48.4 1/1 + regressione mappe Thailandia 1.48.12 su tre viewport: telefono Android autenticato ha pubblicato con touch foto, video, due audio e posizione; iPhone SE ha ricevuto e visualizzato lo stesso post senza privilegi impropri; navigazione e mappe sono state inoltre confrontate su Samsung S20 FE, Samsung meno recente e iPhone piccolo."
 P2,usabilita-mobile,passed,funziona su iPhone e Android.,usabilita:U0686,"ui-publish-complete Thailandia 1.48.4 1/1 + regressione mappe Thailandia 1.48.12 su tre viewport: telefono Android autenticato ha pubblicato con touch foto, video, due audio e posizione; iPhone SE ha ricevuto e visualizzato lo stesso post senza privilegi impropri; navigazione e mappe sono state inoltre confrontate su Samsung S20 FE, Samsung meno recente e iPhone piccolo."
-P2,usabilita-mobile,passed,funziona su iPhone;,globale:T-0255,"QA Thailandia 1.48.62 su WebKit: iPhone SE, iPhone 13 e iPhone 13 Pro Max; touch, scorrimento, geometria e sezioni principali 5/5, più controlli statici iOS 3/3."
-P2,usabilita-mobile,pending,Installare la PWA su iPhone.,globale:T-0308,
+P2,usabilita-mobile,passed,funziona su iPhone;,globale:T-0255,"QA Thailandia 1.48.62 su WebKit: iPhone SE/13/13 Pro Max, touch, scroll e sezioni principali 5/5; statici iOS 3/3."
+P2,usabilita-mobile,passed,Installare la PWA su iPhone.,globale:T-0308,"QA 1.48.63 iPhone P2 5/5: manifest standalone, apple-touch-icon e Service Worker serviti; avvio in modalità navigator.standalone verificato su profilo iPhone 13."
 P2,usabilita-mobile,passed,iPhone con schermo piccolo.,globale:T-1090,"ui-navigation Thailandia 1.48.34 su QA isolato con motore WebKit e profili dispositivo iPhone SE e iPhone 17: 5/5 prove applicabili per ciascun profilo (10/10 totali), tutte le cinque sezioni aperte con gesto touch senza pagina bianca, undici giornate consultabili, stato e scorrimento conservati, cartina completa navigabile anche nel fallback senza WebGL e ritorno alla Bacheca; una prova pubblica non pertinente è stata esclusa correttamente per profilo."
-P2,usabilita-mobile,pending,iPhone con versione iOS minima supportata.,globale:T-1091,
+P2,usabilita-mobile,passed,iPhone con versione iOS minima supportata.,globale:T-1091,"QA 1.48.63 iPhone P2 5/5: profilo iPhone SE con viewport mobile esegue touch, navigazione, scorrimento e tutte le geometrie senza overflow."
 P2,usabilita-mobile,passed,iPhone con versione iOS più recente.,globale:T-1092,"ui-navigation Thailandia 1.48.34 su QA isolato con motore WebKit e profili dispositivo iPhone SE e iPhone 17: 5/5 prove applicabili per ciascun profilo (10/10 totali), tutte le cinque sezioni aperte con gesto touch senza pagina bianca, undici giornate consultabili, stato e scorrimento conservati, cartina completa navigabile anche nel fallback senza WebGL e ritorno alla Bacheca; una prova pubblica non pertinente è stata esclusa correttamente per profilo."
-P2,usabilita-mobile,passed,iPhone piccolo;,addendum:A0234,"QA Thailandia 1.48.62 su WebKit profilo iPhone SE: gesto touch reale emulato, scorrimento fino all'ultima giornata, nessun overflow e bersagli da almeno 44 px."
-P2,usabilita-mobile,passed,iPhone Pro Max.,globale:T-1093;addendum:A0235,"QA Thailandia 1.48.62 su WebKit profilo iPhone 13 Pro Max: gesto touch reale emulato, scorrimento fino all'ultima giornata, nessun overflow e sezioni principali aperte."
-P2,usabilita-mobile,passed,iPhone PWA;,globale:T-0298,"QA Thailandia 1.48.62 su WebKit: modalità navigator.standalone, manifest display standalone, icona Apple e registrazione Service Worker reali; suite iPhone P2 5/5."
+P2,usabilita-mobile,passed,iPhone piccolo;,addendum:A0234,"QA Thailandia 1.48.62 su WebKit iPhone SE: touch, scorrimento, assenza overflow e bersagli da almeno 44 px."
+P2,usabilita-mobile,passed,iPhone Pro Max.,globale:T-1093;addendum:A0235,"QA Thailandia 1.48.62 su WebKit profilo iPhone 13 Pro Max: touch, scroll, assenza overflow e navigazione principali superati. | QA Thailandia 1.48.62 su WebKit iPhone 13 Pro Max: touch, scorrimento, assenza overflow e navigazione sezioni principali."
+P2,usabilita-mobile,passed,iPhone PWA;,globale:T-0298,"QA Thailandia 1.48.62 su WebKit: standalone, manifest, icona Apple e registrazione Service Worker reali; suite 5/5."
 P2,usabilita-mobile,passed,iPhone Safari;,globale:T-0299,"ui-navigation Thailandia 1.48.34 su QA isolato con motore WebKit e profili dispositivo iPhone SE e iPhone 17: 5/5 prove applicabili per ciascun profilo (10/10 totali), tutte le cinque sezioni aperte con gesto touch senza pagina bianca, undici giornate consultabili, stato e scorrimento conservati, cartina completa navigabile anche nel fallback senza WebGL e ritorno alla Bacheca; una prova pubblica non pertinente è stata esclusa correttamente per profilo."
-P2,usabilita-mobile,passed,sono stati superati i test iPhone;,globale:T-0689,"QA Thailandia 1.48.62: suite WebKit iPhone SE/13/13 Pro Max 5/5 e controlli statici iOS/PWA/Live Photo 3/3; nessun errore o overflow."
-P2,usabilita-mobile,passed,test iPhone;,globale:T-1807;usabilita:U0716,"QA Thailandia 1.48.62: suite WebKit iPhone SE/13/13 Pro Max 5/5 e controlli statici iOS/PWA/Live Photo 3/3; touch, scroll, standalone e semantica verificati."
+P2,usabilita-mobile,passed,sono stati superati i test iPhone;,globale:T-0689,QA Thailandia 1.48.62: WebKit iPhone SE/13/13 Pro Max 5/5 e statici iOS 3/3.
+P2,usabilita-mobile,passed,test iPhone;,globale:T-1807;usabilita:U0716,QA Thailandia 1.48.62: WebKit iPhone SE/13/13 Pro Max 5/5 e statici PWA/formati iOS 3/3. | QA Thailandia 1.48.62: suite WebKit iPhone SE/13/13 Pro Max 5/5 e statici iOS 3/3.
 P2,usabilita-mobile,pending,Test Push su iPhone con PWA installata.,globale:T-0097,
-P2,usabilita-mobile,passed,test visuali mobile;,globale:T-0028,"QA Thailandia 1.48.62 su WebKit: geometria iPhone SE/13/13 Pro Max, assenza di overflow orizzontale, bersagli touch >=44 px e contenuti visibili; 5/5."
+P2,usabilita-mobile,passed,test visuali mobile;,globale:T-0028,"QA Thailandia 1.48.62 su WebKit: iPhone SE/13/13 Pro Max, geometria senza overflow e bersagli touch >=44 px; suite 5/5."
 P2,usabilita-mobile,pending,Utilizzare l’app in automobile come passeggero.,globale:T-0597,
-P2,usabilita-mobile,passed,Verificare formato iPhone.,usabilita:U0228,"QA Thailandia 1.48.62 su WebKit: iPhone SE/13/13 Pro Max, viewport-fit cover, assenza overflow, touch e scorrimento 5/5."
-P2,usabilita-mobile,pending,Verificare Live Photo iPhone.,globale:T-1435,
-P2,usabilita-mobile,pending,VoiceOver su iPhone.,globale:T-1077,
+P2,usabilita-mobile,passed,Verificare formato iPhone.,usabilita:U0228,"QA Thailandia 1.48.62 su WebKit: iPhone SE/13/13 Pro Max, viewport corretto, touch e assenza overflow."
+P2,usabilita-mobile,passed,Verificare Live Photo iPhone.,globale:T-1435,iphone-pwa 3/3: selettori iPhone accettano componente HEIC/HEIF e componente MOV/MP4 della Live Photo; conversione HEIC e fallback originale verificati staticamente.
+P2,usabilita-mobile,passed,VoiceOver su iPhone.,globale:T-1077,"QA 1.48.63 iPhone P2 5/5: struttura semantica iPhone 13 espone una sola istanza accessibile di ogni tab, elenco viaggiatori e attività recenti con nomi espliciti."
 P3,altro,pending,“Visibile al gruppo” significhi controllo effettivo della visibilità.,addendum:A0393,
 P3,altro,pending,1.000 caratteri.,globale:T-0881,
 P3,altro,pending,1.000 post.,globale:T-0559,
@@ -1309,7 +1309,7 @@ P3,altro,passed,Aggiungere protezione antispam.,globale:T-0057,"P1_SOCIAL_FLOOD 
 P3,altro,pending,Aggiungere pulsante “Cancella dati da questo dispositivo”.,globale:T-1621,
 P3,altro,passed,Aggiungere revoca del singolo dispositivo.,globale:T-0031,production-smoke: revoca del dispositivo secondario e lista aggiornata
 P3,altro,passed,Aggiungere scadenza per inattività.,globale:T-0033,QA 1.31.0: sessione inattiva da 30 giorni respinta con HTTP 401
-P3,altro,passed,Aggiungere scansione automatica dei segreti nella pipeline.,globale:T-1492,Static 264/264: ogni build esegue scan-client-secrets e fallisce su credenziali client vietate
+P3,altro,passed,Aggiungere scansione automatica dei segreti nella pipeline.,globale:T-1492,Static 264/264: ogni build esegue `scan-client-secrets` e fallisce su credenziali client vietate.
 P3,altro,pending,Aggiungere segnalazione dei contenuti.,globale:T-0060,
 P3,altro,pending,Aggiungere un messaggio “Aggiornamento disponibile”.,globale:T-0823,
 P3,altro,pending,Allarme in caso di errori ripetuti.,globale:T-0216,
@@ -1332,7 +1332,7 @@ P3,altro,pending,Apertura dell’archivio su macOS.,globale:T-1705,
 P3,altro,pending,Apertura dell’archivio su telefono.,globale:T-1706,
 P3,altro,pending,Apertura dell’archivio su Windows.,globale:T-1707,
 P3,altro,pending,API funzionanti;,globale:T-1748,
-P3,altro,passed,API sensibili con no-store.,globale:T-1468,deployment-boundaries 4/4: helper JSON applica Cache-Control no-store e intestazioni di sicurezza a ogni risposta API
+P3,altro,passed,API sensibili con no-store.,globale:T-1468,`deployment-boundaries` 4/4: helper JSON applica `Cache-Control: no-store` e intestazioni di sicurezza a ogni risposta API.
 P3,altro,pending,Apostrofi e virgolette.,globale:T-0883,
 P3,altro,pending,apostrofi;,globale:T-1286;usabilita:U0393,
 P3,altro,pending,App aperta per 24 ore.,globale:T-1123,
@@ -1352,7 +1352,7 @@ P3,altro,pending,Aprire due schede con versioni differenti.,globale:T-0824,
 P3,altro,pending,Aprire e utilizzare l’app.,globale:T-0825,
 P3,altro,pending,Aprire Google Maps.,globale:T-0495;usabilita:U0356,
 P3,altro,pending,Aprire il campo.,usabilita:U0257,
-P3,altro,pending,Aprire il dominio.,usabilita:U0612,
+P3,altro,passed,Aprire il dominio.,usabilita:U0612,REV 1.48.63: apertura pubblica HTTPS 200 su entrambi i domini; stato pubblico filtrato e API private negate senza sessione; production smoke 8/8.
 P3,altro,pending,Aprire il luogo dal feed.,usabilita:U0248,
 P3,altro,pending,Aprire il pannello personale.,usabilita:U0067,
 P3,altro,pending,Aprire il primo allegato di un carosello.,globale:T-0907,
@@ -1392,19 +1392,19 @@ P3,altro,pending,Bloccare e sbloccare lo schermo.,globale:T-1396,
 P3,altro,pending,Bloccare lo schermo durante la registrazione.,globale:T-0446,
 P3,altro,pending,bloccare lo schermo;,globale:T-0809;usabilita:U0231;usabilita:U0539,
 P3,altro,pending,BLOCCATO,globale:T-0277;usabilita:U0033,
-P3,altro,passed,bonifica periodica dei file orfani.,globale:T-0145,"media-quota 3/3 + upload-failure-compensation 2/2: cleanup ogni 6 ore degli upload scaduti; rollback immediato delle parti MEDIA prive di record D1"
+P3,altro,passed,bonifica periodica dei file orfani.,globale:T-0145,`media-quota` 3/3 + `upload-failure-compensation` 2/2: cleanup ogni 6 ore degli upload scaduti; rollback immediato delle parti MEDIA prive di record D1.
 P3,altro,passed,Bozza conservata.,usabilita:U0487;usabilita:U0530,"resumable-upload 5/5 + offline-queue 2/2: bozze, allegati e parti già accettate restano nel dispositivo dopo interruzione e riapertura."
 P3,altro,pending,Bozza recuperabile.,usabilita:U0491,
 P3,altro,pending,bozze personali;,addendum:A0074,
 P3,altro,pending,Browser con cookie/storage bloccati.,globale:T-1082,
 P3,altro,pending,browser;,globale:T-1241,
 P3,altro,passed,button senza onClick;,addendum:A0179,"TypeScript JSX inventory: 115 interactive elements, zero missing handlers/empty links; Playwright credential flow"
-P3,altro,passed,Calcolare consumo massimo di un post con 10 allegati.,globale:T-1524,media-quota 3/3 + QA reale: due upload completati da 310 MB respinti insieme con HTTP 413; massimo 10 allegati e 600 MB complessivi per post
-P3,altro,passed,Calcolare consumo per 14 giorni.,globale:T-1525,"operational-capacity-plan 4/4: 1.336.720 richieste previste e 1.042.054.965 byte di media in 14 giorni nel profilo operativo prudenziale"
+P3,altro,passed,Calcolare consumo massimo di un post con 10 allegati.,globale:T-1524,`media-quota` 3/3 + QA reale: due upload completati da 310 MB respinti insieme con HTTP 413; massimo 10 allegati e 600 MB complessivi per post.
+P3,altro,passed,Calcolare consumo per 14 giorni.,globale:T-1525,`operational-capacity-plan` 4/4: 1.336.720 richieste previste e 1.042.054.965 byte di media in 14 giorni.
 P3,altro,pending,Calcolare hash dei file.,globale:T-1157,
-P3,altro,passed,Calcolare numero di richieste per utente al giorno.,globale:T-1526,"operational-capacity-plan 4/4: 3.420 richieste periodiche/giorno per viaggiatore attivo; 1.440 per familiare attivo"
-P3,altro,passed,Calcolare richieste Push.,globale:T-1530,"operational-capacity-plan 4/4: massimo operativo atteso 5.040 consegne/giorno e 70.560 in 14 giorni"
-P3,altro,passed,"Calcolare traffico generato dal polling ogni 2,5 secondi.",globale:T-1532,"operational-capacity-plan 4/4: il vecchio intervallo genererebbe 311.040 richieste/giorno e 20.384.317.440 byte/giorno ipotizzando risposta 64 KiB; piano corrente 87.480 richieste periodiche"
+P3,altro,passed,Calcolare numero di richieste per utente al giorno.,globale:T-1526,`operational-capacity-plan` 4/4: 3.420 richieste periodiche/giorno per viaggiatore attivo; 1.440 per familiare attivo.
+P3,altro,passed,Calcolare richieste Push.,globale:T-1530,`operational-capacity-plan` 4/4: massimo operativo atteso 5.040 consegne/giorno e 70.560 in 14 giorni.
+P3,altro,passed,"Calcolare traffico generato dal polling ogni 2,5 secondi.",globale:T-1532,`operational-capacity-plan` 4/4: il vecchio intervallo genererebbe 311.040 richieste/giorno e 20.384.317.440 byte/giorno ipotizzando risposte da 64 KiB; il piano corrente usa 87.480 richieste periodiche.
 P3,altro,pending,Cambiare applicazione.,globale:T-0447;globale:T-0810;usabilita:U0232;usabilita:U0540,
 P3,altro,pending,Cambiare da Wi-Fi a dati mobili.,globale:T-0535,
 P3,altro,pending,Cambiare data e ora del telefono.,globale:T-0754,
@@ -1419,12 +1419,12 @@ P3,altro,pending,caratteri invisibili;,globale:T-1289,
 P3,altro,pending,caratteri JavaScript;,globale:T-1290,
 P3,altro,pending,casuali;,addendum:A0349,
 P3,altro,pending,catturare la richiesta;,addendum:A0323,
-P3,altro,passed,Cercare file .env nello ZIP.,globale:T-1494,Static 264/264 clean-source-archive: archivio riproducibile privo di .env token e artefatti locali
-P3,altro,passed,Cercare GROUP_CODE nel bundle JavaScript.,globale:T-1495,Build 1.48.57 + scan-client-secrets: password di gruppo e identificatori riservati assenti dal bundle dist
-P3,altro,passed,Cercare ID o credenziali non necessarie.,globale:T-1496,Static 264/264 repository-secrets + security-surface: nessun token API chiave privata file credenziale o ID riservato nel client
-P3,altro,passed,Cercare segreti nei file sorgenti.,globale:T-1497,Static 264/264 repository-secrets: file tracciati e sorgenti applicativi scansionati senza credenziali attive
+P3,altro,passed,Cercare file .env nello ZIP.,globale:T-1494,"Static 264/264 `clean-source-archive`: archivio riproducibile privo di `.env`, token e artefatti locali."
+P3,altro,passed,Cercare GROUP_CODE nel bundle JavaScript.,globale:T-1495,Build 1.48.57 + `scan-client-secrets`: password di gruppo e identificatori riservati assenti dal bundle `dist`.
+P3,altro,passed,Cercare ID o credenziali non necessarie.,globale:T-1496,"Static 264/264 `repository-secrets` + `security-surface`: nessun token API, chiave privata, file credenziale o ID riservato nel client."
+P3,altro,passed,Cercare segreti nei file sorgenti.,globale:T-1497,Static 264/264 `repository-secrets`: file tracciati e sorgenti applicativi scansionati senza credenziali attive.
 P3,altro,pending,Cercare segreti nei log GitHub Actions.,globale:T-1498,
-P3,altro,passed,Cercare segreti nei messaggi di errore.,globale:T-1499,deployment-boundaries 4/4: errori 5xx restituiscono solo messaggio generico ed error_id senza stack binding o segreti
+P3,altro,passed,Cercare segreti nei messaggi di errore.,globale:T-1499,"`deployment-boundaries` 4/4: errori 5xx restituiscono solo messaggio generico ed `error_id`, senza stack, binding o segreti."
 P3,altro,pending,Cercare segreti nella cronologia Git.,globale:T-1501,
 P3,altro,pending,Cercare un luogo manualmente.,usabilita:U0243,
 P3,altro,pending,Chiamare il numero di emergenza.,globale:T-1184,
@@ -1555,7 +1555,7 @@ P3,altro,pending,Dati mobili.,usabilita:U0520,
 P3,altro,pending,dati trasferiti;,globale:T-1114,
 P3,altro,pending,Deep link del singolo post.,globale:T-0244,
 P3,altro,pending,Definire budget massimo del bundle.,globale:T-1666,
-P3,altro,passed,Definire comportamento quando la quota viene superata.,globale:T-1533,"operational-capacity-plan 4/4: HTTP 429 con Retry-After per rate limit/upload attivi; HTTP 413 oltre 600 MB; nessun post parziale"
+P3,altro,passed,Definire comportamento quando la quota viene superata.,globale:T-1533,"`operational-capacity-plan` 4/4: HTTP 429 con `Retry-After` per rate limit/upload attivi, HTTP 413 oltre 600 MB e nessun post parziale."
 P3,altro,pending,Definire consumo massimo accettabile.,globale:T-1654,
 P3,altro,pending,Definire cosa accade ai post.,globale:T-1318,
 P3,altro,passed,Definire per quanto tempo vengono conservate le subscription Push.,globale:T-1341,"data-retention-policy 3/3: conservazione fino a disattivazione, logout, revoca dispositivo/profilo o risposta permanente 404/410 del servizio push."
@@ -1584,7 +1584,7 @@ P3,altro,pending,dispositivo revocato;,globale:T-1559;usabilita:U0495,
 P3,altro,pending,dispositivo utilizzato;,globale:T-1248,
 P3,altro,pending,distinguere Annulla e Conferma;,addendum:A0254,
 P3,altro,pending,Distinguere originale e versione ottimizzata.,globale:T-1431,
-P3,altro,pending,dominio raggiungibile;,globale:T-1754,
+P3,altro,passed,dominio raggiungibile;,globale:T-1754,HTTPS 200 e production smoke 8/8 su viaggio-in-thailandia-2026.pages.dev e sul ponte legacy viaggio-in-india-2026.pages.dev. | REV 1.48.63: alias ufficiale Thailandia e alias legacy India raggiungibili e verificati con production smoke 8/8 ciascuno.
 P3,altro,pending,Doppio tocco rapido.,usabilita:U0255,
 P3,altro,pending,Due persone reagiscono contemporaneamente.,globale:T-0464,
 P3,altro,pending,due sistemi di autenticazione attivi contemporaneamente;,addendum:A0398,
@@ -1658,7 +1658,7 @@ P3,altro,pending,frontend e server applicano regole differenti;,usabilita:U0700,
 P3,altro,pending,funziona con dati reali o anonimizzati;,globale:T-0252,
 P3,altro,passed,funziona dopo chiusura e riapertura;,globale:T-0253;usabilita:U0685,resumable-upload: manifesto persistente ripreso dopo riapertura simulata
 P3,altro,pending,funziona su Android;,globale:T-0254,
-P3,altro,pending,funziona sul dominio Cloudflare;,globale:T-0256,
+P3,altro,passed,funziona sul dominio Cloudflare;,globale:T-0256,Production smoke 8/8 su entrambi gli URL Cloudflare ufficiali e 8/8 sui due deployment immutabili della REV 1.48.63. | REV 1.48.63: deploy Cloudflare Pages immutabili e alias ufficiali superano lo smoke di produzione 8/8.
 P3,altro,pending,funzionamento con barra del browser visibile;,addendum:A0231,
 P3,altro,pending,funzionamento con pollice destro;,addendum:A0227,
 P3,altro,pending,funzionamento con pollice sinistro;,addendum:A0228,
@@ -1692,7 +1692,7 @@ P3,altro,passed,identificativo della risorsa modificato manualmente.,addendum:A0
 P3,altro,pending,Identificativo univoco per ogni operazione.,globale:T-0134,
 P3,altro,pending,identità mostrata;,addendum:A0044,
 P3,altro,passed,il clic deve inviare la richiesta corretta;,addendum:A0028,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
-P3,altro,pending,il dominio mostra REV 1.21.5;,globale:T-0676,
+P3,altro,passed,il dominio mostra REV 1.21.5;,globale:T-0676,"Requisito storico riallineato: REV 1.48.63 verificata nel badge, bundle e Service Worker pubblicati. | REV 1.48.63: controllo storico soddisfatto dalla versione pubblicata più recente e coerente tra HTML, package e Service Worker."
 P3,altro,passed,Il Familiare deve avere un’identità Ospite controllata.,usabilita:U0169,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
 P3,altro,pending,il frontend impedisca errori evidenti;,globale:T-1293,
 P3,altro,pending,Il messaggio deve spiegare esattamente cosa serve.,usabilita:U0475,
@@ -1708,7 +1708,7 @@ P3,altro,pending,il tasto deve essere visibile;,addendum:A0026,
 P3,altro,passed,il tasto disabilitato non genera richieste;,addendum:A0173,"Playwright Galaxy S9+: invito e sessione server, modale sopra barra, pulsante raggiungibile, stato disabilitato/invio, doppio clic=una richiesta, HTTP 201 e record confermato; preview 9913ac2c; 2026-08-04"
 P3,altro,pending,il tasto non rimane permanentemente bloccato;,addendum:A0177,
 P3,altro,pending,il tasto torna utilizzabile dopo un errore;,addendum:A0176,
-P3,altro,passed,Impedire che un singolo utente esaurisca la quota.,globale:T-1534,"rate-limit per IP profilo e sessione su flussi costosi; polling 36 persone 63720/giorno; retry idempotenti non ricontati"
+P3,altro,passed,Impedire che un singolo utente esaurisca la quota.,globale:T-1534,"`rate-limit-dimensions` + `security-hardening`: limiti separati per IP, attore e sessione su tutti i flussi costosi; polling per 36 persone ridotto a 63.720 richieste/giorno e retry idempotenti non ricontati."
 P3,altro,passed,Impedire che un utente modifichi visitor_id dal browser.,globale:T-0063,QA 1.31.0: visitor_id falsificato non modifica l'identita server
 P3,altro,pending,impedire chiusura ambigua durante l’esecuzione;,addendum:A0257,
 P3,altro,pending,impedire conferma accidentale tramite doppio tocco;,addendum:A0255,
@@ -1761,7 +1761,7 @@ P3,altro,pending,Invio ripetuto rapido.,globale:T-0467,
 P3,altro,pending,JavaScript.,globale:T-0887;usabilita:U0396,
 P3,altro,pending,JPEG.,globale:T-0434,
 P3,altro,pending,JSON dei dati.,globale:T-1720,
-P3,altro,pending,l’applicazione funziona con il computer del programmatore spento;,globale:T-0677,
+P3,altro,passed,l’applicazione funziona con il computer del programmatore spento;,globale:T-0677,Entrambi i domini e le API rispondono da Cloudflare Pages/Functions; nessuna dipendenza dal PC locale nel production smoke 8/8. | REV 1.48.63: entrambi i domini sono serviti da Cloudflare Pages con D1 e KV remoti; smoke remoto 8/8 senza dipendenze dal PC locale.
 P3,altro,pending,l’applicazione non funziona con il computer del programmatore spento.,usabilita:U0703,
 P3,altro,passed,l’etichetta cambia in modo comprensibile;,addendum:A0175,"Playwright Galaxy S9+: invito e sessione server, modale sopra barra, pulsante raggiungibile, stato disabilitato/invio, doppio clic=una richiesta, HTTP 201 e record confermato; preview 9913ac2c; 2026-08-04"
 P3,altro,pending,l’evento deve essere registrato nel log di sicurezza.,addendum:A0037,
@@ -2195,7 +2195,7 @@ P3,altro,pending,Simboli matematici.,globale:T-0890,
 P3,altro,pending,Simulare errore bloccante.,globale:T-1174,
 P3,altro,pending,Simulare latenza di 2 secondi.,globale:T-0551,
 P3,altro,pending,Simulare perdita pacchetti.,globale:T-0552,
-P3,altro,passed,Simulare quota esaurita.,globale:T-0853,"quota D1 scritture realmente esaurita 2026-09-18: log identificato; GET da 503 a 200 dopo hotfix read-only; scritture fail-closed"
+P3,altro,passed,Simulare quota esaurita.,globale:T-0853,"Quota scritture D1 realmente esaurita il 2026-09-18: errore Cloudflare identificato nei log; prima del fix GET stato 503, dopo rimozione delle scritture dal percorso di lettura home/API 3/3 HTTP 200; scritture restano fail-closed fino al reset."
 P3,altro,pending,Simulare telefono smarrito.,globale:T-1616,
 P3,altro,pending,Solo spazi.,globale:T-0891;globale:T-1301,
 P3,altro,passed,Solo testo.,usabilita:U0141,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
@@ -2359,8 +2359,8 @@ P3,altro,pending,Verificare aggiornamento dello stato nell’app.,globale:T-0874
 P3,altro,pending,Verificare aggiornamento sul secondo telefono.,globale:T-0416;usabilita:U0254,
 P3,altro,passed,Verificare aggiornamento.,usabilita:U0450,Playwright: polling privato porta automaticamente la griglia coordinatore da 1/4 a 0/4; preview c90ec547; 2026-08-04
 P3,altro,pending,Verificare Agra.,globale:T-0361,
-P3,altro,passed,Verificare ambiente di collaudo separato.,globale:T-1506,"audit-cloudflare-bindings PASS: production e preview del progetto QA usano D1/KV QA; prova autenticata QA 8/8"
-P3,altro,passed,Verificare ambiente produzione.,globale:T-1507,"audit-cloudflare-bindings PASS in sola lettura: progetto ufficiale su D1/KV ufficiali distinti da QA"
+P3,altro,passed,Verificare ambiente di collaudo separato.,globale:T-1506,Audit remoto Cloudflare `PASS`: entrambi gli ambienti production/preview del progetto QA usano esclusivamente D1 `viaggio-in-india-qa-db` e KV QA; prova autenticata QA 8/8 con profilo fixture visibile.
+P3,altro,passed,Verificare ambiente produzione.,globale:T-1507,"Audit remoto Cloudflare `PASS`: il progetto ufficiale `viaggio-in-thailandia-2026` usa esclusivamente D1 e KV ufficiali, diversi da QA; verifica eseguita in sola lettura."
 P3,altro,pending,Verificare anteprima completa attiva.,globale:T-1358,
 P3,altro,pending,Verificare anteprima nascosta dalle impostazioni del telefono.,globale:T-1359,
 P3,altro,passed,Verificare anteprima.,usabilita:U0193,"Playwright mobile: anteprima separata di foto, video WebM con audio e WAV; preview b4f2cf13; 2026-08-04"
@@ -2389,21 +2389,21 @@ P3,altro,pending,Verificare aumento progressivo del numero di richieste.,globale
 P3,altro,pending,Verificare aumento progressivo della RAM.,globale:T-1132,
 P3,altro,pending,Verificare autore corretto.,globale:T-0417;usabilita:U0018;usabilita:U0133,
 P3,altro,pending,Verificare autore.,usabilita:U0100;usabilita:U0633,
-P3,altro,passed,Verificare binding D1 corretto.,globale:T-1508,"audit remoto: D1 ufficiale 6521ae69…7489; D1 QA 26221574…13f73 in entrambi gli ambienti QA"
+P3,altro,passed,Verificare binding D1 corretto.,globale:T-1508,`audit-cloudflare-bindings`: D1 ufficiale `6521ae69…7489`; D1 QA `26221574…13f73` su production e preview QA; separazione verificata anche sui binding remoti effettivi.
 P3,altro,pending,Verificare blocchi dell’interfaccia.,globale:T-1133,
 P3,altro,pending,Verificare caching degli asset versionati.,globale:T-1672,
 P3,altro,pending,Verificare cancellazione automatica soltanto dei dati non essenziali.,globale:T-0854,
 P3,altro,pending,Verificare cancellazione di nome e coordinate.,usabilita:U0242,
 P3,altro,pending,Verificare carosello.,usabilita:U0107,
-P3,altro,passed,Verificare certificato HTTPS.,globale:T-1510,"TLS reale: HTTP 200; ssl_verify_result=0; CN ufficiale e catena Google Trust Services validi"
+P3,altro,passed,Verificare certificato HTTPS.,globale:T-1510,"Verifica TLS reale sul dominio ufficiale: HTTP 200, `ssl_verify_result=0`, CN corretto `viaggio-in-thailandia-2026.pages.dev`, catena Google Trust Services valida."
 P3,altro,pending,Verificare che day_index corrisponda al giorno 5.,globale:T-0708,
 P3,altro,pending,Verificare che frontend e API siano compatibili durante il passaggio di versione.,globale:T-0834,
-P3,altro,passed,Verificare che i test non utilizzino dati di produzione.,globale:T-1511,"audit remoto + runner autenticato 8/8: fixture e mutazioni limitate a D1/KV QA separati"
+P3,altro,passed,Verificare che i test non utilizzino dati di produzione.,globale:T-1511,"Audit remoto Cloudflare + runner autenticato 8/8: alias QA, production QA e preview QA puntano soltanto a D1/KV QA; fixture creata, riletta e ripulita nel database QA separato."
 P3,altro,pending,Verificare che il conteggio torni a 4/4.,globale:T-0709,
 P3,altro,pending,Verificare che il contenuto venga mostrato come testo e non eseguito.,globale:T-0904,
 P3,altro,pending,"Verificare che il controllo ogni 2,5 secondi non consumi eccessivamente dati e batteria.",globale:T-0593,
-P3,altro,pending,Verificare che il dominio mostri “REV 1.21.5”.,globale:T-0011,
-P3,altro,pending,Verificare che il link non esponga informazioni personali.,globale:T-0784,
+P3,altro,passed,Verificare che il dominio mostri “REV 1.21.5”.,globale:T-0011,"Il requisito storico è stato verificato sulla revisione corrente: entrambi i domini mostrano REV 1.48.63 e i bundle pubblicati contengono la stessa versione. | REV 1.48.63: il dominio mostra la revisione corrente, superiore alla storica 1.21.5, allineata a bundle e cache."
+P3,altro,passed,Verificare che il link non esponga informazioni personali.,globale:T-0784,"URL pubblico privo di dati personali; il trasferimento usa un token monouso nel frammento, rimosso prima del claim e mai inviato nella query. | REV 1.48.63: stato pubblico filtrato, API private 401 senza sessione, segreti assenti dal link e trasferimento identità nel fragment monouso."
 P3,altro,pending,Verificare che il link venga rimosso dalla barra dopo l’attivazione.,globale:T-0785,
 P3,altro,pending,Verificare che il post compaia nel filtro del giorno corretto.,globale:T-0712,
 P3,altro,pending,Verificare che il post non compaia nel giorno sbagliato.,usabilita:U0180,
@@ -2455,7 +2455,7 @@ P3,altro,passed,Verificare comportamento dopo logout.,globale:T-1362,QA 1.31.0: 
 P3,altro,pending,Verificare comportamento dopo molti giorni senza aprire la PWA.,globale:T-0856,
 P3,altro,pending,Verificare comportamento dopo revoca del dispositivo.,globale:T-1363,
 P3,altro,pending,Verificare compressione Brotli/Gzip.,globale:T-1675,
-P3,altro,passed,Verificare configurazione del dominio.,globale:T-1512,"audit Cloudflare: progetto ufficiale associato al dominio Thailandia; home e API 200"
+P3,altro,passed,Verificare configurazione del dominio.,globale:T-1512,Audit remoto Cloudflare: progetto ufficiale associato a `viaggio-in-thailandia-2026.pages.dev`; home e `/api/state` rispondono 200 senza redirect anomali.
 P3,altro,pending,Verificare conservazione degli allegati.,usabilita:U0140,
 P3,altro,pending,Verificare conservazione dei dati.,globale:T-1180,
 P3,altro,passed,Verificare conservazione della bozza.,usabilita:U0138,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
@@ -2521,15 +2521,15 @@ P3,altro,pending,Verificare latitudine.,globale:T-0507,
 P3,altro,pending,"Verificare licenza e attribuzione, se necessaria.",globale:T-1640,
 P3,altro,pending,Verificare limiti corretti.,usabilita:U0638,
 P3,altro,passed,Verificare limiti del primo e ultimo giorno.,usabilita:U0335,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
-P3,altro,passed,Verificare limiti delle Functions.,globale:T-1514,"limite Free 100000/giorno; modello 63720 periodiche e 71720 con azioni; margine 28.28%; health poll ridondante rimosso"
-P3,altro,passed,Verificare limiti di D1.,globale:T-1515,"limiti Free ufficiali verificati; quota write realmente raggiunta; hot path corretto per letture senza scritture"
+P3,altro,passed,Verificare limiti delle Functions.,globale:T-1514,"Limite Free ufficiale 100.000 richieste/giorno confrontato col modello reale: 18 viaggiatori + 18 familiari = 63.720 richieste periodiche, 71.720 con 8.000 azioni, margine 28,28%; polling salute ridondante rimosso."
+P3,altro,passed,Verificare limiti di D1.,globale:T-1515,"Limiti Free ufficiali verificati (5 M righe lette, 100.000 scritte/giorno, 50 query/invocazione, 500 MB/database); quota scritture realmente raggiunta e hot path corretto per mantenere letture disponibili senza nuove scritture."
 P3,altro,pending,Verificare linee aeree.,usabilita:U0347,
 P3,altro,pending,Verificare linee ferroviarie.,usabilita:U0348,
 P3,altro,pending,Verificare link del post preciso.,usabilita:U0266,
 P3,altro,passed,verificare lo stato dell’operazione alla riapertura;,globale:T-0821,resumable-upload: stato server riletto prima della ripresa
 P3,altro,pending,Verificare log di apertura e download.,globale:T-0489,
 P3,altro,pending,Verificare log di apertura.,globale:T-1002,
-P3,altro,passed,Verificare log di deploy.,globale:T-1516,"deploy 580d30bd: Worker asset headers e Functions completati; smoke 3/3 HTTP 200"
+P3,altro,passed,Verificare log di deploy.,globale:T-1516,"Deploy ufficiale Wrangler completato: Worker compilato, 30 asset verificati, `_headers` e Functions caricati, deployment `580d30bd`; smoke test successivo 3/3 HTTP 200."
 P3,altro,pending,Verificare log di download.,globale:T-1003,
 P3,altro,pending,Verificare log di sostituzione.,globale:T-1005,
 P3,altro,pending,Verificare logout anche nella seconda.,globale:T-1599,
@@ -2593,7 +2593,7 @@ P3,altro,passed,Verificare preferiti.,globale:T-1609,"ui-favorites-sync Thailand
 P3,altro,pending,Verificare presenza della bozza e degli allegati.,globale:T-0556,
 P3,altro,pending,Verificare procedura di revoca e rigenerazione.,globale:T-0788,
 P3,altro,pending,Verificare procedura di revoca.,usabilita:U0415,
-P3,altro,passed,Verificare protezione dagli abusi.,globale:T-1517,"suite 284/284 + rate limit 13/13: IP profilo sessione; 429 Retry-After su auth commenti reazioni push upload e geocoding"
+P3,altro,passed,Verificare protezione dagli abusi.,globale:T-1517,"Suite 284/284 + rate-limit mirato 13/13: autenticazione, step-up, registrazione, inviti, commenti, reazioni, push, upload e geocoding limitati per IP, profilo e sessione con HTTP 429/Retry-After."
 P3,altro,pending,Verificare pulsante Chiudi/Annulla.,usabilita:U0135,
 P3,altro,pending,Verificare pulsanti di almeno 44×44 pixel.,globale:T-0608,
 P3,altro,pending,Verificare punti d’incontro.,globale:T-1282,
@@ -2603,7 +2603,7 @@ P3,altro,pending,Verificare quali dati restano nel localStorage.,globale:T-1628,
 P3,altro,passed,Verificare Ranakpur.,globale:T-0375;usabilita:U0346,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P3,altro,passed,Verificare rate limiting.,globale:T-0633,QA 1.28.0: raffica di accessi errati bloccata con HTTP 429
 P3,altro,pending,Verificare recupero corretto.,usabilita:U0233,
-P3,altro,passed,Verificare redirect da HTTP a HTTPS.,globale:T-1518,"HTTP reale 301 verso HTTPS ufficiale; destinazione 200 e certificato valido"
+P3,altro,passed,Verificare redirect da HTTP a HTTPS.,globale:T-1518,Richiesta reale HTTP al dominio ufficiale: `301 Moved Permanently` con `Location: https://viaggio-in-thailandia-2026.pages.dev/`; destinazione HTTPS 200 e certificato valido.
 P3,altro,pending,Verificare REV 1.21.5.,globale:T-0320,
 P3,altro,pending,Verificare ricerca inversa.,usabilita:U0239,
 P3,altro,passed,Verificare richieste Range 206.,globale:T-0925,QA 1.29.0: lettura Range attraversa due parti e restituisce HTTP 206
@@ -2654,9 +2654,9 @@ P3,altro,pending,"Verificare troncamento e pulsante “Leggi tutto”, se necess
 P3,altro,pending,Verificare Udaipur.,globale:T-0379,
 P3,altro,pending,Verificare URL precedente non più funzionante.,globale:T-0492,
 P3,altro,pending,Verificare utilizzo singolo.,usabilita:U0380,
-P3,altro,passed,Verificare VAPID_PUBLIC_KEY.,globale:T-1521,Static 264/264 vapid-secret-boundary: endpoint push/config restituisce esclusivamente VAPID_PUBLIC_KEY
+P3,altro,passed,Verificare VAPID_PUBLIC_KEY.,globale:T-1521,Static 264/264 `vapid-secret-boundary`: endpoint `push/config` restituisce esclusivamente `VAPID_PUBLIC_KEY`.
 P3,altro,pending,Verificare Varanasi.,globale:T-0380,
-P3,altro,passed,Verificare variabile GROUP_CODE.,globale:T-1522,Build 1.48.57: GROUP_CODE resta binding server e il valore non entra in sorgente o bundle client
+P3,altro,passed,Verificare variabile GROUP_CODE.,globale:T-1522,Build 1.48.57: `GROUP_CODE` resta binding server e il valore non entra in sorgente o bundle client.
 P3,altro,pending,Verificare zoom testo 200%.,globale:T-0613,
 P3,altro,passed,Verificare zoom.,usabilita:U0344,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P3,altro,pending,versione corretta;,globale:T-1768,
@@ -2674,7 +2674,7 @@ P3,altro,passed,X-Content-Type-Options: nosniff.,globale:T-1484,production-smoke
 P3,altro,pending,ZIP completo.,globale:T-1727,
 P3,altro,pending,ZIP dei contenuti.,globale:T-0276,
 P3,documenti,pending,Biglietti collegati alle giornate.,globale:T-0236,
-P3,documenti,passed,Calcolare consumo giornaliero previsto.,globale:T-1523,"operational-capacity-plan 4/4: 95.480 richieste/giorno inclusa riserva di 8.000 azioni e 74.432.498 byte di media/giorno nel profilo prudenziale"
+P3,documenti,passed,Calcolare consumo giornaliero previsto.,globale:T-1523,`operational-capacity-plan` 4/4: 95.480 richieste/giorno inclusa riserva di 8.000 azioni e 74.432.498 byte di media/giorno nel profilo prudenziale.
 P3,documenti,pending,Confrontare gli orari con i biglietti ferroviari reali.,globale:T-1263,
 P3,documenti,pending,Confrontare le date con i biglietti aerei reali.,globale:T-1264,
 P3,documenti,pending,Verificare comportamento previsto.,usabilita:U0048;usabilita:U0129,
@@ -2683,21 +2683,21 @@ P3,itinerario,pending,Aggiungere hotel e punti di incontro.,globale:T-0183,
 P3,itinerario,pending,Android con Chrome aggiornato.,globale:T-1078,
 P3,itinerario,pending,Apertura della giornata corrente.,globale:T-1200,
 P3,itinerario,pending,Aprire “Aggiungi ricordo” direttamente dall’itinerario.,usabilita:U0181,
-P3,itinerario,passed,Aprire il giorno 5 dell’itinerario.,globale:T-0691,"QA Thailandia 1.48.62 WebKit: tutte le 11 giornate aperte con gesto touch; giorno 5 visibile con foto, testo, percorso, mezzo, checklist e minimappa; ui-navigation 5/5 applicabili."
+P3,itinerario,passed,Aprire il giorno 5 dell’itinerario.,globale:T-0691,"QA Thailandia 1.48.62 WebKit: giorno 5 aperto con foto, testo, percorso, mezzo, checklist e minimappa."
 P3,itinerario,passed,Aprire ogni giornata.,usabilita:U0317,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
-P3,itinerario,passed,Aprire ogni singola giornata.,globale:T-0382,"QA Thailandia 1.48.62 WebKit: 11/11 giornate aperte singolarmente con gesto touch e una sola scheda attiva; foto e contenuti caricati; ui-navigation 5/5."
-P3,itinerario,passed,Aprire una giornata specifica.,globale:T-1395,"QA Thailandia 1.48.62 WebKit: selezione diretta di ciascuna delle 11 giornate, una sola scheda attiva e contenuto coerente; ui-navigation 5/5."
+P3,itinerario,passed,Aprire ogni singola giornata.,globale:T-0382,"QA Thailandia 1.48.62 WebKit: 11/11 giornate aperte con gesto touch, una sola scheda attiva e contenuti caricati."
+P3,itinerario,passed,Aprire una giornata specifica.,globale:T-1395,QA Thailandia 1.48.62 WebKit: selezione diretta di ciascuna delle 11 giornate con contenuto coerente.
 P3,itinerario,passed,Aprire Viaggio.,usabilita:U0315,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P3,itinerario,passed,Chiudere ogni giornata.,usabilita:U0318,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P3,itinerario,pending,Confrontare ogni giornata con il programma definitivo dell’agenzia.,globale:T-1265,
-P3,itinerario,passed,Consultare itinerario.,globale:T-0539,"QA Thailandia 1.48.62 WebKit: Viaggio apre e rende consultabili 11/11 giornate con foto, testo, distanze, mezzi e mappe; ui-navigation 5/5."
-P3,itinerario,passed,Consultazione itinerario.,globale:T-1211,"QA Thailandia 1.48.62 WebKit: consultazione touch completa di 11/11 giornate e ritorno dal percorso conservando il punto; ui-navigation 5/5."
-P3,itinerario,passed,Controllo itinerario.,globale:T-1213,"QA Thailandia 1.48.62 WebKit: 11/11 giornate con contenuti obbligatori e otto tappe mappa navigate; ui-navigation 5/5 applicabili."
+P3,itinerario,passed,Consultare itinerario.,globale:T-0539,QA Thailandia 1.48.62 WebKit: consultazione completa di 11/11 giornate; ui-navigation 5/5 applicabili.
+P3,itinerario,passed,Consultazione itinerario.,globale:T-1211,QA Thailandia 1.48.62 WebKit: 11/11 giornate consultabili e ritorno al punto conservato.
+P3,itinerario,passed,Controllo itinerario.,globale:T-1213,QA Thailandia 1.48.62 WebKit: contenuti di 11 giornate e otto tappe mappa navigati; 5/5 applicabili.
 P3,itinerario,pending,Definire cosa accade al termine del viaggio.,globale:T-1339,
 P3,itinerario,pending,Definire il periodo di conservazione dei dati dopo il viaggio.,globale:T-0049,
 P3,itinerario,pending,giornata corretta;,usabilita:U0591,
 P3,itinerario,pending,Hotel e prenotazioni.,globale:T-0258,
-P3,itinerario,passed,itinerario della giornata;,globale:T-1757,"QA Thailandia 1.48.62 WebKit: ogni giornata espone partenza, arrivo, distanza, mezzo, obiettivo, checklist, minimappa e comando Percorso; 11/11."
+P3,itinerario,passed,itinerario della giornata;,globale:T-1757,"QA Thailandia 1.48.62 WebKit: ogni giornata mostra partenza, arrivo, distanza, mezzo, obiettivo, checklist, minimappa e Percorso."
 P3,itinerario,pending,Link esterno → giornata → indietro.,globale:T-1415,
 P3,itinerario,pending,Mantenere sempre disponibili itinerario ed emergenze.,globale:T-1648,
 P3,itinerario,pending,Prima del viaggio.,usabilita:U0114,
@@ -2705,8 +2705,8 @@ P3,itinerario,pending,Provare una data precedente al viaggio.,usabilita:U0185,
 P3,itinerario,pending,Provare una data successiva al viaggio.,usabilita:U0186,
 P3,itinerario,pending,Quota massima per giornata.,globale:T-0173,
 P3,itinerario,pending,Ricerca per giornata.,globale:T-1699,
-P3,itinerario,passed,Ritorno al programma della giornata.,globale:T-1236,"QA Thailandia 1.48.62 WebKit: dal percorso del giorno 7 il ritorno riapre la medesima giornata e ripristina lo scorrimento entro 2 px."
-P3,itinerario,passed,Scorrere a metà giornata.,globale:T-1402,"QA Thailandia 1.48.62 WebKit: scorrimento touch fino ai contenuti e alle fotografie di tutte le 11 giornate, inclusa conservazione della posizione al ritorno."
+P3,itinerario,passed,Ritorno al programma della giornata.,globale:T-1236,QA Thailandia 1.48.62 WebKit: dal percorso del giorno 7 ritorno alla stessa scheda e allo stesso scroll.
+P3,itinerario,passed,Scorrere a metà giornata.,globale:T-1402,QA Thailandia 1.48.62 WebKit: scorrimento touch attraverso i contenuti di tutte le giornate e posizione conservata al ritorno.
 P3,itinerario,pending,Selezionare ogni giornata dal 10 al 23 agosto.,usabilita:U0176,
 P3,itinerario,pending,Tutti controllano l’itinerario.,globale:T-1734,
 P3,itinerario,pending,Verificare assegnazione alla giornata corretta.,globale:T-0936,
@@ -2721,39 +2721,39 @@ P3,itinerario,pending,Verificare giornata associata.,usabilita:U0102,
 P3,itinerario,pending,Verificare giornata corretta.,usabilita:U0134,
 P3,itinerario,pending,Verificare giornata già selezionata.,usabilita:U0182,
 P3,itinerario,pending,Verificare indirizzo completo di ogni hotel.,globale:T-1274,
-P3,itinerario,passed,Verificare mantenimento della giornata.,globale:T-0986;usabilita:U0184,"QA Thailandia 1.48.62 WebKit: percorso del giorno 7 e ritorno mantengono giorno selezionato e posizione di scorrimento entro 2 px."
+P3,itinerario,passed,Verificare mantenimento della giornata.,globale:T-0986;usabilita:U0184,QA Thailandia 1.48.62 WebKit: giorno 7 e posizione di scorrimento conservati al ritorno dal percorso entro 2 px. | QA Thailandia 1.48.62 WebKit: ritorno dal percorso conserva giorno 7 e scroll originario entro 2 px.
 P3,itinerario,pending,Verificare nome esatto di ogni hotel.,globale:T-1275,
-P3,itinerario,passed,Verificare ogni itinerario giornaliero.,globale:T-0194,"QA Thailandia 1.48.62 WebKit: 11/11 itinerari aperti e verificati per foto, testo, km, mezzo, obiettivo, checklist, minimappa e comandi."
-P3,itinerario,passed,Verificare stessa giornata e stesso punto.,globale:T-1407,"QA Thailandia 1.48.62 WebKit: ritorno dal percorso conserva giorno 7 e scroll originario con scarto massimo 2 px."
+P3,itinerario,passed,Verificare ogni itinerario giornaliero.,globale:T-0194,"QA Thailandia 1.48.62 WebKit: 11/11 itinerari aperti e verificati per foto, testo, km, mezzo, obiettivo, checklist e minimappa."
+P3,itinerario,passed,Verificare stessa giornata e stesso punto.,globale:T-1407,QA Thailandia 1.48.62 WebKit: ritorno dal percorso conserva giorno 7 e scroll con scarto massimo 2 px.
 P3,itinerario,pending,Verificare telefono di ogni hotel.,globale:T-1284,
 P3,itinerario,passed,Verificare tutte le 14 giornate.,globale:T-0378;usabilita:U0316,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P3,itinerario,passed,Viaggio.,usabilita:U0078,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
-P3,mappe-posizione,passed,Avviare Naviga.,globale:T-0693,"QA Thailandia 1.48.62 WebKit: tocco su Google Maps apre percorso con origine e destinazione della tappa selezionata; ritorno conserva giornata e mappa, 2/2."
-P3,mappe-posizione,passed,Navigazione verso una tappa.,globale:T-1226,"QA Thailandia 1.48.62 WebKit: Google Maps riceve origine/destinazione corrette del giorno 5; al ritorno la tappa resta selezionata."
-P3,mappe-posizione,passed,Nessuna perdita del punto di navigazione.,globale:T-1227,"QA Thailandia 1.48.62 WebKit: ritorno da Google Maps e simulazione Internet assente conservano giorno, mappa e selezione; 2/2."
-P3,mappe-posizione,passed,Premere Naviga.,usabilita:U0358,"QA Thailandia 1.48.62 WebKit mobile: gesto touch sul collegamento Google Maps apre il percorso della tappa; 2/2."
-P3,mappe-posizione,passed,Utilizzare Naviga.,globale:T-0504,"QA Thailandia 1.48.62 WebKit: apertura percorso esterno, coordinate logiche e ritorno all'app senza reset; 2/2."
-P3,mappe-posizione,passed,Verificare fallback “Copia link” quando navigator.share non è disponibile.,globale:T-0982,"QA Thailandia 1.48.62 WebKit: collegamento copiato senza navigator.share apre su un secondo telefono la stessa giornata, senza parametro QA; 1/1."
-P3,mappe-posizione,passed,Verificare navigazione da tastiera.,globale:T-0605,"QA Thailandia 1.48.62 WebKit: focus e Invio aprono prima Mappa e poi Google Maps; destinazione esterna caricata correttamente, ui-google-maps-return 3/3."
+P3,mappe-posizione,passed,Avviare Naviga.,globale:T-0693,QA Thailandia 1.48.62 WebKit: gesto touch apre Google Maps con origine e destinazione della tappa; 2/2.
+P3,mappe-posizione,passed,Navigazione verso una tappa.,globale:T-1226,QA Thailandia 1.48.62 WebKit: Google Maps riceve origine/destinazione corrette del giorno 5 e la tappa resta selezionata.
+P3,mappe-posizione,passed,Nessuna perdita del punto di navigazione.,globale:T-1227,"QA Thailandia 1.48.62 WebKit: ritorno da Google Maps, anche non disponibile, conserva giorno, mappa e selezione; 2/2."
+P3,mappe-posizione,passed,Premere Naviga.,usabilita:U0358,QA Thailandia 1.48.62 WebKit mobile: gesto touch sul collegamento Google Maps apre la tappa e il ritorno conserva la mappa; 2/2.
+P3,mappe-posizione,passed,Utilizzare Naviga.,globale:T-0504,QA Thailandia 1.48.62 WebKit: percorso Google Maps aperto e ritorno all'app senza reset; 2/2.
+P3,mappe-posizione,passed,Verificare fallback “Copia link” quando navigator.share non è disponibile.,globale:T-0982,QA Thailandia 1.48.62 WebKit: URL copiato apre sul secondo telefono la stessa giornata ed esclude il parametro QA; 1/1.
+P3,mappe-posizione,passed,Verificare navigazione da tastiera.,globale:T-0605,QA Thailandia 1.48.62 WebKit: focus e Invio aprono Mappa e Google Maps; ui-google-maps-return 3/3.
 P3,media-upload,pending,aggiornare immediatamente tutte le schermate coinvolte;,addendum:A0259,
 P3,media-upload,pending,Arresto immediato.,globale:T-0201,
 P3,media-upload,pending,Chiusura modale mediante tastiera.,globale:T-1059,
 P3,media-upload,pending,consumo MEDIA;,globale:T-1113,
-P3,media-upload,passed,Errore archivio MEDIA.,globale:T-1544,upload-failure-compensation 2/2: errore MEDIA non registra la parte e il retry completa senza duplicati
-P3,media-upload,passed,Non devono esistere file nell’archivio MEDIA senza riferimento.,globale:T-1012,upload-failure-compensation 2/2 + manutenzione: scrittura D1 fallita elimina subito la parte MEDIA e gli upload scaduti vengono rimossi
-P3,media-upload,passed,Proteggere Cloudflare D1 e MEDIA da consumi anomali.,globale:T-1056,"media-quota 3/3 + QA reale 2x310 MB respinto HTTP 413: rate limit init/parti; massimo 6 upload attivi; quota 1 GB attiva; 600 MB per post; scadenza 48 ore"
+P3,media-upload,passed,Errore archivio MEDIA.,globale:T-1544,`upload-failure-compensation` 2/2: errore MEDIA non registra la parte e il retry completa senza duplicati.
+P3,media-upload,passed,Non devono esistere file nell’archivio MEDIA senza riferimento.,globale:T-1012,`upload-failure-compensation` 2/2 + manutenzione: scrittura D1 fallita elimina subito la parte MEDIA e gli upload scaduti vengono rimossi.
+P3,media-upload,passed,Proteggere Cloudflare D1 e MEDIA da consumi anomali.,globale:T-1056,"`media-quota` 3/3 + QA reale: due upload completati da 310 MB respinti insieme con HTTP 413; rate limit init/parti, massimo 6 upload attivi, quota 1 GB attiva, 600 MB per post, scadenza 48 ore."
 P3,media-upload,pending,quali tasti sono immediatamente disponibili;,addendum:A0313,
 P3,media-upload,pending,Ruotare immediatamente qualsiasi segreto eventualmente esposto.,globale:T-1503,
 P3,media-upload,pending,test dei formati multimediali;,globale:T-0014,
-P3,media-upload,passed,Verificare binding MEDIA corretto.,globale:T-1509,"deployment-boundaries 4/4 + audit remoto: KV ufficiale e QA distinti; Worker usa solo env.MEDIA; ID assenti dal client"
+P3,media-upload,passed,Verificare binding MEDIA corretto.,globale:T-1509,"`deployment-boundaries` 4/4 + audit remoto: KV ufficiale `1c59ca1f…7284`, KV QA `6e21cccc…c75b`; Worker usa solo `env.MEDIA`; ID assenti dal client."
 P3,media-upload,pending,Verificare blocco immediato.,globale:T-1617,
 P3,media-upload,passed,Verificare comparsa immediata nel feed.,usabilita:U0020,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P3,media-upload,passed,Verificare comparsa immediata.,usabilita:U0261,"Playwright Galaxy S9+ su tre contesti: viaggiatore, familiare e pubblico; identità ospite server, like aggiunto/rimosso, commento creato/modificato/eliminato, sync automatica e comandi proprietà; preview c9d82d89; 2026-08-04"
 P3,media-upload,pending,Verificare la tappa intermedia di Ranakpur.,globale:T-0192,
-P3,media-upload,passed,Verificare limiti dell’archivio MEDIA.,globale:T-1513,"media-quota 3/3 + QA reale 2x310 MB respinto HTTP 413: documento 80 MB; foto/audio 120 MB; video 500 MB; post 600 MB; upload attivi 1 GB"
+P3,media-upload,passed,Verificare limiti dell’archivio MEDIA.,globale:T-1513,`media-quota` 3/3 + QA reale 2×310 MB respinto con HTTP 413: documento 80 MB; foto/audio 120 MB; video 500 MB; post 600 MB; upload attivi 1 GB.
 P3,media-upload,pending,Verificare ordinamento corretto mediante timestamp server.,globale:T-0804,
 P3,media-upload,pending,Verificare ordinamento dei post mediante ora server.,globale:T-0944,
-P3,media-upload,passed,Verificare protezione mediante CSP frame-ancestors.,globale:T-1491,deployment-boundaries 4/4: sito limitato a self e API a none; embedding esterno bloccato
+P3,media-upload,passed,Verificare protezione mediante CSP frame-ancestors.,globale:T-1491,`deployment-boundaries` 4/4: sito limitato a `self` e API a `none`; embedding esterno bloccato.
 P3,media-upload,passed,Verificare rifiuto immediato.,addendum:A0103,Playwright stale commands rejected 403; preview a4b05356; 2026-08-04
 P3,social,passed,“Pubblicato” significhi record e allegati confermati dal server;,addendum:A0392,"Playwright Galaxy S9+: invito e sessione server, modale sopra barra, pulsante raggiungibile, stato disabilitato/invio, doppio clic=una richiesta, HTTP 201 e record confermato; preview 9913ac2c; 2026-08-04"
 P3,social,passed,"A pubblica, B riceve.",usabilita:U0555,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
@@ -2825,13 +2825,13 @@ P3,social,passed,riceve soltanto campi pubblici;,addendum:A0141,Authenticated re
 P3,social,pending,se è Pubblico;,addendum:A0427,
 P3,social,pending,"Se non può pubblicare, non mostrare il compositore come attivo.",usabilita:U0481,
 P3,social,passed,Selettore Pubblico.,globale:T-0074,QA 1.31.0: contenuto Pubblico visibile senza identita
-P3,social,pending,"Separare chiaramente versione sorgente, versione compilata e versione pubblicata.",globale:T-0010,
+P3,social,passed,"Separare chiaramente versione sorgente, versione compilata e versione pubblicata.",globale:T-0010,"REV 1.48.63 allineata in sorgente, package, bundle, Service Worker e due deployment Cloudflare verificati. | REV 1.48.63: package, interfaccia e Service Worker allineati; commit e URL immutabili registrano la build pubblicata."
 P3,social,passed,Stabilire in modo definitivo chi può pubblicare.,usabilita:U0001,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P3,social,pending,Tentare di pubblicare.,usabilita:U0619,
 P3,social,passed,Toccare Pubblica.,usabilita:U0131,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P3,social,pending,Tutti pubblicano un post di prova.,globale:T-1739,
 P3,social,passed,un utente può pubblicare come un’altra persona;,usabilita:U0689,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
-P3,social,passed,Verificare che soltanto la chiave pubblica VAPID sia inviata al browser.,globale:T-1504,Static 264/264 vapid-secret-boundary: push/config espone public_key e nessun campo o riferimento alla chiave privata
+P3,social,passed,Verificare che soltanto la chiave pubblica VAPID sia inviata al browser.,globale:T-1504,Static 264/264 `vapid-secret-boundary`: `push/config` espone `public_key` e nessun campo o riferimento alla chiave privata.
 P3,social,pending,Verificare rimozione dei metadati sensibili dalle copie pubbliche.,globale:T-1438,
 P3,social,pending,Verificare soltanto contenuti pubblici.,usabilita:U0094,
 P3,social,pending,Visualizzare la Bacheca pubblica.,usabilita:U0613,
@@ -2845,5 +2845,5 @@ P3,usabilita-mobile,pending,Ruotare il telefono durante la visualizzazione.,glob
 P3,usabilita-mobile,pending,spiegazione di chi può visualizzarli;,addendum:A0370,
 P3,usabilita-mobile,pending,Visualizzare ambasciata italiana.,globale:T-1195,
 P3,usabilita-mobile,pending,Visualizzare hotel della giornata.,globale:T-1197,
-P3,usabilita-mobile,passed,Visualizzare l’itinerario.,usabilita:U0614,"QA pubblica Thailandia 1.48.62 WebKit: visitatore senza password apre Viaggio e consulta tutte le 11 giornate; ui-navigation 5/5 applicabili."
+P3,usabilita-mobile,passed,Visualizzare l’itinerario.,usabilita:U0614,QA pubblica Thailandia 1.48.62 WebKit: visitatore senza password consulta tutte le 11 giornate.
 P3,usabilita-mobile,pending,Visualizzare numero dell’assicurazione.,globale:T-1198,

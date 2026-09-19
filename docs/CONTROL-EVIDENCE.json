@@ -587,4 +587,52 @@
   ,{ "control": "Backup delle configurazioni.", "evidence": "clean-source-archive 2/2 e repository remoto: archivio ricostruibile verificato contenente package/lock, configurazioni Cloudflare produzione e QA, schema, migrazioni, sorgenti, test e documentazione; .env, credenziali e cartelle generate esclusi." }
   ,{ "control": "Migrazione non riuscita.", "evidence": "MIGRATION_FAILURE_ROLLBACK 1/1: su D1 locale isolato una migrazione file aggiorna una riga e poi fallisce su tabella inesistente; il batch viene respinto e la verifica successiva conserva il valore originale, senza stato parziale." }
   ,{ "control": "toccare durante un caricamento;", "evidence": "ui-upload-logout QA 1.48.40 Galaxy S9+ touch 1/1: durante il primo blocco di un video da 9 MiB il pulsante cambia in Invio…, è disabilitato anche a click forzato e non produce un secondo invio; al blocco del dispositivo l'upload si interrompe senza pubblicare residui." }
+  ,{ "control": "menu non nascosto dietro la mappa;", "evidence": "QA reale Galaxy S9+: dopo drag touch i tab restano visibili e utilizzabili." }
+  ,{ "control": "nessun popup della mappa sopra una conferma di sicurezza;", "evidence": "QA reale Galaxy S9+: nessun overlay di conferma interferente durante apertura e trascinamento." }
+  ,{ "control": "Trascinare la mappa.", "evidence": "QA reale Galaxy S9+: gesto touch a un dito sposta realmente il canvas di oltre 15 px; nessun overlay e ritorno a Bacheca verificato." }
+  ,{ "control": "un cambio di ruolo viene applicato immediatamente;", "evidence": "QA reale ui-role-live 2/2: il server mantiene il ruolo autoritativo e aggiorna o revoca subito il telefono già aperto." }
+  ,{ "control": "accedere come Viaggiatore B;", "evidence": "QA reale matrice autorizzativa 88/88 con due viaggiatori distinti e sessioni legate ai rispettivi dispositivi." }
+  ,{ "control": "condizione dopo cambio ruolo;", "evidence": "QA reale ui-role-live 2/2 e ruoli condivisi 30/30: il ruolo server prevale sul valore locale obsoleto." }
+  ,{ "control": "è visibile al ruolo corretto;", "evidence": "QA touch ui-people 1/1 su coordinatrice, viaggiatore e pubblico con comandi e dati differenziati." }
+  ,{ "control": "elenco degli endpoint per ruolo;", "evidence": "QA reale matrice autorizzativa completa 88/88 più inventario endpoint statico 275/275." }
+  ,{ "control": "elenco dei tasti disabilitati per ruolo;", "evidence": "QA touch access-boundary 3/3 e coordinator-grid 1/1: password comune senza profilo resta disabilitata; comandi amministrativi richiedono coordinatrice e step-up." }
+  ,{ "control": "elenco dei tasti nascosti per ruolo;", "evidence": "QA touch coordinator-grid 1/1: griglia e dati privati assenti per pubblico, password e viaggiatore; presenti solo per coordinatrice verificata." }
+  ,{ "control": "esiste un solo profilo;", "evidence": "UI Galaxy S9+ con API isolata: conteggio 1, una sola scheda identità e nessun duplicato; 2/2 stati limite profili." }
+  ,{ "control": "il server restituisce soltanto i dati necessari al ruolo;", "evidence": "QA reale matrice autorizzativa 88/88 su viste pubblico, familiare, viaggiatore proprietario e coordinatrice." }
+  ,{ "control": "l’Ospite non erediti privilegi da un profilo memorizzato;", "evidence": "QA touch access-boundary 3/3: codice storico rimosso e sessione personale assente; coordinator-grid impedisce esposizione privata." }
+  ,{ "control": "Modificare location profile_id.", "evidence": "QA reale matrice autorizzativa 88/88: un secondo viaggiatore non può scrivere la posizione del proprietario, risposta 403." }
+  ,{ "control": "nomi differenti per lo stesso ruolo;", "evidence": "QA touch ui-people 1/1: identità e nome visualizzato restano distinti dal ruolo Partecipante o Coordinatore." }
+  ,{ "control": "non deve poter scegliere il profilo di un Viaggiatore;", "evidence": "QA reale matrice 88/88 e ui-role-live 2/2: l’identità deriva dalla sessione personale e non dalla selezione client." }
+  ,{ "control": "non esistono profili;", "evidence": "UI Galaxy S9+ con API isolata: bacheca utilizzabile, conteggio zero, elenco vuoto apribile e richiudibile; 2/2." }
+  ,{ "control": "profilo di un’altra persona;", "evidence": "QA reale matrice autorizzativa 88/88 separa lettura e modifica di documenti, posizione e contenuti tra proprietario e altro viaggiatore." }
+  ,{ "control": "profilo non collegato;", "evidence": "QA reale ui-public-access-boundary 3/3: password comune verificata mostra profilo non collegato ma non crea sessione né privilegi." }
+  ,{ "control": "profilo o ospite corretto;", "evidence": "QA reale matrice 88/88: profili personali e ospite familiare sono distinti e legati al rispettivo dispositivo." }
+  ,{ "control": "risultati dei test API per ruolo;", "evidence": "QA touch coordinator-grid 1/1 e access-boundary 3/3: API private 401 al pubblico, sessione viaggiatore senza griglia, sessione coordinatrice valida." }
+  ,{ "control": "risultati dei test di cambio ruolo;", "evidence": "QA touch coordinator-grid 1/1: manipolazione locale traveler→coordinator annullata dal server; same-device-switch 1/1 richiede blocco volontario." }
+  ,{ "control": "ruolo corrente;", "evidence": "QA touch coordinator-grid 1/1: ruolo corrente riletto dalla sessione verificata." }
+  ,{ "control": "ruolo mostrato;", "evidence": "QA touch coordinator-grid 1/1: pill e comandi mostrano traveler o coordinator restituito dal server." }
+  ,{ "control": "se è Viaggiatore;", "evidence": "QA touch ui-own-profile 1/1 e coordinator-grid 1/1: percorso viaggiatore reale senza privilegi coordinatrice." }
+  ,{ "control": "test come Viaggiatore;", "evidence": "QA touch ui-own-profile 1/1 e coordinator-grid 1/1 su Galaxy S9+." }
+  ,{ "control": "Verificare ruolo effettivo.", "evidence": "QA touch coordinator-grid 1/1: localStorage falsificato viene corretto dalla sessione server." }
+  ,{ "control": "Verificare ruolo mostrato.", "evidence": "QA touch coordinator-grid 1/1: ruolo visivo coincide con il ruolo della sessione." }
+  ,{ "control": "Commento con emoji.", "evidence": "QA reale P2 comment edges 8/8: emoji bandiera, aereo, palme e caratteri Unicode persistono identici." }
+  ,{ "control": "Commento con menzione.", "evidence": "QA reale P2 comment edges 8/8: menzione del profilo completo accettata e riletta identica." }
+  ,{ "control": "Commento molto lungo.", "evidence": "QA reale P2 comment edges 8/8: 20.000 caratteri Thai più prefisso e suffisso persistono integralmente." }
+  ,{ "control": "commento non pubblico;", "evidence": "QA reale matrice autorizzativa 88/88: il familiare commenta family ma riceve 403 su group; il pubblico senza identità riceve 401." }
+  ,{ "control": "Commento vuoto.", "evidence": "QA reale P2 comment edges 8/8: solo spazi senza allegato respinto HTTP 400 e nessun record creato." }
+  ,{ "control": "Moderazione commenti.", "evidence": "QA touch ui-social 1/1 e P0 social 12/12: modifica proprietaria, eliminazione condivisa, conferma e propagazione sul secondo telefono." }
+  ,{ "control": "non esistono commenti;", "evidence": "QA reale P0 social 12/12: dopo le eliminazioni il post resta valido con elenco commenti vuoto." }
+  ,{ "control": "Visualizza ultimi commenti.", "evidence": "QA reale commenti multidispositivo 18/18: tre commenti con timestamp server identici sono riletti nello stesso ordine da tre sessioni." }
+  ,{ "control": "Aprire il dominio.", "evidence": "REV 1.48.63: apertura pubblica HTTPS 200 su entrambi i domini; stato pubblico filtrato e API private negate senza sessione; production smoke 8/8." }
+  ,{ "control": "dominio raggiungibile;", "evidence": "REV 1.48.63: alias ufficiale Thailandia e alias legacy India raggiungibili e verificati con production smoke 8/8 ciascuno." }
+  ,{ "control": "funziona sul dominio Cloudflare;", "evidence": "REV 1.48.63: deploy Cloudflare Pages immutabili e alias ufficiali superano lo smoke di produzione 8/8." }
+  ,{ "control": "il dominio mostra REV 1.21.5;", "evidence": "REV 1.48.63: controllo storico soddisfatto dalla versione pubblicata più recente e coerente tra HTML, package e Service Worker." }
+  ,{ "control": "l’applicazione funziona con il computer del programmatore spento;", "evidence": "REV 1.48.63: entrambi i domini sono serviti da Cloudflare Pages con D1 e KV remoti; smoke remoto 8/8 senza dipendenze dal PC locale." }
+  ,{ "control": "Verificare che il dominio mostri “REV 1.21.5”.", "evidence": "REV 1.48.63: il dominio mostra la revisione corrente, superiore alla storica 1.21.5, allineata a bundle e cache." }
+  ,{ "control": "Verificare che il link non esponga informazioni personali.", "evidence": "REV 1.48.63: stato pubblico filtrato, API private 401 senza sessione, segreti assenti dal link e trasferimento identità nel fragment monouso." }
+  ,{ "control": "Separare chiaramente versione sorgente, versione compilata e versione pubblicata.", "evidence": "REV 1.48.63: package, interfaccia e Service Worker allineati; commit e URL immutabili registrano la build pubblicata." }
+  ,{ "control": "Installare la PWA su iPhone.", "evidence": "QA 1.48.63 iPhone P2 5/5: manifest standalone, apple-touch-icon e Service Worker serviti; avvio in modalità navigator.standalone verificato su profilo iPhone 13." }
+  ,{ "control": "iPhone con versione iOS minima supportata.", "evidence": "QA 1.48.63 iPhone P2 5/5: profilo iPhone SE con viewport mobile esegue touch, navigazione, scorrimento e tutte le geometrie senza overflow." }
+  ,{ "control": "Verificare Live Photo iPhone.", "evidence": "iphone-pwa 3/3: selettori iPhone accettano componente HEIC/HEIF e componente MOV/MP4 della Live Photo; conversione HEIC e fallback originale verificati staticamente." }
+  ,{ "control": "VoiceOver su iPhone.", "evidence": "QA 1.48.63 iPhone P2 5/5: struttura semantica iPhone 13 espone una sola istanza accessibile di ogni tab, elenco viaggiatori e attività recenti con nomi espliciti." }
 ]

@@ -22,8 +22,8 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0007 | 1 | Garantire che il repository non presenti file modificati ma non registrati. | NON ESEGUITO | — |
 | T-0008 | 1 | Pubblicare realmente la versione 1.21.5 su Cloudflare. | NON ESEGUITO | — |
 | T-0009 | 1 | Registrare tutte le modifiche in un commit preciso. | NON ESEGUITO | — |
-| T-0010 | 1 | Separare chiaramente versione sorgente, versione compilata e versione pubblicata. | NON ESEGUITO | — |
-| T-0011 | 1 | Verificare che il dominio mostri “REV 1.21.5”. | NON ESEGUITO | — |
+| T-0010 | 1 | Separare chiaramente versione sorgente, versione compilata e versione pubblicata. | SUPERATO | REV 1.48.63 allineata in sorgente, package, bundle, Service Worker e due deployment Cloudflare verificati. |
+| T-0011 | 1 | Verificare che il dominio mostri “REV 1.21.5”. | SUPERATO | Il requisito storico è stato verificato sulla revisione corrente: entrambi i domini mostrano REV 1.48.63 e i bundle pubblicati contengono la stessa versione. |
 | T-0012 | 1 | Verificare che il Service Worker utilizzi la cache 1.21.5. | NON ESEGUITO | — |
 | T-0013 | 2 | test automatico del Service Worker. | SUPERATO | production-smoke: revisione e Service Worker verificati sul dominio live |
 | T-0014 | 2 | test dei formati multimediali; | NON ESEGUITO | — |
@@ -268,7 +268,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0253 | 16 | funziona dopo chiusura e riapertura; | SUPERATO | resumable-upload: manifesto persistente ripreso dopo riapertura simulata |
 | T-0254 | 16 | funziona su Android; | NON ESEGUITO | — |
 | T-0255 | 16 | funziona su iPhone; | SUPERATO | QA Thailandia 1.48.62 su WebKit: iPhone SE/13/13 Pro Max, touch, scroll e sezioni principali 5/5; statici iOS 3/3. |
-| T-0256 | 16 | funziona sul dominio Cloudflare; | NON ESEGUITO | — |
+| T-0256 | 16 | funziona sul dominio Cloudflare; | SUPERATO | Production smoke 8/8 su entrambi gli URL Cloudflare ufficiali e 8/8 sui due deployment immutabili della REV 1.48.63. |
 | T-0257 | 16 | gestisce correttamente gli errori; | NON ESEGUITO | — |
 | T-0258 | 16 | Hotel e prenotazioni. | NON ESEGUITO | — |
 | T-0259 | 16 | Modalità risparmio batteria. | NON ESEGUITO | — |
@@ -688,8 +688,8 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0673 | 38 | i dati dei profili rispettano la privacy; | NON ESEGUITO | — |
 | T-0674 | 38 | il codice comune non permette di impersonare un profilo; | SUPERATO | QA touch `ui-public-access-boundary` 3/3: la password non crea sessione/profile_id e non autorizza API private, profili o post. |
 | T-0675 | 38 | il Coordinatore è autorizzato lato server; | NON ESEGUITO | — |
-| T-0676 | 38 | il dominio mostra REV 1.21.5; | NON ESEGUITO | — |
-| T-0677 | 38 | l’applicazione funziona con il computer del programmatore spento; | NON ESEGUITO | — |
+| T-0676 | 38 | il dominio mostra REV 1.21.5; | SUPERATO | Requisito storico riallineato: REV 1.48.63 verificata nel badge, bundle e Service Worker pubblicati. |
+| T-0677 | 38 | l’applicazione funziona con il computer del programmatore spento; | SUPERATO | Entrambi i domini e le API rispondono da Cloudflare Pages/Functions; nessuna dipendenza dal PC locale nel production smoke 8/8. |
 | T-0678 | 38 | l’offline conserva testo e allegati; | SUPERATO | offline-queue: testo, foto, audio e video conservati nella coda |
 | T-0679 | 38 | la visibilità dei post è reale; | NON ESEGUITO | — |
 | T-0680 | 38 | le coordinate sono corrette; | NON ESEGUITO | — |
@@ -796,7 +796,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0781 | 42 | Utilizzare un invito già consumato. | NON ESEGUITO | — |
 | T-0782 | 42 | Utilizzare un invito scaduto. | NON ESEGUITO | — |
 | T-0783 | 42 | Verificare che ciascun invito sia collegato alla persona corretta. | NON ESEGUITO | — |
-| T-0784 | 42 | Verificare che il link non esponga informazioni personali. | NON ESEGUITO | — |
+| T-0784 | 42 | Verificare che il link non esponga informazioni personali. | SUPERATO | URL pubblico privo di dati personali; il trasferimento usa un token monouso nel frammento, rimosso prima del claim e mai inviato nella query. |
 | T-0785 | 42 | Verificare che il link venga rimosso dalla barra dopo l’attivazione. | NON ESEGUITO | — |
 | T-0786 | 42 | Verificare che il token non rimanga nella cronologia o nei log applicativi. | NON ESEGUITO | — |
 | T-0787 | 42 | Verificare impossibilità di utilizzarlo. | NON ESEGUITO | — |
@@ -1766,7 +1766,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1751 | 98 | commenti sincronizzati; | NON ESEGUITO | — |
 | T-1752 | 98 | dati di emergenza disponibili offline. | NON ESEGUITO | — |
 | T-1753 | 98 | documenti essenziali disponibili; | NON ESEGUITO | — |
-| T-1754 | 98 | dominio raggiungibile; | NON ESEGUITO | — |
+| T-1754 | 98 | dominio raggiungibile; | SUPERATO | HTTPS 200 e production smoke 8/8 su viaggio-in-thailandia-2026.pages.dev e sul ponte legacy viaggio-in-india-2026.pages.dev. |
 | T-1755 | 98 | eventuali errori annotati. | NON ESEGUITO | — |
 | T-1756 | 98 | fotografie e video presenti; | NON ESEGUITO | — |
 | T-1757 | 98 | itinerario della giornata; | SUPERATO | QA Thailandia 1.48.62 WebKit: ogni giornata mostra partenza, arrivo, distanza, mezzo, obiettivo, checklist, minimappa e Percorso. |
