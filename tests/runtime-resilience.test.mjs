@@ -51,10 +51,10 @@ test("K0: un aggiornamento non ricarica la pagina durante scrittura, registrazio
 });
 
 test("K1: la sincronizzazione riduce il polling e accelera soltanto su ritorno online o in primo piano", () => {
-  assert.equal(AUTHENTICATED_SYNC_INTERVAL_MS, 7_500);
-  assert.equal(PUBLIC_SYNC_INTERVAL_MS, 15_000);
-  assert.equal(PRIVATE_SYNC_INTERVAL_MS, 10_000);
-  assert.equal(SESSION_VERIFICATION_INTERVAL_MS, 60_000);
+  assert.equal(AUTHENTICATED_SYNC_INTERVAL_MS, 10_000);
+  assert.equal(PUBLIC_SYNC_INTERVAL_MS, 20_000);
+  assert.equal(PRIVATE_SYNC_INTERVAL_MS, 15_000);
+  assert.equal(SESSION_VERIFICATION_INTERVAL_MS, 120_000);
   assert.match(source, /effectiveSessionToken \? AUTHENTICATED_SYNC_INTERVAL_MS : PUBLIC_SYNC_INTERVAL_MS/);
   assert.match(source, /document\.removeEventListener\("visibilitychange", onReturn\);\s*};\s*}, \[effectiveSessionToken\]\);/);
   assert.match(source, /setInterval\(checkPrivateUpdates, PRIVATE_SYNC_INTERVAL_MS\)/);
@@ -63,4 +63,5 @@ test("K1: la sincronizzazione riduce il polling e accelera soltanto su ritorno o
   assert.match(source, /addEventListener\("online", checkVersion\)/);
   assert.match(source, /document\.addEventListener\("visibilitychange", onReturn\)/);
   assert.doesNotMatch(source, /setInterval\(checkVersion, 2500\)/);
+  assert.doesNotMatch(source, /silentRepair|setInterval\([\s\S]{0,300}\/health/);
 });

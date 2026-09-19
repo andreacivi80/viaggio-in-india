@@ -33,7 +33,7 @@ test("le rotte dinamiche e i controlli server critici restano esplicitamente cla
     read("docs/API-AUTHORIZATION-INVENTORY.json"),
   ]);
   const inventory = JSON.parse(rawInventory);
-  assert.equal(inventory.exact.length, 49);
+  assert.equal(inventory.exact.length, 50);
   assert.equal(inventory.dynamic.length, 5);
   for (const entry of [...inventory.exact, ...inventory.dynamic])
     assert.ok(entry.access && entry.access !== "unknown", `policy mancante per ${entry.path}`);
@@ -48,6 +48,7 @@ test("le rotte dinamiche e i controlli server critici restano esplicitamente cla
   assert.match(worker, /path === "security\/audit"[\s\S]*?session\.role !== "coordinator"/);
   assert.match(worker, /path === "auth\/admin-step-up"[\s\S]*?groupSecretMatches/);
   assert.match(worker, /path === "auth\/invites"[\s\S]*?requireAdminStepUp/);
+  assert.match(worker, /path === "auth\/transfer"[\s\S]*?sessionFromRequest[\s\S]*?session\.profile_id/);
   assert.match(worker, /path === "comments"[\s\S]*?sessionFromRequest[\s\S]*?guestFromRequest[\s\S]*?!session && !guest/);
   assert.match(worker, /path === "private"[\s\S]*?sessionFromRequest[\s\S]*?!session/);
   assert.match(worker, /path === "documents"[\s\S]*?ownsDocument[\s\S]*?coordinatorVerificationOnly/);

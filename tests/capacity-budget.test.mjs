@@ -26,9 +26,9 @@ test("il polling di 18 viaggiatori e 18 familiari conserva margine sul limite gr
   const familyRequests = periodicRequests(FAMILY_VIEWERS, PUBLIC_SYNC_INTERVAL_MS);
   const total = travelerRequests + familyRequests;
 
-  assert.equal(travelerRequests, 61_560);
-  assert.equal(familyRequests, 25_920);
-  assert.equal(total, 87_480);
+  assert.equal(travelerRequests, 44_280);
+  assert.equal(familyRequests, 19_440);
+  assert.equal(total, 63_720);
   assert.ok(
     total + ACTION_HEADROOM < WORKERS_FREE_REQUESTS_PER_DAY,
     `Il solo polling usa ${total} richieste e non lascia margine operativo`,
@@ -36,8 +36,8 @@ test("il polling di 18 viaggiatori e 18 familiari conserva margine sul limite gr
 });
 
 test("gli intervalli mantengono sincronizzazione frequente senza verifiche di sessione aggressive", () => {
-  assert.ok(AUTHENTICATED_SYNC_INTERVAL_MS <= 7_500);
-  assert.ok(PRIVATE_SYNC_INTERVAL_MS <= 10_000);
-  assert.ok(PUBLIC_SYNC_INTERVAL_MS <= 15_000);
-  assert.ok(SESSION_VERIFICATION_INTERVAL_MS >= 60_000);
+  assert.ok(AUTHENTICATED_SYNC_INTERVAL_MS <= 10_000);
+  assert.ok(PRIVATE_SYNC_INTERVAL_MS <= 15_000);
+  assert.ok(PUBLIC_SYNC_INTERVAL_MS <= 20_000);
+  assert.ok(SESSION_VERIFICATION_INTERVAL_MS >= 120_000);
 });

@@ -28,6 +28,11 @@
     },
     {
       "method": "POST",
+      "path": "auth/transfer",
+      "access": "device-bound-profile-session-own-profile"
+    },
+    {
+      "method": "POST",
       "path": "auth/claim",
       "access": "invite"
     },

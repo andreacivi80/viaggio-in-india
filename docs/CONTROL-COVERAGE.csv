@@ -1708,7 +1708,7 @@ P3,altro,pending,il tasto deve essere visibile;,addendum:A0026,
 P3,altro,passed,il tasto disabilitato non genera richieste;,addendum:A0173,"Playwright Galaxy S9+: invito e sessione server, modale sopra barra, pulsante raggiungibile, stato disabilitato/invio, doppio clic=una richiesta, HTTP 201 e record confermato; preview 9913ac2c; 2026-08-04"
 P3,altro,pending,il tasto non rimane permanentemente bloccato;,addendum:A0177,
 P3,altro,pending,il tasto torna utilizzabile dopo un errore;,addendum:A0176,
-P3,altro,pending,Impedire che un singolo utente esaurisca la quota.,globale:T-1534,
+P3,altro,passed,Impedire che un singolo utente esaurisca la quota.,globale:T-1534,"rate-limit per IP profilo e sessione su flussi costosi; polling 36 persone 63720/giorno; retry idempotenti non ricontati"
 P3,altro,passed,Impedire che un utente modifichi visitor_id dal browser.,globale:T-0063,QA 1.31.0: visitor_id falsificato non modifica l'identita server
 P3,altro,pending,impedire chiusura ambigua durante l’esecuzione;,addendum:A0257,
 P3,altro,pending,impedire conferma accidentale tramite doppio tocco;,addendum:A0255,
@@ -2195,7 +2195,7 @@ P3,altro,pending,Simboli matematici.,globale:T-0890,
 P3,altro,pending,Simulare errore bloccante.,globale:T-1174,
 P3,altro,pending,Simulare latenza di 2 secondi.,globale:T-0551,
 P3,altro,pending,Simulare perdita pacchetti.,globale:T-0552,
-P3,altro,pending,Simulare quota esaurita.,globale:T-0853,
+P3,altro,passed,Simulare quota esaurita.,globale:T-0853,"quota D1 scritture realmente esaurita 2026-09-18: log identificato; GET da 503 a 200 dopo hotfix read-only; scritture fail-closed"
 P3,altro,pending,Simulare telefono smarrito.,globale:T-1616,
 P3,altro,pending,Solo spazi.,globale:T-0891;globale:T-1301,
 P3,altro,passed,Solo testo.,usabilita:U0141,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
@@ -2521,8 +2521,8 @@ P3,altro,pending,Verificare latitudine.,globale:T-0507,
 P3,altro,pending,"Verificare licenza e attribuzione, se necessaria.",globale:T-1640,
 P3,altro,pending,Verificare limiti corretti.,usabilita:U0638,
 P3,altro,passed,Verificare limiti del primo e ultimo giorno.,usabilita:U0335,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
-P3,altro,pending,Verificare limiti delle Functions.,globale:T-1514,
-P3,altro,pending,Verificare limiti di D1.,globale:T-1515,
+P3,altro,passed,Verificare limiti delle Functions.,globale:T-1514,"limite Free 100000/giorno; modello 63720 periodiche e 71720 con azioni; margine 28.28%; health poll ridondante rimosso"
+P3,altro,passed,Verificare limiti di D1.,globale:T-1515,"limiti Free ufficiali verificati; quota write realmente raggiunta; hot path corretto per letture senza scritture"
 P3,altro,pending,Verificare linee aeree.,usabilita:U0347,
 P3,altro,pending,Verificare linee ferroviarie.,usabilita:U0348,
 P3,altro,pending,Verificare link del post preciso.,usabilita:U0266,
@@ -2593,7 +2593,7 @@ P3,altro,passed,Verificare preferiti.,globale:T-1609,"ui-favorites-sync Thailand
 P3,altro,pending,Verificare presenza della bozza e degli allegati.,globale:T-0556,
 P3,altro,pending,Verificare procedura di revoca e rigenerazione.,globale:T-0788,
 P3,altro,pending,Verificare procedura di revoca.,usabilita:U0415,
-P3,altro,pending,Verificare protezione dagli abusi.,globale:T-1517,
+P3,altro,passed,Verificare protezione dagli abusi.,globale:T-1517,"suite 284/284 + rate limit 13/13: IP profilo sessione; 429 Retry-After su auth commenti reazioni push upload e geocoding"
 P3,altro,pending,Verificare pulsante Chiudi/Annulla.,usabilita:U0135,
 P3,altro,pending,Verificare pulsanti di almeno 44×44 pixel.,globale:T-0608,
 P3,altro,pending,Verificare punti d’incontro.,globale:T-1282,

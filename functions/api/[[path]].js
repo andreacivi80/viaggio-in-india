@@ -1443,6 +1443,20 @@ export async function onRequest(context) {
       if (!name) return json({ error: "Inserisci il tuo nome" }, 400);
       if (name.length > 80 || surname.length > 80 || originCity.length > 100)
         return json({ error: "I dati inseriti sono troppo lunghi" }, 400);
+      if (surname) {
+        const duplicate = await env.DB.prepare(
+          `SELECT id FROM profiles
+           WHERE lower(trim(name))=lower(trim(?))
+             AND lower(trim(COALESCE(surname,'')))=lower(trim(?))
+             AND (?='' OR lower(trim(COALESCE(origin_city,'')))=lower(trim(?)))
+           LIMIT 1`,
+        ).bind(name, surname, originCity, originCity).first();
+        if (duplicate)
+          return json({
+            error: "Questo profilo esiste già. Recupera l’accesso dal vecchio link senza registrarti di nuovo.",
+            code: "PROFILE_EXISTS",
+          }, 409);
+      }
       const profileId = id();
       const createdAt = now();
       await env.DB.prepare(
@@ -1468,6 +1482,45 @@ export async function onRequest(context) {
         await env.DB.prepare("DELETE FROM profiles WHERE id=?").bind(profileId).run();
         throw error;
       }
+    }
+    if (request.method === "POST" && path === "auth/transfer") {
+      const session = await sessionFromRequest(request, env);
+      if (!session) return json({ error: "Sessione personale non valida" }, 401);
+      const limited = await rateLimit(env, request, "auth-transfer", 5, 600, session.profile_id, {
+        ip: 10,
+        actor: 5,
+        session: 5,
+      });
+      if (limited) return limited;
+      const profile = await env.DB.prepare(
+        "SELECT id,name,surname,role FROM profiles WHERE id=?",
+      ).bind(session.profile_id).first();
+      if (!profile) return json({ error: "Profilo non trovato" }, 404);
+      const token = secureToken();
+      const expiresAt = futureIso(1);
+      await env.DB.prepare(
+        "INSERT INTO profile_invites(token_hash,profile_id,created_by,created_at,expires_at,used_at) VALUES(?,?,?,?,?,NULL)",
+      ).bind(
+        await tokenHash(token),
+        profile.id,
+        profile.id,
+        now(),
+        expiresAt,
+      ).run();
+      await writeSecurityAudit(env, {
+        event_type: "profile_domain_transfer_created",
+        actor_profile_id: profile.id,
+        actor_role: profile.role,
+        device_id: session.device_id,
+        resource_type: "profile",
+        resource_id: profile.id,
+        result: "success",
+      });
+      return json({
+        invite_token: token,
+        expires_at: expiresAt,
+        profile,
+      }, 201);
     }
     if (request.method === "POST" && path === "auth/claim") {
       const limited = await rateLimit(env, request, "auth-claim", 20, 60);

@@ -1587,22 +1587,10 @@ function App() {
       checkVersion,
       effectiveSessionToken ? AUTHENTICATED_SYNC_INTERVAL_MS : PUBLIC_SYNC_INTERVAL_MS,
     );
-    const silentRepair = setInterval(async () => {
-      if (document.hidden || !navigator.onLine) return;
-      try {
-        const response = await fetch(`${API}/health`, { cache: "no-store" });
-        if (!response.ok) return;
-        const result = await response.json();
-        if (Number(result.version || 0) > syncVersionRef.current) await refresh();
-      } catch {
-        // Controllo di salute silenzioso: riprova senza disturbare l'utente.
-      }
-    }, 60000);
     addEventListener("online", checkVersion);
     document.addEventListener("visibilitychange", onReturn);
     return () => {
       clearInterval(timer);
-      clearInterval(silentRepair);
       removeEventListener("online", checkVersion);
       document.removeEventListener("visibilitychange", onReturn);
     };
@@ -1687,6 +1675,35 @@ function App() {
     // Il vecchio codice comune non deve sopravvivere nel dispositivo.
     // Dopo il collegamento resta soltanto la sessione personale revocabile.
     localStorage.removeItem("india-group-code");
+  }, []);
+  useEffect(() => {
+    if (location.hostname !== "viaggio-in-india-2026.pages.dev") return undefined;
+    const legacyToken = localStorage.getItem("india-session-token") || "";
+    if (!legacyToken) {
+      setQuickStatus("Su questo dispositivo non risulta un vecchio accesso da trasferire.");
+      return undefined;
+    }
+    let active = true;
+    const transferExistingProfile = async () => {
+      setQuickStatus("Collego il profilo esistente al nuovo link, senza duplicarlo…");
+      try {
+        const response = await fetch(`${API}/auth/transfer`, {
+          method: "POST",
+          cache: "no-store",
+          headers: sessionHeaders(legacyToken),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok) throw Error(result.error || "Trasferimento non riuscito");
+        if (!active) return;
+        location.replace(
+          `https://viaggio-in-thailandia-2026.pages.dev/#invite=${encodeURIComponent(result.invite_token)}`,
+        );
+      } catch (error) {
+        if (active) setQuickStatus(error.message || "Trasferimento non riuscito. Riprova.");
+      }
+    };
+    transferExistingProfile();
+    return () => { active = false; };
   }, []);
   useEffect(() => {
     let active = true;
@@ -2535,6 +2552,15 @@ function App() {
                 >
                   <CircleUserRound /> {(people.length === 0 ? bootstrapBusy : travelerRegisterBusy) ? "Collegamento…" : "Crea profilo e accedi"}
                 </button>
+                {location.hostname !== "viaggio-in-india-2026.pages.dev" && (
+                  <button
+                    type="button"
+                    className="secondary"
+                    onClick={() => location.assign("https://viaggio-in-india-2026.pages.dev/?transfer=1")}
+                  >
+                    Hai già un profilo? Recuperalo dal vecchio link
+                  </button>
+                )}
                 <small>La scelta resta memorizzata su questo dispositivo.</small>
               </div>
             ) : currentProfile && verifiedSessionToken ? (

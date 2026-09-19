@@ -38,8 +38,8 @@ const pushEventsDaily = TRAVELERS * 8;
 const pushDeliveriesDaily = pushEventsDaily * (TRAVELERS + FAMILY_VIEWERS - 1);
 
 test("T-1523/T-1525: il piano misura consumo giornaliero e per quattordici giorni", () => {
-  assert.equal(periodicDaily, 87_480);
-  assert.equal(expectedDailyRequests, 95_480);
+  assert.equal(periodicDaily, 63_720);
+  assert.equal(expectedDailyRequests, 71_720);
   assert.ok(expectedDailyRequests < WORKERS_DAILY_BUDGET);
   assert.equal(Math.round(expectedMediaDaily), 74_432_498);
   assert.equal(Math.round(expectedMediaFourteenDays), 1_042_054_965);
@@ -47,8 +47,8 @@ test("T-1523/T-1525: il piano misura consumo giornaliero e per quattordici giorn
 });
 
 test("T-1526/T-1532: sono esplicite richieste per utente e costo del vecchio polling 2,5 s", () => {
-  assert.equal(travelerRequests / TRAVELERS, 3_420);
-  assert.equal(familyRequests / FAMILY_VIEWERS, 1_440);
+  assert.equal(travelerRequests / TRAVELERS, 2_460);
+  assert.equal(familyRequests / FAMILY_VIEWERS, 1_080);
   assert.equal(legacyTwoPointFiveSecondRequests, 311_040);
   assert.equal(legacyTwoPointFiveSecondRequests * MODELED_RESPONSE_BYTES, 20_384_317_440);
   assert.ok(periodicDaily < legacyTwoPointFiveSecondRequests / 3);

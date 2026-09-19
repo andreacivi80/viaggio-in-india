@@ -865,7 +865,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-0850 | 46 | Salvare una bozza con dieci fotografie. | NON ESEGUITO | — |
 | T-0851 | 46 | Salvare una bozza con un video. | NON ESEGUITO | — |
 | T-0852 | 46 | Salvare una bozza con una fotografia. | NON ESEGUITO | — |
-| T-0853 | 46 | Simulare quota esaurita. | NON ESEGUITO | — |
+| T-0853 | 46 | Simulare quota esaurita. | SUPERATO | Quota scritture D1 realmente esaurita il 2026-09-18: errore Cloudflare identificato nei log; prima del fix GET stato 503, dopo rimozione delle scritture dal percorso di lettura home/API 3/3 HTTP 200; scritture restano fail-closed fino al reset. |
 | T-0854 | 46 | Verificare cancellazione automatica soltanto dei dati non essenziali. | NON ESEGUITO | — |
 | T-0855 | 46 | Verificare comportamento della pulizia automatica di iOS. | NON ESEGUITO | — |
 | T-0856 | 46 | Verificare comportamento dopo molti giorni senza aprire la PWA. | NON ESEGUITO | — |
@@ -1526,10 +1526,10 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1511 | 82 | Verificare che i test non utilizzino dati di produzione. | SUPERATO | Audit remoto Cloudflare + runner autenticato 8/8: alias QA, production QA e preview QA puntano soltanto a D1/KV QA; fixture creata, riletta e ripulita nel database QA separato. |
 | T-1512 | 82 | Verificare configurazione del dominio. | SUPERATO | Audit remoto Cloudflare: progetto ufficiale associato a `viaggio-in-thailandia-2026.pages.dev`; home e `/api/state` rispondono 200 senza redirect anomali. |
 | T-1513 | 82 | Verificare limiti dell’archivio MEDIA. | SUPERATO | `media-quota` 3/3 + QA reale 2×310 MB respinto con HTTP 413: documento 80 MB; foto/audio 120 MB; video 500 MB; post 600 MB; upload attivi 1 GB. |
-| T-1514 | 82 | Verificare limiti delle Functions. | NON ESEGUITO | — |
-| T-1515 | 82 | Verificare limiti di D1. | NON ESEGUITO | — |
+| T-1514 | 82 | Verificare limiti delle Functions. | SUPERATO | Limite Free ufficiale 100.000 richieste/giorno confrontato col modello reale: 18 viaggiatori + 18 familiari = 63.720 richieste periodiche, 71.720 con 8.000 azioni, margine 28,28%; polling salute ridondante rimosso. |
+| T-1515 | 82 | Verificare limiti di D1. | SUPERATO | Limiti Free ufficiali verificati (5 M righe lette, 100.000 scritte/giorno, 50 query/invocazione, 500 MB/database); quota scritture realmente raggiunta e hot path corretto per mantenere letture disponibili senza nuove scritture. |
 | T-1516 | 82 | Verificare log di deploy. | SUPERATO | Deploy ufficiale Wrangler completato: Worker compilato, 30 asset verificati, `_headers` e Functions caricati, deployment `580d30bd`; smoke test successivo 3/3 HTTP 200. |
-| T-1517 | 82 | Verificare protezione dagli abusi. | NON ESEGUITO | — |
+| T-1517 | 82 | Verificare protezione dagli abusi. | SUPERATO | Suite 284/284 + rate-limit mirato 13/13: autenticazione, step-up, registrazione, inviti, commenti, reazioni, push, upload e geocoding limitati per IP, profilo e sessione con HTTP 429/Retry-After. |
 | T-1518 | 82 | Verificare redirect da HTTP a HTTPS. | SUPERATO | Richiesta reale HTTP al dominio ufficiale: `301 Moved Permanently` con `Location: https://viaggio-in-thailandia-2026.pages.dev/`; destinazione HTTPS 200 e certificato valido. |
 | T-1519 | 82 | Verificare rollback del deploy. | NON ESEGUITO | — |
 | T-1520 | 82 | Verificare VAPID_PRIVATE_KEY. | NON ESEGUITO | — |
@@ -1546,7 +1546,7 @@ Generata dalle quattro checklist allegate. Le righe duplicate identiche sono con
 | T-1531 | 83 | Calcolare spazio necessario per documenti. | SUPERATO | `P0_DOCUMENT_CAPACITY` 8/8 su QA: 18 viaggiatori × 4 documenti principali × 80 MiB = 5.760 MiB (5,625 GiB) di capacità teorica massima. |
 | T-1532 | 83 | Calcolare traffico generato dal polling ogni 2,5 secondi. | SUPERATO | `operational-capacity-plan` 4/4: il vecchio intervallo genererebbe 311.040 richieste/giorno e 20.384.317.440 byte/giorno ipotizzando risposte da 64 KiB; il piano corrente usa 87.480 richieste periodiche. |
 | T-1533 | 83 | Definire comportamento quando la quota viene superata. | SUPERATO | `operational-capacity-plan` 4/4: HTTP 429 con `Retry-After` per rate limit/upload attivi, HTTP 413 oltre 600 MB e nessun post parziale. |
-| T-1534 | 83 | Impedire che un singolo utente esaurisca la quota. | NON ESEGUITO | — |
+| T-1534 | 83 | Impedire che un singolo utente esaurisca la quota. | SUPERATO | `rate-limit-dimensions` + `security-hardening`: limiti separati per IP, attore e sessione su tutti i flussi costosi; polling per 36 persone ridotto a 63.720 richieste/giorno e retry idempotenti non ricontati. |
 | T-1535 | 83 | Impostare allarme al 95% della quota. | NON ESEGUITO | — |
 | T-1536 | 83 | Impostare allarme all’80% della quota. | NON ESEGUITO | — |
 | T-1537 | 83 | Moltiplicare per tutti i Viaggiatori e familiari. | NON ESEGUITO | — |

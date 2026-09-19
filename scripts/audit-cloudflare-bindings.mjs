@@ -4,6 +4,7 @@ import { join } from "node:path";
 
 const accountId = "4750912726b08c1c18d36a0df35a7334";
 const productionProject = "viaggio-in-thailandia-2026";
+const legacyProject = "viaggio-in-india-2026";
 const qaProject = "viaggio-in-india-2026-qa";
 
 const productionConfig = JSON.parse(await readFile(new URL("../wrangler.jsonc", import.meta.url), "utf8"));
@@ -11,6 +12,10 @@ const qaConfig = JSON.parse(await readFile(new URL("../wrangler.qa.jsonc", impor
 
 const expected = {
   [productionProject]: {
+    DB: productionConfig.d1_databases.find(({ binding }) => binding === "DB")?.database_id,
+    MEDIA: productionConfig.kv_namespaces.find(({ binding }) => binding === "MEDIA")?.id,
+  },
+  [legacyProject]: {
     DB: productionConfig.d1_databases.find(({ binding }) => binding === "DB")?.database_id,
     MEDIA: productionConfig.kv_namespaces.find(({ binding }) => binding === "MEDIA")?.id,
   },
@@ -39,7 +44,7 @@ for (const path of tokenPaths) {
 if (!token) throw new Error("Credenziali Wrangler non disponibili.");
 
 const result = {};
-for (const project of [productionProject, qaProject]) {
+for (const project of [productionProject, legacyProject, qaProject]) {
   const response = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${accountId}/pages/projects/${project}`,
     { headers: { authorization: `Bearer ${token}` } },
@@ -77,6 +82,12 @@ for (const project of [productionProject, qaProject]) {
 
 if (result[productionProject].production.DB === result[qaProject].production.DB) {
   throw new Error("Produzione e QA condividono il binding DB.");
+}
+if (result[legacyProject].production.DB !== result[productionProject].production.DB) {
+  throw new Error("Il ponte sul dominio precedente non condivide il DB ufficiale.");
+}
+if (result[legacyProject].production.MEDIA !== result[productionProject].production.MEDIA) {
+  throw new Error("Il ponte sul dominio precedente non condivide il MEDIA ufficiale.");
 }
 if (result[productionProject].production.MEDIA === result[qaProject].production.MEDIA) {
   throw new Error("Produzione e QA condividono il binding MEDIA.");
