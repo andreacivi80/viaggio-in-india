@@ -11,6 +11,11 @@ if (!base || !profileId || !token || !deviceKey)
 const endpoint = `${base}/api/auth/transfer`;
 const body = new URLSearchParams({ session_token: token, device_key: deviceKey });
 const before = await (await fetch(`${base}/api/state`)).json();
+const oldAuthorization = { authorization: `Bearer ${token}`, "x-device-key": deviceKey };
+const oldDevicesResponse = await fetch(`${base}/api/auth/devices`, { headers: oldAuthorization });
+assert.equal(oldDevicesResponse.status, 200);
+const oldDeviceId = (await oldDevicesResponse.json()).devices.find((device) => device.current)?.device_id;
+assert.ok(oldDeviceId);
 
 const wrongOrigin = await fetch(endpoint, {
   method: "POST", body, redirect: "manual",
@@ -53,9 +58,23 @@ const claimed = await claim.json();
 assert.equal(claimed.profile.id, profileId);
 const after = await (await fetch(`${base}/api/state`)).json();
 assert.equal(after.profiles.length, before.profiles.length, "nessun profilo duplicato");
+assert.equal((await fetch(`${base}/api/auth/session`, { headers: oldAuthorization })).status, 200,
+  "il vecchio telefono resta collegato dopo il trasferimento");
+
+const newAuthorization = { authorization: `Bearer ${claimed.token}`, "x-device-key": newDeviceKey };
+const devicesResponse = await fetch(`${base}/api/auth/devices`, { headers: newAuthorization });
+assert.equal(devicesResponse.status, 200);
+assert.ok((await devicesResponse.json()).devices.some((device) => device.device_id === oldDeviceId));
+assert.equal((await fetch(`${base}/api/auth/devices/${encodeURIComponent(oldDeviceId)}`, {
+  method: "DELETE", headers: newAuthorization,
+})).status, 200, "il nuovo telefono può revocare quello vecchio");
+assert.equal((await fetch(`${base}/api/auth/session`, { headers: oldAuthorization })).status, 401,
+  "il vecchio telefono revocato non accede più");
+assert.equal((await fetch(`${base}/api/auth/session`, { headers: newAuthorization })).status, 200,
+  "il telefono nuovo conserva l’accesso al medesimo profilo");
 
 await fetch(`${base}/api/auth/logout`, {
   method: "POST",
-  headers: { authorization: `Bearer ${claimed.token}`, "x-device-key": newDeviceKey },
+  headers: newAuthorization,
 });
-console.log("Cross-domain QA: origine, sessione, recupero e nessun duplicato verificati");
+console.log("Cross-domain QA: origine, sessione, recupero, revoca vecchio telefono e nessun duplicato verificati");
