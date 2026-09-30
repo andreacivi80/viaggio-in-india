@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { indexedDB } from "fake-indexeddb";
+import { indexedDB, IDBObjectStore } from "fake-indexeddb";
 
 globalThis.indexedDB = indexedDB;
 Object.defineProperty(globalThis, "navigator", {
@@ -14,6 +14,7 @@ const storage = new Map([
 globalThis.localStorage = {
   getItem: (key) => storage.get(key) || null,
   setItem: (key, value) => storage.set(key, String(value)),
+  removeItem: (key) => storage.delete(key),
 };
 
 const {
@@ -248,4 +249,105 @@ test("l’utente può ispezionare ed eliminare un singolo invio senza toccare gl
   assert.equal((await queuedRequests())[0].id, "da-conservare");
   await removeQueuedRequest("da-conservare");
   assert.equal(await queuedRequestCount(), 0);
+});
+
+test("una transazione abortita dopo la scrittura non dichiara la bozza salvata", async () => {
+  const originalPut = IDBObjectStore.prototype.put;
+  IDBObjectStore.prototype.put = function (...args) {
+    const request = originalPut.apply(this, args);
+    request.addEventListener("success", () => this.transaction.abort(), { once: true });
+    return request;
+  };
+  try {
+    const form = new FormData();
+    form.set("text", "bozza da non perdere");
+    await assert.rejects(queueFormRequest({
+      id: "bozza-transazione-abortita",
+      endpoint: "/api/posts",
+      form,
+      authType: "session",
+      operationKey: "operazione-transazione-abortita",
+    }));
+  } finally {
+    IDBObjectStore.prototype.put = originalPut;
+  }
+  assert.equal(await queuedRequestCount(), 0);
+});
+
+test("un video grande in bozza riparte a parti e conserva l'ordine delle didascalie", async () => {
+  const form = new FormData();
+  form.set("text", "video e foto offline");
+  form.set("visibility", "public");
+  form.set("media_descriptions", JSON.stringify(["video", "foto"]));
+  form.append("files", new Blob([new Uint8Array(8 * 1024 * 1024)], { type: "video/mp4" }), "video.mp4");
+  form.append("files", new Blob(["foto"], { type: "image/jpeg" }), "foto.jpg");
+  await queueFormRequest({
+    id: "video-grande",
+    endpoint: "/api/posts",
+    form,
+    authType: "session",
+    operationKey: "operazione-video-grande",
+  });
+  let published = false;
+  const parts = [];
+  globalThis.fetch = async (url, options) => {
+    if (url === "/api/uploads/init") {
+      assert.equal(JSON.parse(options.body).scope, "post");
+      return Response.json({ upload_id: "upload-video", part_size: 4 * 1024 * 1024 });
+    }
+    if (url.startsWith("/api/uploads/upload-video/parts/")) {
+      parts.push(Number(url.split("/").at(-1)));
+      assert.equal(options.body.size, 4 * 1024 * 1024);
+      return Response.json({ part_number: parts.at(-1) });
+    }
+    if (url === "/api/uploads/upload-video/complete")
+      return Response.json({ upload_id: "upload-video" });
+    if (url === "/api/posts") {
+      assert.equal(options.headers["x-idempotency-key"], "operazione-video-grande");
+      assert.deepEqual(options.body.getAll("files").map((file) => file.name), ["foto.jpg"]);
+      assert.deepEqual(JSON.parse(options.body.get("upload_ids")), ["upload-video"]);
+      assert.deepEqual(JSON.parse(options.body.get("media_descriptions")), ["foto", "video"]);
+      published = true;
+      return Response.json({ ok: true }, { status: 201 });
+    }
+    throw Error(`Richiesta inattesa: ${url}`);
+  };
+  assert.deepEqual(await flushOfflineQueue(), { sent: 1, pending: 0 });
+  assert.deepEqual(parts, [1, 2]);
+  assert.equal(published, true);
+});
+
+test("un PDF grande in bozza usa l'upload riprendibile prima del documento", async () => {
+  const form = new FormData();
+  form.set("profile_id", "profilo-qa");
+  form.set("doc_type", "passport");
+  form.set("file", new Blob([new Uint8Array(8 * 1024 * 1024)], { type: "application/pdf" }), "passaporto.pdf");
+  await queueFormRequest({
+    id: "pdf-grande",
+    endpoint: "/api/documents",
+    form,
+    authType: "session",
+    operationKey: "operazione-pdf-grande",
+  });
+  let saved = false;
+  globalThis.fetch = async (url, options) => {
+    if (url === "/api/uploads/init") {
+      assert.equal(JSON.parse(options.body).scope, "document");
+      return Response.json({ upload_id: "upload-pdf", part_size: 4 * 1024 * 1024 });
+    }
+    if (url.startsWith("/api/uploads/upload-pdf/parts/"))
+      return Response.json({ part_number: Number(url.split("/").at(-1)) });
+    if (url === "/api/uploads/upload-pdf/complete")
+      return Response.json({ upload_id: "upload-pdf" });
+    if (url === "/api/documents") {
+      assert.equal(options.body.get("upload_id"), "upload-pdf");
+      assert.equal(options.body.get("file"), null);
+      assert.equal(options.headers["x-idempotency-key"], "operazione-pdf-grande");
+      saved = true;
+      return Response.json({ ok: true }, { status: 200 });
+    }
+    throw Error(`Richiesta inattesa: ${url}`);
+  };
+  assert.deepEqual(await flushOfflineQueue(), { sent: 1, pending: 0 });
+  assert.equal(saved, true);
 });

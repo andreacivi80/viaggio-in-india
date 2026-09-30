@@ -145,3 +145,45 @@ test("tre bozze multimediali reali sopravvivono offline e si riaprono dopo il re
     await context.close();
   }
 });
+
+test("se il salvataggio locale fallisce dopo la scrittura, testo e foto restano nella schermata", async ({ browser }) => {
+  const context = await browser.newContext({
+    ...devices["Galaxy S9+"],
+    viewport: { width: 412, height: 915 },
+    serviceWorkers: "block",
+  });
+  await context.addInitScript(({ token, id, name, key }) => {
+    localStorage.setItem("india-session-token", token);
+    localStorage.setItem("india-profile-id", id);
+    localStorage.setItem("india-profile-name", name);
+    localStorage.setItem("india-device-key", key);
+  }, { token: sessionToken, id: profileId, name: profileName, key: deviceKey });
+  const page = await context.newPage();
+  try {
+    await page.goto(baseUrl, { waitUntil: "domcontentloaded" });
+    await expect(page.locator(".accessPill")).toContainText(profileName.split(" ")[0]);
+    await context.setOffline(true);
+    await page.getByRole("button", { name: "Pubblica", exact: true }).tap();
+    const sheet = page.locator(".uploadSheet");
+    const draft = `Bozza conservata dopo errore QA ${process.env.QA_RUN_ID}`;
+    await sheet.getByPlaceholder("Racconta questo momento…").fill(draft);
+    await sheet.locator('input[accept^="image"]').first().setInputFiles({
+      name: "foto-conservata.jpg", mimeType: "image/jpeg", buffer: await readFile(photoPath),
+    });
+    await page.evaluate(() => {
+      const original = IDBObjectStore.prototype.put;
+      IDBObjectStore.prototype.put = function (...args) {
+        const request = original.apply(this, args);
+        request.addEventListener("success", () => this.transaction.abort(), { once: true });
+        return request;
+      };
+    });
+    await sheet.locator(".composerActions > button").tap();
+    await expect(page.getByText("Connessione assente e salvataggio offline non disponibile.")).toBeVisible();
+    await expect(sheet.getByPlaceholder("Racconta questo momento…")).toHaveValue(draft);
+    await expect(sheet.getByText("1 allegati pronti")).toBeVisible();
+    expect(await offlineCount(page)).toBe(0);
+  } finally {
+    await context.close();
+  }
+});

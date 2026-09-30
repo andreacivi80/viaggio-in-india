@@ -90,7 +90,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.66",
+const VERSION = "1.48.67",
   API = "/api";
 let mapLibrePromise;
 const loadMapLibre = () => {
@@ -3482,6 +3482,7 @@ function Diary({
   const add = async () => {
     const spotify = spotifyLink(spotifyUrl);
     if (!sessionToken || (!text.trim() && !files.length && !spotify)) return;
+    if (!postOperationRef.current) postOperationRef.current = crypto.randomUUID();
     setBusy(true);
     setFileStatus("Pubblicazione in corso…");
     uploadAbortRef.current?.abort();
@@ -3536,8 +3537,6 @@ function Diary({
       }
       f.set("upload_ids", JSON.stringify(uploadedIds));
       f.set("media_descriptions", JSON.stringify([...directDescriptions, ...uploadedDescriptions]));
-      if (!postOperationRef.current)
-        postOperationRef.current = crypto.randomUUID();
       const r = await fetch(`${API}/posts`, {
         method: "POST",
         headers: {

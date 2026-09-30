@@ -1,3 +1,5 @@
+import { shouldUseResumableUpload, uploadFileResumable } from "./resumableUpload.js";
+
 const DB_NAME = "india-insieme-offline";
 const DB_VERSION = 1;
 const STORE = "requests";
@@ -23,12 +25,29 @@ function openQueue() {
 
 function transact(mode, action) {
   return openQueue().then((db) => new Promise((resolve, reject) => {
-    const transaction = db.transaction(STORE, mode);
-    const store = transaction.objectStore(STORE);
-    const request = action(store);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-    transaction.oncomplete = () => db.close();
+    let transaction;
+    let request;
+    let result;
+    let requestError;
+    try {
+      transaction = db.transaction(STORE, mode);
+      request = action(transaction.objectStore(STORE));
+    } catch (error) {
+      try { transaction?.abort(); } catch { /* transazione già terminata */ }
+      db.close();
+      reject(error);
+      return;
+    }
+    request.onsuccess = () => { result = request.result; };
+    request.onerror = () => { requestError = request.error; };
+    transaction.oncomplete = () => {
+      db.close();
+      resolve(result);
+    };
+    transaction.onabort = () => {
+      db.close();
+      reject(transaction.error || requestError || new Error("Salvataggio offline annullato"));
+    };
   }));
 }
 
@@ -53,6 +72,7 @@ export async function queueFormRequest({
               typeof value.name === "string" && value.name
                 ? value.name
                 : "allegato",
+            lastModified: Number.isFinite(value.lastModified) ? value.lastModified : 0,
           }
         : {}),
     });
@@ -162,6 +182,57 @@ async function authorizationHeaders(item) {
   return {};
 }
 
+async function replayForm(item, identity) {
+  const form = new FormData();
+  for (const entry of item.entries || []) {
+    if (entry.isFile && entry.value instanceof Blob) {
+      const filename = entry.filename || "allegato";
+      const file = new File([entry.value], filename, {
+        type: entry.value.type,
+        lastModified: entry.lastModified || 0,
+      });
+      form.append(entry.name, file);
+    } else form.append(entry.name, entry.value);
+  }
+  const api = item.endpoint.slice(0, item.endpoint.lastIndexOf("/"));
+  if (item.endpoint.endsWith("/posts")) {
+    const files = form.getAll("files");
+    if (files.some((file) => file instanceof Blob && shouldUseResumableUpload(file))) {
+      let descriptions = [];
+      try {
+        const parsed = JSON.parse(String(form.get("media_descriptions") || "[]"));
+        if (Array.isArray(parsed)) descriptions = parsed;
+      } catch { /* vecchia bozza senza descrizioni valide */ }
+      const directDescriptions = [];
+      const uploadedDescriptions = [];
+      const uploadIds = [];
+      form.delete("files");
+      for (const [index, file] of files.entries()) {
+        if (shouldUseResumableUpload(file)) {
+          const uploaded = await uploadFileResumable({
+            api, file, scope: "post", visibility: String(form.get("visibility") || "private"), headers: identity,
+          });
+          uploadIds.push(uploaded.upload_id);
+          uploadedDescriptions.push(descriptions[index] || "");
+        } else {
+          form.append("files", file);
+          directDescriptions.push(descriptions[index] || "");
+        }
+      }
+      form.set("upload_ids", JSON.stringify(uploadIds));
+      form.set("media_descriptions", JSON.stringify([...directDescriptions, ...uploadedDescriptions]));
+    }
+  } else if (item.endpoint.endsWith("/documents")) {
+    const file = form.get("file");
+    if (file instanceof Blob && shouldUseResumableUpload(file)) {
+      const uploaded = await uploadFileResumable({ api, file, scope: "document", headers: identity });
+      form.delete("file");
+      form.set("upload_id", uploaded.upload_id);
+    }
+  }
+  return form;
+}
+
 export async function flushOfflineQueue() {
   if (!navigator.onLine) return { sent: 0, pending: await queuedRequestCount() };
   let sent = 0;
@@ -174,13 +245,13 @@ export async function flushOfflineQueue() {
       body = JSON.stringify(item.body || {});
       requestHeaders["content-type"] = "application/json";
     } else {
-      const form = new FormData();
-      for (const entry of item.entries || []) {
-        if (entry.isFile && entry.value instanceof Blob)
-          form.append(entry.name, entry.value, entry.filename || "allegato");
-        else form.append(entry.name, entry.value);
+      try { body = await replayForm(item, identity); }
+      catch (error) {
+        item.attempts += 1;
+        item.lastError = error.message || "Caricamento allegato non riuscito";
+        await updateRequest(item);
+        break;
       }
-      body = form;
     }
     try {
       const response = await fetch(item.endpoint, {
