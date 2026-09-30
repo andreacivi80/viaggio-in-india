@@ -635,4 +635,6 @@
   ,{ "control": "iPhone con versione iOS minima supportata.", "evidence": "QA 1.48.63 iPhone P2 5/5: profilo iPhone SE con viewport mobile esegue touch, navigazione, scorrimento e tutte le geometrie senza overflow." }
   ,{ "control": "Verificare Live Photo iPhone.", "evidence": "iphone-pwa 3/3: selettori iPhone accettano componente HEIC/HEIF e componente MOV/MP4 della Live Photo; conversione HEIC e fallback originale verificati staticamente." }
   ,{ "control": "VoiceOver su iPhone.", "evidence": "QA 1.48.63 iPhone P2 5/5: struttura semantica iPhone 13 espone una sola istanza accessibile di ogni tab, elenco viaggiatori e attività recenti con nomi espliciti." }
+  ,{ "control": "Aggiornamento in automobile.", "evidence": "QA 1.48.64 ui-passenger-car 1/1 su Galaxy S9+ touch: posizione iniziale Bangkok, rete offline/online, secondo fix in movimento 13.8124,100.5615 ±22 m, un solo record e pulizia finale verificati." }
+  ,{ "control": "Utilizzare l’app in automobile come passeggero.", "evidence": "QA 1.48.64 ui-passenger-car 1/1 su Galaxy S9+ touch: navigazione Bacheca/Viaggio/Mappa con target >=44 px, prima apertura mappa offline tramite cache PWA, nessuna recovery, ritorno online e aggiornamento posizione riusciti." }
 ]

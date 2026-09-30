@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "maplibre-gl/dist/maplibre-gl.css";
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import {
   MapPinned,
   Route,
@@ -89,8 +90,18 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.63",
+const VERSION = "1.48.64",
   API = "/api";
+let mapLibrePromise;
+const loadMapLibre = () => {
+  if (!mapLibrePromise) {
+    mapLibrePromise = import("maplibre-gl").then((maplibregl) => {
+      maplibregl.setWorkerUrl(maplibreWorkerUrl);
+      return maplibregl;
+    });
+  }
+  return mapLibrePromise;
+};
 const copyPlainText = async (value) => {
   if (navigator.clipboard?.writeText) {
     await navigator.clipboard.writeText(value);
@@ -481,7 +492,7 @@ function TripMap({ selectedDay, currentDayIndex, onSelect, onReady }) {
       onReady?.();
     };
     const loadTimer = window.setTimeout(showFallback, 12_000);
-    import("maplibre-gl").then(({ default: maplibregl }) => {
+    loadMapLibre().then((maplibregl) => {
       if (cancelled || !el.current) return;
       maplibre.current = maplibregl;
       map.current = new maplibregl.Map({
@@ -941,7 +952,7 @@ function PeopleLocationMap({ locations }) {
   useEffect(() => {
     if (!elementRef.current || mapRef.current) return;
     let cancelled = false;
-    import("maplibre-gl").then(({ default: maplibregl }) => {
+    loadMapLibre().then((maplibregl) => {
       if (cancelled || !elementRef.current) return;
       mapRef.current = new maplibregl.Map({
         container: elementRef.current,
@@ -1012,7 +1023,7 @@ function PeopleLocationMap({ locations }) {
     let cancelled = false;
     setMapSettled(false);
     const render = async () => {
-      const { default: maplibregl } = await import("maplibre-gl");
+      const maplibregl = await loadMapLibre();
       if (cancelled) return;
       markersRef.current.forEach((marker) => marker.remove());
       const locationGroups = groupLocationsByCoordinate(locations);
@@ -1139,7 +1150,7 @@ function ItalyTravelerMap({ people }) {
     let cancelled = false;
     let settleTimer;
     let resizeObserver;
-    import("maplibre-gl").then(({ default: maplibregl }) => {
+    loadMapLibre().then((maplibregl) => {
       if (cancelled || !elementRef.current) return;
       map = new maplibregl.Map({
         container: elementRef.current,

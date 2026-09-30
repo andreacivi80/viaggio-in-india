@@ -1,6 +1,6 @@
 # Inventario elementi interattivi
 
-- Elementi trovati: 164
+- Elementi trovati: 182
 - Anomalie statiche: 0
 - Funzioni dichiarate incomplete nell'interfaccia: 0
 
