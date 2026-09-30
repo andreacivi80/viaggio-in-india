@@ -2785,25 +2785,25 @@ P3,social,pending,Possibilità di modificare la visibilità dopo la pubblicazion
 P3,social,pending,post non pubblico;,addendum:A0123,
 P3,social,passed,Pubblica.,usabilita:U0079,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P3,social,passed,Pubblicare 10 allegati.,globale:T-0401,"QA 1.48.64 extended-p0-ten-attachments: 10/10 JPEG pubblicati nello stesso post, nomi e ordine conservati, 10/10 riaperti con MIME corretto e poi eliminati."
-P3,social,pending,Pubblicare 20 post in pochi minuti.,globale:T-0867,
-P3,social,pending,Pubblicare con emoji.,globale:T-0402,
-P3,social,pending,Pubblicare con luogo scritto manualmente.,globale:T-0403,
-P3,social,pending,Pubblicare contemporaneamente da 10 dispositivi.,globale:T-0798,
+P3,social,passed,Pubblicare 20 post in pochi minuti.,globale:T-0867,"QA 1.48.64 extended-p3-post-load: 20/20 post pubblicati in raffica dallo stesso viaggiatore, 20 ID unici, tutti riletti nello stato e rimossi."
+P3,social,passed,Pubblicare con emoji.,globale:T-0402,"QA 1.48.64 extended-p3-post-content: testo con palme, aereo, bandiera Thailandia e caratteri Unicode restituito e persistito identico."
+P3,social,passed,Pubblicare con luogo scritto manualmente.,globale:T-0403,QA 1.48.64 extended-p3-post-content: luogo Bangkok scritto manualmente persistito senza coordinate inventate; rilettura nello stato e pulizia verificate.
+P3,social,passed,Pubblicare contemporaneamente da 10 dispositivi.,globale:T-0798,QA 1.48.64 extended-p3-post-load: 18/18 sessioni e chiavi dispositivo distinte pubblicano contemporaneamente; tutti gli ID sono unici e 38/38 post complessivi risultano visibili.
 P3,social,passed,Pubblicare contenuto misto.,globale:T-0405,"QA 1.48.64 ui-publish-complete 1/1: testo, due fotografie, video, audio caricato, audio registrato e posizione pubblicati insieme e riletti su due telefoni."
 P3,social,passed,Pubblicare dalla prima scheda.,globale:T-1592,QA 1.48.64 ui-publish-complete 1/1: dalla Bacheca iniziale il tap touch Pubblica apre il compositore e completa una pubblicazione HTTP 201.
 P3,social,passed,Pubblicare dieci allegati.,usabilita:U0015,"QA 1.48.64 extended-p0-ten-attachments: creazione 201 con esattamente dieci media, persistenza nello stato, apertura di tutti i file e cancellazione verificata."
 P3,social,passed,Pubblicare il post.,usabilita:U0247,"QA 1.48.64 ui-publish-complete 1/1: pubblicazione touch autenticata HTTP 201, contenuto completo visibile al secondo dispositivo e pulizia riuscita."
-P3,social,pending,Pubblicare in ogni giornata.,globale:T-0406,
+P3,social,passed,Pubblicare in ogni giornata.,globale:T-0406,"QA 1.48.64 extended-p3-post-content: 11/11 post creati con day_index da 0 a 10, tutti riletti nello stato con la giornata corretta e rimossi."
 P3,social,pending,Pubblicare la versione 1.21.5.,globale:T-0829,
 P3,social,pending,Pubblicare realmente la versione 1.21.5 su Cloudflare.,globale:T-0008,
-P3,social,pending,Pubblicare senza testo.,globale:T-0408,
+P3,social,passed,Pubblicare senza testo.,globale:T-0408,"QA 1.48.64 extended-p3-post-content: post con una fotografia JPEG e testo vuoto creato, media persistito, testo rimasto vuoto e cancellazione completata."
 P3,social,passed,Pubblicare solo testo.,globale:T-0409;usabilita:U0011,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
-P3,social,pending,Pubblicare testo molto lungo.,globale:T-0410,
-P3,social,pending,"Pubblicare testo, se consentito.",usabilita:U0629,
+P3,social,passed,Pubblicare testo molto lungo.,globale:T-0410,"QA 1.48.64 extended-p3-post-content: testo Unicode di oltre 20.000 caratteri con marcatori INIZIO/FINE accettato, restituito e riletto integralmente."
+P3,social,passed,"Pubblicare testo, se consentito.",usabilita:U0629,"QA 1.48.64 extended-p3-post-content: viaggiatore autenticato pubblica testo normale, emoji e testo lungo; persistenza e autorizzazione server verificate."
 P3,social,passed,Pubblicare un contenuto.,globale:T-0703,"QA 1.48.64 ui-publish-complete 1/1: contenuto multimediale reale creato dal viaggiatore, persistito dal server e sincronizzato al pubblico."
 P3,social,pending,pubblicare un nuovo contenuto durante il filtro;,usabilita:U0123,
-P3,social,pending,Pubblicare un post dal telefono A.,globale:T-0704,
-P3,social,pending,Pubblicare un post per ogni giornata.,usabilita:U0177,
+P3,social,passed,Pubblicare un post dal telefono A.,globale:T-0704,QA 1.48.64 extended-p3-post-load: il telefono proprietario A pubblica una raffica autenticata; persistenza server e visibilità verificate prima della pulizia.
+P3,social,passed,Pubblicare un post per ogni giornata.,usabilita:U0177,"QA 1.48.64 extended-p3-post-content: una pubblicazione distinta per ciascuna delle 11 giornate Thailandia, indici 0..10 coerenti e pulizia completa."
 P3,social,pending,Pubblicare una versione di collaudo successiva.,globale:T-1173,
 P3,social,passed,Pubblicare.,usabilita:U0225,Playwright mobile: pubblicazione multimediale confermata dal server con HTTP 201; preview b4f2cf13; 2026-08-04
 P3,social,pending,Pubblicazione alle 00:00.,globale:T-0927,
@@ -2829,7 +2829,7 @@ P3,social,passed,"Separare chiaramente versione sorgente, versione compilata e v
 P3,social,passed,Stabilire in modo definitivo chi può pubblicare.,usabilita:U0001,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P3,social,passed,Tentare di pubblicare.,usabilita:U0619,QA 1.48.64 ui-publish-complete 1/1: tentativo pubblico negato lato UI e server; tentativo autenticato del viaggiatore completato con 201.
 P3,social,passed,Toccare Pubblica.,usabilita:U0131,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
-P3,social,pending,Tutti pubblicano un post di prova.,globale:T-1739,
+P3,social,passed,Tutti pubblicano un post di prova.,globale:T-1739,"QA 1.48.64 extended-p3-post-load: tutti i 18 viaggiatori QA con sessioni e dispositivi autonomi pubblicano un post, 18/18 risposte 201 implicite, ID unici e pulizia completa."
 P3,social,passed,un utente può pubblicare come un’altra persona;,usabilita:U0689,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P3,social,passed,Verificare che soltanto la chiave pubblica VAPID sia inviata al browser.,globale:T-1504,Static 264/264 `vapid-secret-boundary`: `push/config` espone `public_key` e nessun campo o riferimento alla chiave privata.
 P3,social,pending,Verificare rimozione dei metadati sensibili dalle copie pubbliche.,globale:T-1438,

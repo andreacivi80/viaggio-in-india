@@ -659,4 +659,15 @@
   ,{ "control": "Tentare di pubblicare.", "evidence": "QA 1.48.64 ui-publish-complete 1/1: tentativo pubblico negato lato UI e server; tentativo autenticato del viaggiatore completato con 201." }
   ,{ "control": "Verificare soltanto contenuti pubblici.", "evidence": "QA 1.48.64 ui-publish-complete 1/1: iPhone pubblico riceve il post public completo ma non espone Altre opzioni e non può eliminarlo (403)." }
   ,{ "control": "Visualizzare la Bacheca pubblica.", "evidence": "QA 1.48.64 ui-publish-complete 1/1: Bacheca aperta su iPhone SE senza sessione, nuova pubblicazione public sincronizzata e visualizzata integralmente." }
+  ,{ "control": "Pubblicare 20 post in pochi minuti.", "evidence": "QA 1.48.64 extended-p3-post-load: 20/20 post pubblicati in raffica dallo stesso viaggiatore, 20 ID unici, tutti riletti nello stato e rimossi." }
+  ,{ "control": "Pubblicare contemporaneamente da 10 dispositivi.", "evidence": "QA 1.48.64 extended-p3-post-load: 18/18 sessioni e chiavi dispositivo distinte pubblicano contemporaneamente; tutti gli ID sono unici e 38/38 post complessivi risultano visibili." }
+  ,{ "control": "Pubblicare un post dal telefono A.", "evidence": "QA 1.48.64 extended-p3-post-load: il telefono proprietario A pubblica una raffica autenticata; persistenza server e visibilità verificate prima della pulizia." }
+  ,{ "control": "Tutti pubblicano un post di prova.", "evidence": "QA 1.48.64 extended-p3-post-load: tutti i 18 viaggiatori QA con sessioni e dispositivi autonomi pubblicano un post, 18/18 risposte 201 implicite, ID unici e pulizia completa." }
+  ,{ "control": "Pubblicare con emoji.", "evidence": "QA 1.48.64 extended-p3-post-content: testo con palme, aereo, bandiera Thailandia e caratteri Unicode restituito e persistito identico." }
+  ,{ "control": "Pubblicare con luogo scritto manualmente.", "evidence": "QA 1.48.64 extended-p3-post-content: luogo Bangkok scritto manualmente persistito senza coordinate inventate; rilettura nello stato e pulizia verificate." }
+  ,{ "control": "Pubblicare in ogni giornata.", "evidence": "QA 1.48.64 extended-p3-post-content: 11/11 post creati con day_index da 0 a 10, tutti riletti nello stato con la giornata corretta e rimossi." }
+  ,{ "control": "Pubblicare senza testo.", "evidence": "QA 1.48.64 extended-p3-post-content: post con una fotografia JPEG e testo vuoto creato, media persistito, testo rimasto vuoto e cancellazione completata." }
+  ,{ "control": "Pubblicare testo molto lungo.", "evidence": "QA 1.48.64 extended-p3-post-content: testo Unicode di oltre 20.000 caratteri con marcatori INIZIO/FINE accettato, restituito e riletto integralmente." }
+  ,{ "control": "Pubblicare testo, se consentito.", "evidence": "QA 1.48.64 extended-p3-post-content: viaggiatore autenticato pubblica testo normale, emoji e testo lungo; persistenza e autorizzazione server verificate." }
+  ,{ "control": "Pubblicare un post per ogni giornata.", "evidence": "QA 1.48.64 extended-p3-post-content: una pubblicazione distinta per ciascuna delle 11 giornate Thailandia, indici 0..10 coerenti e pulizia completa." }
 ]
