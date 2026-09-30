@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="it">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <title>Recupera il profilo · Viaggio in Thailandia</title>
+    <style>
+      body { margin: 0; min-height: 100vh; display: grid; place-items: center; font: 16px/1.5 system-ui, sans-serif; background: #fff7eb; color: #25303a; }
+      main { box-sizing: border-box; width: min(92vw, 440px); padding: 28px; border-radius: 20px; background: white; box-shadow: 0 12px 40px #24304018; }
+      h1 { margin-top: 0; font-size: 1.5rem; }
+      a { color: #a33a34; font-weight: 700; }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Recupero del profilo esistente</h1>
+      <p id="status" role="status">Controllo l’accesso salvato sul vecchio link…</p>
+      <p><a href="https://viaggio-in-thailandia-2026.pages.dev/">Torna al viaggio in Thailandia</a></p>
+    </main>
+    <script>
+      const status = document.getElementById("status");
+      const token = localStorage.getItem("india-session-token") || "";
+      const deviceKey = localStorage.getItem("india-device-key") || "";
+      if (!token || !/^[a-f0-9]{64}$/.test(deviceKey)) {
+        status.textContent = "Su questo browser non trovo il vecchio accesso personale. Non creare un secondo profilo: apri questa pagina dal dispositivo usato prima, oppure chiedi alla coordinatrice un invito per il profilo già esistente.";
+      } else {
+        status.textContent = "Accesso trovato. Collego lo stesso profilo al nuovo link senza duplicarlo…";
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "https://viaggio-in-thailandia-2026.pages.dev/api/auth/transfer";
+        for (const [name, value] of [["session_token", token], ["device_key", deviceKey]]) {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = name;
+          input.value = value;
+          form.append(input);
+        }
+        document.body.append(form);
+        form.submit();
+      }
+    </script>
+  </body>
+</html>

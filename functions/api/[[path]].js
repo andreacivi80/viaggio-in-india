@@ -1443,26 +1443,31 @@ export async function onRequest(context) {
       if (!name) return json({ error: "Inserisci il tuo nome" }, 400);
       if (name.length > 80 || surname.length > 80 || originCity.length > 100)
         return json({ error: "I dati inseriti sono troppo lunghi" }, 400);
-      if (surname) {
-        const duplicate = await env.DB.prepare(
-          `SELECT id FROM profiles
-           WHERE lower(trim(name))=lower(trim(?))
-             AND lower(trim(COALESCE(surname,'')))=lower(trim(?))
-             AND (?='' OR lower(trim(COALESCE(origin_city,'')))=lower(trim(?)))
-           LIMIT 1`,
-        ).bind(name, surname, originCity, originCity).first();
-        if (duplicate)
-          return json({
-            error: "Questo profilo esiste già. Recupera l’accesso dal vecchio link senza registrarti di nuovo.",
-            code: "PROFILE_EXISTS",
-          }, 409);
-      }
+      const duplicateError = {
+        error: surname
+          ? "Questo profilo esiste già. Usa ‘Recupera il profilo’ senza registrarti di nuovo."
+          : "Esiste già un profilo con questo nome. Recuperalo se è il tuo; se sei un’altra persona, inserisci anche il cognome.",
+        code: "PROFILE_EXISTS",
+      };
+      const duplicate = await env.DB.prepare(
+        `SELECT id FROM profiles
+         WHERE lower(trim(name))=lower(trim(?))
+           AND (?='' OR lower(trim(COALESCE(surname,'')))=lower(trim(?)))
+         LIMIT 1`,
+      ).bind(name, surname, surname).first();
+      if (duplicate) return json(duplicateError, 409);
       const profileId = id();
       const createdAt = now();
-      await env.DB.prepare(
+      const inserted = await env.DB.prepare(
         `INSERT INTO profiles(id,name,surname,age,job,origin_city,bio,role,avatar_key,privacy_consent_at,privacy_consent_version,created_at,gender)
-         VALUES(?,?,?, '', '', ?, '', ?, NULL, ?, ?, ?, ?)`,
-      ).bind(profileId, name, surname, originCity, role, createdAt, PRIVACY_CONSENT_VERSION, createdAt, gender).run();
+         SELECT ?,?,?, '', '', ?, '', ?, NULL, ?, ?, ?, ?
+         WHERE NOT EXISTS (
+           SELECT 1 FROM profiles
+           WHERE lower(trim(name))=lower(trim(?))
+             AND (?='' OR lower(trim(COALESCE(surname,'')))=lower(trim(?)))
+         )`,
+      ).bind(profileId, name, surname, originCity, role, createdAt, PRIVACY_CONSENT_VERSION, createdAt, gender, name, surname, surname).run();
+      if (!inserted.meta?.changes) return json(duplicateError, 409);
       try {
         const issued = await createSession(env, profileId, deviceNameFromRequest(request), deviceKeyFromRequest(request));
         await writeSecurityAudit(env, {
@@ -1484,7 +1489,19 @@ export async function onRequest(context) {
       }
     }
     if (request.method === "POST" && path === "auth/transfer") {
-      const session = await sessionFromRequest(request, env);
+      const formTransfer = request.headers.get("content-type")?.startsWith("application/x-www-form-urlencoded");
+      let identityRequest = request;
+      if (formTransfer) {
+        if (request.headers.get("origin") !== "https://viaggio-in-india-2026.pages.dev")
+          return json({ error: "Origine del recupero non valida" }, 403);
+        const form = await request.formData();
+        const token = String(form.get("session_token") || "");
+        const deviceKey = String(form.get("device_key") || "");
+        identityRequest = new Request(request.url, {
+          headers: { authorization: `Bearer ${token}`, "x-device-key": deviceKey },
+        });
+      }
+      const session = await sessionFromRequest(identityRequest, env);
       if (!session) return json({ error: "Sessione personale non valida" }, 401);
       const limited = await rateLimit(env, request, "auth-transfer", 5, 600, session.profile_id, {
         ip: 10,
@@ -1516,6 +1533,15 @@ export async function onRequest(context) {
         resource_id: profile.id,
         result: "success",
       });
+      if (formTransfer)
+        return new Response(null, {
+          status: 303,
+          headers: {
+            location: `https://viaggio-in-thailandia-2026.pages.dev/#invite=${encodeURIComponent(token)}`,
+            "cache-control": "no-store",
+            "referrer-policy": "no-referrer",
+          },
+        });
       return json({
         invite_token: token,
         expires_at: expiresAt,
