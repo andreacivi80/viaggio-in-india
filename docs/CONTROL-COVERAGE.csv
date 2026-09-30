@@ -2699,7 +2699,7 @@ P3,itinerario,pending,giornata corretta;,usabilita:U0591,
 P3,itinerario,pending,Hotel e prenotazioni.,globale:T-0258,
 P3,itinerario,passed,itinerario della giornata;,globale:T-1757,"QA Thailandia 1.48.62 WebKit: ogni giornata mostra partenza, arrivo, distanza, mezzo, obiettivo, checklist, minimappa e Percorso."
 P3,itinerario,pending,Link esterno → giornata → indietro.,globale:T-1415,
-P3,itinerario,pending,Mantenere sempre disponibili itinerario ed emergenze.,globale:T-1648,
+P3,itinerario,passed,Mantenere sempre disponibili itinerario ed emergenze.,globale:T-1648,"QA 1.48.65 ui-passenger-car 1/1 su Galaxy S9+ PWA: dopo perdita completa della rete apre Viaggio, mostra il diario e il pannello emergenze con reperibilità dell’Ambasciata; apre anche la mappa dalla cache senza recovery."
 P3,itinerario,pending,Prima del viaggio.,usabilita:U0114,
 P3,itinerario,pending,Provare una data precedente al viaggio.,usabilita:U0185,
 P3,itinerario,pending,Provare una data successiva al viaggio.,usabilita:U0186,
@@ -2737,7 +2737,7 @@ P3,mappe-posizione,passed,Verificare fallback “Copia link” quando navigator.
 P3,mappe-posizione,passed,Verificare navigazione da tastiera.,globale:T-0605,QA Thailandia 1.48.62 WebKit: focus e Invio aprono Mappa e Google Maps; ui-google-maps-return 3/3.
 P3,media-upload,pending,aggiornare immediatamente tutte le schermate coinvolte;,addendum:A0259,
 P3,media-upload,pending,Arresto immediato.,globale:T-0201,
-P3,media-upload,pending,Chiusura modale mediante tastiera.,globale:T-1059,
+P3,media-upload,passed,Chiusura modale mediante tastiera.,globale:T-1059,"QA 1.48.65 ui-publish-complete 1/1: il compositore espone role=dialog e aria-modal, Esc lo chiude, un nuovo tap lo riapre e l’intero upload multimediale termina con HTTP 201 e sincronizzazione sul secondo telefono."
 P3,media-upload,passed,consumo MEDIA;,globale:T-1113,"QA 1.48.64 extended-p3-media-post-cap: due upload completati da 310 MB ciascuno vengono respinti insieme con HTTP 413 oltre il limite cumulativo di 600 MB, senza creare la pubblicazione; fixture ripulite."
 P3,media-upload,passed,Errore archivio MEDIA.,globale:T-1544,`upload-failure-compensation` 2/2: errore MEDIA non registra la parte e il retry completa senza duplicati.
 P3,media-upload,passed,Non devono esistere file nell’archivio MEDIA senza riferimento.,globale:T-1012,`upload-failure-compensation` 2/2 + manutenzione: scrittura D1 fallita elimina subito la parte MEDIA e gli upload scaduti vengono rimossi.
@@ -2839,11 +2839,11 @@ P3,social,pending,Visualizzare le mappe pubbliche.,usabilita:U0615,
 P3,social,passed,Visualizzare soltanto informazioni pubbliche consentite.,usabilita:U0362,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P3,usabilita-mobile,passed,Biografia.,usabilita:U0387,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P3,usabilita-mobile,pending,comandi che modificano soltanto lo stato grafico;,addendum:A0184,
-P3,usabilita-mobile,pending,Inserire biografia.,globale:T-0345,
+P3,usabilita-mobile,passed,Inserire biografia.,globale:T-0345,"QA 1.48.64 ui-own-profile 1/1 su due Galaxy S9+ touch: proprietario inserisce una biografia, PUT 200, scheda aggiornata localmente e testo sincronizzato sul secondo telefono; profilo originale ripristinato."
 P3,usabilita-mobile,passed,Non visualizzare comandi di modifica.,usabilita:U0365,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
-P3,usabilita-mobile,pending,Ruotare il telefono durante la visualizzazione.,globale:T-0918,
+P3,usabilita-mobile,passed,Ruotare il telefono durante la visualizzazione.,globale:T-0918,"QA 1.48.64 ui-rotation-live 1/1 su Galaxy S9+ touch: rotazione 360x740↔740x360 in Bacheca, Viaggio, Mappa e Gruppo; nessun overflow, target tab >=44 px, scorrimento e ritorno portrait verificati senza recovery."
 P3,usabilita-mobile,pending,spiegazione di chi può visualizzarli;,addendum:A0370,
-P3,usabilita-mobile,pending,Visualizzare ambasciata italiana.,globale:T-1195,
+P3,usabilita-mobile,passed,Visualizzare ambasciata italiana.,globale:T-1195,"QA 1.48.64 ui-rotation-live 1/1: nella sezione Viaggio il pannello Emergenza e dati offline espone su touch AMBASCIATA D’ITALIA, numero tel:+66818256103 e descrizione di reperibilità, anche dopo rotazione."
 P3,usabilita-mobile,pending,Visualizzare hotel della giornata.,globale:T-1197,
 P3,usabilita-mobile,passed,Visualizzare l’itinerario.,usabilita:U0614,QA pubblica Thailandia 1.48.62 WebKit: visitatore senza password consulta tutte le 11 giornate.
 P3,usabilita-mobile,pending,Visualizzare numero dell’assicurazione.,globale:T-1198,

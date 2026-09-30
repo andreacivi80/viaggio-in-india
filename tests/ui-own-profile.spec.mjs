@@ -70,21 +70,24 @@ test("il viaggiatore apre e modifica soltanto il proprio profilo, sincronizzato 
     const form = ownerPage.locator(".profileForm");
     await expect(form.getByText("Stai modificando questo viaggiatore")).toBeVisible();
     const temporaryName = `ProfiloQA${process.env.QA_RUN_ID}`;
+    const temporaryBio = `Biografia sincronizzata QA ${process.env.QA_RUN_ID}`;
     await form.getByPlaceholder("Nome *").fill(temporaryName);
     await form.getByPlaceholder("Cognome").fill("Sincronizzato");
+    await form.getByPlaceholder("Raccontaci qualcosa di te…").fill(temporaryBio);
     const update = ownerPage.waitForResponse((response) =>
       new URL(response.url()).pathname === `/api/profiles/${owner.id}` && response.request().method() === "PUT");
     await form.getByRole("button", { name: "Salva modifiche" }).tap();
     expect((await update).status()).toBe(200);
     expect(await ownerPage.evaluate(() => localStorage.getItem("india-profile-id"))).toBe(owner.id);
     expect(await ownerPage.evaluate(() => localStorage.getItem("india-visitor-name"))).toBe(`${temporaryName} Sincronizzato`);
-    await expect(ownerPage.locator(".peopleGrid article").filter({ hasText: temporaryName })).toBeVisible();
+    await expect(ownerPage.locator(".peopleGrid article").filter({ hasText: temporaryName })).toContainText(temporaryBio);
     activeOwnerToken = await ownerPage.evaluate(() => localStorage.getItem("india-session-token"));
 
     const otherPage = await otherContext.newPage();
     await openGroup(otherPage);
     const synchronizedCard = otherPage.locator(".peopleGrid article").filter({ hasText: temporaryName });
     await expect(synchronizedCard).toBeVisible({ timeout: 20_000 });
+    await expect(synchronizedCard).toContainText(temporaryBio);
     await expect(synchronizedCard.getByRole("button", { name: "Modifica profilo" })).toHaveCount(0);
     expect(await otherPage.evaluate(() => localStorage.getItem("india-profile-id"))).toBe(other.id);
 

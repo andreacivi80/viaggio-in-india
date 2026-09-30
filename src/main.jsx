@@ -90,7 +90,7 @@ import {
   tripDateKeys,
 } from "./tripThailand.js";
 
-const VERSION = "1.48.64",
+const VERSION = "1.48.65",
   API = "/api";
 let mapLibrePromise;
 const loadMapLibre = () => {
@@ -3408,6 +3408,14 @@ function Diary({
   }, [deviceProfileName]);
   useEffect(() => localStorage.setItem("india-draft", text), [text]);
   useEffect(() => {
+    if (!composeOpen) return undefined;
+    const closeWithKeyboard = (event) => {
+      if (event.key === "Escape" && !busy) setComposeOpen(false);
+    };
+    addEventListener("keydown", closeWithKeyboard);
+    return () => removeEventListener("keydown", closeWithKeyboard);
+  }, [composeOpen, busy, setComposeOpen]);
+  useEffect(() => {
     const stopLoggedOutUpload = (event) => {
       if (event.key === "india-session-token" && !event.newValue)
         uploadAbortRef.current?.abort();
@@ -3773,7 +3781,13 @@ function Diary({
       )}
       {composeOpen && (
         <div className="sheetBackdrop" onClick={() => setComposeOpen(false)}>
-          <div className="uploadSheet" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="uploadSheet"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Nuovo contenuto"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="sheetHandle" />
             <div className="sheetTitle">
               <div>

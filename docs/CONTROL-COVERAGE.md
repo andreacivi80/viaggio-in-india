@@ -5,8 +5,8 @@ Questa vista non dichiara superato un controllo senza evidenza registrata. Manti
 - Righe sorgente: 3024
 - Controlli unici normalizzati: 2848
 - Doppioni consolidati: 176
-- Superati con evidenza gia registrata: 1568
-- Da verificare o collegare a evidenza: 1280
+- Superati con evidenza gia registrata: 1573
+- Da verificare o collegare a evidenza: 1275
 
 | Priorita | Categoria | Superati | Pendenti | Totale |
 |---|---|---:|---:|---:|
@@ -32,8 +32,8 @@ Questa vista non dichiara superato un controllo senza evidenza registrata. Manti
 | P2 | usabilita-mobile | 19 | 2 | 21 |
 | P3 | altro | 218 | 1201 | 1419 |
 | P3 | documenti | 1 | 4 | 5 |
-| P3 | itinerario | 19 | 31 | 50 |
+| P3 | itinerario | 20 | 30 | 50 |
 | P3 | mappe-posizione | 7 | 0 | 7 |
-| P3 | media-upload | 13 | 7 | 20 |
+| P3 | media-upload | 14 | 6 | 20 |
 | P3 | social | 56 | 26 | 82 |
-| P3 | usabilita-mobile | 3 | 7 | 10 |
+| P3 | usabilita-mobile | 6 | 4 | 10 |

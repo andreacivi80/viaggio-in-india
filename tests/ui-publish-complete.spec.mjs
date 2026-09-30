@@ -82,7 +82,12 @@ test("Pubblica completo: touch, galleria, scatto, video, audio, posizione e seco
     await publicSheet.getByRole("button", { name: "Chiudi" }).tap();
 
     await author.getByRole("button", { name: "Pubblica", exact: true }).tap();
-    const sheet = author.locator(".uploadSheet");
+    let sheet = author.locator(".uploadSheet");
+    await expect(sheet).toHaveAttribute("role", "dialog");
+    await author.keyboard.press("Escape");
+    await expect(sheet).toHaveCount(0);
+    await author.getByRole("button", { name: "Pubblica", exact: true }).tap();
+    sheet = author.locator(".uploadSheet");
     const gallery = sheet.locator('input[accept="image/*,.heic,.heif"][multiple]');
     const camera = sheet.locator('input[accept="image/*,.heic,.heif"][capture="environment"]');
     const videoInput = sheet.locator('input[accept="video/*,.mov,.mp4"]');

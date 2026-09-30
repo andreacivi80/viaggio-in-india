@@ -67,6 +67,8 @@ test("passeggero in automobile: touch, cambio rete e posizione in movimento rest
     await context.setOffline(true);
     await tapTab(page, "Viaggio");
     await expect(page.getByRole("heading", { name: "La storia, giorno per giorno" })).toBeVisible();
+    await page.locator(".offlineEmergencyCard summary").tap();
+    await expect(page.locator('.offlineEmergencyCard a[href="tel:+66818256103"]')).toBeVisible();
     await tapTab(page, "Mappa");
     await expect(page.getByRole("heading", { name: "Tutto l’itinerario" })).toBeVisible();
     await tapTab(page, "Bacheca");
