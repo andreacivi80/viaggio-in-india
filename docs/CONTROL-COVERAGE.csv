@@ -2775,14 +2775,14 @@ P3,social,passed,Messaggio “Pubblicazione in corso”.,usabilita:U0160,"Playwr
 P3,social,passed,Messaggio “Pubblicazione riuscita”.,usabilita:U0161,"Playwright mobile: loading held, disabled state, duplicate click, HTTP 201, confirmation; preview 9393a1aa"
 P3,social,pending,Misurare pubblicazione post.,globale:T-0591,
 P3,social,pending,Modifica di un post pubblicato.,globale:T-0262,
-P3,social,pending,nessuna pubblicazione automatica di dati personali.,addendum:A0369,
-P3,social,pending,Nessuna pubblicazione.,usabilita:U0477,
+P3,social,passed,nessuna pubblicazione automatica di dati personali.,addendum:A0369,REV 1.48.65 production smoke 8/8 su URL immutabile e due domini: lo stato pubblico non espone campi privati; ui-publish-complete conferma che senza sessione non esiste un compositore attivo né una pubblicazione automatica.
+P3,social,passed,Nessuna pubblicazione.,usabilita:U0477,"QA 1.48.65 ui-publish-complete 1/1: sul telefono Pubblico il compositore non viene montato, la richiesta POST forzata riceve 403 e nessun post viene creato."
 P3,social,pending,nessuna tastiera che nasconde Conferma o Pubblica;,addendum:A0249,
 P3,social,passed,"Non mostrare automaticamente età, lavoro e biografia al pubblico.",globale:T-0050,"production-smoke: eta, lavoro, bio e avatar_key assenti dallo stato pubblico"
 P3,social,passed,Non mostrare mai il pulsante “Pubblica” come utilizzabile se il server rifiuterà l’operazione.,usabilita:U0004,"Playwright Galaxy S9+ reale: touch fisico, 14 giornate, persistenza, 14 ricollocazioni mappa, marker Delhi 1/8 e Ranakpur; pubblicazione HTTP 201 senza duplicati; preview 9913ac2c; 2026-08-04"
 P3,social,passed,possibilità di consultare contenuti pubblici già disponibili;,addendum:A0320,"QA 1.48.64 ui-publish-complete 1/1: il secondo telefono pubblico consulta testo, posizione, due foto, un video e due audio senza ottenere azioni riservate."
 P3,social,pending,Possibilità di modificare la visibilità dopo la pubblicazione.,globale:T-0071,
-P3,social,pending,post non pubblico;,addendum:A0123,
+P3,social,passed,post non pubblico;,addendum:A0123,"QA authorization-matrix 88/88 e production smoke 1.48.65: family, group e private sono filtrati lato server; il pubblico riceve soltanto public e le API private restano 401/403."
 P3,social,passed,Pubblica.,usabilita:U0079,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P3,social,passed,Pubblicare 10 allegati.,globale:T-0401,"QA 1.48.64 extended-p0-ten-attachments: 10/10 JPEG pubblicati nello stesso post, nomi e ordine conservati, 10/10 riaperti con MIME corretto e poi eliminati."
 P3,social,passed,Pubblicare 20 post in pochi minuti.,globale:T-0867,"QA 1.48.64 extended-p3-post-load: 20/20 post pubblicati in raffica dallo stesso viaggiatore, 20 ID unici, tutti riletti nello stato e rimossi."
@@ -2808,21 +2808,21 @@ P3,social,pending,Pubblicare una versione di collaudo successiva.,globale:T-1173
 P3,social,passed,Pubblicare.,usabilita:U0225,Playwright mobile: pubblicazione multimediale confermata dal server con HTTP 201; preview b4f2cf13; 2026-08-04
 P3,social,pending,Pubblicazione alle 00:00.,globale:T-0927,
 P3,social,pending,Pubblicazione alle 23:59.,globale:T-0928,
-P3,social,pending,Pubblicazione bloccata.,usabilita:U0486,
+P3,social,passed,Pubblicazione bloccata.,usabilita:U0486,"QA 1.48.65 ui-publish-complete 1/1: pubblicazione dal contesto Pubblico bloccata sia dall’interfaccia sia dal server con HTTP 403, senza falsa conferma."
 P3,social,pending,Pubblicazione dopo l’arrivo in India.,globale:T-0929,
 P3,social,pending,Pubblicazione durante il volo.,globale:T-0930,
 P3,social,pending,Pubblicazione periodica durante la prova.,globale:T-1128,
 P3,social,passed,pubblicazione post;,globale:T-0750,QA 1.48.64 ui-publish-complete 1/1: ciclo completo compositore-upload-POST 201-render-secondo telefono-delete verificato.
-P3,social,pending,Pubblicazione prima della partenza.,globale:T-0931,
+P3,social,passed,Pubblicazione prima della partenza.,globale:T-0931,"QA 1.48.64 extended-p3-post-content: pubblicazioni con day_index -1 create e rilette nella fase Preparativi prima della partenza, poi eliminate."
 P3,social,passed,Pubblicazione riuscita.,usabilita:U0484,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
 P3,social,passed,Pubblicazione.,usabilita:U0641,Playwright mobile UI + HTTP 201 + production-smoke identity; preview 4bc152c6; 2026-08-04
-P3,social,pending,Pubblico,globale:T-0286;addendum:A0129;addendum:A0209,
+P3,social,passed,Pubblico,globale:T-0286;addendum:A0129;addendum:A0209,"REV 1.48.65 production smoke e QA ui-publish-complete: apertura senza sessione resta Pubblico, vede soltanto contenuti autorizzati e non può pubblicare, eliminare o aprire dati privati."
 P3,social,passed,Pubblico sulla risorsa A;,addendum:A0109,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
 P3,social,passed,Pubblico: 403.,usabilita:U0436,Authenticated remote QA: 18/18 applicable; preview a018a091; 2026-08-04
 P3,social,passed,Pulsante Pubblica disabilitato durante l’invio.,usabilita:U0158,"Playwright mobile: loading held, disabled state, duplicate click, HTTP 201, confirmation; preview 9393a1aa"
 P3,social,passed,Pulsante Pubblica disabilitato se non esiste alcun contenuto.,usabilita:U0157,"Playwright mobile: loading held, disabled state, duplicate click, HTTP 201, confirmation; preview 9393a1aa"
 P3,social,passed,riceve soltanto campi pubblici;,addendum:A0141,Authenticated remote QA + mobile publication; preview a018a091; 2026-08-04
-P3,social,pending,se è Pubblico;,addendum:A0427,
+P3,social,passed,se è Pubblico;,addendum:A0427,"QA 1.48.65 ui-publish-complete: il ruolo Pubblico è derivato dal server, apre la Bacheca consentita e riceve Accesso privato senza compositore quando tenta Pubblica."
 P3,social,passed,"Se non può pubblicare, non mostrare il compositore come attivo.",usabilita:U0481,"QA 1.48.64 ui-publish-complete 1/1: sul telefono Pubblico il tap apre solo Accesso privato, il campo Racconta questo momento è assente e POST forzato è 403."
 P3,social,passed,Selettore Pubblico.,globale:T-0074,QA 1.31.0: contenuto Pubblico visibile senza identita
 P3,social,passed,"Separare chiaramente versione sorgente, versione compilata e versione pubblicata.",globale:T-0010,"REV 1.48.63 allineata in sorgente, package, bundle, Service Worker e due deployment Cloudflare verificati. | REV 1.48.63: package, interfaccia e Service Worker allineati; commit e URL immutabili registrano la build pubblicata."
@@ -2835,7 +2835,7 @@ P3,social,passed,Verificare che soltanto la chiave pubblica VAPID sia inviata al
 P3,social,pending,Verificare rimozione dei metadati sensibili dalle copie pubbliche.,globale:T-1438,
 P3,social,passed,Verificare soltanto contenuti pubblici.,usabilita:U0094,QA 1.48.64 ui-publish-complete 1/1: iPhone pubblico riceve il post public completo ma non espone Altre opzioni e non può eliminarlo (403).
 P3,social,passed,Visualizzare la Bacheca pubblica.,usabilita:U0613,"QA 1.48.64 ui-publish-complete 1/1: Bacheca aperta su iPhone SE senza sessione, nuova pubblicazione public sincronizzata e visualizzata integralmente."
-P3,social,pending,Visualizzare le mappe pubbliche.,usabilita:U0615,
+P3,social,passed,Visualizzare le mappe pubbliche.,usabilita:U0615,"QA 1.48.64 ui-maps + ui-maplibre-v6: accesso senza sessione apre la mappa generale, 8 marker, 7 città, 5 mezzi e 11 mappe giornaliere; fallback cartografico verificato."
 P3,social,passed,Visualizzare soltanto informazioni pubbliche consentite.,usabilita:U0362,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P3,usabilita-mobile,passed,Biografia.,usabilita:U0387,Playwright mobile people/roles 1/1; preview 64167f5a; 2026-08-04
 P3,usabilita-mobile,pending,comandi che modificano soltanto lo stato grafico;,addendum:A0184,
